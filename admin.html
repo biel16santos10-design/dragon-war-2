@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dragon War — Admin</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial;background:#090e1c;color:#fff}.wrap{max-width:1250px;margin:auto;padding:18px}.card{background:#141c30;border:1px solid #2a375b;border-radius:15px;padding:16px;margin:10px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}input,textarea,button{width:100%;padding:11px;border-radius:9px;border:1px solid #344568;background:#0c1324;color:#fff;margin:4px 0}button{background:#315bd5;border:0;font-weight:bold;cursor:pointer}.danger{background:#a72d3b}.good{background:#248b57}.muted{color:#a9b6d3}.hidden{display:none}table{width:100%;border-collapse:collapse}th,td{padding:8px;border-bottom:1px solid #293653;text-align:left}small{color:#94a5c9}.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;min-width:260px}
+#toast{position:fixed;right:15px;bottom:15px;background:#111a2d;border:1px solid #40527e;padding:12px;border-radius:10px;display:none}
+</style>
+</head>
+<body><div class="wrap">
+<div id="loginView" class="card"><h1>Dragon War — ADM</h1><p class="muted">Entre com uma conta autorizada.</p><input id="email" type="email" placeholder="E-mail"><input id="pass" type="password" placeholder="Senha"><button id="login">Entrar</button></div>
+
+<div id="panel" class="hidden">
+<div class="card"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><h1>Painel ADM</h1><span id="adminName" class="muted"></span></div><button id="logout" style="width:auto">Sair</button></div></div>
+<div id="denied" class="card hidden"><h2>Acesso negado</h2><p>Esta conta não possui função administrativa.</p></div>
+<div id="adminContent" class="hidden">
+<div class="grid">
+<div class="card"><h3>Jogadores</h3><div id="count">0</div></div>
+<div class="card"><h3>Online</h3><div id="online">0</div></div>
+<div class="card"><h3>Mensagem global</h3><textarea id="globalMsg" placeholder="Mensagem para todos"></textarea><button id="saveMsg">Publicar</button></div>
+</div>
+
+<div class="card"><h2>Pesquisar jogadores</h2><input id="search" placeholder="Nick ou e-mail"><div style="overflow:auto"><table><thead><tr><th>Jogador</th><th>Recursos</th><th>Status</th><th>Ações</th></tr></thead><tbody id="players"></tbody></table></div></div>
+
+<div class="grid">
+<div class="card"><h2>Evento</h2><input id="eventTitle" placeholder="Título"><input id="eventDesc" placeholder="Descrição"><input id="eventEnds" placeholder="Fim (texto opcional)"><button id="createEvent">Criar evento</button></div>
+<div class="card"><h2>Configurações</h2><input id="xpMult" type="number" value="1" step="0.1" placeholder="Multiplicador XP"><button id="saveConfig">Salvar configuração</button><div id="configInfo" class="muted"></div></div>
+</div>
+<div class="card"><h2>Logs administrativos</h2><div id="logs"></div></div>
+</div></div></div>
+<div id="toast"></div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import {getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import {getFirestore,collection,doc,getDoc,setDoc,updateDoc,deleteDoc,query,orderBy,limit,onSnapshot,serverTimestamp,addDoc} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+const firebaseConfig={apiKey:"AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",authDomain:"dragon-war-rise-of-power-2a9f1.firebaseapp.com",projectId:"dragon-war-rise-of-power-2a9f1",storageBucket:"dragon-war-rise-of-power-2a9f1.firebasestorage.app",messagingSenderId:"115455691167",appId:"1:115455691167:web:ff3638f67b66c17c5515aa",measurementId:"G-S7XE2EN9CL"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+const toast=m=>{let t=$("toast");t.textContent=m;t.style.display="block";setTimeout(()=>t.style.display="none",2500)};
+let all=[]; let adminOk=false;
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+
+$("login").onclick=async()=>{try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("pass").value)}catch(e){toast(e.message)}};
+$("logout").onclick=()=>signOut(auth);
+
+onAuthStateChanged(auth,async u=>{
+ if(!u){$("loginView").classList.remove("hidden");$("panel").classList.add("hidden");return}
+ $("loginView").classList.add("hidden");$("panel").classList.remove("hidden");$("adminName").textContent=u.email||u.uid;
+ const snap=await getDoc(doc(db,"players",u.uid));
+ // Para segurança real, confirme a função admin também nas regras do Firestore.
+ // O painel usa role:"admin" no documento do jogador.
+ adminOk=snap.exists() && snap.data().role==="admin";
+ $("denied").classList.toggle("hidden",adminOk);$("adminContent").classList.toggle("hidden",!adminOk);
+ if(adminOk){loadPlayers();loadLogs();loadGlobal();loadConfig();}
+});
+
+function loadPlayers(){
+ onSnapshot(query(collection(db,"players"),orderBy("points","desc"),limit(500)),s=>{
+  all=s.docs.map(d=>({id:d.id,...d.data()}));render();updateCounts();
+ });
+}
+function render(){
+ const term=$("search").value.trim().toLowerCase();
+ const arr=all.filter(x=>(x.nick||"").toLowerCase().includes(term)||(x.email||"").toLowerCase().includes(term));
+ $("players").innerHTML=arr.map(x=>{
+  const online=x.lastSeen?.toDate && Date.now()-x.lastSeen.toDate().getTime()<45000;
+  return `<tr><td><b>${esc(x.nick)}</b><br><small>${esc(x.email||"")}<br>${x.uid}</small></td>
+  <td>🪙 ${x.coins||0}<br>💎 ${x.gems||0}<br>🏆 ${x.points||0}<br>Lv. ${x.level||1}</td>
+  <td>${online?"Online":"Offline"}${x.banned?"<br><b>BANIDO</b>":""}${x.godMode?"<br>DEUS":""}</td>
+  <td><div class="actions">
+  <button onclick="editPlayer('${x.id}')">Editar</button>
+  <button class="good" onclick="adjust('${x.id}','coins',100)">+100 moedas</button>
+  <button class="good" onclick="adjust('${x.id}','gems',10)">+10 gemas</button>
+  <button onclick="adjust('${x.id}','points',100)">+100 pontos</button>
+  <button onclick="toggleGod('${x.id}',${!!x.godMode})">${x.godMode?"Desligar Deus":"Modo Deus"}</button>
+  <button class="danger" onclick="toggleBan('${x.id}',${!!x.banned})">${x.banned?"Desbanir":"Banir"}</button>
+  </div></td></tr>`;
+ }).join("");
+}
+$("search").oninput=render;
+function updateCounts(){let on=all.filter(x=>x.lastSeen?.toDate && Date.now()-x.lastSeen.toDate().getTime()<45000).length;$("count").textContent=all.length;$("online").textContent=on}
+window.adjust=async(id,field,n)=>{try{let x=all.find(a=>a.id===id);await updateDoc(doc(db,"players",id),{[field]:Math.max(0,(x[field]||0)+n)});await log("adjust",{uid:id,field,value:n});toast("Atualizado.");}catch(e){toast(e.message)}};
+window.toggleGod=async(id,v)=>{await updateDoc(doc(db,"players",id),{godMode:!v});await log("godMode",{uid:id,value:!v});toast("Modo Deus alterado.")};
+window.toggleBan=async(id,v)=>{await updateDoc(doc(db,"players",id),{banned:!v});await log(v?"unban":"ban",{uid:id});toast(v?"Desbanido.":"Banido.")};
+window.editPlayer=async id=>{
+ const x=all.find(a=>a.id===id); if(!x)return;
+ const coins=prompt("Moedas:",x.coins||0),gems=prompt("Gemas:",x.gems||0),points=prompt("Pontos:",x.points||0),level=prompt("Nível:",x.level||1);
+ if(coins===null||gems===null||points===null||level===null)return;
+ await updateDoc(doc(db,"players",id),{coins:Number(coins),gems:Number(gems),points:Number(points),level:Number(level)});
+ await log("edit",{uid:id,coins:Number(coins),gems:Number(gems),points:Number(points),level:Number(level)});toast("Jogador atualizado.");
+};
+async function log(action,data){try{await addDoc(collection(db,"adminLogs"),{action,data,adminUid:auth.currentUser.uid,adminEmail:auth.currentUser.email||"",createdAt:serverTimestamp()})}catch{}}
+$("saveMsg").onclick=async()=>{await setDoc(doc(db,"config","global"),{globalMessage:$("globalMsg").value.trim(),updatedAt:serverTimestamp()},{merge:true});await log("globalMessage",{});toast("Mensagem publicada.")};
+$("createEvent").onclick=async()=>{let title=$("eventTitle").value.trim();if(!title)return toast("Informe o título.");await addDoc(collection(db,"events"),{title,description:$("eventDesc").value.trim(),endsAt:$("eventEnds").value.trim(),active:true,createdAt:serverTimestamp()});await log("createEvent",{title});toast("Evento criado.");};
+$("saveConfig").onclick=async()=>{let xp=Number($("xpMult").value)||1;await setDoc(doc(db,"config","global"),{xpMultiplier:xp,updatedAt:serverTimestamp()},{merge:true});await log("config",{xpMultiplier:xp});toast("Configuração salva.")};
+function loadGlobal(){onSnapshot(doc(db,"config","global"),s=>{let x=s.exists()?s.data():{};$("globalMsg").value=x.globalMessage||"";$("xpMult").value=x.xpMultiplier||1;$("configInfo").textContent="Multiplicador XP: "+(x.xpMultiplier||1)})}
+function loadConfig(){loadGlobal()}
+function loadLogs(){onSnapshot(query(collection(db,"adminLogs"),orderBy("createdAt","desc"),limit(100)),s=>{$("logs").innerHTML=s.docs.map(d=>{let x=d.data();return `<div><b>${esc(x.action)}</b> — ${esc(x.adminEmail)} — ${x.createdAt?.toDate?x.createdAt.toDate().toLocaleString("pt-BR"):"agora"}<br><small>${esc(JSON.stringify(x.data||{}))}</small></div><hr>`}).join("")})}
+</script>
+</body></html>
