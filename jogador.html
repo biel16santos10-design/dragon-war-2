@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dragon War — Jogador</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#0b1020;color:#fff}
+.wrap{max-width:1100px;margin:auto;padding:18px}.card{background:#151d35;border:1px solid #2a365c;border-radius:16px;padding:18px;margin:12px 0;box-shadow:0 8px 30px #0004}
+h1,h2,h3{margin-top:0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+input,button,select{width:100%;padding:12px;border-radius:10px;border:1px solid #34446e;background:#0d1428;color:#fff;margin:5px 0}
+button{cursor:pointer;background:#3159d9;border:0;font-weight:700}button.danger{background:#a52b38}button.good{background:#248b57}
+.hidden{display:none}.stat{font-size:28px;font-weight:800}.muted{color:#aeb9d6}.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px solid #2b3657;text-align:left}#toast{position:fixed;right:15px;bottom:15px;background:#111a31;border:1px solid #40517f;padding:12px 16px;border-radius:10px;display:none;z-index:10}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div id="authView">
+<div class="card">
+<h1>Dragon War</h1><p class="muted">Rise of Power</p>
+<div class="grid">
+<div><h2>Entrar</h2><input id="loginEmail" type="email" placeholder="E-mail"><input id="loginPass" type="password" placeholder="Senha"><button id="loginBtn">Entrar</button></div>
+<div><h2>Criar conta</h2><input id="regNick" placeholder="Nick"><input id="regEmail" type="email" placeholder="E-mail"><input id="regPass" type="password" placeholder="Senha (mín. 6)"><button id="registerBtn" class="good">Cadastrar</button></div>
+</div></div></div>
+
+<div id="appView" class="hidden">
+<div class="card">
+<div class="row"><div><h1 id="welcome">Dragon War</h1><span id="status" class="muted">Conectando...</span></div><button id="logoutBtn" style="width:auto">Sair</button></div>
+</div>
+<div class="grid">
+<div class="card"><div class="muted">Moedas</div><div class="stat" id="coins">0</div></div>
+<div class="card"><div class="muted">Gemas</div><div class="stat" id="gems">0</div></div>
+<div class="card"><div class="muted">Pontos</div><div class="stat" id="points">0</div></div>
+<div class="card"><div class="muted">Nível</div><div class="stat" id="level">1</div></div>
+</div>
+
+<div class="card"><h2>Perfil</h2><div id="profile"></div></div>
+<div class="card"><h2>Mensagem global</h2><div id="globalMessage" class="muted">Nenhuma mensagem.</div></div>
+<div class="card"><h2>Eventos</h2><div id="events">Nenhum evento ativo.</div></div>
+
+<div class="card"><h2>Ranking global</h2><table><thead><tr><th>#</th><th>Jogador</th><th>Pontos</th><th>Nível</th><th>Status</th></tr></thead><tbody id="ranking"></tbody></table></div>
+</div>
+</div>
+<div id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, orderBy, limit, onSnapshot, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+const firebaseConfig={
+apiKey:"AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
+authDomain:"dragon-war-rise-of-power-2a9f1.firebaseapp.com",
+projectId:"dragon-war-rise-of-power-2a9f1",
+storageBucket:"dragon-war-rise-of-power-2a9f1.firebasestorage.app",
+messagingSenderId:"115455691167",
+appId:"1:115455691167:web:ff3638f67b66c17c5515aa",
+measurementId:"G-S7XE2EN9CL"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+const $=id=>document.getElementById(id);
+const toast=m=>{const t=$("toast");t.textContent=m;t.style.display="block";setTimeout(()=>t.style.display="none",2500)};
+let unsubUser=null, heartbeat=null;
+
+$("registerBtn").onclick=async()=>{
+ try{
+  const nick=$("regNick").value.trim(),email=$("regEmail").value.trim(),pass=$("regPass").value;
+  if(!nick) throw Error("Digite um nick.");
+  const c=await createUserWithEmailAndPassword(auth,email,pass);
+  await updateProfile(c.user,{displayName:nick});
+  await setDoc(doc(db,"players",c.user.uid),{uid:c.user.uid,nick,email,coins:0,gems:0,points:0,level:1,xp:0,banned:false,godMode:false,role:"player",createdAt:serverTimestamp(),lastSeen:serverTimestamp()});
+  toast("Conta criada.");
+ }catch(e){toast(e.message)}
+};
+$("loginBtn").onclick=async()=>{try{await signInWithEmailAndPassword(auth,$("loginEmail").value.trim(),$("loginPass").value)}catch(e){toast(e.message)}};
+$("logoutBtn").onclick=()=>signOut(auth);
+
+function renderUser(d){
+ const x=d.data();
+ $("welcome").textContent=x.nick||"Jogador";
+ $("coins").textContent=(x.coins||0).toLocaleString("pt-BR");
+ $("gems").textContent=(x.gems||0).toLocaleString("pt-BR");
+ $("points").textContent=(x.points||0).toLocaleString("pt-BR");
+ $("level").textContent=x.level||1;
+ $("profile").innerHTML=`<b>Nick:</b> ${esc(x.nick)}<br><b>Nível:</b> ${x.level||1}<br><b>XP:</b> ${x.xp||0}<br><b>Status:</b> ${x.banned?"BANIDO":"Ativo"}${x.godMode?"<br><b>Modo Deus:</b> Ativo":""}`;
+ $("status").textContent=x.banned?"Conta banida":"Online";
+ if(x.banned){toast("Sua conta está banida.");}
+}
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+
+onAuthStateChanged(auth,async u=>{
+ if(unsubUser)unsubUser(); if(heartbeat)clearInterval(heartbeat);
+ if(!u){$("authView").classList.remove("hidden");$("appView").classList.add("hidden");return}
+ $("authView").classList.add("hidden");$("appView").classList.remove("hidden");
+ const ref=doc(db,"players",u.uid);
+ unsubUser=onSnapshot(ref,s=>{if(s.exists())renderUser(s);else toast("Perfil não encontrado.");});
+ const beat=async()=>{try{await updateDoc(ref,{lastSeen:serverTimestamp()})}catch{}};
+ await beat(); heartbeat=setInterval(beat,20000);
+ loadRanking();loadConfig();loadEvents();
+});
+function loadRanking(){
+ const q=query(collection(db,"players"),orderBy("points","desc"),limit(50));
+ onSnapshot(q,s=>{$("ranking").innerHTML=s.docs.map((d,i)=>{const x=d.data(), online=x.lastSeen?.toDate && (Date.now()-x.lastSeen.toDate().getTime()<45000);return `<tr><td>${i+1}</td><td>${esc(x.nick)}</td><td>${x.points||0}</td><td>${x.level||1}</td><td>${online?"Online":"Offline"}</td></tr>`}).join("")});
+}
+function loadConfig(){
+ onSnapshot(doc(db,"config","global"),s=>{const x=s.exists()?s.data():{};$("globalMessage").textContent=x.globalMessage||"Nenhuma mensagem."});
+}
+function loadEvents(){
+ onSnapshot(query(collection(db,"events"),where("active","==",true),limit(20)),s=>{
+  $("events").innerHTML=s.empty?"Nenhum evento ativo.":s.docs.map(d=>{const x=d.data();return `<div class="card"><b>${esc(x.title||"Evento")}</b><br>${esc(x.description||"")}<br><span class="muted">${x.endsAt?"Até: "+esc(x.endsAt):""}</span></div>`}).join("");
+ });
+}
+</script>
+</body>
+</html>
