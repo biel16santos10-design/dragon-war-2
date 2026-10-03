@@ -3,101 +3,1971 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Dragon War — Admin</title>
+<title>Dragon War — Painel ADM</title>
+
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial;background:#090e1c;color:#fff}.wrap{max-width:1250px;margin:auto;padding:18px}.card{background:#141c30;border:1px solid #2a375b;border-radius:15px;padding:16px;margin:10px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}input,textarea,button{width:100%;padding:11px;border-radius:9px;border:1px solid #344568;background:#0c1324;color:#fff;margin:4px 0}button{background:#315bd5;border:0;font-weight:bold;cursor:pointer}.danger{background:#a72d3b}.good{background:#248b57}.muted{color:#a9b6d3}.hidden{display:none}table{width:100%;border-collapse:collapse}th,td{padding:8px;border-bottom:1px solid #293653;text-align:left}small{color:#94a5c9}.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;min-width:260px}
-#toast{position:fixed;right:15px;bottom:15px;background:#111a2d;border:1px solid #40527e;padding:12px;border-radius:10px;display:none}
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#070b16;
+  color:#fff;
+}
+
+.wrap{
+  width:100%;
+  max-width:1250px;
+  margin:auto;
+  padding:18px;
+}
+
+.card{
+  background:#141c30;
+  border:1px solid #2b3a60;
+  border-radius:16px;
+  padding:18px;
+  margin:12px 0;
+  box-shadow:0 8px 25px rgba(0,0,0,.18);
+}
+
+h1,h2,h3{
+  margin-top:0;
+}
+
+.muted{
+  color:#a9b6d3;
+}
+
+.hidden{
+  display:none!important;
+}
+
+input,
+textarea,
+button,
+select{
+  width:100%;
+  padding:12px;
+  border-radius:9px;
+  border:1px solid #344568;
+  background:#0c1324;
+  color:#fff;
+  margin:5px 0;
+  font-size:15px;
+}
+
+textarea{
+  min-height:100px;
+  resize:vertical;
+}
+
+button{
+  background:#315bd5;
+  border:0;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover{
+  filter:brightness(1.1);
+}
+
+.danger{
+  background:#a72d3b;
+}
+
+.good{
+  background:#248b57;
+}
+
+.warning{
+  background:#a86f20;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:10px;
+}
+
+.stat{
+  font-size:28px;
+  font-weight:bold;
+  margin-top:8px;
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+}
+
+.header button{
+  width:auto;
+  min-width:90px;
+}
+
+.login-box{
+  max-width:500px;
+  margin:60px auto;
+}
+
+.admin-ok{
+  border-color:#248b57;
+}
+
+.denied{
+  border-color:#a72d3b;
+}
+
+.table-wrap{
+  overflow:auto;
+}
+
+table{
+  width:100%;
+  min-width:850px;
+  border-collapse:collapse;
+}
+
+th,
+td{
+  padding:10px;
+  border-bottom:1px solid #293653;
+  text-align:left;
+  vertical-align:top;
+}
+
+th{
+  color:#aebbd5;
+}
+
+small{
+  color:#94a5c9;
+}
+
+.actions{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:5px;
+  min-width:300px;
+}
+
+.actions button{
+  margin:0;
+}
+
+.status-online{
+  color:#47d889;
+  font-weight:bold;
+}
+
+.status-offline{
+  color:#9ca8bf;
+}
+
+.badge{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:20px;
+  background:#263452;
+  font-size:12px;
+  margin:2px;
+}
+
+.badge-admin{
+  background:#315bd5;
+}
+
+.badge-ban{
+  background:#a72d3b;
+}
+
+.badge-god{
+  background:#8c5bdd;
+}
+
+.log{
+  padding:10px 0;
+  border-bottom:1px solid #293653;
+}
+
+#toast{
+  position:fixed;
+  right:15px;
+  bottom:15px;
+  max-width:350px;
+  background:#111a2d;
+  border:1px solid #40527e;
+  padding:13px 16px;
+  border-radius:10px;
+  display:none;
+  z-index:9999;
+}
+
+.loading{
+  text-align:center;
+  padding:25px;
+  color:#a9b6d3;
+}
+
+@media(max-width:600px){
+  .wrap{
+    padding:10px;
+  }
+
+  .card{
+    padding:14px;
+  }
+
+  .header{
+    align-items:flex-start;
+  }
+
+  .actions{
+    grid-template-columns:1fr;
+    min-width:180px;
+  }
+}
 </style>
 </head>
-<body><div class="wrap">
-<div id="loginView" class="card"><h1>Dragon War — ADM</h1><p class="muted">Entre com uma conta autorizada.</p><input id="email" type="email" placeholder="E-mail"><input id="pass" type="password" placeholder="Senha"><button id="login">Entrar</button></div>
 
-<div id="panel" class="hidden">
-<div class="card"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><h1>Painel ADM</h1><span id="adminName" class="muted"></span></div><button id="logout" style="width:auto">Sair</button></div></div>
-<div id="denied" class="card hidden"><h2>Acesso negado</h2><p>Esta conta não possui função administrativa.</p></div>
-<div id="adminContent" class="hidden">
-<div class="grid">
-<div class="card"><h3>Jogadores</h3><div id="count">0</div></div>
-<div class="card"><h3>Online</h3><div id="online">0</div></div>
-<div class="card"><h3>Mensagem global</h3><textarea id="globalMsg" placeholder="Mensagem para todos"></textarea><button id="saveMsg">Publicar</button></div>
+<body>
+
+<div class="wrap">
+
+  <!-- LOGIN -->
+  <div id="loginView" class="card login-box">
+
+    <h1>Dragon War</h1>
+    <h2>Painel ADM</h2>
+
+    <p class="muted">
+      Entre com sua conta autorizada.
+    </p>
+
+    <input
+      id="email"
+      type="email"
+      placeholder="E-mail"
+      autocomplete="email"
+    >
+
+    <input
+      id="pass"
+      type="password"
+      placeholder="Senha"
+      autocomplete="current-password"
+    >
+
+    <button id="login">
+      Entrar
+    </button>
+
+    <p id="loginStatus" class="muted"></p>
+
+  </div>
+
+
+  <!-- PAINEL -->
+  <div id="panel" class="hidden">
+
+    <div class="card admin-ok">
+
+      <div class="header">
+
+        <div>
+          <h1>Painel ADM</h1>
+          <div id="adminName" class="muted"></div>
+          <div id="adminUid" class="muted"></div>
+        </div>
+
+        <button id="logout">
+          Sair
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- ACESSO NEGADO -->
+
+    <div id="denied" class="card denied hidden">
+
+      <h2>Acesso negado</h2>
+
+      <p>
+        Esta conta está autenticada, mas não possui
+        a função administrativa.
+      </p>
+
+      <p class="muted">
+        O sistema verifica a coleção users e o campo role.
+      </p>
+
+    </div>
+
+
+    <!-- CONTEÚDO ADM -->
+
+    <div id="adminContent" class="hidden">
+
+
+      <!-- ESTATÍSTICAS -->
+
+      <div class="grid">
+
+        <div class="card">
+          <h3>Jogadores</h3>
+          <div id="count" class="stat">0</div>
+        </div>
+
+        <div class="card">
+          <h3>Online</h3>
+          <div id="online" class="stat">0</div>
+        </div>
+
+        <div class="card">
+          <h3>Administradores</h3>
+          <div id="admins" class="stat">0</div>
+        </div>
+
+      </div>
+
+
+      <!-- MENSAGEM GLOBAL -->
+
+      <div class="card">
+
+        <h2>Mensagem global</h2>
+
+        <p class="muted">
+          Essa mensagem poderá ser exibida para todos os jogadores.
+        </p>
+
+        <textarea
+          id="globalMsg"
+          placeholder="Digite uma mensagem para todos..."
+        ></textarea>
+
+        <button id="saveMsg">
+          Publicar mensagem
+        </button>
+
+      </div>
+
+
+      <!-- PESQUISA -->
+
+      <div class="card">
+
+        <h2>Pesquisar jogadores</h2>
+
+        <input
+          id="search"
+          placeholder="Pesquisar por nick, e-mail ou UID..."
+        >
+
+        <div class="table-wrap">
+
+          <table>
+
+            <thead>
+
+              <tr>
+                <th>Jogador</th>
+                <th>Recursos</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+
+            </thead>
+
+            <tbody id="players">
+
+              <tr>
+                <td colspan="4" class="loading">
+                  Carregando jogadores...
+                </td>
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+
+      <!-- EVENTO + CONFIGURAÇÃO -->
+
+      <div class="grid">
+
+        <div class="card">
+
+          <h2>Criar evento</h2>
+
+          <input
+            id="eventTitle"
+            placeholder="Título do evento"
+          >
+
+          <input
+            id="eventDesc"
+            placeholder="Descrição"
+          >
+
+          <input
+            id="eventEnds"
+            placeholder="Fim do evento"
+          >
+
+          <button id="createEvent">
+            Criar evento
+          </button>
+
+        </div>
+
+
+        <div class="card">
+
+          <h2>Configurações</h2>
+
+          <label>
+            Multiplicador de XP
+          </label>
+
+          <input
+            id="xpMult"
+            type="number"
+            value="1"
+            min="0"
+            step="0.1"
+          >
+
+          <button id="saveConfig">
+            Salvar configuração
+          </button>
+
+          <div
+            id="configInfo"
+            class="muted"
+            style="margin-top:10px"
+          ></div>
+
+        </div>
+
+      </div>
+
+
+      <!-- LOGS -->
+
+      <div class="card">
+
+        <h2>Logs administrativos</h2>
+
+        <div id="logs">
+          <div class="loading">
+            Carregando logs...
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
 </div>
 
-<div class="card"><h2>Pesquisar jogadores</h2><input id="search" placeholder="Nick ou e-mail"><div style="overflow:auto"><table><thead><tr><th>Jogador</th><th>Recursos</th><th>Status</th><th>Ações</th></tr></thead><tbody id="players"></tbody></table></div></div>
 
-<div class="grid">
-<div class="card"><h2>Evento</h2><input id="eventTitle" placeholder="Título"><input id="eventDesc" placeholder="Descrição"><input id="eventEnds" placeholder="Fim (texto opcional)"><button id="createEvent">Criar evento</button></div>
-<div class="card"><h2>Configurações</h2><input id="xpMult" type="number" value="1" step="0.1" placeholder="Multiplicador XP"><button id="saveConfig">Salvar configuração</button><div id="configInfo" class="muted"></div></div>
-</div>
-<div class="card"><h2>Logs administrativos</h2><div id="logs"></div></div>
-</div></div></div>
 <div id="toast"></div>
 
+
 <script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-import {getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import {getFirestore,collection,doc,getDoc,setDoc,updateDoc,deleteDoc,query,orderBy,limit,onSnapshot,serverTimestamp,addDoc} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-const firebaseConfig={apiKey:"AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",authDomain:"dragon-war-rise-of-power-2a9f1.firebaseapp.com",projectId:"dragon-war-rise-of-power-2a9f1",storageBucket:"dragon-war-rise-of-power-2a9f1.firebasestorage.app",messagingSenderId:"115455691167",appId:"1:115455691167:web:ff3638f67b66c17c5515aa",measurementId:"G-S7XE2EN9CL"};
-const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
-const toast=m=>{let t=$("toast");t.textContent=m;t.style.display="block";setTimeout(()=>t.style.display="none",2500)};
-let all=[]; let adminOk=false;
-const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+/* =========================================================
+   FIREBASE
+========================================================= */
 
-$("login").onclick=async()=>{try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("pass").value)}catch(e){toast(e.message)}};
-$("logout").onclick=()=>signOut(auth);
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 
-onAuthStateChanged(auth,async u=>{
- if(!u){$("loginView").classList.remove("hidden");$("panel").classList.add("hidden");return}
- $("loginView").classList.add("hidden");$("panel").classList.remove("hidden");$("adminName").textContent=u.email||u.uid;
- const snap=await getDoc(doc(db,"players",u.uid));
- // Para segurança real, confirme a função admin também nas regras do Firestore.
- // O painel usa role:"admin" no documento do jogador.
- adminOk=snap.exists() && snap.data().role==="admin";
- $("denied").classList.toggle("hidden",adminOk);$("adminContent").classList.toggle("hidden",!adminOk);
- if(adminOk){loadPlayers();loadLogs();loadGlobal();loadConfig();}
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  query,
+  orderBy,
+  limit,
+  onSnapshot,
+  serverTimestamp,
+  addDoc
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+
+/* =========================================================
+   CONFIGURAÇÃO DO SEU FIREBASE
+========================================================= */
+
+const firebaseConfig = {
+
+  apiKey:
+    "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
+
+  authDomain:
+    "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
+
+  projectId:
+    "dragon-war-rise-of-power-2a9f1",
+
+  storageBucket:
+    "dragon-war-rise-of-power-2a9f1.firebasestorage.app",
+
+  messagingSenderId:
+    "115455691167",
+
+  appId:
+    "1:115455691167:web:ff3638f67b66c17c5515aa",
+
+  measurementId:
+    "G-S7XE2EN9CL"
+
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const db = getFirestore(app);
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+const $ = id => document.getElementById(id);
+
+const esc = value => {
+
+  return String(value ?? "")
+    .replace(/[&<>"']/g, char => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    }[char]));
+
+};
+
+
+function toast(message){
+
+  const box = $("toast");
+
+  box.textContent = message;
+
+  box.style.display = "block";
+
+  setTimeout(() => {
+
+    box.style.display = "none";
+
+  },3000);
+
+}
+
+
+/* =========================================================
+   VARIÁVEIS
+========================================================= */
+
+let allPlayers = [];
+
+let adminOk = false;
+
+let playersUnsubscribe = null;
+
+let logsUnsubscribe = null;
+
+let configUnsubscribe = null;
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+$("login").onclick = async () => {
+
+  const email = $("email").value.trim();
+
+  const password = $("pass").value;
+
+  if(!email){
+
+    toast("Digite o e-mail.");
+
+    return;
+
+  }
+
+  if(!password){
+
+    toast("Digite a senha.");
+
+    return;
+
+  }
+
+  $("login").disabled = true;
+
+  $("loginStatus").textContent =
+    "Entrando...";
+
+  try{
+
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    $("loginStatus").textContent =
+      "";
+
+  }catch(error){
+
+    console.error(error);
+
+    $("loginStatus").textContent =
+      "Não foi possível entrar.";
+
+    toast(
+      traduzErroFirebase(error)
+    );
+
+  }finally{
+
+    $("login").disabled = false;
+
+  }
+
+};
+
+
+/* =========================================================
+   ENTER NO LOGIN
+========================================================= */
+
+$("pass").addEventListener("keydown",event => {
+
+  if(event.key === "Enter"){
+
+    $("login").click();
+
+  }
+
 });
 
-function loadPlayers(){
- onSnapshot(query(collection(db,"players"),orderBy("points","desc"),limit(500)),s=>{
-  all=s.docs.map(d=>({id:d.id,...d.data()}));render();updateCounts();
- });
-}
-function render(){
- const term=$("search").value.trim().toLowerCase();
- const arr=all.filter(x=>(x.nick||"").toLowerCase().includes(term)||(x.email||"").toLowerCase().includes(term));
- $("players").innerHTML=arr.map(x=>{
-  const online=x.lastSeen?.toDate && Date.now()-x.lastSeen.toDate().getTime()<45000;
-  return `<tr><td><b>${esc(x.nick)}</b><br><small>${esc(x.email||"")}<br>${x.uid}</small></td>
-  <td>🪙 ${x.coins||0}<br>💎 ${x.gems||0}<br>🏆 ${x.points||0}<br>Lv. ${x.level||1}</td>
-  <td>${online?"Online":"Offline"}${x.banned?"<br><b>BANIDO</b>":""}${x.godMode?"<br>DEUS":""}</td>
-  <td><div class="actions">
-  <button onclick="editPlayer('${x.id}')">Editar</button>
-  <button class="good" onclick="adjust('${x.id}','coins',100)">+100 moedas</button>
-  <button class="good" onclick="adjust('${x.id}','gems',10)">+10 gemas</button>
-  <button onclick="adjust('${x.id}','points',100)">+100 pontos</button>
-  <button onclick="toggleGod('${x.id}',${!!x.godMode})">${x.godMode?"Desligar Deus":"Modo Deus"}</button>
-  <button class="danger" onclick="toggleBan('${x.id}',${!!x.banned})">${x.banned?"Desbanir":"Banir"}</button>
-  </div></td></tr>`;
- }).join("");
-}
-$("search").oninput=render;
-function updateCounts(){let on=all.filter(x=>x.lastSeen?.toDate && Date.now()-x.lastSeen.toDate().getTime()<45000).length;$("count").textContent=all.length;$("online").textContent=on}
-window.adjust=async(id,field,n)=>{try{let x=all.find(a=>a.id===id);await updateDoc(doc(db,"players",id),{[field]:Math.max(0,(x[field]||0)+n)});await log("adjust",{uid:id,field,value:n});toast("Atualizado.");}catch(e){toast(e.message)}};
-window.toggleGod=async(id,v)=>{await updateDoc(doc(db,"players",id),{godMode:!v});await log("godMode",{uid:id,value:!v});toast("Modo Deus alterado.")};
-window.toggleBan=async(id,v)=>{await updateDoc(doc(db,"players",id),{banned:!v});await log(v?"unban":"ban",{uid:id});toast(v?"Desbanido.":"Banido.")};
-window.editPlayer=async id=>{
- const x=all.find(a=>a.id===id); if(!x)return;
- const coins=prompt("Moedas:",x.coins||0),gems=prompt("Gemas:",x.gems||0),points=prompt("Pontos:",x.points||0),level=prompt("Nível:",x.level||1);
- if(coins===null||gems===null||points===null||level===null)return;
- await updateDoc(doc(db,"players",id),{coins:Number(coins),gems:Number(gems),points:Number(points),level:Number(level)});
- await log("edit",{uid:id,coins:Number(coins),gems:Number(gems),points:Number(points),level:Number(level)});toast("Jogador atualizado.");
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+$("logout").onclick = async () => {
+
+  try{
+
+    await signOut(auth);
+
+  }catch(error){
+
+    toast(error.message);
+
+  }
+
 };
-async function log(action,data){try{await addDoc(collection(db,"adminLogs"),{action,data,adminUid:auth.currentUser.uid,adminEmail:auth.currentUser.email||"",createdAt:serverTimestamp()})}catch{}}
-$("saveMsg").onclick=async()=>{await setDoc(doc(db,"config","global"),{globalMessage:$("globalMsg").value.trim(),updatedAt:serverTimestamp()},{merge:true});await log("globalMessage",{});toast("Mensagem publicada.")};
-$("createEvent").onclick=async()=>{let title=$("eventTitle").value.trim();if(!title)return toast("Informe o título.");await addDoc(collection(db,"events"),{title,description:$("eventDesc").value.trim(),endsAt:$("eventEnds").value.trim(),active:true,createdAt:serverTimestamp()});await log("createEvent",{title});toast("Evento criado.");};
-$("saveConfig").onclick=async()=>{let xp=Number($("xpMult").value)||1;await setDoc(doc(db,"config","global"),{xpMultiplier:xp,updatedAt:serverTimestamp()},{merge:true});await log("config",{xpMultiplier:xp});toast("Configuração salva.")};
-function loadGlobal(){onSnapshot(doc(db,"config","global"),s=>{let x=s.exists()?s.data():{};$("globalMsg").value=x.globalMessage||"";$("xpMult").value=x.xpMultiplier||1;$("configInfo").textContent="Multiplicador XP: "+(x.xpMultiplier||1)})}
-function loadConfig(){loadGlobal()}
-function loadLogs(){onSnapshot(query(collection(db,"adminLogs"),orderBy("createdAt","desc"),limit(100)),s=>{$("logs").innerHTML=s.docs.map(d=>{let x=d.data();return `<div><b>${esc(x.action)}</b> — ${esc(x.adminEmail)} — ${x.createdAt?.toDate?x.createdAt.toDate().toLocaleString("pt-BR"):"agora"}<br><small>${esc(JSON.stringify(x.data||{}))}</small></div><hr>`}).join("")})}
+
+
+/* =========================================================
+   AUTENTICAÇÃO
+========================================================= */
+
+onAuthStateChanged(auth, async user => {
+
+  if(!user){
+
+    $("loginView").classList.remove("hidden");
+
+    $("panel").classList.add("hidden");
+
+    adminOk = false;
+
+    return;
+
+  }
+
+
+  $("loginView").classList.add("hidden");
+
+  $("panel").classList.remove("hidden");
+
+
+  $("adminName").textContent =
+    user.email || "Usuário";
+
+  $("adminUid").textContent =
+    "UID: " + user.uid;
+
+
+  /*
+    IMPORTANTE:
+
+    O ADM é verificado na coleção USERS.
+
+    users/
+      DJ0865XZ51V7G5neeqVP2mr1h8T2
+        role: "admin"
+  */
+
+  try{
+
+    const adminDoc = await getDoc(
+      doc(db,"users",user.uid)
+    );
+
+
+    adminOk =
+      adminDoc.exists() &&
+      adminDoc.data().role === "admin";
+
+
+    $("denied").classList.toggle(
+      "hidden",
+      adminOk
+    );
+
+    $("adminContent").classList.toggle(
+      "hidden",
+      !adminOk
+    );
+
+
+    if(!adminOk){
+
+      return;
+
+    }
+
+
+    loadPlayers();
+
+    loadLogs();
+
+    loadConfig();
+
+
+  }catch(error){
+
+    console.error(error);
+
+    adminOk = false;
+
+    $("denied").classList.remove("hidden");
+
+    $("adminContent").classList.add("hidden");
+
+    toast(
+      "Erro ao verificar administrador."
+    );
+
+  }
+
+});
+
+
+/* =========================================================
+   CARREGAR JOGADORES
+========================================================= */
+
+function loadPlayers(){
+
+  if(playersUnsubscribe){
+
+    playersUnsubscribe();
+
+  }
+
+
+  const playersQuery = query(
+
+    collection(db,"players"),
+
+    orderBy("points","desc"),
+
+    limit(500)
+
+  );
+
+
+  playersUnsubscribe = onSnapshot(
+
+    playersQuery,
+
+    snapshot => {
+
+      allPlayers = snapshot.docs.map(
+        document => ({
+          id:document.id,
+          ...document.data()
+        })
+      );
+
+
+      renderPlayers();
+
+      updateCounts();
+
+    },
+
+    error => {
+
+      console.error(error);
+
+      toast(
+        "Erro ao carregar jogadores."
+      );
+
+    }
+
+  );
+
+}
+
+
+/* =========================================================
+   RENDERIZAR JOGADORES
+========================================================= */
+
+function renderPlayers(){
+
+  const term =
+    $("search").value.trim().toLowerCase();
+
+
+  const players = allPlayers.filter(player => {
+
+    const nick =
+      String(player.nick || "")
+        .toLowerCase();
+
+    const email =
+      String(player.email || "")
+        .toLowerCase();
+
+    const uid =
+      String(player.uid || player.id || "")
+        .toLowerCase();
+
+
+    return (
+
+      nick.includes(term) ||
+
+      email.includes(term) ||
+
+      uid.includes(term)
+
+    );
+
+  });
+
+
+  if(!players.length){
+
+    $("players").innerHTML = `
+
+      <tr>
+
+        <td colspan="4" class="loading">
+
+          Nenhum jogador encontrado.
+
+        </td>
+
+      </tr>
+
+    `;
+
+    return;
+
+  }
+
+
+  $("players").innerHTML = players.map(player => {
+
+    const uid =
+      player.uid || player.id;
+
+
+    const lastSeen =
+      player.lastSeen?.toDate
+        ? player.lastSeen.toDate().getTime()
+        : 0;
+
+
+    const online =
+      lastSeen &&
+      Date.now() - lastSeen < 45000;
+
+
+    const coins =
+      Number(player.coins || 0);
+
+
+    const gems =
+      Number(player.gems || 0);
+
+
+    const points =
+      Number(player.points || 0);
+
+
+    const level =
+      Number(player.level || 1);
+
+
+    const banned =
+      !!player.banned;
+
+
+    const godMode =
+      !!player.godMode;
+
+
+    return `
+
+      <tr>
+
+        <td>
+
+          <b>${esc(player.nick || "Sem nick")}</b>
+
+          <br>
+
+          <small>
+            ${esc(player.email || "Sem e-mail")}
+          </small>
+
+          <br>
+
+          <small>
+            UID: ${esc(uid)}
+          </small>
+
+        </td>
+
+
+        <td>
+
+          🪙 ${coins}
+
+          <br>
+
+          💎 ${gems}
+
+          <br>
+
+          🏆 ${points}
+
+          <br>
+
+          Lv. ${level}
+
+        </td>
+
+
+        <td>
+
+          ${
+            online
+
+              ? `<span class="status-online">
+                   ● Online
+                 </span>`
+
+              : `<span class="status-offline">
+                   ● Offline
+                 </span>`
+          }
+
+
+          <br>
+
+
+          ${
+            banned
+              ? `<span class="badge badge-ban">
+                   BANIDO
+                 </span>`
+              : ""
+          }
+
+
+          ${
+            godMode
+              ? `<span class="badge badge-god">
+                   DEUS
+                 </span>`
+              : ""
+          }
+
+
+          ${
+            player.role === "admin"
+              ? `<span class="badge badge-admin">
+                   ADMIN
+                 </span>`
+              : ""
+          }
+
+        </td>
+
+
+        <td>
+
+          <div class="actions">
+
+            <button
+              onclick="editPlayer('${esc(uid)}')"
+            >
+              Editar
+            </button>
+
+
+            <button
+              class="good"
+              onclick="adjust('${esc(uid)}','coins',100)"
+            >
+              +100 moedas
+            </button>
+
+
+            <button
+              class="good"
+              onclick="adjust('${esc(uid)}','gems',10)"
+            >
+              +10 gemas
+            </button>
+
+
+            <button
+              onclick="adjust('${esc(uid)}','points',100)"
+            >
+              +100 pontos
+            </button>
+
+
+            <button
+              class="warning"
+              onclick="toggleGod('${esc(uid)}',${godMode})"
+            >
+              ${
+                godMode
+                  ? "Desligar Deus"
+                  : "Modo Deus"
+              }
+            </button>
+
+
+            <button
+              class="danger"
+              onclick="toggleBan('${esc(uid)}',${banned})"
+            >
+              ${
+                banned
+                  ? "Desbanir"
+                  : "Banir"
+              }
+            </button>
+
+          </div>
+
+        </td>
+
+      </tr>
+
+    `;
+
+  }).join("");
+
+}
+
+
+/* =========================================================
+   PESQUISA
+========================================================= */
+
+$("search").addEventListener(
+  "input",
+  renderPlayers
+);
+
+
+/* =========================================================
+   CONTADORES
+========================================================= */
+
+function updateCounts(){
+
+  const onlineCount =
+    allPlayers.filter(player => {
+
+      if(!player.lastSeen?.toDate){
+
+        return false;
+
+      }
+
+      return (
+        Date.now() -
+        player.lastSeen.toDate().getTime()
+        < 45000
+      );
+
+    }).length;
+
+
+  const adminCount =
+    allPlayers.filter(
+      player => player.role === "admin"
+    ).length;
+
+
+  $("count").textContent =
+    allPlayers.length;
+
+
+  $("online").textContent =
+    onlineCount;
+
+
+  $("admins").textContent =
+    adminCount;
+
+}
+
+
+/* =========================================================
+   ALTERAR RECURSOS
+========================================================= */
+
+window.adjust = async (
+  id,
+  field,
+  amount
+) => {
+
+  if(!adminOk){
+
+    toast("Acesso negado.");
+
+    return;
+
+  }
+
+
+  try{
+
+    const player =
+      allPlayers.find(
+        item =>
+          item.id === id ||
+          item.uid === id
+      );
+
+
+    if(!player){
+
+      toast("Jogador não encontrado.");
+
+      return;
+
+    }
+
+
+    const current =
+      Number(player[field] || 0);
+
+
+    const newValue =
+      Math.max(
+        0,
+        current + Number(amount)
+      );
+
+
+    await updateDoc(
+      doc(db,"players",id),
+      {
+        [field]:newValue
+      }
+    );
+
+
+    await log(
+      "adjust",
+      {
+        uid:id,
+        field,
+        value:amount,
+        newValue
+      }
+    );
+
+
+    toast("Jogador atualizado.");
+
+  }catch(error){
+
+    console.error(error);
+
+    toast(
+      "Erro: " + error.message
+    );
+
+  }
+
+};
+
+
+/* =========================================================
+   MODO DEUS
+========================================================= */
+
+window.toggleGod = async (
+  id,
+  currentValue
+) => {
+
+  try{
+
+    const newValue =
+      !currentValue;
+
+
+    await updateDoc(
+      doc(db,"players",id),
+      {
+        godMode:newValue
+      }
+    );
+
+
+    await log(
+      "godMode",
+      {
+        uid:id,
+        value:newValue
+      }
+    );
+
+
+    toast(
+      newValue
+        ? "Modo Deus ativado."
+        : "Modo Deus desativado."
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    toast(error.message);
+
+  }
+
+};
+
+
+/* =========================================================
+   BANIR
+========================================================= */
+
+window.toggleBan = async (
+  id,
+  currentValue
+) => {
+
+  try{
+
+    const newValue =
+      !currentValue;
+
+
+    await updateDoc(
+      doc(db,"players",id),
+      {
+        banned:newValue
+      }
+    );
+
+
+    await log(
+      newValue
+        ? "ban"
+        : "unban",
+      {
+        uid:id
+      }
+    );
+
+
+    toast(
+      newValue
+        ? "Jogador banido."
+        : "Jogador desbanido."
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    toast(error.message);
+
+  }
+
+};
+
+
+/* =========================================================
+   EDITAR JOGADOR
+========================================================= */
+
+window.editPlayer = async id => {
+
+  const player =
+    allPlayers.find(
+      item =>
+        item.id === id ||
+        item.uid === id
+    );
+
+
+  if(!player){
+
+    toast("Jogador não encontrado.");
+
+    return;
+
+  }
+
+
+  const coins =
+    prompt(
+      "Moedas:",
+      player.coins || 0
+    );
+
+
+  if(coins === null){
+
+    return;
+
+  }
+
+
+  const gems =
+    prompt(
+      "Gemas:",
+      player.gems || 0
+    );
+
+
+  if(gems === null){
+
+    return;
+
+  }
+
+
+  const points =
+    prompt(
+      "Pontos:",
+      player.points || 0
+    );
+
+
+  if(points === null){
+
+    return;
+
+  }
+
+
+  const level =
+    prompt(
+      "Nível:",
+      player.level || 1
+    );
+
+
+  if(level === null){
+
+    return;
+
+  }
+
+
+  try{
+
+    await updateDoc(
+      doc(db,"players",id),
+      {
+
+        coins:Math.max(
+          0,
+          Number(coins)
+        ),
+
+        gems:Math.max(
+          0,
+          Number(gems)
+        ),
+
+        points:Math.max(
+          0,
+          Number(points)
+        ),
+
+        level:Math.max(
+          1,
+          Number(level)
+        )
+
+      }
+    );
+
+
+    await log(
+      "edit",
+      {
+        uid:id,
+        coins:Number(coins),
+        gems:Number(gems),
+        points:Number(points),
+        level:Number(level)
+      }
+    );
+
+
+    toast(
+      "Jogador atualizado."
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    toast(error.message);
+
+  }
+
+};
+
+
+/* =========================================================
+   MENSAGEM GLOBAL
+========================================================= */
+
+$("saveMsg").onclick =
+  async () => {
+
+    try{
+
+      const message =
+        $("globalMsg").value.trim();
+
+
+      await setDoc(
+        doc(db,"config","global"),
+        {
+
+          globalMessage:message,
+
+          updatedAt:
+            serverTimestamp(),
+
+          updatedBy:
+            auth.currentUser?.uid || ""
+
+        },
+        {
+          merge:true
+        }
+      );
+
+
+      await log(
+        "globalMessage",
+        {
+          message
+        }
+      );
+
+
+      toast(
+        "Mensagem publicada."
+      );
+
+
+    }catch(error){
+
+      console.error(error);
+
+      toast(error.message);
+
+    }
+
+  };
+
+
+/* =========================================================
+   CRIAR EVENTO
+========================================================= */
+
+$("createEvent").onclick =
+  async () => {
+
+    const title =
+      $("eventTitle").value.trim();
+
+
+    const description =
+      $("eventDesc").value.trim();
+
+
+    const endsAt =
+      $("eventEnds").value.trim();
+
+
+    if(!title){
+
+      toast(
+        "Informe o título do evento."
+      );
+
+      return;
+
+    }
+
+
+    try{
+
+      const eventRef =
+        await addDoc(
+          collection(db,"events"),
+          {
+
+            title,
+
+            description,
+
+            endsAt,
+
+            active:true,
+
+            createdAt:
+              serverTimestamp(),
+
+            createdBy:
+              auth.currentUser?.uid || ""
+
+          }
+        );
+
+
+      await log(
+        "createEvent",
+        {
+          eventId:eventRef.id,
+          title
+        }
+      );
+
+
+      $("eventTitle").value = "";
+
+      $("eventDesc").value = "";
+
+      $("eventEnds").value = "";
+
+
+      toast(
+        "Evento criado."
+      );
+
+
+    }catch(error){
+
+      console.error(error);
+
+      toast(error.message);
+
+    }
+
+  };
+
+
+/* =========================================================
+   CONFIGURAÇÃO XP
+========================================================= */
+
+$("saveConfig").onclick =
+  async () => {
+
+    try{
+
+      let xp =
+        Number(
+          $("xpMult").value
+        );
+
+
+      if(!Number.isFinite(xp) || xp <= 0){
+
+        xp = 1;
+
+      }
+
+
+      await setDoc(
+        doc(db,"config","global"),
+        {
+
+          xpMultiplier:xp,
+
+          updatedAt:
+            serverTimestamp(),
+
+          updatedBy:
+            auth.currentUser?.uid || ""
+
+        },
+        {
+          merge:true
+        }
+      );
+
+
+      await log(
+        "config",
+        {
+          xpMultiplier:xp
+        }
+      );
+
+
+      toast(
+        "Configuração salva."
+      );
+
+
+    }catch(error){
+
+      console.error(error);
+
+      toast(error.message);
+
+    }
+
+  };
+
+
+/* =========================================================
+   CONFIGURAÇÕES EM TEMPO REAL
+========================================================= */
+
+function loadConfig(){
+
+  if(configUnsubscribe){
+
+    configUnsubscribe();
+
+  }
+
+
+  configUnsubscribe =
+    onSnapshot(
+      doc(db,"config","global"),
+      snapshot => {
+
+        const data =
+          snapshot.exists()
+            ? snapshot.data()
+            : {};
+
+
+        $("globalMsg").value =
+          data.globalMessage || "";
+
+
+        $("xpMult").value =
+          data.xpMultiplier || 1;
+
+
+        $("configInfo").textContent =
+          "Multiplicador XP atual: " +
+          (data.xpMultiplier || 1);
+
+      },
+      error => {
+
+        console.error(error);
+
+      }
+    );
+
+}
+
+
+/* =========================================================
+   LOG ADMINISTRATIVO
+========================================================= */
+
+async function log(
+  action,
+  data
+){
+
+  try{
+
+    const user =
+      auth.currentUser;
+
+
+    if(!user){
+
+      return;
+
+    }
+
+
+    await addDoc(
+      collection(db,"adminLogs"),
+      {
+
+        action,
+
+        data,
+
+        adminUid:
+          user.uid,
+
+        adminEmail:
+          user.email || "",
+
+        createdAt:
+          serverTimestamp()
+
+      }
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "Erro ao salvar log:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CARREGAR LOGS
+========================================================= */
+
+function loadLogs(){
+
+  if(logsUnsubscribe){
+
+    logsUnsubscribe();
+
+  }
+
+
+  const logsQuery =
+    query(
+
+      collection(db,"adminLogs"),
+
+      orderBy(
+        "createdAt",
+        "desc"
+      ),
+
+      limit(100)
+
+    );
+
+
+  logsUnsubscribe =
+    onSnapshot(
+      logsQuery,
+
+      snapshot => {
+
+        if(snapshot.empty){
+
+          $("logs").innerHTML =
+            `<div class="muted">
+              Nenhum log ainda.
+            </div>`;
+
+          return;
+
+        }
+
+
+        $("logs").innerHTML =
+          snapshot.docs.map(
+            document => {
+
+              const data =
+                document.data();
+
+
+              const date =
+                data.createdAt?.toDate
+                  ? data.createdAt
+                      .toDate()
+                      .toLocaleString(
+                        "pt-BR"
+                      )
+                  : "agora";
+
+
+              return `
+
+                <div class="log">
+
+                  <b>
+                    ${esc(data.action)}
+                  </b>
+
+                  —
+
+                  ${esc(data.adminEmail)}
+
+                  <br>
+
+                  <small>
+                    ${esc(date)}
+                  </small>
+
+                  <br>
+
+                  <small>
+                    ${esc(
+                      JSON.stringify(
+                        data.data || {}
+                      )
+                    )}
+                  </small>
+
+                </div>
+
+              `;
+
+            }
+          ).join("");
+
+      },
+
+      error => {
+
+        console.error(error);
+
+        $("logs").innerHTML =
+          `<div class="muted">
+            Não foi possível carregar os logs.
+          </div>`;
+
+      }
+
+    );
+
+}
+
+
+/* =========================================================
+   TRADUÇÃO DE ERROS DO FIREBASE
+========================================================= */
+
+function traduzErroFirebase(error){
+
+  const code =
+    error?.code || "";
+
+
+  const erros = {
+
+    "auth/invalid-credential":
+      "E-mail ou senha incorretos.",
+
+    "auth/invalid-login-credentials":
+      "E-mail ou senha incorretos.",
+
+    "auth/user-not-found":
+      "Usuário não encontrado.",
+
+    "auth/wrong-password":
+      "Senha incorreta.",
+
+    "auth/invalid-email":
+      "E-mail inválido.",
+
+    "auth/too-many-requests":
+      "Muitas tentativas. Aguarde um pouco.",
+
+    "auth/user-disabled":
+      "Essa conta foi desativada."
+
+  };
+
+
+  return erros[code] ||
+    error?.message ||
+    "Erro ao entrar.";
+
+}
+
 </script>
-</body></html>
+
+</body>
+</html>
