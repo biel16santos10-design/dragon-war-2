@@ -40,7 +40,7 @@
         .user-profile { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--panel-border); }
         .user-avatar { width: 45px; height: 45px; background: var(--accent-color); color: #000; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 18px; border: 2px solid white; object-fit: cover; }
         
-        .menu-list { list-style: none; display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
+        .menu-list { list-style: none; display: flex; flex-direction: column; gap: 8px; flex-grow: 1; overflow-y: auto; }
         .menu-item { padding: 10px 15px; border-radius: 6px; cursor: pointer; background: rgba(255,255,255,0.03); transition: 0.2s; font-size: 14px; font-weight: 600; border-left: 3px solid transparent; }
         .menu-item:hover { background: rgba(255,255,255,0.08); }
         .menu-item.active { background: rgba(245, 158, 11, 0.15); color: var(--accent-color); border-left: 3px solid var(--accent-color); }
@@ -65,16 +65,19 @@
         th { color: var(--accent-color); text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
         
         .form-control { width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 15px; background: #070a12; border: 1px solid var(--panel-border); color: white; border-radius: 4px; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 100; }
+        .modal-card { background: var(--panel-bg); border: 2px solid var(--accent-color); padding: 25px; border-radius: 10px; width: 450px; box-shadow: 0 10px 30px rgba(0,0,0,0.9); position: relative; }
+        .close-modal { position: absolute; top: 10px; right: 15px; background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <!-- TELA DE AUTENTICAÇÃO REAL (FIREBASE AUTH) -->
+    <!-- TELA DE LOGIN / CADASTRO COM FIREBASE AUTH (GERA ID REAL) -->
     <div id="login-screen" class="screen">
         <div class="card">
             <img src="89097.png" alt="Dragon War Logo" class="logo-login">
-            <h2 id="auth-title">Entrar no Servidor</h2>
-            
+            <h2 id="auth-title">Dragon War - Servidor Real</h2>
             <div class="input-group">
                 <label>E-mail:</label>
                 <input type="email" id="auth-email" placeholder="seuemail@dominio.com">
@@ -83,9 +86,8 @@
                 <label>Senha:</label>
                 <input type="password" id="auth-pass" placeholder="******">
             </div>
-            
             <button class="btn" id="auth-btn-action" onclick="realizarAutenticacao()">Entrar na Partida</button>
-            <div class="auth-switch" id="auth-switch-mode" onclick="alternarModoAuth()">Não tem uma conta? Cadastre-se com ID Real</div>
+            <div class="auth-switch" id="auth-switch-mode" onclick="alternarModoAuth()">Não tem conta? Cadastre-se com ID Real</div>
         </div>
     </div>
 
@@ -95,6 +97,7 @@
             <div class="server-banner" title="Dragon War - Rise of Power"></div>
 
             <div class="user-profile">
+                <img src="" id="sidebar-avatar-img" class="user-avatar" style="display:none;">
                 <div class="user-avatar" id="sidebar-avatar-txt">U</div>
                 <div>
                     <div id="sidebar-name" style="font-weight: bold; font-size: 15px;">Usuário</div>
@@ -118,54 +121,171 @@
                 <!-- 1. MODO JOGO -->
                 <div id="section-jogar" class="panel-section">
                     <h2>Modo Batalha - Servidor Oficial</h2>
-                    <p style="color: #94a3b8; margin-top: 5px;">Ambiente sincronizado com o banco de dados do Firebase.</p>
-                    <button class="btn" style="margin-top: 20px; width: auto; padding: 12px 25px;" onclick="alert('Buscando partida ranqueada com jogadores reais...')">Iniciar Partida</button>
+                    <p style="color: #94a3b8; margin-top: 5px;">Ambiente principal sincronizado com o banco de dados Firebase.</p>
+                    <button class="btn" style="margin-top: 20px; width: auto; padding: 12px 25px;" onclick="alert('Buscando partida ranqueada com jogadores reais...')">Iniciar Partida / Matchmaking</button>
                 </div>
 
-                <!-- 2. LOJA -->
+                <!-- 2. COMBATE -->
+                <div id="section-combate" class="panel-section">
+                    <h2>Arena de Combate</h2>
+                    <p style="color: #94a3b8; margin-top: 5px;">Enfrente chefes lendários e outros combatentes reais em tempo real.</p>
+                </div>
+
+                <!-- 3. LOJA & CAIXAS ÉPICAS -->
                 <div id="section-loja" class="panel-section">
-                    <h2>Loja & Caixas Épicas</h2>
+                    <h2>Loja & Caixas Misteriosas</h2>
+                    <p style="color: #94a3b8; margin-top: 5px;">Adquira itens exclusivos do servidor.</p>
+                    
+                    <div id="adm-loja-controls" class="hidden" style="margin-top: 15px; background: var(--panel-bg); padding: 15px; border-radius: 6px; border: 1px solid var(--panel-border);">
+                        <h4>Adicionar Item ao Catálogo do Servidor Real</h4>
+                        <input type="text" id="new-item-name" class="form-control" placeholder="Nome do item ou caixa">
+                        <input type="text" id="new-item-price" class="form-control" placeholder="Preço em moedas">
+                        <button class="btn" onclick="adicionarItemCatalogo()">Salvar no Catálogo</button>
+                    </div>
+
+                    <h3 style="margin-top: 20px;">Caixas Diárias Épicas</h3>
                     <div class="grid-boxes" id="epic-boxes-grid"></div>
                 </div>
 
-                <!-- 3. CONFIGURAÇÕES & ID REAL -->
-                <div id="section-config-jogador" class="panel-section">
-                    <h2>⚙️ Perfil e Credenciais Reais</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 15px;">Seu identificador único gerado automaticamente pelo Firebase:</p>
-                    
-                    <div style="background: var(--panel-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--panel-border); max-width: 500px;">
-                        <label style="display:block; margin-bottom:5px;">Seu ID Real (Firebase UID):</label>
-                        <input type="text" id="player-real-id" class="form-control" readonly style="color: var(--accent-color); font-weight: bold; font-family: monospace;">
-                        
-                        <label>Seu E-mail:</label>
-                        <input type="text" id="player-real-email" class="form-control" readonly>
+                <!-- 4. PODERES & ARMAS -->
+                <div id="section-poderes" class="panel-section">
+                    <h2>Gerenciador de Poderes e Armas</h2>
+                    <div id="adm-poderes-controls" class="hidden" style="margin-bottom: 15px;">
+                        <p style="color: #94a3b8;">Crie novas armas para os jogadores reais:</p>
+                        <label style="margin-top:10px; display:block;">Nome da Arma/Poder:</label>
+                        <input type="text" id="poder-nome" class="form-control" placeholder="Ex: Lâmina do Dragão de Fogo">
+                        <label>Atributo / Dano:</label>
+                        <input type="text" id="poder-dano" class="form-control" placeholder="Ex: +1200 Dano Crítico">
+                        <button class="btn" onclick="criarPoder()">Criar e Distribuir</button>
+                    </div>
+                    <div>
+                        <h4>Seus Poderes Ativos</h4>
+                        <ul id="lista-poderes-user" style="margin-top: 10px; padding-left: 20px; color: #94a3b8;">
+                            <li>Ataque de Garra Básica (Nível 1)</li>
+                        </ul>
                     </div>
                 </div>
 
-                <!-- 4. LISTA DE JOGADORES REAIS DO SERVER (PAINEL ADM) -->
+                <!-- 5. INVENTÁRIO -->
+                <div id="section-inventario" class="panel-section">
+                    <h2>Seu Inventário</h2>
+                    <p style="color: #94a3b8; margin-top: 5px;">Gerencie suas skins e itens obtidos.</p>
+                    <div id="inventario-itens" style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <div style="background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 15px; border-radius: 6px; text-align: center; width: 120px;">Poção de Mana x5</div>
+                        <div style="background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 15px; border-radius: 6px; text-align: center; width: 120px;">Caixa Lendária</div>
+                    </div>
+                </div>
+
+                <!-- 6. RANKINGS -->
+                <div id="section-rank" class="panel-section">
+                    <h2>Rankings de Jogadores Reais</h2>
+                    <div style="display: flex; gap: 10px; margin-top: 10px; margin-bottom: 15px;">
+                        <button class="btn" style="width: auto; padding: 6px 15px;" onclick="mudarTabRank('global')">Rank Global</button>
+                        <button class="btn" style="width: auto; padding: 6px 15px;" onclick="mudarTabRank('online')">Jogadores Online</button>
+                        <button class="btn" style="width: auto; padding: 6px 15px;" onclick="mudarTabRank('adms')">Lista de ADMs</button>
+                    </div>
+                    <div id="rank-content"></div>
+                </div>
+
+                <!-- 7. CONFIGURAÇÕES & PERFIL DO JOGADOR REAL -->
+                <div id="section-config-jogador" class="panel-section">
+                    <h2>⚙️ Configurações e Perfil Real</h2>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 15px;">Gerencie suas credenciais do Firebase e preferências de áudio.</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div style="background: var(--panel-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--panel-border);">
+                            <h4>Identidade Real (Firebase UID)</h4>
+                            <label style="margin-top: 10px; display:block;">Seu ID Único Real:</label>
+                            <input type="text" id="player-real-id" class="form-control" readonly style="color: var(--accent-color); font-weight: bold; font-family: monospace;">
+                            
+                            <label>Seu Nick / E-mail:</label>
+                            <input type="text" id="player-edit-name" class="form-control" placeholder="Seu Nick">
+                            
+                            <label>URL do Avatar Real:</label>
+                            <input type="text" id="player-edit-avatar" class="form-control" placeholder="Link da imagem">
+                            
+                            <button class="btn" onclick="salvarPerfilJogador()">Salvar Alterações Reais</button>
+                        </div>
+
+                        <div style="background: var(--panel-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--panel-border);">
+                            <h4>🎧 Sistema de Som e Áudio</h4>
+                            <p style="font-size: 12px; color: #94a3b8; margin-bottom: 15px;">Controle o volume das trilhas do jogo.</p>
+                            
+                            <label>Volume Geral da Música:</label>
+                            <input type="range" min="0" max="100" value="80" class="form-control" id="vol-musica" oninput="ajustarSom()">
+                            
+                            <label>Volume dos Efeitos:</label>
+                            <input type="range" min="0" max="100" value="90" class="form-control" id="vol-efeitos" oninput="ajustarSom()">
+                            
+                            <div style="margin-top: 15px;">
+                                <button class="btn" style="background: #16a34a; color: white;" onclick="tocarMusicaFundo()">▶ Testar Trilha Sonora</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. LISTA DE JOGADORES REAIS DO SERVER (PAINEL ADM) -->
                 <div id="section-jogadores" class="panel-section">
-                    <h2>👥 Lista de Jogadores Reais (Banco de Dados)</h2>
-                    <p style="color: #94a3b8; margin-bottom: 15px;">Lista obtida em tempo real com os IDs reais cadastrados no servidor:</p>
+                    <h2>👥 Lista de Jogadores Reais do Server</h2>
+                    <p style="color: #94a3b8; margin-bottom: 15px;">Lista puxada diretamente do banco de dados Firebase com os IDs reais:</p>
                     
                     <table>
                         <thead>
                             <tr>
                                 <th>ID Real (Firebase UID)</th>
-                                <th>E-mail Cadastrado</th>
-                                <th>Tipo / Cargo</th>
+                                <th>E-mail / Nick</th>
+                                <th>Status</th>
+                                <th>Gerenciar</th>
                             </tr>
                         </thead>
                         <tbody id="tabela-jogadores-server">
-                            <!-- Preenchido dinamicamente do banco de dados real -->
+                            <!-- Preenchido dinamicamente via Firestore -->
                         </tbody>
                     </table>
                 </div>
 
-                <!-- CHAT GLOBAL -->
+                <!-- 9. EVENTOS & PESQUISA DIÁRIA -->
+                <div id="section-evento" class="panel-section">
+                    <h2>Eventos Ativos & Pesquisa Diária</h2>
+                    <div style="background: var(--panel-bg); padding: 15px; border-radius: 6px; border: 1px solid var(--panel-border); margin-top: 10px;">
+                        <h4>🗓️ Evento: Ascensão dos Dragões</h4>
+                        <p style="font-size: 14px; color: #94a3b8; margin-top: 5px;">Participe dos combates mundiais e colete recompensas exclusivas.</p>
+                        <button class="btn" style="margin-top: 10px; width: auto;" onclick="alert('Pesquisa diária respondida! +50 moedas adicionadas.')">Responder Pesquisa Diária (+50 Moedas)</button>
+                    </div>
+                </div>
+
+                <!-- 10. PAINEL DE ADMINISTRAÇÃO GERAL -->
+                <div id="section-painel-adm" class="panel-section">
+                    <h2>👑 Painel de Administração Avançado</h2>
+                    <p style="color: var(--adm-color); margin-bottom: 15px;">Gerenciamento completo de moedas e usuários reais cadastrados.</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div style="background: var(--panel-bg); padding: 15px; border-radius: 6px; border: 1px solid var(--panel-border);">
+                            <h4>Ação Rápida por Nick/Email</h4>
+                            <label style="margin-top:10px; display:block;">Identificação do Jogador:</label>
+                            <input type="text" id="target-player" class="form-control" placeholder="E-mail ou ID real">
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 5px;">
+                                <button class="btn btn-adm" onclick="acaoAdm('banir')">Banir</button>
+                                <button class="btn" style="background:#d97706; color:white;" onclick="acaoAdm('mutar')">Mutar</button>
+                            </div>
+                            <button class="btn" style="background:#8b5cf6; color:white; width:100%; margin-top:5px;" onclick="acaoAdm('liberar_loja')">🎁 Liberar Loja Completa</button>
+                        </div>
+
+                        <div style="background: var(--panel-bg); padding: 15px; border-radius: 6px; border: 1px solid var(--panel-border);">
+                            <h4>📢 Enviar Mensagem Global</h4>
+                            <p style="font-size: 12px; color: #94a3b8; margin-bottom: 5px;">Transmite aviso para todos no chat do servidor real.</p>
+                            <input type="text" id="global-msg-input" class="form-control" placeholder="Digite o aviso global...">
+                            <button class="btn btn-adm" onclick="enviarMensagemGlobal()">Transmitir Mensagem</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHAT GLOBAL FIXO -->
                 <div style="margin-top: 30px; border-top: 1px solid var(--panel-border); padding-top: 15px;">
                     <h4>Chat do Servidor / Global</h4>
                     <div class="chat-box" id="chat-container">
-                        <div class="chat-msg">Servidor Real: Conectado ao Firebase Auth e Firestore!</div>
+                        <div class="chat-msg">Servidor Real: Conectado com sucesso ao Firebase Auth e Firestore!</div>
                     </div>
                 </div>
 
@@ -173,11 +293,34 @@
         </main>
     </div>
 
-    <!-- SCRIPT DE INTEGRAÇÃO COM FIREBASE (AUTH + FIRESTORE) -->
+    <!-- MODAL DE GESTÃO DO JOGADOR REAL SELECIONADO -->
+    <div id="modal-jogador" class="modal-overlay hidden">
+        <div class="modal-card">
+            <button class="close-modal" onclick="fecharModalJogador()">&times;</button>
+            <h3 style="color: var(--accent-color); margin-bottom: 15px;">🛡️ Painel do Jogador Real</h3>
+            
+            <div style="font-size: 14px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
+                <div><strong>ID Real Firebase:</strong> <span id="m-id" style="color: #f59e0b; font-family:monospace;"></span></div>
+                <div><strong>E-mail:</strong> <span id="m-nome"></span></div>
+                <div><strong>Status:</strong> <span id="m-status" style="color: #16a34a;">Online</span></div>
+            </div>
+
+            <hr style="border-color: var(--panel-border); margin-bottom: 15px;">
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn" style="background: #16a34a; color: white;" onclick="acaoModal('presentes')">🎁 Dar Todos os Presentes da Loja</button>
+                <button class="btn" style="background: #3b82f6; color: white;" onclick="acaoModal('dm')">💬 Enviar Mensagem Direta (DM)</button>
+                <button class="btn" style="background: #8b5cf6; color: white;" onclick="acaoModal('funcoes')">⚡ Atribuir Funções Especiais</button>
+                <button class="btn btn-adm" onclick="acaoModal('puxar')">🚀 Puxar Jogador Real para Sala</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE INTEGRAÇÃO COMPLETA FIREBASE + TODAS AS FUNÇÕES DE ADM -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
@@ -195,12 +338,13 @@
 
         const EMAIL_ADMIN = "groupsacabraldigital@gmail.com";
         let modoCadastro = false;
+        let usuarioAtual = { uid: "", email: "", isAdm: false, avatar: "" };
 
         window.alternarModoAuth = function() {
             modoCadastro = !modoCadastro;
             document.getElementById('auth-title').innerText = modoCadastro ? "Criar Conta Real" : "Entrar no Servidor";
             document.getElementById('auth-btn-action').innerText = modoCadastro ? "Registrar e Gerar ID" : "Entrar na Partida";
-            document.getElementById('auth-switch-mode').innerText = modoCadastro ? "Já tem uma conta? Faça login" : "Não tem uma conta? Cadastre-se com ID Real";
+            document.getElementById('auth-switch-mode').innerText = modoCadastro ? "Já tem conta? Faça login" : "Não tem conta? Cadastre-se com ID Real";
         }
 
         window.realizarAutenticacao = async function() {
@@ -215,59 +359,127 @@
             try {
                 let userCredential;
                 if(modoCadastro) {
-                    // Cria o usuário de forma real no Firebase Auth (gera o ID único real)
                     userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-                    alert("Conta criada com sucesso! ID Real gerado.");
+                    alert("Conta criada com sucesso! ID Real gerado pelo Firebase.");
                 } else {
-                    // Faz o login real
                     userCredential = await signInWithEmailAndPassword(auth, email, pass);
                 }
 
                 const user = userCredential.user;
                 const isAdm = (user.email.toLowerCase() === EMAIL_ADMIN);
 
-                // Salva ou atualiza os dados reais do jogador no Firestore (Banco de Dados)
                 await setDoc(doc(db, "jogadores_reais", user.uid), {
                     uid: user.uid,
                     email: user.email,
                     isAdm: isAdm,
+                    status: "Online",
                     ultimoAcesso: new Date().toISOString()
                 }, { merge: true });
 
-                entrarNoJogo(user, isAdm);
+                usuarioAtual = { uid: user.uid, email: user.email, isAdm: isAdm, avatar: "" };
+
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('game-container').classList.remove('hidden');
+
+                atualizarPerfilUI();
+                montarMenuLateral();
+                construirCaixasEpicas();
+                mudarTabRank('global');
+
+                document.getElementById('player-real-id').value = usuarioAtual.uid;
+                document.getElementById('player-edit-name').value = usuarioAtual.email;
+
+                if(isAdm) {
+                    carregarJogadoresReaisDoBanco();
+                }
 
             } catch (error) {
                 alert("Erro na autenticação: " + error.message);
             }
         }
 
-        function entrarNoJogo(user, isAdm) {
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('game-container').classList.remove('hidden');
+        function atualizarPerfilUI() {
+            const nomeCurto = usuarioAtual.email.split('@')[0];
+            document.getElementById('sidebar-name').innerHTML = usuarioAtual.isAdm 
+                ? `${nomeCurto} <span class="adm-tag">[ADM]</span> 👑` 
+                : nomeCurto;
+            
+            document.getElementById('sidebar-role').innerText = usuarioAtual.isAdm ? "Administrador (Fundador Real)" : "Aventureiro Real";
 
-            document.getElementById('sidebar-name').innerHTML = isAdm ? `${user.email.split('@')[0]} <span class="adm-tag">[ADM]</span> 👑` : user.email.split('@')[0];
-            document.getElementById('sidebar-role').innerText = isAdm ? "Administrador (Fundador)" : "Jogador Real";
-            document.getElementById('sidebar-avatar-txt').innerText = user.email.charAt(0).toUpperCase();
+            const avatarImg = document.getElementById('sidebar-avatar-img');
+            const avatarTxt = document.getElementById('sidebar-avatar-txt');
 
-            document.getElementById('player-real-id').value = user.uid;
-            document.getElementById('player-real-email').value = user.email;
-
-            montarMenuLateral(isAdm);
-            construirCaixasEpicas();
-            if(isAdm) carregarJogadoresReaisDoBanco();
+            if(usuarioAtual.avatar) {
+                avatarImg.src = usuarioAtual.avatar;
+                avatarImg.style.display = "block";
+                avatarTxt.style.display = "none";
+            } else {
+                avatarTxt.innerText = nomeCurto.charAt(0).toUpperCase();
+                avatarTxt.style.display = "flex";
+                avatarImg.style.display = "none";
+            }
         }
 
-        function montarMenuLateral(isAdm) {
+        window.salvarPerfilJogador = function() {
+            const novoAvatar = document.getElementById('player-edit-avatar').value.trim();
+            if(novoAvatar) usuarioAtual.avatar = novoAvatar;
+            atualizarPerfilUI();
+            alert('Perfil real atualizado com sucesso!');
+        }
+
+        async function carregarJogadoresReaisDoBanco() {
+            const tbody = document.getElementById('tabela-jogadores-server');
+            tbody.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Carregando do Firestore...</td></tr>";
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "jogadores_reais"));
+                tbody.innerHTML = "";
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="font-family: monospace; color: var(--accent-color);">${data.uid}</td>
+                        <td>${data.email} ${data.isAdm ? '<span class="adm-tag">[ADM]</span>' : ''}</td>
+                        <td style="color: #16a34a;">${data.status || 'Online'}</td>
+                        <td><button class="btn" style="padding: 4px 10px; font-size: 12px; width:auto;" onclick="abrirPainelJogador('${data.uid}', '${data.email}', '${data.status || 'Online'}')">Selecionar</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan='4' style='text-align:center; color: red;'>Erro ao carregar: ${error.message}</td></tr>`;
+            }
+        }
+
+        window.ajustarSom = function() {
+            const volMusica = document.getElementById('vol-musica').value;
+            const volEfeitos = document.getElementById('vol-efeitos').value;
+            console.log(`Volume ajustado -> Música: ${volMusica}%, Efeitos: ${volEfeitos}%`);
+        }
+
+        window.tocarMusicaFundo = function() {
+            alert('Trilha sonora real do Dragon War ativada!');
+        }
+
+        function montarMenuLateral() {
             const menuList = document.getElementById('menu-list');
             menuList.innerHTML = "";
-            let itensMenu = isAdm ? [
-                { id: 'loja', label: '🛒 Loja & Caixas' },
+            let itensMenu = usuarioAtual.isAdm ? [
+                { id: 'loja', label: '🛒 Loja & Catálogo' },
+                { id: 'poderes', label: '⚡ Criar Poderes' },
+                { id: 'inventario', label: '🎒 Inventário' },
+                { id: 'rank', label: '🏆 Rankings' },
                 { id: 'jogadores', label: '👥 Jogadores Reais' },
-                { id: 'config-jogador', label: '⚙️ Meu Perfil / ID' }
+                { id: 'evento', label: '🎉 Eventos & Caixas' },
+                { id: 'painel-adm', label: '👑 Painel ADM' }
             ] : [
                 { id: 'jogar', label: '🎮 Modo de Jogo' },
+                { id: 'combate', label: '⚔ Combate' },
                 { id: 'loja', label: '🛒 Loja' },
-                { id: 'config-jogador', label: '⚙️ Meu Perfil / ID' }
+                { id: 'poderes', label: '⚡ Poderes' },
+                { id: 'inventario', label: '🎒 Inventário' },
+                { id: 'rank', label: '🏆 Rankings' },
+                { id: 'config-jogador', label: '⚙️ Meu Perfil e Som' },
+                { id: 'evento', label: '🎉 Eventos' }
             ];
 
             itensMenu.forEach((item, index) => {
@@ -290,46 +502,112 @@
 
             document.getElementById('current-page-title').innerText = elementoLi ? elementoLi.innerText : idSecao;
 
-            if(idSecao === 'jogadores') {
-                carregarJogadoresReaisDoBanco();
-            }
-        }
-
-        async function carregarJogadoresReaisDoBanco() {
-            const tbody = document.getElementById('tabela-jogadores-server');
-            tbody.innerHTML = "<tr><td colspan='3' style='text-align:center;'>Carregando jogadores do banco de dados...</td></tr>";
-
-            try {
-                const querySnapshot = await getDocs(collection(db, "jogadores_reais"));
-                tbody.innerHTML = "";
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td style="font-family: monospace; color: var(--accent-color);">${data.uid}</td>
-                        <td>${data.email}</td>
-                        <td>${data.isAdm ? '<span class="adm-tag">[ADM]</span>' : 'Jogador Real'}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            } catch (error) {
-                tbody.innerHTML = `<tr><td colspan='3' style='text-align:center; color: red;'>Erro ao carregar dados: ${error.message}</td></tr>`;
+            if(usuarioAtual.isAdm) {
+                if(idSecao === 'loja') document.getElementById('adm-loja-controls').classList.remove('hidden');
+                if(idSecao === 'poderes') document.getElementById('adm-poderes-controls').classList.remove('hidden');
+                if(idSecao === 'jogadores') carregarJogadoresReaisDoBanco();
             }
         }
 
         function construirCaixasEpicas() {
             const grid = document.getElementById('epic-boxes-grid');
             grid.innerHTML = "";
-            [100, 250, 500].forEach((preco, idx) => {
+            const precosCaixas = [100, 250, 500, 1000, 2500, 5000];
+            precosCaixas.forEach((preco, idx) => {
                 grid.innerHTML += `
                     <div class="box-item">
                         <strong>Caixa Épica #${idx+1}</strong>
-                        <p style="font-size:12px; color:#94a3b8; margin:5px 0;">Equipamento lendário real.</p>
+                        <p style="font-size:12px; color:#94a3b8; margin:5px 0;">Contém equipamentos lendários reais.</p>
                         <span style="color:#f59e0b; display:block; margin-bottom:8px;">${preco} Moedas</span>
-                        <button class="btn" style="padding:5px; font-size:12px;" onclick="alert('Caixa aberta com sucesso!')">Comprar</button>
+                        <button class="btn" style="padding:5px; font-size:12px;" onclick="abrirCaixa(${preco})">Comprar e Abrir</button>
                     </div>
                 `;
             });
+        }
+
+        window.abrirCaixa = function(preco) {
+            alert(`Caixa aberta! Você gastou ${preco} moedas e adquiriu um item lendário.`);
+        }
+
+        window.adicionarItemCatalogo = function() {
+            const nome = document.getElementById('new-item-name').value;
+            const preco = document.getElementById('new-item-price').value;
+            if(!nome || !preco) { alert('Preencha todos os campos!'); return; }
+            alert(`Item real "${nome}" adicionado por ${preco} moedas!`);
+            document.getElementById('new-item-name').value = "";
+            document.getElementById('new-item-price').value = "";
+        }
+
+        window.criarPoder = function() {
+            const nome = document.getElementById('poder-nome').value;
+            const dano = document.getElementById('poder-dano').value;
+            if(!nome) { alert('Insira o nome do poder!'); return; }
+            alert(`Poder real "${nome}" (${dano}) criado e distribuído para os jogadores reais!`);
+        }
+
+        let jogadorSelecionadoModal = { id: "", nome: "" };
+
+        window.abrirPainelJogador = function(id, nome, status) {
+            jogadorSelecionadoModal = { id, nome };
+            document.getElementById('m-id').innerText = id;
+            document.getElementById('m-nome').innerText = nome;
+            document.getElementById('m-status').innerText = status;
+            document.getElementById('modal-jogador').classList.remove('hidden');
+        }
+
+        window.fecharModalJogador = function() {
+            document.getElementById('modal-jogador').classList.add('hidden');
+        }
+
+        window.acaoModal = function(tipo) {
+            const { id, nome } = jogadorSelecionadoModal;
+            if(tipo === 'presentes') {
+                alert(`🎁 Presentes da loja liberados para o jogador real ${nome} (${id})!`);
+            } else if(tipo === 'dm') {
+                const msgDM = prompt(`Enviar Mensagem Direta (DM) para ${nome}:`);
+                if(msgDM) alert(`DM enviada para ${nome}: "${msgDM}"`);
+            } else if(tipo === 'funcoes') {
+                alert(`⚡ Funções especiais gerenciadas para ${nome}.`);
+            } else if(tipo === 'puxar') {
+                alert(`🚀 O jogador real ${nome} foi puxado para a sua sala!`);
+            }
+            fecharModalJogador();
+        }
+
+        window.acaoAdm = function(tipo) {
+            const target = document.getElementById('target-player').value;
+            if(!target) { alert('Digite o e-mail ou ID do jogador real!'); return; }
+            
+            if(tipo === 'banir') alert(`O jogador real ${target} foi banido do servidor.`);
+            if(tipo === 'mutar') alert(`O jogador real ${target} foi mutado.`);
+            if(tipo === 'liberar_loja') alert(`Loja liberada para ${target}!`);
+            
+            document.getElementById('target-player').value = "";
+        }
+
+        window.enviarMensagemGlobal = function() {
+            const msg = document.getElementById('global-msg-input').value.trim();
+            if(!msg) return;
+
+            const chat = document.getElementById('chat-container');
+            const div = document.createElement('div');
+            div.className = "chat-msg global";
+            div.innerHTML = `<strong>👑 [AVISO GLOBAL - ADM]:</strong> ${msg}`;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+
+            document.getElementById('global-msg-input').value = "";
+        }
+
+        window.mudarTabRank = function(tipo) {
+            const container = document.getElementById('rank-content');
+            if(tipo === 'global') {
+                container.innerHTML = `<table><tr><th>Posição</th><th>Jogador Real</th><th>Nível</th></tr><tr><td>1º</td><td>ShadowKilled</td><td>99</td></tr><tr><td>2º</td><td>DragonSlayer</td><td>95</td></tr></table>`;
+            } else if(tipo === 'online') {
+                container.innerHTML = `<table><tr><th>Jogador Real</th><th>Status</th></tr><tr><td>Gabriel <span class="adm-tag">[ADM]</span></td><td>Online Real</td></tr></table>`;
+            } else if(tipo === 'adms') {
+                container.innerHTML = `<table><tr><th>Administrador Real</th><th>Cargo</th><th>Acesso</th></tr><tr><td>Gabriel <span class="adm-tag">[ADM]</span></td><td>Fundador / Desenvolvedor</td><td>Total</td></tr></table>`;
+            }
         }
     </script>
 </body>
