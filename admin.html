@@ -192,25 +192,25 @@
                 <button onclick="mudarAbaAdmin('loja-gm', this)">🛒 LOJA DE GM</button>
                 <button onclick="mudarAbaAdmin('logs', this)">📜 LOGS</button>
                 <button onclick="mudarAbaAdmin('config', this)">⚙️ CONFIGURAÇÕES</button>
+                <button onclick="voltarParaJogo()" style="margin-top: auto; color: #38bdf8;">⬅ Voltar ao Jogo</button>
             </div>
 
-            <!-- CONTEÚDO PRINCIPAL (DINÂMICO E EDITÁVEL) -->
+            <!-- CONTEÚDO PRINCIPAL -->
             <div class="admin-content">
                 
                 <!-- ABA: VISÃO GERAL -->
                 <div id="visao-geral" class="tab-pane active" style="grid-column: span 2; display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
                     <div>
-                        <!-- Estatísticas -->
                         <div class="panel-card">
                             <h3 style="color: #38bdf8; margin-bottom: 10px;">ESTATÍSTICAS DO SERVIDOR</h3>
                             <div class="stats-grid">
                                 <div class="stat-box">
                                     <span>Total Players</span>
-                                    <h4 id="stat-total-players">12.543</h4>
+                                    <h4>12.543</h4>
                                 </div>
                                 <div class="stat-box">
                                     <span>Online</span>
-                                    <h4 id="stat-online-players">1.892</h4>
+                                    <h4>1.892</h4>
                                 </div>
                                 <div class="stat-box">
                                     <span>Ping</span>
@@ -223,7 +223,6 @@
                             </div>
                         </div>
 
-                        <!-- Lista de Jogadores Online (Editável ao clicar) -->
                         <div class="panel-card" style="margin-top: 15px;">
                             <h3 style="color: #38bdf8;">LISTA DE JOGADORES ONLINE (Clique para Editar)</h3>
                             <table>
@@ -236,22 +235,22 @@
                                        <th>ESTADO</th>
                                    </tr>
                                </thead>
-                               <tbody id="tabela-jogadores-online">
-                                   <tr onclick="editarJogador('Gromnash', 150, 'Guerreiro')">
+                               <tbody>
+                                   <tr onclick="editarJogador('Gromnash', 150)">
                                        <td>Gromnash</td>
                                        <td>150</td>
                                        <td>Guerreiro</td>
                                        <td>Dragen's Peak</td>
                                        <td style="color: #22c55e;">ONLINE</td>
                                    </tr>
-                                   <tr onclick="editarJogador('Karansh', 150, 'Guerreiro')">
+                                   <tr onclick="editarJogador('Karansh', 150)">
                                        <td>Karansh</td>
                                        <td>150</td>
                                        <td>Guerreiro</td>
                                        <td>Dragen's Peak</td>
                                        <td style="color: #22c55e;">ONLINE</td>
                                    </tr>
-                                   <tr onclick="editarJogador('GabrielCabral', 150, 'Guerreiro')">
+                                   <tr onclick="editarJogador('GabrielCabral', 150)">
                                        <td>GabrielCabral</td>
                                        <td>150</td>
                                        <td>Guerreiro</td>
@@ -264,7 +263,6 @@
                     </div>
 
                     <div>
-                        <!-- Ações Rápidas -->
                         <div class="panel-card">
                             <h3 style="color: #38bdf8; margin-bottom: 15px;">AÇÕES RÁPIDAS (BETA)</h3>
                             <button class="action-btn" onclick="executarAcao('Spawn de Boss')">🔥 SPAWN DE BOSS</button>
@@ -275,43 +273,26 @@
                     </div>
                 </div>
 
-                <!-- ABA: JOGADORES -->
-                <div id="jogadores" class="tab-pane" style="grid-column: span 2;">
-                    <div class="panel-card">
-                        <h3>Gerenciamento Completo de Contas (Firestore)</h3>
-                        <p style="color: #94a3b8; margin-top: 10px;">Aqui você pode buscar qualquer usuário pelo UID ou E-mail para alterar nível, moedas ou banir diretamente no banco de dados.</p>
-                        <input type="text" id="busca-uid" placeholder="Digite o UID do Jogador..." style="width: 100%; padding: 10px; margin-top: 15px; background: #020617; border: 1px solid #334155; color: white; border-radius: 5px;">
-                        <button class="action-btn" style="margin-top: 10px; width: auto;" onclick="pesquisarUsuarioFirestore()">Buscar e Editar Dados</button>
-                    </div>
-                </div>
-
-                <!-- ABA: EVENTOS -->
-                <div id="eventos" class="tab-pane" style="grid-column: span 2;">
-                    <div class="panel-card">
-                        <h3>Criar Evento Global no Servidor</h3>
-                        <p style="color: #94a3b8; margin-top: 10px;">Dispare bônus de EXP em dobro ou recompensas automáticas para todos os jogadores online.</p>
-                    </div>
-                </div>
-
-                <!-- OUTRAS ABAS (Loja GM, Logs, Config) -->
-                <div id="loja-gm" class="tab-pane" style="grid-column: span 2;"><div class="panel-card"><h3>Gerenciamento de Itens da Loja de GM</h3></div></div>
-                <div id="logs" class="tab-pane" style="grid-column: span 2;"><div class="panel-card"><h3>Logs de Moderação e Transações</h3></div></div>
-                <div id="config" class="tab-pane" style="grid-column: span 2;"><div class="panel-card"><h3>Configurações Globais do Servidor</h3></div></div>
+                <!-- OUTRAS ABAS DO PAINEL -->
+                <div id="jogadores" class="tab-pane" style="grid-column: span 2;"><div class="panel-card"><h3>Gerenciamento de Contas (Firestore)</h3><input type="text" placeholder="Digite o UID..." style="width: 100%; padding: 10px; margin-top: 10px; background: #020617; border: 1px solid #334155; color: white; border-radius: 5px;"></div></div>
+                <div id="eventos" class="tab-pane" style="grid-column: span 2;"><div class="panel-card"><h3>Criar Evento Global</h3></div></div>
+                <div id="loja-gm" class="tab-pane" style="grid-column: span 2;"><div class="panel-card"><h3>Loja de GM</h3></div></div>
+                <div id="logs" class="tab-pane" style="grid-column: span 2;"><div class="panel-card"><h3>Logs de Moderação</h3></div></div>
+                <div id="config" class="tab-pane" style="grid-column: span 2;"><div class="panel-card"><h3>Configurações do Servidor</h3></div></div>
 
             </div>
         </div>
 
         <!-- RODAPÉ -->
         <div class="admin-footer">
-            <span id="admin-info">Bem-vindo, ADM_KAIROS (RANK: SUPER ADM)</span>
+            <span>Bem-vindo, ADM_KAIROS (RANK: SUPER ADM)</span>
             <span>Server: [BR-1] ELDERSTONE</span>
-            <span id="data-atual">Date: 04 OUT 2026, 06:36:00</span>
-            <button class="logout-btn" onclick="fazerLogout()">LOGOUT 🚪</button>
+            <span>Date: 04 OUT 2026</span>
+            <button class="logout-btn" onclick="voltarParaJogo()">LOGOUT 🚪</button>
         </div>
     </div>
 
     <script>
-        // Função para trocar as abas do Painel de ADM
         function mudarAbaAdmin(nomeAba, elementoBtn) {
             document.querySelectorAll('.tab-pane').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.admin-sidebar button').forEach(btn => btn.classList.remove('active'));
@@ -320,45 +301,26 @@
             if(elementoBtn) elementoBtn.classList.add('active');
         }
 
-        // Ações Rápidas Editáveis
         function executarAcao(acao) {
             if(acao === 'Dar Moedas') {
-                let nick = prompt("Para qual jogador deseja enviar moedas?");
-                let qtd = prompt("Quantidade de moedas:");
-                if(nick && qtd) {
-                    alert(`Sucesso! ${qtd} moedas enviadas para a conta de ${nick}. (Sincronizado com o Firestore)`);
-                }
+                let nick = prompt("Para qual jogador?");
+                let qtd = prompt("Quantidade:");
+                if(nick && qtd) alert(`${qtd} moedas enviadas para ${nick}!`);
             } else if(acao === 'Banir Jogador') {
-                let nick = prompt("Digite o nick do jogador que deseja banir:");
-                if(nick) {
-                    alert(`O jogador ${nick} foi banido e desconectado do servidor.`);
-                }
+                let nick = prompt("Nick do jogador a banir:");
+                if(nick) alert(`Jogador ${nick} banido com sucesso.`);
             } else {
-                alert(`Comando executado com sucesso: ${acao}!`);
+                alert(`Ação executada: ${acao}`);
             }
         }
 
-        // Edição de Jogador via Tabela
-        function editarJogador(nome, nivelAtual, classeAtual) {
+        function editarJogador(nome, nivelAtual) {
             let novoNivel = prompt(`Editar Nível de ${nome}:`, nivelAtual);
-            if(novoNivel !== null) {
-                alert(`Nível de ${nome} atualizado para ${novoNivel} no banco de dados.`);
-            }
+            if(novoNivel) alert(`Nível atualizado para ${novoNivel}!`);
         }
 
-        function pesquisarUsuarioFirestore() {
-            let uid = document.getElementById('busca-uid').value;
-            if(uid) {
-                alert(`Buscando dados do UID: ${uid} no Firestore...`);
-            } else {
-                alert("Por favor, digite um UID válido.");
-            }
-        }
-
-        function fazerLogout() {
-            if(confirm("Deseja sair do painel administrativo?")) {
-                alert("Sessão encerrada.");
-            }
+        function voltarParaJogo() {
+            window.location.href = 'index.html';
         }
     </script>
 </body>
