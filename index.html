@@ -3,1014 +3,271 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dragon War - RPG Completo com Autenticação</title>
+  <title>Dragon War - Rise of Power</title>
   <style>
-    :root {
-      --bg-dark: #030814;
-      --card-bg: rgba(6, 18, 38, 0.95);
-      --border-blue: #00d2ff;
-      --border-dark: #102a45;
-      --text-main: #e0f2fe;
-      --text-gold: #ffb700;
-      --green: #22c55e;
-      --red: #ef4444;
-      --purple: #a855f7;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; }
-    body { background: #000; color: var(--text-main); min-height: 100vh; display: flex; justify-content: center; align-items: center; }
-
-    /* TOAST GLOBAL */
-    #global-toast {
-      position: fixed; top: 20px; right: 20px;
-      background: linear-gradient(135deg, rgba(0, 210, 255, 0.9), rgba(0, 85, 255, 0.9));
-      color: #fff; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 0.9rem;
-      box-shadow: 0 0 15px rgba(0, 210, 255, 0.5); z-index: 4000; display: none;
-      animation: fadeIn 0.3s ease;
+    body {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
     }
-
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* TELA DE GAME OVER */
-    #game-over-screen {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(0, 0, 0, 0.95); z-index: 3500; display: none;
-      flex-direction: column; justify-content: center; align-items: center;
-      text-align: center; gap: 20px; animation: fadeIn 0.5s ease;
+    .card {
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 30px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
     }
-
-    .game-over-title {
-      font-size: clamp(3rem, 8vw, 6rem); font-weight: 900; color: var(--red);
-      text-shadow: 0 0 20px var(--red), 0 0 50px #000; letter-spacing: 4px;
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #38bdf8;
+      font-size: 1.8rem;
     }
-
-    /* TELA DE LOGIN / REGISTRO */
-    #cinema-screen {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: radial-gradient(circle, rgba(10,25,50,0.85) 0%, rgba(3,8,20,1) 100%), 
-                  url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1000&auto=format&fit=crop') center/cover no-repeat;
-      z-index: 999; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 30px 20px; text-align: center;
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #334155;
     }
-
-    .brand-title { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; color: #ff4500; text-shadow: 0 0 20px #ff4500, 0 0 40px #000; letter-spacing: 2px; }
-    .sub-brand { font-size: 1.1rem; color: var(--border-blue); letter-spacing: 4px; margin-top: -10px; }
-
-    .login-box {
-      background: rgba(6, 18, 38, 0.95); border: 2px solid var(--border-blue);
-      padding: 25px; border-radius: 12px; width: 100%; max-width: 380px; backdrop-filter: blur(8px);
-      box-shadow: 0 0 25px rgba(0, 210, 255, 0.2);
+    .tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      color: #94a3b8;
+      font-weight: bold;
     }
-
-    .login-input {
-      width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 6px;
-      border: 1px solid var(--border-dark); background: rgba(0,0,0,0.7); color: #fff; font-size: 0.9rem; outline: none;
+    .tab.active {
+      color: #38bdf8;
+      border-bottom: 2px solid #38bdf8;
     }
-
-    .login-input:focus { border-color: var(--border-blue); }
-
-    .auth-toggle {
-      display: flex; justify-content: space-around; margin-bottom: 15px; border-bottom: 1px solid var(--border-dark); padding-bottom: 8px;
+    .form-group {
+      margin-bottom: 15px;
     }
-    .auth-tab { cursor: pointer; color: #aaa; font-weight: bold; font-size: 0.9rem; transition: 0.2s; }
-    .auth-tab.active { color: var(--border-blue); border-bottom: 2px solid var(--border-blue); }
-
-    .btn-cinema {
-      width: 100%; background: linear-gradient(135deg, #10b981, #059669); border: none;
-      color: #fff; padding: 12px; font-weight: bold; font-size: 1rem; border-radius: 6px; cursor: pointer; text-transform: uppercase; transition: 0.2s;
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      color: #cbd5e1;
     }
-
-    .btn-cinema:hover { filter: brightness(1.2); box-shadow: 0 0 15px var(--green); }
-
-    /* CONTAINER DO JOGO */
-    #game-container {
-      display: none; width: 100vw; height: 100vh; max-width: 1300px; max-height: 900px;
-      background: var(--bg-dark); border: 2px solid var(--border-dark); flex-direction: column; position: relative; overflow: hidden;
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: #fff;
+      font-size: 1rem;
     }
-
-    /* HEADER */
-    header { background: rgba(5, 15, 30, 0.95); border-bottom: 2px solid var(--border-dark); padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-    .user-profile { display: flex; align-items: center; gap: 10px; }
-    .avatar { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--border-blue); background: #111 center/cover no-repeat; }
-    .user-info { display: flex; flex-direction: column; }
-    .user-nick { font-weight: bold; font-size: 0.95rem; display: flex; align-items: center; gap: 5px; }
-    .badge-rank { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; background: rgba(255, 183, 0, 0.2); color: var(--text-gold); border: 1px solid var(--text-gold); }
-    .badge-admin { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; background: rgba(239, 68, 68, 0.2); color: var(--red); border: 1px solid var(--red); font-weight: bold; }
-
-    .resources-group { display: flex; gap: 12px; background: rgba(0,0,0,0.5); padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border-dark); font-size: 0.85rem; font-weight: bold; }
-
-    /* LAYOUT DE ABAS */
-    .main-body { display: flex; flex: 1; overflow: hidden; }
-    nav { width: 220px; background: rgba(3, 10, 22, 0.98); border-right: 1px solid var(--border-dark); display: flex; flex-direction: column; padding: 10px; gap: 6px; overflow-y: auto; }
-    .nav-btn { background: transparent; border: 1px solid transparent; color: #94a3b8; padding: 10px 12px; border-radius: 6px; text-align: left; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
-    .nav-btn:hover, .nav-btn.active { background: rgba(0, 210, 255, 0.1); border-color: var(--border-blue); color: #fff; }
-
-    .content-area { flex: 1; padding: 15px; overflow-y: auto; background: radial-gradient(circle at center, rgba(10,25,50,0.3), transparent); }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-    .title-header { font-size: 1.2rem; color: var(--border-blue); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; border-bottom: 1px solid var(--border-dark); padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
-
-    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
-    .card { background: var(--card-bg); border: 1px solid var(--border-dark); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; position: relative; }
-    .card img { width: 100%; height: 110px; object-fit: cover; border-radius: 6px; }
-
-    .sub-tabs { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-    .sub-btn { background: rgba(0,0,0,0.5); border: 1px solid var(--border-dark); color: #aaa; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
-    .sub-btn.active { border-color: var(--border-blue); color: #fff; background: rgba(0, 210, 255, 0.2); }
-
-    .btn-action { padding: 10px; border-radius: 6px; border: none; color: #fff; font-weight: bold; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 6px; }
-
-    /* ARENA DE COMBATE */
-    .battle-arena { display: flex; flex-direction: column; gap: 15px; height: 100%; justify-content: space-between; }
-    .battle-display { display: flex; justify-content: space-around; align-items: center; background: rgba(0,0,0,0.6); padding: 20px; border-radius: 8px; border: 1px solid var(--border-dark); }
-    .fighter-box { text-align: center; width: 45%; }
-    .hp-bar-bg { background: rgba(255,255,255,0.1); height: 14px; border-radius: 7px; overflow: hidden; margin-top: 6px; border: 1px solid var(--border-dark); }
-    .hp-bar-fill { background: var(--green); height: 100%; width: 100%; transition: width 0.3s; }
-    .battle-log { height: 100px; background: #000; border: 1px solid var(--border-dark); border-radius: 6px; padding: 10px; overflow-y: auto; font-size: 0.8rem; font-family: monospace; color: #a855f7; }
-    .combat-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .btn-combat { padding: 12px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; color: #fff; font-size: 0.9rem; text-transform: uppercase; }
-
-    /* RANKING TABLE */
-    .rank-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
-    .rank-table th, .rank-table td { padding: 10px; border-bottom: 1px solid var(--border-dark); }
-    .rank-table th { color: var(--border-blue); background: rgba(0,0,0,0.5); }
-
-    @media (max-width: 768px) {
-      .main-body { flex-direction: column-reverse; }
-      nav { width: 100%; height: 60px; flex-direction: row; border-right: none; border-top: 1px solid var(--border-dark); padding: 5px; }
-      .nav-btn { flex: 1; flex-direction: column; justify-content: center; align-items: center; font-size: 0.65rem; padding: 4px; gap: 2px; }
-      .cards-grid { grid-template-columns: 1fr; }
+    input:focus {
+      outline: none;
+      border-color: #38bdf8;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      background: #0284c7;
+      color: white;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #0369a1;
+    }
+    .hidden {
+      display: none;
+    }
+    #game-screen {
+      text-align: center;
+    }
+    .user-info {
+      margin: 20px 0;
+      padding: 15px;
+      background: #0f172a;
+      border-radius: 8px;
     }
   </style>
 </head>
 <body>
 
-  <div id="global-toast">💬 Mensagem do Servidor</div>
+  <div class="card">
+    <h1>Dragon War</h1>
 
-  <!-- TELA DE GAME OVER -->
-  <div id="game-over-screen">
-    <div class="game-over-title">GAME OVER</div>
-    <p style="font-size: 1.1rem; color: #aaa; max-width: 400px;">Seu personagem sucumbiu em batalha. Seus recursos foram perdidos e sua jornada recomeçará do zero.</p>
-    <button class="btn-cinema" style="max-width: 250px; background: linear-gradient(135deg, #ef4444, #b91c1c);" onclick="reiniciarJogoAposMorte()">TENTAR NOVAMENTE</button>
-  </div>
-
-  <!-- TELA DE LOGIN / REGISTRO -->
-  <div id="cinema-screen">
-    <div>
-      <div class="brand-title">DRAGON WAR</div>
-      <div class="sub-brand">RISE OF POWER</div>
-    </div>
-
-    <div class="login-box">
-      <div class="auth-toggle">
-        <span id="tab-login-btn" class="auth-tab active" onclick="alternarModoAuth('login')">LOGIN</span>
-        <span id="tab-register-btn" class="auth-tab" onclick="alternarModoAuth('register')">CRIAR CONTA</span>
+    <!-- TELA DE AUTENTICAÇÃO -->
+    <div id="auth-screen">
+      <div class="tabs">
+        <div class="tab active" id="tab-login" onclick="showForm('login')">LOGIN</div>
+        <div class="tab" id="tab-register" onclick="showForm('register')">CRIAR CONTA</div>
       </div>
 
       <!-- FORMULÁRIO DE LOGIN -->
-      <div id="form-login">
-        <input type="email" id="login-email" class="login-input" placeholder="E-mail Cadastrado" required>
-        <input type="password" id="login-pass" class="login-input" placeholder="Sua Senha" required>
-        <button class="btn-cinema" onclick="entrarNaConta()">ENTRAR NO JOGO</button>
-      </div>
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="login-email">E-mail</label>
+          <input type="email" id="login-email" required placeholder="seu@email.com">
+        </div>
+        <div class="form-group">
+          <label for="login-password">Palavra-passe</label>
+          <input type="password" id="login-password" required placeholder="••••••••">
+        </div>
+        <button type="submit">ENTRAR NO JOGO</button>
+      </form>
 
-      <!-- FORMULÁRIO DE REGISTRO -->
-      <div id="form-register" style="display: none;">
-        <input type="email" id="reg-email" class="login-input" placeholder="Seu E-mail Real" required>
-        <input type="password" id="reg-pass" class="login-input" placeholder="Crie uma Senha (mínimo 6 dígitos)" required>
-        <input type="text" id="reg-nick" class="login-input" placeholder="Nome do Personagem (3 a 16 letras)" required>
-        <button class="btn-cinema" style="background: linear-gradient(135deg, #00d2ff, #0055ff);" onclick="cadastrarConta()">CRIAR PERSONAGEM</button>
-      </div>
+      <!-- FORMULÁRIO DE REGISTO -->
+      <form id="register-form" class="hidden" onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label for="reg-username">Nome de Jogador</label>
+          <input type="text" id="reg-username" required placeholder="Ex: Guerriro123">
+        </div>
+        <div class="form-group">
+          <label for="reg-email">E-mail</label>
+          <input type="email" id="reg-email" required placeholder="seu@email.com">
+        </div>
+        <div class="form-group">
+          <label for="reg-password">Palavra-passe</label>
+          <input type="password" id="reg-password" required placeholder="••••••••">
+        </div>
+        <button type="submit">CRIAR CONTA</button>
+      </form>
     </div>
 
-    <div style="font-size: 0.8rem; color: #64748b;">Servidor Online | DW v3.1.0</div>
-  </div>
-
-  <!-- CONTAINER JOGO -->
-  <div id="game-container">
-    <header>
-      <div class="user-profile">
-        <div class="avatar" id="ui-avatar"></div>
-        <div class="user-info">
-          <div class="user-nick">
-            <span id="ui-nick">Carregando...</span>
-            <span id="ui-admin-tag" class="badge-admin" style="display: none;">ADMIN</span>
-          </div>
-          <div><span class="badge-rank" id="ui-rank-badge">🌱 Guerreiro</span> <span style="font-size: 0.75rem; color: #aaa;">Nv. <b id="ui-level">1</b></span></div>
-        </div>
+    <!-- TELA DO JOGO (PÓS-LOGIN) -->
+    <div id="game-screen" class="hidden">
+      <h2>Bem-vindo, <span id="player-name">---</span>!</h2>
+      <div class="user-info">
+        <p><strong>Nível:</strong> <span id="player-level">1</span></p>
+        <p><strong>Moedas:</strong> <span id="player-coins">100</span></p>
       </div>
-
-      <div class="resources-group">
-        <span>💰 <span id="ui-coins">0</span></span>
-        <span>💎 <span id="ui-gems">0</span></span>
-        <span>⚡ <span id="ui-energy">120/120</span></span>
-      </div>
-    </header>
-
-    <div class="main-body">
-      <nav>
-        <button class="nav-btn active" id="btn-nav-home" onclick="switchTab(this, 'tab-home')">🏠 <span>Home</span></button>
-        <button class="nav-btn" onclick="switchTab(this, 'tab-jogar')">⚔️ <span>Fases / Bosses</span></button>
-        <button class="nav-btn" onclick="switchTab(this, 'tab-poderes')">🔥 <span>Poderes</span></button>
-        <button class="nav-btn" onclick="switchTab(this, 'tab-loja')">🛒 <span>Loja</span></button>
-        <button class="nav-btn" onclick="switchTab(this, 'tab-inventario')">🎒 <span>Mochila</span></button>
-        <button class="nav-btn" onclick="switchTab(this, 'tab-ranking')">🏆 <span>Ranking</span></button>
-        <button class="nav-btn" onclick="switchTab(this, 'tab-config')">⚙️ <span>Configurações</span></button>
-        <button class="nav-btn" id="nav-admin-btn" style="display: none; color: var(--red);" onclick="switchTab(this, 'tab-admin')">⚡ <span>Painel ADM</span></button>
-      </nav>
-
-      <div class="content-area">
-
-        <!-- HOME -->
-        <div id="tab-home" class="tab-content active">
-          <div class="title-header">Painel Principal</div>
-          <div class="cards-grid">
-            <div class="card">
-              <h3>Status do Personagem</h3>
-              <p style="font-size: 0.85rem;">Vida Atual: <b id="home-hp-status" style="color: var(--green);">100/100</b></p>
-              <button class="btn-action" style="background: var(--green); color: #000; margin-top: 5px;" onclick="descansarErecuperar()">💤 Descansar (+50 HP / +30 ⚡)</button>
-            </div>
-            <div class="card">
-              <h3>Estatísticas Rápidas</h3>
-              <p style="font-size: 0.85rem;">Vitórias: <b id="stat-wins" style="color: var(--green);">0</b></p>
-              <p style="font-size: 0.85rem;">Derrotas: <b id="stat-losses" style="color: var(--red);">0</b></p>
-              <p style="font-size: 0.85rem;">Poções de Cura: <b id="stat-potions" style="color: var(--border-blue);">0</b></p>
-              <button class="btn-action" style="background: var(--red); margin-top: 10px;" onclick="sairParaMenu()">↩️ Sair da Conta</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- FASES & BOSSES -->
-        <div id="tab-jogar" class="tab-content">
-          <div class="title-header">Desafios e Bosses (5 Fases)</div>
-          <div id="boss-selection-view">
-            <div class="cards-grid" id="bosses-grid"></div>
-          </div>
-
-          <div id="battle-arena-view" style="display: none;" class="battle-arena">
-            <div class="battle-display">
-              <div class="fighter-box">
-                <h3 id="battle-player-name" style="color: var(--border-blue);">Jogador</h3>
-                <div class="hp-bar-bg"><div id="battle-player-hp-fill" class="hp-bar-fill"></div></div>
-                <p style="font-size: 0.8rem; margin-top: 4px;"><span id="battle-player-hp-text">100/100</span> HP</p>
-              </div>
-              <div style="font-size: 1.5rem; font-weight: bold; color: var(--text-gold);">VS</div>
-              <div class="fighter-box">
-                <h3 id="battle-enemy-name" style="color: var(--red);">Inimigo</h3>
-                <div class="hp-bar-bg"><div id="battle-enemy-hp-fill" class="hp-bar-fill" style="background: var(--red);"></div></div>
-                <p style="font-size: 0.8rem; margin-top: 4px;"><span id="battle-enemy-hp-text">100/100</span> HP</p>
-              </div>
-            </div>
-            <div class="battle-log" id="battle-log"></div>
-            <div class="combat-controls">
-              <button class="btn-combat" style="background: #ef4444;" onclick="executarAcaoCombate('lutar')">⚔️ Lutar</button>
-              <button class="btn-combat" style="background: #00d2ff; color: #000;" onclick="executarAcaoCombate('defender')">🛡️ Defender</button>
-              <button class="btn-combat" style="background: #22c55e;" onclick="executarAcaoCombate('recuperar')">🧪 Usar Poção</button>
-              <button class="btn-combat" style="background: #64748b;" onclick="executarAcaoCombate('fugir')">🏃 Fugir</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- ÁRVORE DE PODERES -->
-        <div id="tab-poderes" class="tab-content">
-          <div class="title-header">Árvore de Habilidades</div>
-          <div class="cards-grid" id="powers-tree-grid"></div>
-        </div>
-
-        <!-- LOJA COMPLETA -->
-        <div id="tab-loja" class="tab-content">
-          <div class="title-header">Loja do Servidor</div>
-          <div class="sub-tabs">
-            <button class="sub-btn active" onclick="filtrarLoja(this, 'personagens')">Personagens</button>
-            <button class="sub-btn" onclick="filtrarLoja(this, 'equipamentos')">Equipamentos</button>
-            <button class="sub-btn" onclick="filtrarLoja(this, 'consumiveis')">Consumíveis</button>
-            <button class="sub-btn" onclick="filtrarLoja(this, 'materiais')">Materiais</button>
-            <button class="sub-btn" onclick="filtrarLoja(this, 'gemas')">Gemas Raras</button>
-          </div>
-          <div class="cards-grid" id="shop-items-container"></div>
-        </div>
-
-        <!-- MOCHILA / INVENTÁRIO -->
-        <div id="tab-inventario" class="tab-content">
-          <div class="title-header">Mochila do Jogador</div>
-          <div class="sub-tabs">
-            <button class="sub-btn active" onclick="filtrarInventario(this, 'skins')">Skins</button>
-            <button class="sub-btn" onclick="filtrarInventario(this, 'armas')">Armas/Equipamentos</button>
-            <button class="sub-btn" onclick="filtrarInventario(this, 'consumiveis')">Consumíveis</button>
-            <button class="sub-btn" onclick="filtrarInventario(this, 'materiais')">Materiais</button>
-          </div>
-          <div class="cards-grid" id="inventory-container"></div>
-        </div>
-
-        <!-- RANKING GERAL -->
-        <div id="tab-ranking" class="tab-content">
-          <div class="title-header">Ranking Geral de Jogadores</div>
-          <table class="rank-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Nome / ID</th>
-                <th>Nível</th>
-                <th>Personagens</th>
-                <th>Vitórias</th>
-              </tr>
-            </thead>
-            <tbody id="ranking-tbody"></tbody>
-          </table>
-        </div>
-
-        <!-- CONFIGURAÇÕES -->
-        <div id="tab-config" class="tab-content">
-          <div class="title-header">Configurações e Perfil</div>
-          <div class="card" style="max-width: 500px; gap: 10px;">
-            <h3>Trilha Sonora e Áudio</h3>
-            <button class="btn-action" id="btn-audio-toggle" style="background: var(--purple);" onclick="toggleMusica()">🎵 Ativar Música de Guerra</button>
-            
-            <hr style="border-color: var(--border-dark);">
-
-            <h3>Editar Perfil</h3>
-            <input type="text" id="config-nick-input" class="login-input" placeholder="Novo Nickname">
-            <input type="text" id="config-avatar-input" class="login-input" placeholder="URL da Foto de Perfil">
-            <button class="btn-action" style="background: var(--border-blue); color: #000;" onclick="salvarAlteracoesPerfil()">💾 Salvar Perfil</button>
-
-            <hr style="border-color: var(--border-dark);">
-
-            <h3>Progresso do Jogo</h3>
-            <button class="btn-action" style="background: var(--green); color: #000;" onclick="salvarJogoManual()">💾 Salvar Jogo no Servidor</button>
-            <button class="btn-action" style="background: var(--red);" onclick="confirmarNovoJogo()">⚠️ Reiniciar Jogo (Novo Jogo)</button>
-          </div>
-        </div>
-
-        <!-- PAINEL ADM -->
-        <div id="tab-admin" class="tab-content">
-          <div class="title-header" style="color: var(--red);">⚡ Painel de Controle Administrador</div>
-          <div class="card" style="border-color: var(--red); max-width: 500px;">
-            <h3>Gerenciamento de Jogadores</h3>
-            <input type="text" id="admin-target-user" class="login-input" placeholder="E-mail do jogador alvo">
-            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-              <button class="btn-action" style="background: var(--text-gold); color: #000; flex: 1;" onclick="adminDarRecursos('coins', 5000)">+5.000 💰 Moedas</button>
-              <button class="btn-action" style="background: var(--purple); flex: 1;" onclick="adminDarRecursos('gems', 500)">+500 💎 Gemas</button>
-            </div>
-            <button class="btn-action" style="background: var(--red); width: 100%; margin-top: 8px;" onclick="adminConcederADM()">👑 Dar Cargo de ADM</button>
-          </div>
-        </div>
-
-      </div>
+      <button onclick="handleLogout()" style="background: #ef4444;">SAIR DA CONTA</button>
     </div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, setDoc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  <!-- FIREBASE SDKs (COMPATIBILIDADE BROWSER) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
+  <!-- LÓGICA DO JOGO E CONEXÃO COM O FIREBASE -->
+  <script>
+    // Configurações do seu projeto Firebase
     const firebaseConfig = {
-      apiKey: "SEU_API_KEY",
-      authDomain: "seu-app.firebaseapp.com",
-      projectId: "seu-app",
-      storageBucket: "seu-app.appspot.com",
-      messagingSenderId: "00000000000",
-      appId: "1:00000000000:web:00000000000"
+      apiKey: "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
+      authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
+      projectId: "dragon-war-rise-of-power-2a9f1",
+      storageBucket: "dragon-war-rise-of-power-2a9f1.firebasestorage.app",
+      messagingSenderId: "115455691167",
+      appId: "1:115455691167:web:ff3638f67b66c17c5515aa",
+      measurementId: "G-S7XE2EN9CL"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // TERMOS PROIBIDOS PARA NOMES DE PERSONAGEM
-    const FORBIDDEN_NICKS = ['admin', 'adm', 'administrator', 'moderador', 'mod', 'gerente', 'suporte', 'dw_admin', 'dono', 'master', 'system'];
-
-    // BASE DE DADOS DO JOGO
-    const BOSSES = [
-      { id: 'b1', name: 'Goblin Guerreiro', hp: 150, atk: 15, reward: 150, energy: 10, color: '#22c55e', desc: 'Floresta Inicial' },
-      { id: 'b2', name: 'Orc do Vulcão', hp: 450, atk: 35, reward: 500, energy: 15, color: '#ffb700', desc: 'Caverna Vulcânica' },
-      { id: 'b3', name: 'Sombra Necromante', hp: 900, atk: 70, reward: 1000, energy: 20, color: '#a855f7', desc: 'Vale das Sombras' },
-      { id: 'b4', name: 'Golem de Trovão', hp: 1800, atk: 120, reward: 2000, energy: 25, color: '#00d2ff', desc: 'Pico dos Raios' },
-      { id: 'b5', name: 'Khaldron (Lendário)', hp: 3500, atk: 200, reward: 5000, energy: 30, color: '#ef4444', desc: 'Guardião Final' }
-    ];
-
-    const POWERS_TREE = [
-      { id: 'pow1', name: 'Chamas de Fogo', minLevel: 1, bonusAtk: 10, desc: 'Aumenta seu dano básico.' },
-      { id: 'pow2', name: 'Raio Espiritual', minLevel: 5, bonusAtk: 30, desc: 'Recarrega Nível 5 para desbloquear o Raio.' },
-      { id: 'pow3', name: 'Nova Era', minLevel: 10, bonusAtk: 80, desc: 'Recarrega Nível 10 para dominar a magia suprema.' }
-    ];
-
-    const SHOP_ITEMS = [
-      { id: 'p1', category: 'personagens', name: 'Guerreiro de Fogo', price: 0, currency: 'coins', hpMax: 200, atk: 25, img: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&q=80' },
-      { id: 'p2', category: 'personagens', name: 'Mago Sombrio', price: 1000, currency: 'coins', hpMax: 160, atk: 50, img: 'https://images.unsplash.com/photo-1563089145-599997674d42?w=300&q=80' },
-      { id: 'e1', category: 'equipamentos', name: 'Espada de Aço', price: 300, currency: 'coins', atkBonus: 15, img: 'https://images.unsplash.com/photo-1595590424283-b8f17842773f?w=300&q=80' },
-      { id: 'e2', category: 'equipamentos', name: 'Cajado Celestial', price: 150, currency: 'gems', atkBonus: 40, img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&q=80' },
-      { id: 'c1', category: 'consumiveis', name: 'Poção de Cura (+80 HP)', price: 100, currency: 'coins', heal: 80, img: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=300&q=80' },
-      { id: 'm1', category: 'materiais', name: 'Essência Dragônica', price: 500, currency: 'coins', img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&q=80' },
-      { id: 'g1', category: 'gemas', name: 'Pacote +100 Gemas', price: 2000, currency: 'coins', gemsAmount: 100, img: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=300&q=80' }
-    ];
-
-    let player = {
-      email: "",
-      password: "",
-      nick: "",
-      avatarUrl: "https://via.placeholder.com/45",
-      coins: 1000,
-      gems: 50,
-      energy: 120,
-      maxEnergy: 120,
-      currentHp: 200,
-      wins: 0,
-      losses: 0,
-      level: 1,
-      isAdmin: false,
-      ownedChars: ['p1'],
-      equippedChar: 'p1',
-      ownedEquips: [],
-      inventory: { 'c1': 2, 'm1': 1 }
-    };
-
-    let combatState = null;
-    let lojaAbaAtual = 'personagens';
-    let invAbaAtual = 'skins';
-    let audioCtx = null;
-    let isAudioPlaying = false;
-
-    function showToast(msg) {
-      const toast = document.getElementById('global-toast');
-      toast.innerText = msg;
-      toast.style.display = 'block';
-      setTimeout(() => { toast.style.display = 'none'; }, 4000);
+    // Inicialização do Firebase
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
     }
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-    // NAVEGAÇÃO ENTRE TELAS DE AUTH
-    window.alternarModoAuth = function(modo) {
-      if (modo === 'login') {
-        document.getElementById('form-login').style.display = 'block';
-        document.getElementById('form-register').style.display = 'none';
-        document.getElementById('tab-login-btn').classList.add('active');
-        document.getElementById('tab-register-btn').classList.remove('active');
+    // Alternar entre abas de Login e Registo
+    function showForm(type) {
+      const loginForm = document.getElementById('login-form');
+      const regForm = document.getElementById('register-form');
+      const tabLogin = document.getElementById('tab-login');
+      const tabReg = document.getElementById('tab-register');
+
+      if (type === 'login') {
+        loginForm.classList.remove('hidden');
+        regForm.classList.add('hidden');
+        tabLogin.classList.add('active');
+        tabReg.classList.remove('active');
       } else {
-        document.getElementById('form-login').style.display = 'none';
-        document.getElementById('form-register').style.display = 'block';
-        document.getElementById('tab-register-btn').classList.add('active');
-        document.getElementById('tab-login-btn').classList.remove('active');
+        loginForm.classList.add('hidden');
+        regForm.classList.remove('hidden');
+        tabLogin.classList.remove('active');
+        tabReg.classList.add('active');
       }
-    };
-
-    // FUNÇÃO DE VALIDAÇÃO DE E-MAIL
-    function validarEmailReal(email) {
-      const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      return re.test(String(email).toLowerCase());
     }
 
-    // FUNÇÃO DE VALIDAÇÃO DO NOME DO PERSONAGEM
-    function validarNomePersonagem(nick) {
-      if (nick.length < 3 || nick.length > 16) {
-        console.warn("[AUTH-CONSOLE] Validação Recusada: Nome deve ter entre 3 e 16 caracteres.");
-        return { valido: false, motivo: "O nome deve conter entre 3 e 16 caracteres." };
-      }
-
-      const regexApenasLetrasEParteEspecial = /^[a-zA-Z0-9_]+$/;
-      if (!regexApenasLetrasEParteEspecial.test(nick)) {
-        console.warn("[AUTH-CONSOLE] Validação Recusada: Caracteres inválidos detectados.");
-        return { valido: false, motivo: "O nome não pode conter caracteres especiais ou espaços." };
-      }
-
-      const nickLower = nick.toLowerCase();
-      if (FORBIDDEN_NICKS.some(termo => nickLower.includes(termo))) {
-        console.warn(`[AUTH-CONSOLE] Validação Recusada: Termo reservado detectado no nome "${nick}".`);
-        return { valido: false, motivo: "Nome indisponível. Contém palavras reservadas para administradores." };
-      }
-
-      return { valido: true };
-    }
-
-    // CADASTRO DE NOVO JOGADOR
-    window.cadastrarConta = async function() {
-      const email = document.getElementById('reg-email').value.trim().toLowerCase();
-      const password = document.getElementById('reg-pass').value.trim();
-      const nick = document.getElementById('reg-nick').value.trim();
-
-      console.log(`[AUTH-CONSOLE] Tentativa de Cadastro - Email: ${email} | Nick: ${nick}`);
-
-      // Validação de E-mail
-      if (!validarEmailReal(email)) {
-        console.error("[AUTH-CONSOLE] Falha no cadastro: E-mail inválido.");
-        return alert("⚠️ Digite um endereço de e-mail real e válido!");
-      }
-
-      // Validação de Senha
-      if (password.length < 6) {
-        console.error("[AUTH-CONSOLE] Falha no cadastro: Senha muito curta.");
-        return alert("⚠️ A senha precisa ter pelo menos 6 caracteres!");
-      }
-
-      // Validação de Nickname
-      const validacaoNick = validarNomePersonagem(nick);
-      if (!validacaoNick.valido) {
-        return alert(`⚠️ ${validacaoNick.motivo}`);
-      }
-
-      const docId = email.replace(/[^a-zA-Z0-9]/g, "_");
-      const userRef = doc(db, "users", docId);
+    // Função de Registo de Jogador
+    async function handleRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('reg-username').value;
+      const email = document.getElementById('reg-email').value;
+      const password = document.getElementById('reg-password').value;
 
       try {
-        const docSnap = await getDoc(userRef);
-        if (docSnap.exists()) {
-          console.warn("[AUTH-CONSOLE] Cadastro abortado: E-mail já existente.");
-          return alert("⚠️ Este e-mail já está cadastrado! Faça login.");
-        }
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
 
-        player.email = email;
-        player.password = password;
-        player.nick = nick;
-
-        await setDoc(userRef, player);
-        console.log(`[AUTH-CONSOLE] ✅ Novo Jogador registrado com sucesso! ID: ${docId}`);
-
-        iniciarSessaoJogo(userRef);
-      } catch (e) {
-        console.error("[AUTH-CONSOLE] Erro de conexão ao cadastrar:", e);
-        // Modo offline de contingência
-        player.email = email;
-        player.password = password;
-        player.nick = nick;
-        iniciarSessaoSemFirebase();
-      }
-    };
-
-    // LOGIN NA CONTA EXISTENTE
-    window.entrarNaConta = async function() {
-      const email = document.getElementById('login-email').value.trim().toLowerCase();
-      const password = document.getElementById('login-pass').value.trim();
-
-      console.log(`[AUTH-CONSOLE] Tentativa de Login - Email: ${email}`);
-
-      if (!validarEmailReal(email)) {
-        console.error("[AUTH-CONSOLE] Falha no login: E-mail inválido.");
-        return alert("⚠️ Por favor, informe seu e-mail cadastrado.");
-      }
-
-      if (!password) {
-        return alert("⚠️ Digite sua senha!");
-      }
-
-      const docId = email.replace(/[^a-zA-Z0-9]/g, "_");
-      const userRef = doc(db, "users", docId);
-
-      try {
-        const docSnap = await getDoc(userRef);
-        if (!docSnap.exists()) {
-          console.warn("[AUTH-CONSOLE] Login abortado: Conta não encontrada.");
-          return alert("❌ Conta não encontrada. Verifique o e-mail ou cadastre-se.");
-        }
-
-        const dadosSalvos = docSnap.data();
-        if (dadosSalvos.password && dadosSalvos.password !== password) {
-          console.error("[AUTH-CONSOLE] Falha de autenticação: Senha incorreta.");
-          return alert("❌ Senha incorreta!");
-        }
-
-        player = { ...player, ...dadosSalvos };
-        console.log(`[AUTH-CONSOLE] ✅ Login bem-sucedido! Bem-vindo de volta ${player.nick}.`);
-
-        iniciarSessaoJogo(userRef);
-      } catch (e) {
-        console.error("[AUTH-CONSOLE] Erro ao realizar login:", e);
-        alert("Erro de conexão com o servidor de autenticação.");
-      }
-    };
-
-    function iniciarSessaoJogo(userRef) {
-      onSnapshot(userRef, (snap) => {
-        if (snap.exists()) {
-          player = { ...player, ...snap.data() };
-          atualizarUI();
-        }
-      });
-
-      document.getElementById('cinema-screen').style.display = 'none';
-      document.getElementById('game-container').style.display = 'flex';
-      atualizarUI();
-      carregarRanking();
-    }
-
-    function iniciarSessaoSemFirebase() {
-      document.getElementById('cinema-screen').style.display = 'none';
-      document.getElementById('game-container').style.display = 'flex';
-      atualizarUI();
-    }
-
-    function atualizarUI() {
-      const charAtual = SHOP_ITEMS.find(i => i.id === player.equippedChar) || SHOP_ITEMS[0];
-
-      document.getElementById('ui-nick').innerText = player.nick;
-      document.getElementById('ui-avatar').style.backgroundImage = `url('${player.avatarUrl}')`;
-      document.getElementById('ui-coins').innerText = player.coins;
-      document.getElementById('ui-gems').innerText = player.gems;
-      document.getElementById('ui-level').innerText = player.level;
-      document.getElementById('ui-energy').innerText = `${player.energy}/${player.maxEnergy}`;
-
-      if (player.isAdmin) {
-        document.getElementById('ui-admin-tag').style.display = 'inline-block';
-        document.getElementById('nav-admin-btn').style.display = 'flex';
-      } else {
-        document.getElementById('ui-admin-tag').style.display = 'none';
-        document.getElementById('nav-admin-btn').style.display = 'none';
-      }
-
-      document.getElementById('home-hp-status').innerText = `${player.currentHp}/${charAtual.hpMax}`;
-      document.getElementById('stat-wins').innerText = player.wins;
-      document.getElementById('stat-losses').innerText = player.losses;
-      document.getElementById('stat-potions').innerText = player.inventory['c1'] || 0;
-
-      renderBosses();
-      renderPoderes();
-      renderLoja();
-      renderInventario();
-    }
-
-    // DESCANSAR
-    window.descansarErecuperar = function() {
-      const charAtual = SHOP_ITEMS.find(i => i.id === player.equippedChar) || SHOP_ITEMS[0];
-      player.currentHp = Math.min(charAtual.hpMax, player.currentHp + 50);
-      player.energy = Math.min(player.maxEnergy, player.energy + 30);
-      showToast("💤 Recuperou +50 HP e +30 Energia!");
-      console.log(`[GAME-CONSOLE] Descanso realizado. HP: ${player.currentHp}, Energia: ${player.energy}`);
-      salvarFirebase();
-      atualizarUI();
-    };
-
-    // RENDER BOSSES
-    function renderBosses() {
-      const grid = document.getElementById('bosses-grid');
-      grid.innerHTML = '';
-      BOSSES.forEach(b => {
-        grid.innerHTML += `
-          <div class="card" style="border-color: ${b.color};">
-            <h4 style="color: ${b.color};">${b.name}</h4>
-            <p style="font-size: 0.75rem; color: #aaa;">${b.desc}</p>
-            <p style="font-size: 0.8rem;">Vida: <b>${b.hp} HP</b> | Custo: <b>${b.energy} ⚡</b></p>
-            <p style="font-size: 0.8rem; color: var(--text-gold);">Recompensa: <b>+${b.reward} 💰 Moedas</b></p>
-            <button class="btn-action" style="background: ${b.color}; color: #000; width: 100%; margin-top: 5px;" onclick="iniciarCombate('${b.name}', ${b.hp}, ${b.atk}, ${b.reward}, ${b.energy})">LUTAR BOSS</button>
-          </div>
-        `;
-      });
-    }
-
-    // COMBATE
-    window.iniciarCombate = function(nome, hp, atk, recompensa, energia) {
-      if (player.energy < energia) return alert("⚡ Energia insuficiente!");
-      if (player.currentHp <= 0) return alert("💀 Seu personagem precisa ser curado!");
-
-      const charAtual = SHOP_ITEMS.find(i => i.id === player.equippedChar) || SHOP_ITEMS[0];
-      player.energy -= energia;
-      salvarFirebase();
-
-      console.log(`[GAME-CONSOLE] Combate Iniciado contra ${nome}. Energia gasta: ${energia}`);
-
-      combatState = {
-        enemyName: nome, enemyMaxHp: hp, enemyHp: hp, enemyAtk: atk,
-        playerMaxHp: charAtual.hpMax, playerHp: player.currentHp, playerAtk: charAtual.atk,
-        rewardCoins: recompensa, isDefending: false
-      };
-
-      document.getElementById('boss-selection-view').style.display = 'none';
-      document.getElementById('battle-arena-view').style.display = 'flex';
-      document.getElementById('battle-player-name').innerText = `${player.nick}`;
-      document.getElementById('battle-enemy-name').innerText = nome;
-      document.getElementById('battle-log').innerHTML = `<p style="color:#aaa;">🚨 Batalha iniciada contra ${nome}!</p>`;
-      
-      atualizarBarrasCombate();
-      atualizarUI();
-    };
-
-    function atualizarBarrasCombate() {
-      const pPct = Math.max(0, Math.round((combatState.playerHp / combatState.playerMaxHp) * 100));
-      const ePct = Math.max(0, Math.round((combatState.enemyHp / combatState.enemyMaxHp) * 100));
-      document.getElementById('battle-player-hp-fill').style.width = `${pPct}%`;
-      document.getElementById('battle-player-hp-text').innerText = `${combatState.playerHp}/${combatState.playerMaxHp}`;
-      document.getElementById('battle-enemy-hp-fill').style.width = `${ePct}%`;
-      document.getElementById('battle-enemy-hp-text').innerText = `${combatState.enemyHp}/${combatState.enemyMaxHp}`;
-    }
-
-    function addLog(msg) {
-      const log = document.getElementById('battle-log');
-      log.innerHTML += `<p>${msg}</p>`;
-      log.scrollTop = log.scrollHeight;
-    }
-
-    window.executarAcaoCombate = function(acao) {
-      if (!combatState) return;
-      combatState.isDefending = false;
-
-      if (acao === 'lutar') {
-        const dano = combatState.playerAtk + Math.floor(Math.random() * 12);
-        combatState.enemyHp -= dano;
-        addLog(`⚔ Você causou <b>${dano}</b> de dano!`);
-      } else if (acao === 'defender') {
-        combatState.isDefending = true;
-        addLog(`🛡️ Defesa ativada!`);
-      } else if (acao === 'recuperar') {
-        if ((player.inventory['c1'] || 0) <= 0) return addLog(`❌ Sem poções!`);
-        player.inventory['c1']--;
-        combatState.playerHp = Math.min(combatState.playerMaxHp, combatState.playerHp + 80);
-        player.currentHp = combatState.playerHp;
-        addLog(`🧪 Curou <b>80 HP</b>!`);
-        atualizarUI();
-      } else if (acao === 'fugir') {
-        console.log("[GAME-CONSOLE] Jogador fugiu do combate.");
-        player.currentHp = combatState.playerHp;
-        salvarFirebase();
-        encerrarCombate();
-        return;
-      }
-
-      atualizarBarrasCombate();
-
-      if (combatState.enemyHp <= 0) {
-        addLog(`🏆 <b>VITÓRIA!</b> +${combatState.rewardCoins} Moedas!`);
-        console.log(`[GAME-CONSOLE] Vitória registrada! Recompensa: +${combatState.rewardCoins} moedas.`);
-        player.wins++;
-        player.coins += combatState.rewardCoins;
-        player.level += 1;
-        player.currentHp = combatState.playerHp;
-        salvarFirebase();
-        atualizarUI();
-        setTimeout(encerrarCombate, 2000);
-        return;
-      }
-
-      setTimeout(() => {
-        let danoInimigo = combatState.enemyAtk + Math.floor(Math.random() * 10);
-        if (combatState.isDefending) danoInimigo = Math.floor(danoInimigo / 2);
-        combatState.playerHp -= danoInimigo;
-        player.currentHp = Math.max(0, combatState.playerHp);
-        addLog(`🔥 Inimigo causou <b>${danoInimigo}</b> de dano!`);
-        atualizarBarrasCombate();
-
-        if (combatState.playerHp <= 0) {
-          console.warn("[GAME-CONSOLE] Jogador foi derrotado no combate.");
-          player.losses++;
-          player.currentHp = 0;
-          salvarFirebase();
-          atualizarUI();
-          encerrarCombate();
-          document.getElementById('game-over-screen').style.display = 'flex';
-        }
-      }, 800);
-    };
-
-    function encerrarCombate() {
-      combatState = null;
-      document.getElementById('battle-arena-view').style.display = 'none';
-      document.getElementById('boss-selection-view').style.display = 'block';
-    }
-
-    window.reiniciarJogoAposMorte = function() {
-      console.log("[GAME-CONSOLE] Reiniciando progresso do jogador após morte.");
-      const charAtual = SHOP_ITEMS.find(i => i.id === player.equippedChar) || SHOP_ITEMS[0];
-      player.coins = 0; player.gems = 0; player.level = 1;
-      player.currentHp = charAtual.hpMax; player.energy = player.maxEnergy;
-      salvarFirebase();
-      atualizarUI();
-      document.getElementById('game-over-screen').style.display = 'none';
-      switchTab(document.getElementById('btn-nav-home'), 'tab-home');
-      showToast("🔄 O jogo recomeçou do zero!");
-    };
-
-    // ÁRVORE DE PODERES
-    function renderPoderes() {
-      const grid = document.getElementById('powers-tree-grid');
-      grid.innerHTML = '';
-      POWERS_TREE.forEach(p => {
-        const liberado = player.level >= p.minLevel;
-        grid.innerHTML += `
-          <div class="card" style="border-color: ${liberado ? 'var(--green)' : 'var(--border-dark)'}; opacity: ${liberado ? '1' : '0.6'};">
-            <h3>${p.name}</h3>
-            <p style="font-size:0.8rem;">${p.desc}</p>
-            <p style="font-size:0.8rem; color: var(--text-gold);">Bônus Ataque: +${p.bonusAtk}</p>
-            <p style="font-size:0.75rem; color: #aaa;">Requisito: Nível ${p.minLevel}</p>
-            <div style="font-weight:bold; font-size:0.85rem; color: ${liberado ? 'var(--green)' : 'var(--red)'}; margin-top:5px;">
-              ${liberado ? '✅ HABILIDADE ATIVA' : '🔒 BLOQUEADO'}
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    // LOJA
-    window.filtrarLoja = function(btn, cat) {
-      document.querySelectorAll('#tab-loja .sub-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      lojaAbaAtual = cat;
-      renderLoja();
-    };
-
-    function renderLoja() {
-      const container = document.getElementById('shop-items-container');
-      container.innerHTML = '';
-      const itens = SHOP_ITEMS.filter(i => i.category === lojaAbaAtual);
-
-      itens.forEach(item => {
-        let acaoBtn = '';
-        if (item.category === 'personagens') {
-          const jaComprado = player.ownedChars.includes(item.id);
-          const equipado = player.equippedChar === item.id;
-          if (equipado) acaoBtn = `<div style="color: var(--text-gold); font-weight: bold;">✅ EQUIPADO</div>`;
-          else if (jaComprado) acaoBtn = `<button class="btn-action" style="background: var(--border-blue); color: #000; width: 100%;" onclick="equiparPersonagem('${item.id}')">⚔ EQUIPAR</button>`;
-          else acaoBtn = `<button class="btn-action" style="background: var(--green); color: #000; width: 100%;" onclick="comprarItem('${item.id}')">🛒 COMPRAR (${item.price} 💰)</button>`;
-        } else {
-          acaoBtn = `<button class="btn-action" style="background: var(--green); color: #000; width: 100%;" onclick="comprarItem('${item.id}')">🛒 COMPRAR (${item.price} ${item.currency === 'gems' ? '💎' : '💰'})</button>`;
-        }
-
-        container.innerHTML += `
-          <div class="card">
-            <img src="${item.img}" alt="${item.name}">
-            <h4>${item.name}</h4>
-            ${acaoBtn}
-          </div>
-        `;
-      });
-    }
-
-    window.comprarItem = function(id) {
-      const item = SHOP_ITEMS.find(i => i.id === id);
-      if (item.currency === 'gems' && player.gems < item.price) return alert("Gemas insuficientes!");
-      if (item.currency !== 'gems' && player.coins < item.price) return alert("Moedas insuficientes!");
-
-      if (item.currency === 'gems') player.gems -= item.price;
-      else player.coins -= item.price;
-
-      if (item.category === 'personagens') player.ownedChars.push(id);
-      else if (item.category === 'equipamentos') player.ownedEquips.push(id);
-      else if (item.category === 'gemas') player.gems += item.gemsAmount;
-      else player.inventory[id] = (player.inventory[id] || 0) + 1;
-
-      console.log(`[SHOP-CONSOLE] Item comprado: ${item.name} | Custo: ${item.price} ${item.currency}`);
-      showToast(`📢 Adquirido: ${item.name}!`);
-      salvarFirebase();
-      atualizarUI();
-    };
-
-    window.equiparPersonagem = function(id) {
-      player.equippedChar = id;
-      const charAtual = SHOP_ITEMS.find(i => i.id === id);
-      player.currentHp = charAtual.hpMax;
-      console.log(`[GAME-CONSOLE] Personagem alterado para: ${charAtual.name}`);
-      salvarFirebase();
-      atualizarUI();
-    };
-
-    // INVENTÁRIO
-    window.filtrarInventario = function(btn, cat) {
-      document.querySelectorAll('#tab-inventario .sub-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      invAbaAtual = cat;
-      renderInventario();
-    };
-
-    function renderInventario() {
-      const container = document.getElementById('inventory-container');
-      container.innerHTML = '';
-
-      if (invAbaAtual === 'skins') {
-        player.ownedChars.forEach(id => {
-          const item = SHOP_ITEMS.find(i => i.id === id);
-          container.innerHTML += `<div class="card"><img src="${item.img}"><h4>${item.name}</h4></div>`;
+        // Salvar os dados iniciais do jogador no Firestore
+        await db.collection('users').doc(user.uid).set({
+          username: name,
+          email: email,
+          level: 1,
+          coins: 100,
+          createdAt: new Date()
         });
-      } else if (invAbaAtual === 'armas') {
-        player.ownedEquips.forEach(id => {
-          const item = SHOP_ITEMS.find(i => i.id === id);
-          container.innerHTML += `<div class="card"><img src="${item.img}"><h4>${item.name}</h4></div>`;
-        });
-      } else {
-        for (let key in player.inventory) {
-          if (player.inventory[key] > 0) {
-            const item = SHOP_ITEMS.find(i => i.id === key);
-            if ((invAbaAtual === 'consumiveis' && item?.category === 'consumiveis') ||
-                (invAbaAtual === 'materiais' && item?.category === 'materiais')) {
-              container.innerHTML += `<div class="card"><h4>${item.name}</h4><p>Qtd: <b>${player.inventory[key]}</b></p></div>`;
-            }
-          }
+
+        alert("Conta criada com sucesso!");
+      } catch (error) {
+        alert("Erro no registo: " + error.message);
+      }
+    }
+
+    // Função de Login
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+
+      try {
+        await auth.signInWithEmailAndPassword(email, password);
+      } catch (error) {
+        alert("Erro ao entrar: " + error.message);
+      }
+    }
+
+    // Função de Terminar Sessão
+    function handleLogout() {
+      auth.signOut();
+    }
+
+    // Monitorizar Estado do Utilizador em Tempo Real
+    auth.onAuthStateChanged(async (user) => {
+      const authScreen = document.getElementById('auth-screen');
+      const gameScreen = document.getElementById('game-screen');
+
+      if (user) {
+        // Carregar dados do Firestore
+        const doc = await db.collection('users').doc(user.uid).get();
+        if (doc.exists) {
+          const data = doc.data();
+          document.getElementById('player-name').innerText = data.username || "Jogador";
+          document.getElementById('player-level').innerText = data.level || 1;
+          document.getElementById('player-coins').innerText = data.coins || 100;
         }
-      }
-    }
 
-    // RANKING GERAL
-    async function carregarRanking() {
-      const tbody = document.getElementById('ranking-tbody');
-      tbody.innerHTML = '<tr><td colspan="5">Carregando ranking...</td></tr>';
-      try {
-        const querySnap = await getDocs(collection(db, "users"));
-        let lista = [];
-        querySnap.forEach(d => lista.push(d.data()));
-        lista.sort((a, b) => (b.level || 1) - (a.level || 1));
-
-        tbody.innerHTML = '';
-        lista.forEach((u, i) => {
-          const charsCount = u.ownedChars ? u.ownedChars.length : 1;
-          tbody.innerHTML += `
-            <tr>
-              <td><b>#${i + 1}</b></td>
-              <td>${u.nick} <br><small style="color:#aaa;">ID: ${u.email.split('@')[0]}</small></td>
-              <td>Nv. ${u.level || 1}</td>
-              <td>🎭 ${charsCount} Unidades</td>
-              <td style="color: var(--green);">${u.wins || 0} V</td>
-            </tr>
-          `;
-        });
-      } catch (e) {
-        tbody.innerHTML = '<tr><td colspan="5">Ranking local ativo.</td></tr>';
-      }
-    }
-
-    // CONFIGURAÇÕES & SOM
-    window.salvarAlteracoesPerfil = function() {
-      const newNick = document.getElementById('config-nick-input').value.trim();
-      const newAvatar = document.getElementById('config-avatar-input').value.trim();
-      
-      if (newNick) {
-        const validacao = validarNomePersonagem(newNick);
-        if (!validacao.valido) return alert(`⚠️ ${validacao.motivo}`);
-        player.nick = newNick;
-      }
-      if (newAvatar) player.avatarUrl = newAvatar;
-
-      console.log(`[GAME-CONSOLE] Perfil alterado. Novo Nick: ${player.nick}`);
-      salvarFirebase();
-      atualizarUI();
-      showToast("✅ Perfil Atualizado!");
-    };
-
-    window.salvarJogoManual = function() {
-      salvarFirebase();
-      showToast("💾 Progresso Salvo com Sucesso!");
-    };
-
-    window.confirmarNovoJogo = function() {
-      if (confirm("⚠️ Tem certeza que deseja apagar todo o seu progresso e reiniciar?")) {
-        reiniciarJogoAposMorte();
-      }
-    };
-
-    window.toggleMusica = function() {
-      const btn = document.getElementById('btn-audio-toggle');
-      if (!isAudioPlaying) {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        isAudioPlaying = true;
-        btn.innerText = '🔊 Desativar Música de Guerra';
-        btn.style.background = 'var(--red)';
-        showToast("🎵 Música ativada!");
+        authScreen.classList.add('hidden');
+        gameScreen.classList.remove('hidden');
       } else {
-        isAudioPlaying = false;
-        btn.innerText = '🎵 Ativar Música de Guerra';
-        btn.style.background = 'var(--purple)';
-        showToast("🔇 Música desativada.");
+        authScreen.classList.remove('hidden');
+        gameScreen.classList.add('hidden');
       }
-    };
-
-    // ADM CONSOLE
-    window.adminDarRecursos = async function(tipo, qtd) {
-      if (!player.isAdmin) return alert("Acesso negado.");
-      const targetUser = document.getElementById('admin-target-user').value.trim().toLowerCase();
-      const docId = targetUser.replace(/[^a-zA-Z0-9]/g, "_");
-      const targetRef = doc(db, "users", docId);
-      const snap = await getDoc(targetRef);
-      if (snap.exists()) {
-        await updateDoc(targetRef, { [tipo]: (snap.data()[tipo] || 0) + qtd });
-        console.log(`[ADMIN-CONSOLE] Recursos concedidos para ${targetUser}: +${qtd} ${tipo}`);
-        alert(`Sucesso! +${qtd} ${tipo}`);
-      }
-    };
-
-    window.adminConcederADM = async function() {
-      if (!player.isAdmin) return alert("Acesso negado.");
-      const targetUser = document.getElementById('admin-target-user').value.trim().toLowerCase();
-      const docId = targetUser.replace(/[^a-zA-Z0-9]/g, "_");
-      await updateDoc(doc(db, "users", docId), { isAdmin: true });
-      console.log(`[ADMIN-CONSOLE] Permissão de Administrador concedida para ${targetUser}`);
-      alert("Sucesso! Cargo de ADM concedido.");
-    };
-
-    // NAVEGAÇÃO E UTILS
-    window.switchTab = function(btn, tabId) {
-      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      btn.classList.add('active');
-      if (tabId === 'tab-ranking') carregarRanking();
-    };
-
-    async function salvarFirebase() {
-      try {
-        if (!player.email) return;
-        const docId = player.email.replace(/[^a-zA-Z0-9]/g, "_");
-        await setDoc(doc(db, "users", docId), player, { merge: true });
-        console.log(`[DATABASE-CONSOLE] Dados sincronizados no Firebase para: ${docId}`);
-      } catch (e) { 
-        console.error("[DATABASE-CONSOLE] Erro ao salvar dados:", e); 
-      }
-    }
-
-    window.sairParaMenu = function() {
-      console.log("[AUTH-CONSOLE] Usuário desconectou.");
-      document.getElementById('game-container').style.display = 'none';
-      document.getElementById('cinema-screen').style.display = 'flex';
-    };
+    });
   </script>
 </body>
 </html>
