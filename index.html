@@ -207,7 +207,7 @@
                     </div>
                 </div>
 
-                <!-- ABA: PODERES (ÁRVORE DE MAIS DE 50 HABILIDADES) -->
+                <!-- ABA: PODERES -->
                 <div id="tab-poderes" class="tab-panel">
                     <h2>Árvore de Habilidades Elementais (+50 Poderes)</h2>
                     <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Melhore suas habilidades para causar mais dano (gasta 1 Ponto de Poder por melhoria).</p>
@@ -372,7 +372,7 @@
                     </div>
                 </div>
 
-                <!-- ABA: CONFIGURAÇÕES E PERFIL (COM MÚSICA E ÁUDIO) -->
+                <!-- ABA: CONFIGURAÇÕES E PERFIL -->
                 <div id="tab-config" class="tab-panel">
                     <h2>Configurações e Perfil do Jogador</h2>
                     <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Personalize seu perfil e controle o sistema de áudio.</p>
@@ -400,10 +400,11 @@
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
+    <!-- Firebase SDKs (Modo Compatível / Compat) para unificar com o script global -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
 
     <script>
         const firebaseConfig = {
@@ -416,7 +417,11 @@
             measurementId: "G-S7XE2EN9CL"
         };
 
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const app = firebase.app();
+        const analytics = firebase.analytics();
         const auth = firebase.auth();
         const db = firebase.firestore();
 
@@ -440,7 +445,7 @@
         let combateAtual = { ativo: false, dificuldade: '', mobNome: '', mobHp: 0, mobMaxHp: 0, mobDano: 0, defendendo: false };
         let poderSelecionadoNome = null;
 
-        // SISTEMA DE ÁUDIO WEB AUDIO API (MÚSICA DE GUERRA & EFEITOS)
+        // SISTEMA DE ÁUDIO WEB AUDIO API
         let audioCtx = null;
         let musicaAtiva = false;
         let efeitosAtivos = true;
@@ -502,7 +507,7 @@
             document.getElementById('status-efeitos').innerText = efeitosAtivos ? "Ativados" : "Desativados";
         }
 
-        // 16+ ARMAS DA LOJA
+        // 18 ARMAS DA LOJA
         const listaArmasLoja = [
             { id: 1, nome: "Adaga de Cobre", preco: 250 },
             { id: 2, nome: "Espada Curta do Novato", preco: 450 },
@@ -524,7 +529,7 @@
             { id: 18, nome: "Lâmina do Vazio Infinito", preco: 60000 }
         ];
 
-        // SKINS DA LOJA EXPANDIDAS
+        // SKINS DA LOJA
         const listaSkinsLoja = [
             { id: 101, nome: "Skin Guerreiro Iniciante", preco: 500 },
             { id: 102, nome: "Skin Cavaleiro de Prata", preco: 1500 },
@@ -536,7 +541,7 @@
             { id: 108, nome: "Skin Guardião Estelar", preco: 50000 }
         ];
 
-        // SUPRIMENTOS / POÇÕES EXPANDIDOS
+        // SUPRIMENTOS
         const listaSuprimentosLoja = [
             { id: 201, nome: "Poção de Cura Pequena (+30 HP)", preco: 100 },
             { id: 202, nome: "Poção de Cura Média (+60 HP)", preco: 250 },
@@ -546,7 +551,7 @@
             { id: 206, nome: "Poção de Regeneração Contínua", preco: 1200 }
         ];
 
-        // 25 AVATARES (5 LIBERADOS, 20 BLOQUEADOS)
+        // 25 AVATARES
         const avataresDisponiveis = [];
         for(let i=1; i<=25; i++) {
             let reqNivel = i <= 5 ? 1 : Math.floor(i * 1.5);
@@ -556,7 +561,7 @@
             });
         }
 
-        // MAIS DE 50 HABILIDADES NA ÁRVORE DE PODERES
+        // ÁRVORE DE MAIS DE 50 HABILIDADES
         const listaArvorePoderes = [];
         const tiposMagia = ['Fogo', 'Raio', 'Gelo', 'Vento', 'Sombra', 'Luz', 'Terra', 'Arcano'];
         for(let i=1; i<=55; i++) {
