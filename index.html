@@ -2,307 +2,370 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Dragon War: Rise of Power — 3D</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dragon War - Rise of Power | Servidor Oficial</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#050509;color:#fff;font-family:Arial,sans-serif;overflow:hidden}
-#game{position:relative;width:100vw;height:100vh}
-canvas{display:block;width:100%;height:100%;background:#111}
-#start,#menu,#shop,#dragonPanel,#pausePanel{
- position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
- background:radial-gradient(circle,#24113b,#050509 70%);z-index:10;text-align:center
-}
+:root{--bg-color:#0b0f19;--panel-bg:#131b2e;--panel-border:#1e293b;--accent-color:#f59e0b;--adm-color:#ef4444;--diamond-color:#38bdf8;--text-color:#f8fafc}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+body{background-color:var(--bg-color);color:var(--text-color);height:100vh;display:flex;overflow:hidden}
+.screen{width:100%;height:100%;display:flex;justify-content:center;align-items:center;position:absolute;top:0;left:0;background:radial-gradient(circle,#1e293b 0%,#0b0f19 100%);z-index:10}
 .hidden{display:none!important}
-h1{font-size:clamp(30px,6vw,70px);margin:8px;text-shadow:0 0 25px #7b2cff}
-.sub{opacity:.85;margin:4px 0 20px}
-button{border:0;border-radius:12px;padding:12px 18px;margin:6px;background:#6d28d9;color:white;font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 0 14px #000}
-button:hover{filter:brightness(1.2)}
-#hud{position:absolute;top:10px;left:10px;right:10px;z-index:5;display:flex;gap:8px;flex-wrap:wrap;pointer-events:none}
-.stat{background:#000b;border:1px solid #ffffff22;border-radius:10px;padding:7px 10px;font-size:14px}
-#controls{position:absolute;bottom:12px;left:12px;z-index:5;background:#0009;padding:9px;border-radius:10px;font-size:13px}
-#actions{position:absolute;right:12px;bottom:12px;z-index:5;display:flex;flex-wrap:wrap;justify-content:flex-end}
-#actions button{font-size:14px;margin:3px;padding:10px 13px}
-#msg{position:absolute;left:50%;top:17%;transform:translateX(-50%);z-index:6;background:#000b;padding:10px 16px;border-radius:10px;min-width:220px;text-align:center}
-.panel{max-width:620px;width:92%;background:#000c;border:1px solid #ffffff22;border-radius:18px;padding:24px;box-shadow:0 0 35px #000}
-.row{display:flex;justify-content:space-between;gap:10px;align-items:center;border-bottom:1px solid #ffffff16;padding:9px 0}
-.small{font-size:13px;opacity:.8}
-#cross{position:absolute;left:50%;top:50%;width:20px;height:20px;transform:translate(-50%,-50%);z-index:4;pointer-events:none}
-#cross:before,#cross:after{content:"";position:absolute;background:#fff;box-shadow:0 0 4px #000}
-#cross:before{width:20px;height:2px;top:9px}
-#cross:after{height:20px;width:2px;left:9px}
+.card{background:var(--panel-bg);padding:30px;border-radius:12px;width:380px;box-shadow:0 10px 25px rgba(0,0,0,.8);border:2px solid var(--accent-color);text-align:center}
+.card img.logo-login{width:100%;max-height:90px;object-fit:contain;margin-bottom:20px;border-radius:6px}
+.card h2{margin-bottom:20px;color:var(--accent-color);font-size:20px;text-transform:uppercase;letter-spacing:1px}
+.input-group{margin-bottom:15px;text-align:left}.input-group label{display:block;margin-bottom:5px;font-size:14px;color:#94a3b8}
+.input-group input{width:100%;padding:10px;border-radius:6px;border:1px solid var(--panel-border);background:#070a12;color:white}
+.btn{width:100%;padding:10px;background:linear-gradient(90deg,#f59e0b,#d97706);border:none;color:#000;font-weight:bold;border-radius:6px;cursor:pointer;transition:.2s;text-transform:uppercase}
+.btn:hover{opacity:.9;transform:translateY(-1px)}.btn-adm{background:linear-gradient(90deg,#ef4444,#b91c1c);color:white;margin-top:10px}
+.btn-blue{background:linear-gradient(90deg,#38bdf8,#0284c7);color:#000}
+.btn-green{background:linear-gradient(90deg,#10b981,#059669);color:white}
+.btn-purple{background:linear-gradient(90deg,#8b5cf6,#6d28d9);color:white}
+.btn-gray{background:#334155;color:white}
+.auth-switch{margin-top:15px;font-size:13px;color:#94a3b8;cursor:pointer}.auth-switch:hover{color:var(--accent-color);text-decoration:underline}
+#game-container{display:flex;width:100%;height:100%;background:linear-gradient(rgba(11,15,25,.85),rgba(11,15,25,.95)),url('89097.png') no-repeat center center;background-size:cover;position:relative}
+sidebar{width:260px;background:rgba(19,27,46,.95);border-right:1px solid var(--panel-border);display:flex;flex-direction:column;padding:20px;backdrop-filter:blur(5px)}
+.server-banner{width:100%;height:75px;background:url('89097.png') no-repeat center center;background-size:cover;border-radius:6px;margin-bottom:15px;border:1px solid var(--accent-color)}
+.user-profile{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-bottom:15px;border-bottom:1px solid var(--panel-border)}
+.user-avatar{width:45px;height:45px;background:var(--accent-color);color:#000;border-radius:50%;display:flex;justify-content:center;align-items:center;font-weight:bold;font-size:18px;border:2px solid white;object-fit:cover}
+.menu-list{list-style:none;display:flex;flex-direction:column;gap:8px;flex-grow:1;overflow-y:auto}
+.menu-item{padding:10px 15px;border-radius:6px;cursor:pointer;background:rgba(255,255,255,.03);transition:.2s;font-size:14px;font-weight:600;border-left:3px solid transparent}
+.menu-item:hover{background:rgba(255,255,255,.08)}.menu-item.active{background:rgba(245,158,11,.15);color:var(--accent-color);border-left:3px solid var(--accent-color)}
+main{flex-grow:1;display:flex;flex-direction:column;position:relative;padding-bottom:60px}
+header{padding:15px 25px;background:rgba(19,27,46,.9);border-bottom:1px solid var(--panel-border);display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(5px)}
+.content-area{flex-grow:1;padding:25px;overflow-y:auto;position:relative}.panel-section{display:none}.panel-section.active{display:block}
+.adm-tag{color:var(--adm-color);font-weight:bold}
+.dragon-rainbow-name{background:linear-gradient(90deg,#ef4444,#f59e0b,#10b981,#3b82f6,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900;font-size:15px}
+.global-chat-bar{position:absolute;bottom:0;left:0;width:100%;height:55px;background:rgba(2,6,23,.95);border-top:1px solid var(--panel-border);display:flex;align-items:center;padding:0 15px;gap:10px;z-index:50;backdrop-filter:blur(5px)}
+.global-chat-bar span{font-size:12px;color:var(--accent-color);font-weight:bold;white-space:nowrap;text-transform:uppercase}
+.global-chat-bar input{flex-grow:1;padding:8px 12px;border-radius:4px;border:1px solid var(--panel-border);background:#070a12;color:white;font-size:13px}
+.global-chat-bar button{padding:8px 15px;background:var(--adm-color);border:none;color:white;font-weight:bold;border-radius:4px;cursor:pointer;text-transform:uppercase;font-size:12px}
+.chat-box{height:130px;background:rgba(2,6,23,.8);border:1px solid var(--panel-border);border-radius:6px;padding:10px;overflow-y:auto;font-size:13px;display:flex;flex-direction:column;gap:5px;margin-top:10px}
+.chat-msg{background:rgba(255,255,255,.05);padding:5px 8px;border-radius:4px}.chat-msg.global{border-left:3px solid var(--adm-color);background:rgba(239,68,68,.15)}
+.grid-boxes{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:15px}.box-item{background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:8px;padding:15px;text-align:center}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px}th,td{padding:10px;border-bottom:1px solid var(--panel-border);text-align:left}
+th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spacing:1px}
+.form-control{width:100%;padding:8px;margin-top:5px;margin-bottom:15px;background:#070a12;border:1px solid var(--panel-border);color:white;border-radius:4px}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);display:flex;justify-content:center;align-items:center;z-index:100}
+.modal-card{background:var(--panel-bg);border:2px solid var(--accent-color);padding:25px;border-radius:10px;width:450px;max-height:90vh;overflow:auto;box-shadow:0 10px 30px rgba(0,0,0,.9);position:relative}
+.close-modal{position:absolute;top:10px;right:15px;background:none;border:none;color:white;font-size:20px;cursor:pointer}
+.shop-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.shop-tabs button{width:auto;padding:7px 12px}
+.shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-height:520px;overflow-y:auto}
+.item-card{background:var(--panel-bg);border:1px solid var(--panel-border);padding:12px;border-radius:8px}.item-card h4{color:var(--accent-color);font-size:14px}
+.item-card p{font-size:11px;color:#94a3b8;margin:5px 0}.price{color:#f59e0b;font-weight:bold;font-size:12px}
+.badge{display:inline-block;padding:3px 7px;border-radius:20px;font-size:10px;font-weight:bold;background:#334155;margin:2px}
+.badge.online{background:#14532d;color:#86efac}.badge.offline{background:#334155;color:#cbd5e1}.badge.adm{background:#7f1d1d;color:#fecaca}.badge.vip{background:#78350f;color:#fde68a}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:15px}.stat{background:var(--panel-bg);border:1px solid var(--panel-border);padding:14px;border-radius:8px;text-align:center}.stat b{font-size:22px;color:var(--accent-color);display:block}
+.support-chat{height:260px;background:#020617;border:1px solid var(--panel-border);border-radius:7px;padding:10px;overflow-y:auto;display:flex;flex-direction:column;gap:7px;margin:10px 0}
+.support-msg{max-width:80%;padding:8px;border-radius:8px;background:#172033;font-size:13px}.support-msg.me{align-self:flex-end;background:#713f12}.support-msg.adm{border-left:3px solid var(--adm-color)}
+.progress{height:7px;background:#1e293b;border-radius:5px;overflow:hidden;margin-top:5px}.progress>div{height:100%;background:var(--accent-color)}
+#notificacoes-box{position:fixed;top:15px;right:15px;width:min(360px,calc(100vw - 30px));z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}.dw-notificacao{background:rgba(15,23,42,.97);border:1px solid var(--panel-border);border-left:4px solid var(--accent-color);color:#fff;padding:10px 12px;border-radius:8px;box-shadow:0 10px 25px rgba(0,0,0,.45);font-size:12px}.dw-notificacao.success{border-left-color:#10b981}.dw-notificacao.danger{border-left-color:#ef4444}.dw-notificacao.info{border-left-color:#38bdf8}
+@media(max-width:900px){sidebar{width:210px}.grid-boxes,.shop-grid{grid-template-columns:repeat(2,1fr)}.stat-grid{grid-template-columns:repeat(2,1fr)}header{gap:8px;flex-wrap:wrap}.content-area{padding:15px}}
+@media(max-width:650px){sidebar{width:175px;padding:10px}.server-banner{height:55px}.menu-item{font-size:11px;padding:8px}.grid-boxes,.shop-grid{grid-template-columns:1fr}.modal-card{width:92%}}
 </style>
 </head>
 <body>
-<div id="game">
-<canvas id="canvas"></canvas>
-<div id="cross"></div>
-<div id="hud" class="hidden">
- <div class="stat">❤️ HP: <span id="hp">5</span></div>
- <div class="stat">🔵 Mana: <span id="mana">500</span></div>
- <div class="stat">⭐ XP: <span id="xp">0</span></div>
- <div class="stat">🏆 Nv: <span id="level">1</span></div>
- <div class="stat">🪙 <span id="coins">10000</span></div>
- <div class="stat">🎯 <span id="points">0</span></div>
- <div class="stat">⚔️ <span id="weapon">Faca</span></div>
-</div>
-<div id="controls" class="hidden">W/S = andar • A/D = virar • Espaço = atacar • Q = poder • P = pausa</div>
-<div id="actions" class="hidden">
- <button onclick="attack()">⚔️ ATACAR</button>
- <button onclick="usePower()">🔥 PODER</button>
- <button onclick="openShop()">🛒 LOJA</button>
- <button onclick="summonDragon()">🐉 DRAGÃO</button>
- <button onclick="togglePause()">⏸️ PAUSAR</button>
- <button id="musicBtn" onclick="toggleMusic()">🎵 Música: OFF</button>
- <button onclick="saveGame()">💾 SALVAR</button>
- <button onclick="loadGame()">↩️ CARREGAR</button>
- <button onclick="home()">🏠 INÍCIO</button>
-</div>
-<div id="msg">Bem-vindo!</div>
+<div id="notificacoes-box"></div>
 
-<div id="start">
- <div style="font-size:90px">🐉</div>
- <h1>🔥 Dragon War: Rise of Power 🔥</h1>
- <div class="sub">🎮 Desenvolvido por Gabriel Cabral • Edição 3D</div>
- <button onclick="startGame()">▶️ JOGAR</button>
- <div class="small">Mundo 3D em primeira pessoa • teclado ou botões</div>
-</div>
+<div id="login-screen" class="screen">
+<div class="card">
+<img src="89097.png" alt="Dragon War Logo" class="logo-login">
+<h2 id="auth-title">Dragon War - Servidor Real</h2>
+<div class="input-group"><label>E-mail:</label><input type="email" id="auth-email" placeholder="seuemail@dominio.com"></div>
+<div class="input-group"><label>Senha:</label><input type="password" id="auth-pass" placeholder="******"></div>
+<button class="btn" id="auth-btn-action" onclick="realizarAutenticacao()">Entrar na Partida</button>
+<div class="auth-switch" id="auth-switch-mode" onclick="alternarModoAuth()">Não tem conta? Cadastre-se com ID Real</div>
+</div></div>
 
-<div id="menu" class="hidden">
- <div class="panel">
-  <h2>☰ MENU</h2>
-  <button onclick="closePanels()">▶️ VOLTAR</button>
-  <button onclick="openShop()">🛒 LOJA</button>
-  <button onclick="summonDragon()">🐉 BATALHA DO DRAGÃO</button>
-  <button onclick="togglePause()">⏸️ PAUSAR</button>
- </div>
+<div id="game-container" class="hidden">
+<sidebar>
+<div class="server-banner" title="Dragon War - Rise of Power"></div>
+<div class="user-profile">
+<img src="" id="sidebar-avatar-img" class="user-avatar" style="display:none">
+<div class="user-avatar" id="sidebar-avatar-txt">U</div>
+<div><div id="sidebar-name" style="font-weight:bold;font-size:15px">Usuário</div><div style="font-size:11px;color:#94a3b8" id="sidebar-role">Jogador Real</div></div>
 </div>
+<ul class="menu-list" id="menu-list"></ul>
+<button class="btn btn-gray" onclick="sairDaConta()" style="margin-top:12px;width:100%;font-size:12px">🚪 SAIR DA CONTA</button>
+</sidebar>
 
-<div id="shop" class="hidden">
- <div class="panel">
-  <h2>🛒 LOJA</h2>
-  <div id="shopItems"></div>
-  <button onclick="closePanels()">↩️ VOLTAR</button>
- </div>
-</div>
+<main>
+<header>
+<h3 id="current-page-title" style="text-transform:uppercase;font-size:16px;letter-spacing:1px">Painel</h3>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+<div style="font-size:13px;background:rgba(0,0,0,.4);padding:5px 10px;border-radius:20px">Moedas: <span id="user-coins" style="color:#f59e0b;font-weight:bold">150</span> 🪙</div>
+<div style="font-size:13px;background:rgba(0,0,0,.4);padding:5px 10px;border-radius:20px">Diamantes: <span id="user-diamonds" style="color:#38bdf8;font-weight:bold">10</span> 💎</div>
+<div style="font-size:13px;background:rgba(0,0,0,.4);padding:5px 10px;border-radius:20px">Nível: <span id="user-level" style="color:#10b981;font-weight:bold">5</span> ⚡</div>
+</div></header>
 
-<div id="dragonPanel" class="hidden">
- <div class="panel">
-  <div style="font-size:80px">🐉</div>
-  <h2>DRAGÃO DAS SOMBRAS</h2>
-  <p>Vida do Dragão: <b id="dragonHp">500</b></p>
-  <button onclick="attack()">⚔️ ATACAR</button>
-  <button onclick="usePower()">🔥 PODER</button>
-  <button onclick="closeDragon()">↩️ SAIR DA BATALHA</button>
- </div>
-</div>
+<div class="content-area">
 
-<div id="pausePanel" class="hidden">
- <div class="panel">
-  <h2>⏸️ JOGO PAUSADO</h2>
-  <button onclick="togglePause()">▶️ CONTINUAR</button>
-  <button onclick="home()">🏠 TELA INICIAL</button>
- </div>
+<div id="section-jogar" class="panel-section">
+<h2>Modo Batalha - Sistema de Fases</h2>
+<p style="color:#94a3b8;margin-top:5px">Progressão salva por jogador no Firestore.</p>
+<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-top:20px">
+<div class="box-item" style="cursor:pointer" onclick="iniciarFases('normal')"><h3 style="color:var(--accent-color)">Fase Fácil — 30 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Progressão acessível.</p></div>
+<div class="box-item" style="cursor:pointer" onclick="iniciarFases('dificil')"><h3 style="color:var(--accent-color)">Fase Difícil — 30 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Inimigos mais resistentes.</p></div>
+<div class="box-item" style="cursor:pointer" onclick="iniciarFases('avancada')"><h3 style="color:var(--accent-color)">Fase Avançada — 25 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Alta resistência e recompensas.</p></div>
+<div class="box-item" style="cursor:pointer;border-color:var(--adm-color)" onclick="iniciarFases('hardcore')"><h3 style="color:var(--adm-color)">🔥 Hardcore Elite — 25 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Requer nível 25.</p></div>
 </div>
+<div id="arena-fases-container" class="hidden" style="margin-top:20px;background:var(--panel-bg);padding:20px;border-radius:8px;border:1px solid var(--panel-border)">
+<h3 id="fases-titulo-cat" style="color:var(--accent-color)">Fase Ativa</h3>
+<p id="fases-etapa-info" style="font-size:14px;color:#94a3b8;margin:10px 0">Nível 1</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px">
+<div style="background:#070a12;padding:12px;border-radius:6px"><div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px"><span>Sua Vida:</span><span id="player-hp-txt" style="color:#10b981;font-weight:bold">100/100</span></div><div style="width:100%;background:#1e293b;height:8px;border-radius:4px;overflow:hidden"><div id="player-hp-bar" style="width:100%;background:#10b981;height:100%"></div></div></div>
+<div style="background:#070a12;padding:12px;border-radius:6px"><div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px"><span>Poder/Mana:</span><span id="player-mp-txt" style="color:var(--accent-color);font-weight:bold">100/100</span></div><div style="width:100%;background:#1e293b;height:8px;border-radius:4px;overflow:hidden"><div id="player-mp-bar" style="width:100%;background:var(--accent-color);height:100%"></div></div></div>
+</div>
+<div style="background:#070a12;padding:15px;border-radius:6px;margin-bottom:15px"><div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px"><span id="inimigo-alvo-nome">Inimigo</span><span id="movel-hp" style="color:var(--adm-color);font-weight:bold">100%</span></div><div style="width:100%;background:#1e293b;height:10px;border-radius:5px;overflow:hidden"><div id="movel-hp-bar" style="width:100%;background:var(--adm-color);height:100%"></div></div></div>
+<div id="log-batalha" style="background:#020617;padding:10px;border-radius:6px;font-size:12px;color:#94a3b8;height:70px;overflow-y:auto;margin-bottom:15px">Início da batalha!</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<button class="btn" style="width:auto;padding:10px 15px" onclick="batalhaAcao('atacar')">⚔️ Atacar</button>
+<button class="btn btn-blue" style="width:auto;padding:10px 15px" onclick="batalhaAcao('defender')">🛡️ Defender</button>
+<button class="btn btn-purple" style="width:auto;padding:10px 15px" onclick="batalhaAcao('poder')">🔥 Usar Poder</button>
+<button class="btn btn-green" style="width:auto;padding:10px 15px" onclick="batalhaAcao('habilidade')">✨ Usar Habilidade</button>
+<button class="btn btn-gray" style="width:auto;padding:10px 15px" onclick="batalhaAcao('curar')">🧪 Usar Poção</button>
+<button class="btn btn-adm" style="width:auto;padding:10px 15px" onclick="batalhaAcao('fugir')">🏃 Fugir</button>
+</div></div>
 </div>
 
-<script>
-const canvas=document.getElementById("canvas"),ctx=canvas.getContext("2d");
-let W=0,H=0;
-function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}
-addEventListener("resize",resize);resize();
+<div id="section-loja" class="panel-section">
+<h2>🛒 Loja de Dragon War</h2><p style="color:#94a3b8;margin-top:5px">Tudo comprado vai automaticamente para o inventário.</p>
+<div id="adm-loja-controls" class="hidden" style="margin-top:15px;background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)">
+<h4>👑 Criar conteúdo da Loja</h4><select id="new-item-category" class="form-control"><option value="weapon">Arma</option><option value="skin">Skin</option><option value="potion">Poção</option><option value="power">Poder</option></select>
+<input type="text" id="new-item-name" class="form-control" placeholder="Nome"><input type="number" id="new-item-price" class="form-control" placeholder="Preço em moedas">
+<input type="number" id="new-item-damage" class="form-control" placeholder="Dano/Bônus" value="50">
+<button class="btn" onclick="adicionarItemCatalogo()">Salvar no Catálogo Global</button></div>
+<div class="shop-tabs">
+<button class="btn" onclick="mudarCategoriaLoja('all')">🔥 Todos</button><button class="btn btn-blue" onclick="mudarCategoriaLoja('weapon')">⚔️ Armas 50+</button>
+<button class="btn btn-purple" onclick="mudarCategoriaLoja('skin')">🧙 Skins 50+</button><button class="btn btn-green" onclick="mudarCategoriaLoja('potion')">🧪 Poções 20+</button><button class="btn btn-adm" onclick="mudarCategoriaLoja('power')">⚡ Poderes 50+</button>
+</div><div id="loja-grid" class="shop-grid"></div></div>
 
-let hp=5,mana=500,pontos=0,moedas=10000,nivel=1,xp=0,weapon="Faca";
-let dragonHP=500,dragonActive=false,gameStarted=false,gamePaused=false;
-let px=7,py=7,angle=0,move=0,turn=0,last=performance.now();
-let enemies=[{x:4,y:4,hp:60,dead:false},{x:10,y:5,hp:80,dead:false},{x:12,y:10,hp:100,dead:false}];
-const map=[
-"1111111111111111","1000000000000001","1011110111111101","1000010000000101",
-"1011010111110101","1001010000010101","1101011111010101","1001000000010001",
-"1011110111111101","1000000100000001","1011111101111101","1000000001000001",
-"1011110101111101","1000010000000001","1000000000000001","1111111111111111"];
-const weapons=[
- ["Faca",20,0,"🔪"],["Espada",40,100,"⚔️"],["Arco",50,200,"🏹"],["Machado",65,350,"🪓"],["Arma Lendária",90,700,"⚡"]
-];
-const powers=[["Raio",30,35],["Cura",25,2],["Explosão",50,55]];
-function el(id){return document.getElementById(id)}
-function updateHUD(){
- el("hp").textContent=hp;el("mana").textContent=mana;el("xp").textContent=xp;
- el("level").textContent=nivel;el("coins").textContent=moedas;el("points").textContent=pontos;el("weapon").textContent=weapon;
-}
-function msg(t){el("msg").textContent=t;el("msg").style.display="block";clearTimeout(msg.t);msg.t=setTimeout(()=>el("msg").style.display="none",1700)}
-function showGame(v){
- ["hud","controls","actions"].forEach(id=>el(id).classList.toggle("hidden",!v));
-}
-function startGame(){
- gameStarted=true;gamePaused=false;el("start").classList.add("hidden");showGame(true);startMusic();msg("🎮 Bem-vindo ao mundo 3D!");requestAnimationFrame(loop)
-}
-function home(){
- stopMusic();gameStarted=false;gamePaused=false;dragonActive=false;
- ["menu","shop","dragonPanel","pausePanel"].forEach(id=>el(id).classList.add("hidden"));
- showGame(false);el("start").classList.remove("hidden")
-}
-function closePanels(){["menu","shop"].forEach(id=>el(id).classList.add("hidden"))}
-function openShop(){
- if(!gameStarted)return;el("shop").classList.remove("hidden");renderShop()
-}
-function renderShop(){
- let s="";
- weapons.forEach(w=>{
-  s+=`<div class="row"><span>${w[3]} ${w[0]} <span class="small">Dano ${w[1]}</span></span><button onclick="buyWeapon('${w[0]}',${w[2]})">${w[2]===0?"EQUIPAR":"🪙 "+w[2]}</button></div>`
- });
- s+=`<div class="row"><span>🔵 +100 Mana</span><button onclick="buyMana()">🪙 300</button></div>`;
- s+=`<div class="row"><span>❤️ +1 Vida</span><button onclick="buyLife()">🪙 200</button></div>`;
- el("shopItems").innerHTML=s
-}
-function buyWeapon(n,c){
- if(c===0){weapon=n;msg("⚔️ "+n+" equipado")}
- else if(moedas>=c){moedas-=c;weapon=n;msg("✅ "+n+" comprado!")}
- else msg("❌ Moedas insuficientes");
- updateHUD();renderShop()
-}
-function buyMana(){if(moedas>=300){moedas-=300;mana=Math.min(500,mana+100);msg("🔵 Mana aumentado!")}else msg("❌ Moedas insuficientes");updateHUD()}
-function buyLife(){if(moedas>=200){moedas-=200;hp++;msg("❤️ Vida aumentada!")}else msg("❌ Moedas insuficientes");updateHUD()}
+<div id="section-poderes" class="panel-section">
+<h2>⚡ Catálogo de Poderes</h2><p style="color:#94a3b8;margin-top:5px">Poderes disponíveis e poderes criados pelo ADM.</p>
+<div id="adm-poderes-controls" class="hidden" style="margin-top:15px;margin-bottom:15px;background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)">
+<h4>Cadastrar Novo Poder</h4><input type="text" id="poder-nome" class="form-control" placeholder="Nome"><input type="number" id="poder-dano" class="form-control" placeholder="Dano" value="500"><button class="btn" onclick="criarPoder()">Adicionar Poder</button></div>
+<div id="lista-mais-de-50-poderes" class="shop-grid"></div></div>
 
-function summonDragon(){
- if(!gameStarted)return;
- dragonActive=true;el("dragonPanel").classList.remove("hidden");el("dragonHp").textContent=dragonHP;
- msg("🐉 O Dragão apareceu!");
-}
-function closeDragon(){dragonActive=false;el("dragonPanel").classList.add("hidden")}
-function damageOf(){return weapons.find(w=>w[0]===weapon)?.[1]||20}
-function attack(){
- if(gamePaused||!gameStarted)return;
- let d=damageOf();
- if(dragonActive){
-  dragonHP=Math.max(0,dragonHP-d);el("dragonHp").textContent=dragonHP;
-  msg("⚔️ Você causou "+d+" de dano!");
-  if(dragonHP<=0){pontos+=1000;moedas+=500;xp+=300;dragonActive=false;el("dragonPanel").classList.add("hidden");msg("🏆 DRAGÃO DERROTADO! +1000 pontos +500 moedas");levelCheck()}
-  else enemyHit();
- }else{
-  let hit=enemies.find(e=>!e.dead && Math.hypot(e.x-px,e.y-py)<2.0);
-  if(hit){hit.hp-=d;msg("💥 Inimigo atingido: -"+d);if(hit.hp<=0){hit.dead=true;pontos+=100;moedas+=50;xp+=50;levelCheck();msg("👾 Inimigo derrotado! +50 moedas")}}
-  else msg("⚔️ Ataque no ar!");
- }
- updateHUD()
-}
-function enemyHit(){if(Math.random()<.45){hp--;msg("🐉 O dragão atacou! -1 HP");if(hp<=0){hp=5;msg("💀 Você caiu! HP restaurado.");}}updateHUD()}
-function usePower(){
- if(gamePaused||!gameStarted)return;
- let p=powers[0];
- if(mana<30){msg("🔵 Mana insuficiente");return}
- mana-=30;
- if(dragonActive){dragonHP=Math.max(0,dragonHP-55);el("dragonHp").textContent=dragonHP;msg("⚡ RAIO! -55");if(dragonHP<=0){pontos+=1000;moedas+=500;xp+=300;dragonActive=false;el("dragonPanel").classList.add("hidden");msg("🏆 Dragão derrotado com magia!")}}
- else{for(const e of enemies){if(!e.dead&&Math.hypot(e.x-px,e.y-py)<2.8){e.hp-=55;if(e.hp<=0){e.dead=true;pontos+=100;moedas+=50;xp+=50}}}msg("⚡ RAIO lançado!")}
- levelCheck();updateHUD()
-}
-function levelCheck(){while(xp>=nivel*100){xp-=nivel*100;nivel++;mana=500;hp++;msg("⬆️ Você subiu para o nível "+nivel+"!")}}
-function saveGame(){localStorage.setItem("dragon3d",JSON.stringify({hp,mana,pontos,moedas,nivel,xp,weapon,dragonHP}));msg("💾 Jogo salvo!")}
-function loadGame(){
- let s=localStorage.getItem("dragon3d");if(!s){msg("❌ Nenhum save");return}
- Object.assign(window,JSON.parse(s));updateHUD();msg("↩️ Jogo carregado!")
-}
-function togglePause(){
- if(!gameStarted)return;
- gamePaused=!gamePaused;
- el("pausePanel").classList.toggle("hidden",!gamePaused);
- if(gamePaused){stopMusic();msg("⏸️ Jogo pausado")}
- else{startMusic();msg("▶️ Continuando")}
-}
-const keys={};
-addEventListener("keydown",e=>{
- if(e.key==="p"||e.key==="P"||e.key==="Escape"){togglePause();return}
- if(gamePaused)return;
- keys[e.key.toLowerCase()]=true;
- if(e.code==="Space"){e.preventDefault();attack()}
- if(e.key.toLowerCase()==="q")usePower();
- if(e.key.toLowerCase()==="l")openShop();
-});
-addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
+<div id="section-inventario" class="panel-section">
+<h2>🎒 Seu Inventário</h2><p style="color:#94a3b8;margin-top:5px">Itens comprados e recompensas ficam salvos na sua conta.</p><div id="inventario-itens" style="margin-top:15px;display:flex;gap:15px;flex-wrap:wrap"></div></div>
 
-function canMove(x,y){let mx=Math.floor(x),my=Math.floor(y);return map[my]?.[mx]==="0"}
-function movePlayer(dt){
- let speed=2.3*dt;
- let nx=px,ny=py;
- if(keys["w"]||keys["arrowup"]){nx+=Math.cos(angle)*speed;ny+=Math.sin(angle)*speed}
- if(keys["s"]||keys["arrowdown"]){nx-=Math.cos(angle)*speed;ny-=Math.sin(angle)*speed}
- if(keys["a"]||keys["arrowleft"])angle-=2.3*dt;
- if(keys["d"]||keys["arrowright"])angle+=2.3*dt;
- if(canMove(nx,py))px=nx;if(canMove(px,ny))py=ny;
-}
-function castRay(a){
- let dx=Math.cos(a),dy=Math.sin(a),dist=0;
- while(dist<20){
-  dist+=.035;
-  let x=Math.floor(px+dx*dist),y=Math.floor(py+dy*dist);
-  if(map[y]?.[x]==="1")return dist;
- }
- return 20
-}
-function draw3D(){
- ctx.clearRect(0,0,W,H);
- let sky=ctx.createLinearGradient(0,0,0,H/2);sky.addColorStop(0,"#080b24");sky.addColorStop(1,"#32125a");
- ctx.fillStyle=sky;ctx.fillRect(0,0,W,H/2);
- let floor=ctx.createLinearGradient(0,H/2,0,H);floor.addColorStop(0,"#17131e");floor.addColorStop(1,"#050507");
- ctx.fillStyle=floor;ctx.fillRect(0,H/2,W,H/2);
- const rays=Math.min(500,Math.floor(W/2)),fov=Math.PI/3,step=fov/rays;
- for(let i=0;i<rays;i++){
-  let a=angle-fov/2+(i+.5)*step,d=castRay(a)*Math.cos(a-angle);
-  let wallH=Math.min(H*1.4,H/(d*.72));
-  let x=i*W/rays,w=W/rays+1,y=(H-wallH)/2;
-  let shade=Math.max(20,150-d*8);
-  ctx.fillStyle=`rgb(${Math.floor(shade*.45)},${Math.floor(shade*.28)},${shade})`;
-  ctx.fillRect(x,y,w,wallH);
- }
- drawEnemies3D(fov,rays)
-}
-function drawEnemies3D(fov,rays){
- const list=enemies.filter(e=>!e.dead).map(e=>({...e,dist:Math.hypot(e.x-px,e.y-py)})).sort((a,b)=>b.dist-a.dist);
- list.forEach(e=>{
-  let a=Math.atan2(e.y-py,e.x-px)-angle;
-  while(a>Math.PI)a-=Math.PI*2;while(a<-Math.PI)a+=Math.PI*2;
-  if(Math.abs(a)>fov/2+.2)return;
-  let x=W/2+(a/(fov/2))*(W/2),size=Math.min(H*.65,H/(e.dist*.75));
-  let y=H/2-size*.45;
-  ctx.font=size+"px Arial";ctx.textAlign="center";ctx.fillText("👾",x,y+size*.55);
-  ctx.font=Math.max(12,size*.12)+"px Arial";ctx.fillStyle="#fff";ctx.fillText("HP "+Math.max(0,e.hp),x,y-4)
- });
- if(dragonActive){
-  let a=Math.atan2(7-py,10-px)-angle;
-  while(a>Math.PI)a-=Math.PI*2;while(a<-Math.PI)a+=Math.PI*2;
-  if(Math.abs(a)<fov/2){
-   let d=Math.hypot(10-px,7-py),x=W/2+(a/(fov/2))*(W/2),size=Math.min(H*.9,H/(Math.max(.7,d)*.48));
-   ctx.font=size+"px Arial";ctx.textAlign="center";ctx.fillText("🐉",x,H/2+size*.3);
-  }
- }
-}
-function loop(now){
- if(!gameStarted){return}
- requestAnimationFrame(loop);
- if(gamePaused)return;
- let dt=Math.min(.05,(now-last)/1000);last=now;
- movePlayer(dt);draw3D();
-}
-draw3D();
+<div id="section-rank" class="panel-section">
+<h2>🏆 Rankings e Achievements</h2>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;margin-bottom:15px">
+<button class="btn" style="width:auto;padding:6px 15px" onclick="mudarTabRank('global')">🌎 Global</button><button class="btn btn-green" style="width:auto;padding:6px 15px" onclick="mudarTabRank('online')">🟢 Online</button><button class="btn btn-purple" style="width:auto;padding:6px 15px" onclick="mudarTabRank('achievements')">🏅 Achievements</button>
+</div><div id="rank-content"></div></div>
 
-let audioCtx=null,musicTimer=null,musicOn=false,musicStep=0;
-function tone(freq,duration,type,volume){
- if(!audioCtx)return;let o=audioCtx.createOscillator(),g=audioCtx.createGain();
- o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(volume,audioCtx.currentTime);
- g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);
- o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration)
+<div id="section-config-jogador" class="panel-section">
+<h2>⚙️ Meu Perfil</h2><div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+<div style="background:var(--panel-bg);padding:20px;border-radius:8px;border:1px solid var(--panel-border)">
+<h4>👤 Identidade Real</h4><label style="margin-top:10px;display:block">Firebase UID:</label><input type="text" id="player-real-id" class="form-control" readonly style="color:var(--accent-color);font-weight:bold;font-family:monospace">
+<label>Nome exibido:</label><input type="text" id="player-edit-name" class="form-control">
+<label>E-mail:</label><input type="text" id="player-edit-email" class="form-control" readonly>
+<label>URL do Avatar:</label><input type="text" id="player-edit-avatar" class="form-control" placeholder="https://...">
+<div id="perfil-recursos" style="margin:10px 0;color:#94a3b8"></div><button class="btn" onclick="salvarPerfilJogador()">Salvar Alterações</button>
+</div>
+<div style="background:var(--panel-bg);padding:20px;border-radius:8px;border:1px solid var(--panel-border)">
+<h4>🔊 Sistema de Som</h4><label>Volume da Música:</label><input type="range" min="0" max="100" value="60" class="form-control" id="vol-musica" oninput="atualizarVolume()">
+<label>Volume dos Efeitos:</label><input type="range" min="0" max="100" value="80" class="form-control" id="vol-efeitos">
+<button class="btn btn-blue" onclick="alternarSom()">🔊 Ligar/Desligar Música</button>
+<p style="font-size:11px;color:#94a3b8;margin-top:10px">Coloque um arquivo chamado <b>music.mp3</b> na mesma pasta do HTML.</p></div></div></div>
+
+<div id="section-jogadores" class="panel-section">
+<h2>👥 Jogadores Reais do Servidor</h2><div class="stat-grid"><div class="stat"><b id="adm-total">0</b>Total</div><div class="stat"><b id="adm-online">0</b>Online</div><div class="stat"><b id="adm-adms">0</b>ADMs</div><div class="stat"><b id="adm-banidos">0</b>Banidos</div></div>
+<table><thead><tr><th>UID</th><th>Nome/E-mail</th><th>Status</th><th>Cargo</th><th>Ação</th></tr></thead><tbody id="tabela-jogadores-server"></tbody></table></div>
+
+<div id="section-evento" class="panel-section">
+<h2>🎉 Eventos & Recompensa Diária</h2>
+<div style="background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border);margin-top:10px">
+<h4>🎁 Recompensa Diária</h4><p style="font-size:14px;color:#94a3b8;margin-top:5px">Disponível uma vez a cada 24 horas.</p>
+<button id="daily-btn" class="btn" style="margin-top:10px;width:auto" onclick="resgatarRecompensaDiaria()">🎁 Resgatar +100 🪙 +5 💎</button><div id="daily-countdown" style="margin-top:8px;color:#94a3b8"></div></div>
+<div id="adm-evento-controls" class="hidden" style="margin-top:15px;background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)">
+<h4>👑 Criar Evento Global</h4><input type="text" id="novo-evento-titulo" class="form-control" placeholder="Título"><input type="text" id="novo-evento-desc" class="form-control" placeholder="Descrição"><input type="number" id="novo-evento-reward" class="form-control" placeholder="Recompensa em moedas" value="100"><button class="btn btn-purple" onclick="criarEventoGlobal()">Publicar Evento</button></div>
+<div id="lista-eventos-criados" style="margin-top:15px"></div></div>
+
+<div id="section-painel-adm" class="panel-section">
+<h2>👑 Painel ADM — Admin Gabriel</h2><div class="stat-grid"><div class="stat"><b id="adm-total2">0</b>Jogadores</div><div class="stat"><b id="adm-online2">0</b>Online</div><div class="stat"><b>VIP 10</b>👑 Principal</div><div class="stat"><b id="adm-chatrooms">0</b>Atendimentos</div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:15px">
+<div style="background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)">
+<h4>📢 Mensagem Global</h4><input id="global-msg-adm" class="form-control" placeholder="Mensagem para todos"><button class="btn btn-adm" onclick="enviarMensagemGlobalAdm()">Publicar</button></div>
+<div style="background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)">
+<h4>💬 Puxar jogador</h4><input id="target-player" class="form-control" placeholder="UID ou e-mail"><button class="btn btn-purple" onclick="abrirAtendimentoPorBusca()">Abrir Sala de Atendimento</button></div>
+<div style="background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)">
+<h4>🎁 Recompensa</h4><input id="reward-target" class="form-control" placeholder="UID do jogador"><input id="reward-coins" class="form-control" type="number" placeholder="Moedas" value="100"><button class="btn" onclick="darRecompensaAdm()">Enviar Recompensa</button></div>
+<div style="background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)">
+<h4>⚙️ Configuração VIP</h4><button class="btn btn-gray" onclick="alert('Sistema VIP: Em desenvolvimento')">Adicionar VIP</button><button class="btn btn-gray" onclick="alert('Sistema VIP: Em desenvolvimento')">Comprar VIP</button></div>
+</div>
+<div style="margin-top:15px;background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)"><h4>📝 Logs Administrativos</h4><div id="adm-logs" class="chat-box"></div></div>
+</div>
+
+<div style="margin-top:30px;border-top:1px solid var(--panel-border);padding-top:15px"><h4>Histórico do Chat Global</h4><div class="chat-box" id="chat-container"></div></div>
+</div></main>
+
+<div class="global-chat-bar"><span>Chat Global:</span><input type="text" id="footer-chat-input" placeholder="Digite sua mensagem..."><button onclick="enviarMensagemRodape()">Enviar</button></div>
+</div>
+
+<div id="modal-jogador" class="modal-overlay hidden"><div class="modal-card"><button class="close-modal" onclick="fecharModalJogador()">&times;</button>
+<h3 style="color:var(--accent-color);margin-bottom:15px">🛡️ Gestão do Jogador</h3><div style="font-size:14px;display:flex;flex-direction:column;gap:8px;margin-bottom:15px">
+<div><strong>UID:</strong> <span id="m-id" style="color:#f59e0b;font-family:monospace"></span></div><div><strong>Nome:</strong> <span id="m-nome"></span></div><div><strong>Status:</strong> <span id="m-status"></span></div></div>
+<button class="btn btn-purple" onclick="abrirAtendimentoSelecionado()">💬 Puxar para Atendimento</button>
+<button class="btn" onclick="atribuirSubAdm()">👑 Conceder/Remover ADM</button>
+<button class="btn btn-adm" onclick="alternarBanSelecionado()">🚫 Banir/Desbanir</button></div></div>
+
+<div id="modal-atendimento" class="modal-overlay hidden"><div class="modal-card" style="width:600px"><button class="close-modal" onclick="fecharAtendimento()">&times;</button>
+<h3 style="color:var(--adm-color);margin-bottom:4px">💬 Sala de Atendimento</h3><div id="support-header" style="font-size:12px;color:#94a3b8;margin-bottom:8px"></div>
+<div id="support-messages" class="support-chat"></div>
+<div style="display:flex;gap:8px"><input id="support-input" class="form-control" style="margin:0" placeholder="Digite sua mensagem..." onkeydown="if(event.key==='Enter')enviarMensagemAtendimento()"><button class="btn btn-adm" style="width:110px;margin:0" onclick="enviarMensagemAtendimento()">Enviar</button></div>
+<button class="btn btn-gray" style="margin-top:10px" onclick="fecharAtendimento()">Fechar janela</button></div></div>
+
+<audio id="bg-music" loop src="music.mp3"></audio>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import{getFirestore,doc,setDoc,getDoc,getDocs,updateDoc,addDoc,collection,query,orderBy,onSnapshot,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig={apiKey:"AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",authDomain:"dragon-war-rise-of-power-2a9f1.firebaseapp.com",projectId:"dragon-war-rise-of-power-2a9f1",storageBucket:"dragon-war-rise-of-power-2a9f1.firebasestorage.app",messagingSenderId:"115455691167",appId:"1:115455691167:web:ff3638f67b66c17c5515aa",measurementId:"G-S7XE2EN9CL"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+const EMAIL_ADMIN="groupsacabraldigital@gmail.com";
+let modoCadastro=false, unsubscribeGlobal=null, unsubscribeSupport=null, heartbeatTimer=null;
+let categoriaLoja="all", jogadorSelecionadoModal={id:"",nome:"",data:{}}, salaAtualId="";
+let usuarioAtual={uid:"",email:"",displayName:"",avatar:"",isAdm:false,isSubAdm:false,coins:150,diamonds:10,level:5,xp:0,inventory:[],phaseProgress:{normal:1,dificil:1,avancada:1,hardcore:1},achievements:[],dailyRewardLastClaim:0,banned:false};
+let faseAtualInfo={categoria:"",etapa:1,hpMovel:100,maxHp:100,playerHp:100,playerMp:100,defend:false};
+
+const categorias={normal:{nome:"Fácil",max:30,mult:1,hp:100},dificil:{nome:"Difícil",max:30,mult:1.6,hp:180},avancada:{nome:"Avançado",max:25,mult:2.5,hp:300},hardcore:{nome:"Hardcore Elite",max:25,mult:4,hp:500}};
+const alvos={normal:["Goblin de Cinzas","Cadeira de Ferro","Lobo Sombrio","Guardião de Madeira","Dragão Jovem"],dificil:["Orc de Aço","Golem Pesado","Cavaleiro Negro","Dragão de Gelo","Guardião Real"],avancada:["Titã Arcano","Golem Mítico","Dragão Ancião","Rei Sombrio","Colosso"],hardcore:["Elite Infernal","Titã do Caos","Dragão Supremo","Rei Demônio","Monarca do Abismo"]};
+
+const achievementsCatalog=[
+["first_login","👋 Primeiro Acesso","Entre no servidor pela primeira vez."],["first_purchase","🛒 Primeira Compra","Compre seu primeiro item."],["five_battles","⚔️ Guerreiro","Conclua 5 níveis."],["ten_battles","🔥 Veterano","Conclua 10 níveis."],["level10","⚡ Nível 10","Chegue ao nível 10."],["level25","👑 Elite","Chegue ao nível 25."],["collector10","🎒 Colecionador","Tenha 10 itens."],["power10","✨ Mestre dos Poderes","Tenha 10 poderes."],["skin5","🧙 Estiloso","Tenha 5 skins."],["weapon10","⚔️ Arsenal","Tenha 10 armas."],["easy30","🏆 Fácil Completo","Complete o modo Fácil."],["hard30","💀 Difícil Completo","Complete o modo Difícil."],["advanced25","🌋 Avançado Completo","Complete o modo Avançado."],["hardcore25","☠️ Hardcore Completo","Complete Hardcore Elite."],["daily7","🎁 Constante","Resgate 7 recompensas diárias."],["rich","💰 Rico","Tenha 10.000 moedas."],["diamond","💎 Guardião","Tenha 500 diamantes."],["admin","👑 Administrador","Possua permissão ADM."]];
+
+function gerarCatalogo(){
+ let arr=[];const elements=["Fogo","Gelo","Raio","Sombra","Luz","Caos","Terra","Vento","Plasma","Inferno"];
+ for(let i=1;i<=60;i++)arr.push({id:"weapon_"+i,nome:["Espada","Machado","Lança","Arco","Adaga","Martelo"][i%6]+" "+elements[i%10]+" #"+i,category:"weapon",price:100+i*20,stat:20+i*4,desc:"Dano +"+(20+i*4)});
+ for(let i=1;i<=60;i++)arr.push({id:"skin_"+i,nome:"Skin "+elements[i%10]+" "+i,category:"skin",price:150+i*25,stat:5+i,desc:"Vida +"+(5+i)+" • Dano +"+Math.floor(i/2)});
+ for(let i=1;i<=25;i++)arr.push({id:"potion_"+i,nome:"Poção "+["de Vida","de Mana","Suprema","de Fúria","de Defesa"][i%5]+" #"+i,category:"potion",price:40+i*5,stat:20+i*3,desc:"Efeito +"+(20+i*3)});
+ for(let i=1;i<=60;i++)arr.push({id:"power_"+i,nome:"Poder "+elements[i%10]+" "+["Lâmina","Garra","Sopro","Meteoro","Escudo","Esfera"][i%6]+" #"+i,category:"power",price:180+i*30,stat:50+i*10,desc:"Poder +"+(50+i*10)});
+ return arr;
 }
-function playBattleNote(){
- if(!audioCtx||!musicOn)return;
- const n=[110,110,146.83,130.81,110,164.81,146.83,98],b=[55,55,73.42,65.41];
- let f=n[musicStep%n.length],bb=b[Math.floor(musicStep/2)%b.length];
- tone(f,.16,"sawtooth",.045);if(musicStep%2===0)tone(bb,.25,"triangle",.06);musicStep++
+let catalogo=gerarCatalogo();
+
+function atualizarMoedasDiamantesUI(){document.getElementById("user-coins").textContent=usuarioAtual.coins;document.getElementById("user-diamonds").textContent=usuarioAtual.diamonds;document.getElementById("user-level").textContent=usuarioAtual.level}
+function nomeAtual(){return usuarioAtual.displayName||usuarioAtual.email.split("@")[0]}
+function atualizarPerfilUI(){
+ const img=document.getElementById("sidebar-avatar-img"),txt=document.getElementById("sidebar-avatar-txt");
+ if(usuarioAtual.isAdm){document.getElementById("sidebar-name").innerHTML='<span class="dragon-rainbow-name">ADM GABRIEL</span> <span class="adm-tag">[👑 ADM]</span>';document.getElementById("sidebar-role").innerText="SUPER ADM • VIP 10";img.src=usuarioAtual.avatar||"89097.png";img.style.display="block";txt.style.display="none"}
+ else{document.getElementById("sidebar-name").innerHTML=nomeAtual()+(usuarioAtual.isSubAdm?' <span style="color:#f59e0b">[MOD]</span>':"");document.getElementById("sidebar-role").innerText=usuarioAtual.isSubAdm?"Moderador":"Aventureiro Real";if(usuarioAtual.avatar){img.src=usuarioAtual.avatar;img.style.display="block";txt.style.display="none"}else{txt.innerText=nomeAtual().charAt(0).toUpperCase();txt.style.display="flex";img.style.display="none"}}
+ atualizarMoedasDiamantesUI();
+ document.getElementById("player-real-id").value=usuarioAtual.uid;
+ document.getElementById("player-edit-name").value=usuarioAtual.displayName||nomeAtual();
+ document.getElementById("player-edit-email").value=usuarioAtual.email;
+ document.getElementById("player-edit-avatar").value=usuarioAtual.avatar||"";
+ document.getElementById("perfil-recursos").innerHTML=`Nível ${usuarioAtual.level} • ${usuarioAtual.coins} 🪙 • ${usuarioAtual.diamonds} 💎 • XP ${usuarioAtual.xp}`;
 }
-function startMusic(){
- if(musicOn)return;try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume();musicOn=true;el("musicBtn").textContent="🎵 Música: ON";musicStep=0;playBattleNote();musicTimer=setInterval(playBattleNote,220)}catch(e){msg("⚠️ Áudio não liberado")}
+function montarMenuLateral(){
+ const m=document.getElementById("menu-list");m.innerHTML="";
+ const itens=[{id:"jogar",label:"🎮 Modo Batalha"},{id:"loja",label:"🛒 Loja & Itens"},{id:"poderes",label:"⚡ Poderes (50+)"},{id:"inventario",label:"🎒 Inventário"},{id:"rank",label:"🏆 Rankings"},{id:"config-jogador",label:"⚙ Meu Perfil"},{id:"evento",label:"🎉 Eventos"}];
+ if(usuarioAtual.isAdm||usuarioAtual.isSubAdm)itens.push({id:"jogadores",label:"👥 Jogadores Reais"},{id:"painel-adm",label:"👑 Painel ADM"});
+ itens.forEach((x,i)=>{let li=document.createElement("li");li.className="menu-item"+(i===0?" active":"");li.innerText=x.label;li.onclick=()=>trocarSecao(x.id,li);m.appendChild(li)});
+ trocarSecao("jogar",m.children[0]);
 }
-function stopMusic(){musicOn=false;if(musicTimer){clearInterval(musicTimer);musicTimer=null}el("musicBtn").textContent="🎵 Música: OFF"}
-function toggleMusic(){if(musicOn)stopMusic();else startMusic()}
+window.trocarSecao=(id,el)=>{document.querySelectorAll(".panel-section").forEach(x=>x.classList.remove("active"));document.getElementById("section-"+id)?.classList.add("active");document.querySelectorAll(".menu-item").forEach(x=>x.classList.remove("active"));if(el)el.classList.add("active");document.getElementById("current-page-title").innerText=el?el.innerText:id;if(id==="jogadores"&&usuarioAtual.isAdm)carregarJogadoresReaisDoBanco();if(id==="loja")renderLoja();if(id==="inventario")atualizarInventarioUI();if(id==="rank")mudarTabRank("global")};
+
+async function carregarJogador(){
+ const ref=doc(db,"jogadores_reais",auth.currentUser.uid),snap=await getDoc(ref),base=snap.exists()?snap.data():{};
+ usuarioAtual={...usuarioAtual,...base,uid:auth.currentUser.uid,email:auth.currentUser.email,displayName:base.displayName||auth.currentUser.email.split("@")[0],isAdm:auth.currentUser.email.toLowerCase()===EMAIL_ADMIN||base.isAdm===true,inventory:Array.isArray(base.inventory)?base.inventory:[],phaseProgress:base.phaseProgress||{normal:1,dificil:1,avancada:1,hardcore:1},achievements:base.achievements||[]};
+ if(usuarioAtual.isAdm){usuarioAtual.coins=Math.max(Number(usuarioAtual.coins||0),999999);usuarioAtual.diamonds=Math.max(Number(usuarioAtual.diamonds||0),99999);usuarioAtual.level=Math.max(Number(usuarioAtual.level||1),100)}
+ await setDoc(ref,{...usuarioAtual,lastSeen:serverTimestamp(),status:"Online",updatedAt:serverTimestamp()},{merge:true});
+ atualizarPerfilUI();montarMenuLateral();renderLoja();renderizarPoderes();atualizarInventarioUI();renderizarEventos();atualizarDailyUI();iniciarHeartbeat();assinarChatGlobal();verificarAchievements();
+ if(usuarioAtual.isAdm){carregarJogadoresReaisDoBanco();document.getElementById("adm-loja-controls").classList.remove("hidden");document.getElementById("adm-poderes-controls").classList.remove("hidden");document.getElementById("adm-evento-controls").classList.remove("hidden")}
+}
+window.alternarModoAuth=()=>{modoCadastro=!modoCadastro;document.getElementById("auth-title").innerText=modoCadastro?"Criar Conta Real":"Entrar no Servidor";document.getElementById("auth-btn-action").innerText=modoCadastro?"Registrar e Gerar ID":"Entrar na Partida";document.getElementById("auth-switch-mode").innerText=modoCadastro?"Já tem conta? Faça login":"Não tem conta? Cadastre-se com ID Real"};
+window.realizarAutenticacao=async()=>{
+ const email=document.getElementById("auth-email").value.trim(),pass=document.getElementById("auth-pass").value.trim();if(!email||!pass)return alert("Preencha o e-mail e a senha!");
+ try{if(modoCadastro)await createUserWithEmailAndPassword(auth,email,pass);else await signInWithEmailAndPassword(auth,email,pass)}catch(e){alert("Erro na autenticação: "+e.message)}
+};
+
+function iniciarHeartbeat(){clearInterval(heartbeatTimer);heartbeatTimer=setInterval(async()=>{if(auth.currentUser)await updateDoc(doc(db,"jogadores_reais",auth.currentUser.uid),{lastSeen:serverTimestamp(),status:"Online"})},30000)}
+window.addEventListener("beforeunload",()=>{if(auth.currentUser)updateDoc(doc(db,"jogadores_reais",auth.currentUser.uid),{status:"Offline"}).catch(()=>{})});
+
+window.salvarPerfilJogador=async()=>{
+ const nome=document.getElementById("player-edit-name").value.trim(),avatar=document.getElementById("player-edit-avatar").value.trim();if(!nome)return alert("Informe um nome.");
+ usuarioAtual.displayName=nome;usuarioAtual.avatar=avatar;await updateDoc(doc(db,"jogadores_reais",usuarioAtual.uid),{displayName:nome,avatar,updatedAt:serverTimestamp()});atualizarPerfilUI();alert("Perfil salvo no Firestore!");
+};
+
+window.iniciarFases=async(cat)=>{
+ if(cat==="hardcore"&&usuarioAtual.level<25)return alert("Hardcore Elite requer nível 25.");
+ faseAtualInfo.categoria=cat;faseAtualInfo.etapa=Math.min(usuarioAtual.phaseProgress?.[cat]||1,categorias[cat].max);faseAtualInfo.maxHp=Math.round(categorias[cat].hp*faseAtualInfo.etapa*categorias[cat].mult);faseAtualInfo.hpMovel=faseAtualInfo.maxHp;faseAtualInfo.playerHp=100;faseAtualInfo.playerMp=100;faseAtualInfo.defend=false;
+ document.getElementById("fases-titulo-cat").innerText=categorias[cat].nome.toUpperCase();atualizarBatalhaUI();document.querySelector("#section-jogar>div:nth-child(2)").classList.add("hidden");document.getElementById("arena-fases-container").classList.remove("hidden");adicionarLogBatalha("Nível "+faseAtualInfo.etapa+" iniciado.");
+};
+window.desistirBatalha=()=>{if(confirm("Desistir da batalha?"))voltarSelecaoFases()};
+window.voltarSelecaoFases=()=>{document.getElementById("arena-fases-container").classList.add("hidden");document.querySelector("#section-jogar>div:nth-child(2)").classList.remove("hidden")};
+function atualizarBatalhaUI(){let c=categorias[faseAtualInfo.categoria],nome=alvos[faseAtualInfo.categoria][(faseAtualInfo.etapa-1)%5],p=Math.max(0,faseAtualInfo.hpMovel/faseAtualInfo.maxHp*100);document.getElementById("fases-etapa-info").innerText=`Nível ${faseAtualInfo.etapa}/${c.max} • Alvo: ${nome}`;document.getElementById("inimigo-alvo-nome").innerText=nome;document.getElementById("movel-hp").innerText=Math.round(p)+"%";document.getElementById("movel-hp-bar").style.width=p+"%";document.getElementById("player-hp-txt").innerText=`${faseAtualInfo.playerHp}/100`;document.getElementById("player-hp-bar").style.width=faseAtualInfo.playerHp+"%";document.getElementById("player-mp-txt").innerText=`${faseAtualInfo.playerMp}/100`;document.getElementById("player-mp-bar").style.width=faseAtualInfo.playerMp+"%"}
+function adicionarLogBatalha(t){let x=document.getElementById("log-batalha");x.innerHTML+="<div>> "+t+"</div>";x.scrollTop=x.scrollHeight}
+function notificar(msg,tipo="info"){const box=document.getElementById("notificacoes-box");if(!box)return;const n=document.createElement("div");n.className="dw-notificacao "+tipo;n.textContent=msg;box.appendChild(n);setTimeout(()=>n.remove(),4500)}
+function calcularDanoBase(){return 30+(Number(usuarioAtual.level)||1)*3}
+async function iniciarProximaFase(){const cat=categorias[faseAtualInfo.categoria];if(faseAtualInfo.etapa>=cat.max){const reward=120+faseAtualInfo.etapa*20+(faseAtualInfo.categoria==="hardcore"?500:0);usuarioAtual.coins+=reward;usuarioAtual.diamonds+=faseAtualInfo.categoria==="hardcore"?25:5;usuarioAtual.xp+=200;usuarioAtual.level=Math.max(usuarioAtual.level,Math.floor(usuarioAtual.xp/100)+5);await salvarProgresso();notificar(`🏆 ${cat.nome} concluído! +${reward} moedas.` ,"success");voltarSelecaoFases();return false}
+faseAtualInfo.etapa=Math.min(faseAtualInfo.etapa+1,cat.max);faseAtualInfo.maxHp=Math.round(cat.hp*faseAtualInfo.etapa*cat.mult);faseAtualInfo.hpMovel=faseAtualInfo.maxHp;faseAtualInfo.playerHp=100;faseAtualInfo.playerMp=100;faseAtualInfo.defend=false;usuarioAtual.phaseProgress[faseAtualInfo.categoria]=faseAtualInfo.etapa;usuarioAtual.xp+=50;usuarioAtual.level=Math.max(usuarioAtual.level,Math.floor(usuarioAtual.xp/100)+5);await salvarProgresso();atualizarBatalhaUI();adicionarLogBatalha(`Nível ${faseAtualInfo.etapa} iniciado.`);notificar(`➡️ Avançou para o nível ${faseAtualInfo.etapa}!`,"success");return true}
+window.batalhaAcao=async acao=>{if(faseAtualInfo.playerHp<=0)return;let dano=0;
+if(acao==="fugir"){notificar("🏃 Você fugiu da batalha.","danger");voltarSelecaoFases();return}
+if(acao==="atacar"){dano=calcularDanoBase();faseAtualInfo.hpMovel=Math.max(0,faseAtualInfo.hpMovel-dano);adicionarLogBatalha(`⚔️ Você causou ${dano} de dano.`);notificar(`⚔️ Ataque: -${dano} HP no inimigo.`)}
+else if(acao==="defender"){faseAtualInfo.defend=true;adicionarLogBatalha("🛡️ Defesa ativada.");notificar("🛡️ Você está defendendo.","info")}
+else if(acao==="poder"){if(faseAtualInfo.playerMp<30)return notificar("🔥 Mana insuficiente para usar o poder.","danger");faseAtualInfo.playerMp-=30;dano=calcularDanoBase()+35;faseAtualInfo.hpMovel=Math.max(0,faseAtualInfo.hpMovel-dano);adicionarLogBatalha(`🔥 Poder usado: ${dano} de dano.`);notificar(`🔥 Poder usado: -${dano} HP.`)}
+else if(acao==="habilidade"){if(faseAtualInfo.playerMp<20)return notificar("✨ Mana insuficiente para usar a habilidade.","danger");faseAtualInfo.playerMp-=20;dano=calcularDanoBase()+20;faseAtualInfo.hpMovel=Math.max(0,faseAtualInfo.hpMovel-dano);faseAtualInfo.playerHp=Math.min(100,faseAtualInfo.playerHp+10);adicionarLogBatalha(`✨ Habilidade usada: ${dano} de dano e +10 vida.`);notificar(`✨ Habilidade: -${dano} HP e +10 Vida.`)}
+else if(acao==="curar"){if(faseAtualInfo.playerMp<15)return notificar("🧪 Mana insuficiente para usar a poção.","danger");faseAtualInfo.playerMp-=15;faseAtualInfo.playerHp=Math.min(100,faseAtualInfo.playerHp+40);adicionarLogBatalha("🧪 Você recuperou 40 de vida.");notificar("🧪 +40 de Vida.","success")}
+if(faseAtualInfo.hpMovel<=0){const avancou=await iniciarProximaFase();if(!avancou)return;atualizarMoedasDiamantesUI();return}
+const danoInimigo=faseAtualInfo.defend?8+Math.floor(faseAtualInfo.etapa/3):18+Math.floor(faseAtualInfo.etapa/2);faseAtualInfo.defend=false;faseAtualInfo.playerHp=Math.max(0,faseAtualInfo.playerHp-danoInimigo);adicionarLogBatalha(`👹 O inimigo contra-atacou: ${danoInimigo} de dano.`);notificar(`👹 Inimigo atacou: -${danoInimigo} Vida.` ,"danger");if(faseAtualInfo.playerHp<=0){notificar("💀 Você perdeu a batalha.","danger");voltarSelecaoFases();return}atualizarBatalhaUI();atualizarMoedasDiamantesUI()};
+async function salvarProgresso(){await updateDoc(doc(db,"jogadores_reais",usuarioAtual.uid),{coins:usuarioAtual.coins,diamonds:usuarioAtual.diamonds,level:usuarioAtual.level,xp:usuarioAtual.xp,phaseProgress:usuarioAtual.phaseProgress,inventory:usuarioAtual.inventory,achievements:usuarioAtual.achievements,updatedAt:serverTimestamp()});atualizarMoedasDiamantesUI();verificarAchievements()}
+
+function renderLoja(){let g=document.getElementById("loja-grid");let arr=categoriaLoja==="all"?catalogo:catalogo.filter(x=>x.category===categoriaLoja);g.innerHTML=arr.map(i=>`<div class="item-card"><h4>${icone(i.category)} ${i.nome}</h4><p>${i.desc}</p><div class="price">${i.price} 🪙</div><button class="btn" style="padding:6px;margin-top:7px;font-size:11px" onclick="comprarItem('${i.id}')">Comprar</button></div>`).join("")}
+function icone(c){return c==="weapon"?"⚔️":c==="skin"?"🧙":c==="potion"?"🧪":"⚡"}
+window.mudarCategoriaLoja=c=>{categoriaLoja=c;renderLoja()};
+window.comprarItem=async id=>{let i=catalogo.find(x=>x.id===id);if(!i)return;if(usuarioAtual.coins<i.price)return alert("Moedas insuficientes.");usuarioAtual.coins-=i.price;usuarioAtual.inventory.push({...i,purchasedAt:Date.now()});await salvarProgresso();alert(`Compra realizada: ${i.nome}. Foi para seu inventário.`);renderLoja();atualizarInventarioUI()};
+function atualizarInventarioUI(){let c=document.getElementById("inventario-itens");if(!usuarioAtual.inventory.length){c.innerHTML='<div class="box-item">Seu inventário está vazio.</div>';return}c.innerHTML=usuarioAtual.inventory.map((i,n)=>`<div class="item-card" style="width:170px"><h4>${icone(i.category)} ${i.nome}</h4><p>${i.desc||"Item Dragon War"}</p><button class="btn btn-blue" style="padding:5px;font-size:10px" onclick="usarItemInventario(${n})">Usar / Equipar</button></div>`).join("")}
+window.usarItemInventario=async n=>{let i=usuarioAtual.inventory[n];if(!i)return;if(i.category==="potion"){usuarioAtual.coins+=0;alert(`🧪 ${i.nome} usado.`)}else alert(`${icone(i.category)} ${i.nome} equipado.`);await salvarProgresso()};
+function renderizarPoderes(){let c=document.getElementById("lista-mais-de-50-poderes");c.innerHTML=catalogo.filter(x=>x.category==="power").map(p=>`<div class="item-card"><h4>${p.nome}</h4><p>${p.desc}</p><div class="price">${p.price} 🪙</div><button class="btn" style="padding:5px;font-size:10px" onclick="comprarItem('${p.id}')">Comprar</button></div>`).join("")}
+window.criarPoder=async()=>{if(!usuarioAtual.isAdm)return alert("Acesso negado.");let n=document.getElementById("poder-nome").value.trim(),d=Number(document.getElementById("poder-dano").value)||500;if(!n)return alert("Informe o nome.");let item={id:"custom_"+Date.now(),nome:n,category:"power",price:500,stat:d,desc:"Poder criado pelo ADM • +"+d};catalogo.push(item);await setDoc(doc(db,"catalogo",item.id),item);renderizarPoderes();renderLoja();alert("Poder criado e salvo.");};
+
+window.adicionarItemCatalogo=async()=>{if(!usuarioAtual.isAdm)return alert("Acesso negado.");let cat=document.getElementById("new-item-category").value,n=document.getElementById("new-item-name").value.trim(),price=Number(document.getElementById("new-item-price").value),stat=Number(document.getElementById("new-item-damage").value)||50;if(!n||!price)return alert("Preencha nome e preço.");let item={id:"custom_"+Date.now(),nome:n,category:cat,price,stat,desc:"Conteúdo criado pelo ADM"};catalogo.push(item);await setDoc(doc(db,"catalogo",item.id),item);renderLoja();renderizarPoderes();alert("Item adicionado ao catálogo global.");};
+
+async function carregarCatalogoCustom(){try{let s=await getDocs(collection(db,"catalogo"));s.forEach(d=>{let x=d.data();if(!catalogo.some(i=>i.id===x.id))catalogo.push(x)});renderLoja();renderizarPoderes()}catch(e){}}
+
+async function verificarAchievements(){let a=new Set(usuarioAtual.achievements||[]),total=usuarioAtual.inventory.length,niveis=Object.values(usuarioAtual.phaseProgress||{}).reduce((s,x)=>s+x-1,0);const checks={first_login:true,first_purchase:total>0,five_battles:niveis>=5,ten_battles:niveis>=10,level10:usuarioAtual.level>=10,level25:usuarioAtual.level>=25,collector10:total>=10,power10:usuarioAtual.inventory.filter(x=>x.category==="power").length>=10,skin5:usuarioAtual.inventory.filter(x=>x.category==="skin").length>=5,weapon10:usuarioAtual.inventory.filter(x=>x.category==="weapon").length>=10,easy30:(usuarioAtual.phaseProgress?.normal||1)>30,hard30:(usuarioAtual.phaseProgress?.dificil||1)>30,advanced25:(usuarioAtual.phaseProgress?.avancada||1)>25,hardcore25:(usuarioAtual.phaseProgress?.hardcore||1)>25,rich:usuarioAtual.coins>=10000,diamond:usuarioAtual.diamonds>=500,admin:usuarioAtual.isAdm};let changed=false;Object.keys(checks).forEach(k=>{if(checks[k]&&!a.has(k)){a.add(k);changed=true}});if(changed){usuarioAtual.achievements=[...a];await updateDoc(doc(db,"jogadores_reais",usuarioAtual.uid),{achievements:usuarioAtual.achievements})}}
+window.mudarTabRank=async tipo=>{let c=document.getElementById("rank-content");if(tipo==="achievements"){c.innerHTML="<h3>🏅 Achievements disponíveis</h3>"+achievementsCatalog.map(a=>`<div class="item-card" style="margin-top:8px"><b>${a[1]}</b> ${usuarioAtual.achievements.includes(a[0])?'<span class="badge online">DESBLOQUEADO</span>':'<span class="badge">BLOQUEADO</span>'}<p>${a[2]}</p></div>`).join("");return}let snap=await getDocs(collection(db,"jogadores_reais")),rows=[];snap.forEach(d=>rows.push(d.data()));rows.sort((a,b)=>(b.level||0)-(a.level||0));if(tipo==="online")rows=rows.filter(x=>x.lastSeen&&x.lastSeen.toMillis?Date.now()-x.lastSeen.toMillis()<90000:(x.status==="Online"));c.innerHTML="<table><tr><th>#</th><th>Jogador</th><th>Nível</th><th>Status</th></tr>"+rows.slice(0,50).map((x,i)=>`<tr><td>${i+1}</td><td>${x.displayName||x.email||x.uid} ${x.isAdm?'<span class="adm-tag">[ADM]</span>':""}</td><td>${x.level||1}</td><td>${x.status==="Online"?"🟢 Online":"⚫ Offline"}</td></tr>`).join("")+"</table>"};
+
+window.resgatarRecompensaDiaria=async()=>{let now=Date.now(),last=Number(usuarioAtual.dailyRewardLastClaim||0),wait=86400000;if(now-last<wait)return atualizarDailyUI();usuarioAtual.coins+=100;usuarioAtual.diamonds+=5;usuarioAtual.dailyRewardLastClaim=now;await salvarProgresso();atualizarDailyUI();alert("🎁 Recompensa resgatada: +100 moedas e +5 diamantes!")};
+function atualizarDailyUI(){let b=document.getElementById("daily-btn"),c=document.getElementById("daily-countdown"),last=Number(usuarioAtual.dailyRewardLastClaim||0),r=86400000-(Date.now()-last);if(r>0){b.disabled=true;b.style.opacity=".5";let h=Math.floor(r/3600000),m=Math.floor(r%3600000/60000),s=Math.floor(r%60000/1000);c.innerText=`Próxima recompensa em ${h}h ${m}m ${s}s`}else{b.disabled=false;b.style.opacity="1";c.innerText="Recompensa disponível agora!"}}
+setInterval(atualizarDailyUI,1000);
+
+window.criarEventoGlobal=async()=>{if(!usuarioAtual.isAdm)return alert("Acesso negado.");let titulo=document.getElementById("novo-evento-titulo").value.trim(),desc=document.getElementById("novo-evento-desc").value.trim()||"Evento criado pelo ADM",reward=Number(document.getElementById("novo-evento-reward").value)||100;if(!titulo)return alert("Digite o título.");await addDoc(collection(db,"eventos"),{titulo,desc,reward,createdBy:usuarioAtual.uid,createdAt:serverTimestamp(),active:true});document.getElementById("novo-evento-titulo").value="";document.getElementById("novo-evento-desc").value="";renderizarEventos();alert("Evento publicado para o servidor.")};
+async function renderizarEventos(){let c=document.getElementById("lista-eventos-criados");try{let s=await getDocs(collection(db,"eventos"));let arr=[];s.forEach(d=>arr.push(d.data()));if(!arr.length)arr=[{titulo:"Ascensão dos Dragões",desc:"Batalhe nas fases para ganhar bônus!",reward:100}];c.innerHTML="<h4>Eventos ativos:</h4>"+arr.map(e=>`<div class="item-card" style="margin-top:8px"><b>🌟 ${e.titulo}</b><p>${e.desc}</p><span class="badge">+${e.reward||0} 🪙</span></div>`).join("")}catch(e){c.innerHTML="<p>Ascensão dos Dragões — evento padrão.</p>"}}
+
+async function carregarJogadoresReaisDoBanco(){let t=document.getElementById("tabela-jogadores-server");if(!t)return;t.innerHTML="<tr><td colspan=5>Carregando...</td></tr>";try{let s=await getDocs(collection(db,"jogadores_reais")),arr=[];s.forEach(d=>arr.push(d.data()));let online=0,adms=0,ban=0;arr.forEach(x=>{let isOn=x.lastSeen?.toMillis?Date.now()-x.lastSeen.toMillis()<90000:x.status==="Online";if(isOn)online++;if(x.isAdm)adms++;if(x.banned)ban++});document.getElementById("adm-total").innerText=arr.length;document.getElementById("adm-online").innerText=online;document.getElementById("adm-adms").innerText=adms;document.getElementById("adm-banidos").innerText=ban;document.getElementById("adm-total2").innerText=arr.length;document.getElementById("adm-online2").innerText=online;t.innerHTML="";arr.forEach(x=>{let on=x.lastSeen?.toMillis?Date.now()-x.lastSeen.toMillis()<90000:x.status==="Online";let tr=document.createElement("tr");tr.innerHTML=`<td style="font-family:monospace;color:var(--accent-color);font-size:11px">${x.uid||""}</td><td>${x.displayName||x.email||""} ${x.isAdm?'<span class="badge adm">ADM</span>':""}</td><td>${on?'<span class="badge online">🟢 Online</span>':'<span class="badge offline">⚫ Offline</span>'}</td><td>${x.isAdm?"ADM":x.isSubAdm?"MOD":"Jogador"}</td><td><button class="btn" style="padding:4px 8px;width:auto;font-size:10px" onclick="abrirPainelJogador('${x.uid}','${String(x.displayName||x.email||"Jogador").replace(/'/g,"")}')">Selecionar</button></td>`;t.appendChild(tr)})}catch(e){t.innerHTML="<tr><td colspan=5>Erro ao carregar jogadores.</td></tr>"}}
+
+window.abrirPainelJogador=async(id,nome)=>{let s=await getDoc(doc(db,"jogadores_reais",id)),d=s.exists()?s.data():{};jogadorSelecionadoModal={id,nome,data:d};document.getElementById("m-id").innerText=id;document.getElementById("m-nome").innerText=nome;document.getElementById("m-status").innerText=d.banned?"BANIDO":d.status||"Offline";document.getElementById("modal-jogador").classList.remove("hidden")};
+window.fecharModalJogador=()=>document.getElementById("modal-jogador").classList.add("hidden");
+window.atribuirSubAdm=async()=>{if(!usuarioAtual.isAdm)return alert("Apenas o ADM principal.");let d=jogadorSelecionadoModal.data,newVal=!d.isSubAdm;await updateDoc(doc(db,"jogadores_reais",jogadorSelecionadoModal.id),{isSubAdm:newVal});alert(newVal?"Moderador concedido.":"Moderador removido.");fecharModalJogador();carregarJogadoresReaisDoBanco()};
+window.alternarBanSelecionado=async()=>{if(!usuarioAtual.isAdm)return alert("Acesso negado.");let d=jogadorSelecionadoModal.data,newVal=!d.banned;await updateDoc(doc(db,"jogadores_reais",jogadorSelecionadoModal.id),{banned:newVal,status:newVal?"Banido":"Offline"});await registrarLog(newVal?"Banimento":"Desbanimento",jogadorSelecionadoModal.id);alert(newVal?"Jogador banido.":"Jogador desbanido.");fecharModalJogador();carregarJogadoresReaisDoBanco()};
+window.acaoAdm=async tipo=>{let target=document.getElementById("target-player").value.trim();if(!target)return alert("Informe UID/e-mail.");if(tipo==="banir")alert("Use a lista de jogadores para banir com segurança.")};
+
+window.abrirAtendimentoSelecionado=async()=>{if(!jogadorSelecionadoModal.id)return;await abrirSalaAtendimento(jogadorSelecionadoModal.id,jogadorSelecionadoModal.nome)};
+window.abrirAtendimentoPorBusca=async()=>{let target=document.getElementById("target-player").value.trim();if(!target)return alert("Informe UID ou e-mail.");let s=await getDocs(collection(db,"jogadores_reais")),found=null;s.forEach(d=>{let x=d.data();if(x.uid===target||x.email===target)found={id:d.id,data:x}});if(!found)return alert("Jogador não encontrado.");await abrirSalaAtendimento(found.id,found.data.displayName||found.data.email)};
+async function abrirSalaAtendimento(playerId,playerName){let q=query(collection(db,"salas_atendimento"),orderBy("createdAt","desc"));let snap=await getDocs(q),room=null;snap.forEach(d=>{let x=d.data();if(!room&&x.playerUid===playerId&&x.status==="aberta")room={id:d.id,data:x}});if(!room){let r=await addDoc(collection(db,"salas_atendimento"),{playerUid:playerId,playerName,admUid:usuarioAtual.uid,admName:"ADM GABRIEL",status:"aberta",createdAt:serverTimestamp()});room={id:r.id,data:{playerUid:playerId,playerName,status:"aberta"}}}salaAtualId=room.id;document.getElementById("support-header").innerText=`👑 ADM GABRIEL ↔ 👤 ${playerName}`;document.getElementById("modal-atendimento").classList.remove("hidden");assinarMensagensSala()};
+function assinarMensagensSala(){if(unsubscribeSupport)unsubscribeSupport();if(!salaAtualId)return;let q=query(collection(db,"salas_atendimento",salaAtualId,"mensagens"),orderBy("createdAt","asc"));unsubscribeSupport=onSnapshot(q,s=>{let c=document.getElementById("support-messages");c.innerHTML="";s.forEach(d=>{let x=d.data(),me=x.senderUid===usuarioAtual.uid,div=document.createElement("div");div.className="support-msg "+(me?"me":"adm");div.innerHTML=`<b>${x.senderName||"Usuário"}</b><br>${escapeHtml(x.text||"")}`;c.appendChild(div)});c.scrollTop=c.scrollHeight})}
+window.enviarMensagemAtendimento=async()=>{let input=document.getElementById("support-input"),text=input.value.trim();if(!text||!salaAtualId)return;await addDoc(collection(db,"salas_atendimento",salaAtualId,"mensagens"),{senderUid:usuarioAtual.uid,senderName:nomeAtual(),text,createdAt:serverTimestamp()});input.value="";};
+window.fecharAtendimento=()=>{document.getElementById("modal-atendimento").classList.add("hidden");if(unsubscribeSupport){unsubscribeSupport();unsubscribeSupport=null}};
+async function registrarLog(acao,target){if(!usuarioAtual.isAdm)return;await addDoc(collection(db,"logs_adm"),{acao,target,adminUid:usuarioAtual.uid,adminName:"ADM GABRIEL",createdAt:serverTimestamp()});carregarLogs()};
+async function carregarLogs(){let c=document.getElementById("adm-logs");if(!c)return;try{let s=await getDocs(query(collection(db,"logs_adm"),orderBy("createdAt","desc")));c.innerHTML="";s.forEach(d=>{let x=d.data();c.innerHTML+=`<div class="chat-msg"><b>${x.adminName||"ADM"}:</b> ${x.acao} → ${x.target||""}</div>`})}catch(e){}}
+window.enviarMensagemGlobalAdm=async()=>{if(!usuarioAtual.isAdm)return alert("Acesso negado.");let i=document.getElementById("global-msg-adm"),text=i.value.trim();if(!text)return;await addDoc(collection(db,"chat_global"),{senderUid:usuarioAtual.uid,senderName:"👑 ADM GABRIEL",text,global:true,createdAt:serverTimestamp()});await registrarLog("Mensagem global",text);i.value="";};
+window.enviarMensagemRodape=async()=>{let i=document.getElementById("footer-chat-input"),text=i.value.trim();if(!text)return;await addDoc(collection(db,"chat_global"),{senderUid:usuarioAtual.uid,senderName:nomeAtual(),text,global:false,createdAt:serverTimestamp()});i.value=""};
+function assinarChatGlobal(){if(unsubscribeGlobal)unsubscribeGlobal();let q=query(collection(db,"chat_global"),orderBy("createdAt","asc"));unsubscribeGlobal=onSnapshot(q,s=>{let c=document.getElementById("chat-container");c.innerHTML="";s.docs.slice(-80).forEach(d=>{let x=d.data(),div=document.createElement("div");div.className="chat-msg"+(x.global?" global":"");div.innerHTML=`<strong>${escapeHtml(x.senderName||"Jogador")}:</strong> ${escapeHtml(x.text||"")}`;c.appendChild(div)});c.scrollTop=c.scrollHeight})}
+window.darRecompensaAdm=async()=>{if(!usuarioAtual.isAdm)return alert("Acesso negado.");let uid=document.getElementById("reward-target").value.trim(),coins=Number(document.getElementById("reward-coins").value)||0;if(!uid||coins<=0)return alert("Informe UID e recompensa.");let r=doc(db,"jogadores_reais",uid),s=await getDoc(r);if(!s.exists())return alert("Jogador não encontrado.");let d=s.data();await updateDoc(r,{coins:Number(d.coins||0)+coins});await registrarLog("Recompensa enviada",uid+" +"+coins+" moedas");alert("Recompensa enviada.");};
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+
+window.atualizarVolume=()=>{document.getElementById("bg-music").volume=Number(document.getElementById("vol-musica").value)/100};
+window.alternarSom=async()=>{let a=document.getElementById("bg-music");if(a.paused){a.volume=Number(document.getElementById("vol-musica").value)/100;try{await a.play()}catch(e){alert("O navegador bloqueou o áudio. Clique novamente após interagir com a página.")}}else a.pause()};
+
+window.sairDaConta=async()=>{try{if(heartbeatTimer)clearInterval(heartbeatTimer);if(unsubscribeGlobal)unsubscribeGlobal();if(unsubscribeSupport)unsubscribeSupport();if(auth.currentUser)await updateDoc(doc(db,"jogadores_reais",auth.currentUser.uid),{status:"Offline",lastSeen:serverTimestamp()});await signOut(auth)}catch(e){console.error(e)}finally{document.getElementById("game-container").classList.add("hidden");document.getElementById("login-screen").classList.remove("hidden");document.getElementById("auth-email").value="";document.getElementById("auth-pass").value="";notificar("🚪 Conta desconectada. Faça login novamente.","info")}};
+
+onAuthStateChanged(auth,async user=>{if(!user)return;try{await carregarJogador();await carregarCatalogoCustom();await carregarLogs();document.getElementById("login-screen").classList.add("hidden");document.getElementById("game-container").classList.remove("hidden");try{document.getElementById("bg-music").volume=.6}catch(e){}}catch(e){console.error(e)}});
 </script>
 </body>
 </html>
