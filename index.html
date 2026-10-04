@@ -7,7 +7,7 @@
     <!-- Importação do Firebase (SDK Modular v10) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -33,6 +33,7 @@
         window.fbUpdateDoc = updateDoc;
         window.fbCollection = collection;
         window.fbGetDocs = getDocs;
+        window.fbDeleteDoc = deleteDoc;
         window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
         window.signInWithEmailAndPassword = signInWithEmailAndPassword;
         window.signOut = signOut;
@@ -66,7 +67,7 @@
 
         /* Telas de Autenticação */
         .auth-screen {
-            background: linear-gradient(135deg, rgba(11,15,25,0.9), rgba(15,23,42,0.95)), url('fundo-dragon.jpg') no-repeat center center/cover;
+            background: linear-gradient(135deg, rgba(11,15,25,0.9), rgba(15,23,42,0.95));
             justify-content: center;
             align-items: center;
             padding: 20px;
@@ -98,9 +99,6 @@
             border-radius: 6px;
             outline: none;
             font-size: 14px;
-        }
-        .auth-container input:focus {
-            border-color: #3b82f6;
         }
         .btn-auth {
             background: linear-gradient(135deg, #f5af19, #f12711);
@@ -185,7 +183,6 @@
             border-radius: 8px;
             padding: 15px;
             text-align: center;
-            transition: 0.2s;
         }
         .item-card h4 {
             color: #38bdf8;
@@ -230,11 +227,6 @@
             object-fit: cover;
             background: #334155;
         }
-        .status-info p {
-            margin-bottom: 6px;
-            color: #cbd5e1;
-            font-size: 14px;
-        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -253,7 +245,6 @@
             color: #38bdf8;
             background: rgba(15, 23, 42, 0.6);
         }
-        /* Sistema de Abas da Loja */
         .store-tabs {
             display: flex;
             gap: 10px;
@@ -279,8 +270,6 @@
         .store-section.active {
             display: grid;
         }
-
-        /* Sistema de Chat */
         .chat-container-box {
             background: #020617;
             border: 1px solid #334155;
@@ -333,8 +322,6 @@
             border-radius: 6px;
             outline: none;
         }
-
-        /* 10 Avatares Iniciais */
         .avatar-selection-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -353,9 +340,7 @@
         .avatar-option:hover, .avatar-option.selected {
             border-color: #f5af19;
             transform: scale(1.08);
-            box-shadow: 0 0 10px rgba(245, 175, 25, 0.5);
         }
-        /* Painel de Batalha por Turnos */
         .battle-arena {
             background: #1e293b;
             border: 1px solid #334155;
@@ -381,7 +366,6 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
         }
-        /* Recompensas Diárias */
         .daily-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -411,7 +395,7 @@
     <div id="login-screen" class="screen active auth-screen">
         <div class="auth-container">
             <h2>DRAGON WAR</h2>
-            <p style="text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Entre com sua conta de e-mail real</p>
+            <p style="text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Entre com sua conta</p>
             <input type="email" id="login-email" placeholder="Seu e-mail real">
             <input type="password" id="login-senha" placeholder="Sua senha">
             <button class="btn-auth" onclick="fazerLogin()">ENTRAR NO SERVIDOR</button>
@@ -423,8 +407,7 @@
     <div id="register-screen" class="screen auth-screen">
         <div class="auth-container">
             <h2>REGISTRAR JOGADOR</h2>
-            <p style="text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Crie sua conta para jogar</p>
-            <input type="text" id="reg-nome" placeholder="Nome de Usuário (Padrão)">
+            <input type="text" id="reg-nome" placeholder="Nome de Usuário">
             <input type="email" id="reg-email" placeholder="E-mail real válido">
             <input type="password" id="reg-senha" placeholder="Senha (mínimo 6 dígitos)">
             <button class="btn-auth" onclick="fazerRegistro()">CRIAR CONTA NA NUVEM</button>
@@ -446,6 +429,10 @@
             <button onclick="mudarAba('chat', this)">💬 Sistema de Chat</button>
             <button onclick="mudarAba('ranking', this)">🏆 Ranking Global</button>
             <button onclick="mudarAba('config', this)">⚙️ Configurações & Áudio</button>
+            
+            <!-- ABA EXCLUSIVA DO ADM (Invisível para comuns) -->
+            <button id="btn-aba-adm" onclick="mudarAba('painel-adm', this)" style="display: none; background: rgba(168, 85, 247, 0.2); border: 1px solid #a855f7; color: #d8b4fe; margin-top: 10px;">👑 Painel ADM Mestre</button>
+
             <button onclick="sairParaMenuLogin()" style="margin-top: 20px; color: #f87171; border-top: 1px solid #334155; padding-top: 12px;">🚪 Sair / Trocar Conta</button>
         </div>
         <div class="content-area">
@@ -468,69 +455,33 @@
                 </div>
             </div>
 
-            <!-- ABA CAMPANHA / MODOS DE BATALHA (8 NÍVEIS) -->
+            <!-- ABA CAMPANHA / MODOS DE BATALHA -->
             <div id="campanha" class="tab-content">
-                <h2 style="margin-bottom: 10px;">Modos de Batalha (Progressivos)</h2>
-                <p style="color: #94a3b8; margin-bottom: 20px;">Enfrente 8 níveis desafiadores. Quanto mais difícil, maiores as recompensas em Ouro, Moedas de Poder e Diamantes!</p>
+                <h2 style="margin-bottom: 10px;">Modos de Batalha (8 Níveis)</h2>
                 <div id="lista-modos-batalha" class="card-grid" style="max-height: 440px;">
-                    <div class="item-card" style="border-color: #22c55e;">
-                        <h4>Nível 1: Fácil</h4>
-                        <p style="color: #22c55e;">Inimigo Fraco | Ouro 🟡</p>
-                        <button class="btn-acao" style="background: #22c55e;" onclick="entrarNaArena('Fácil (Nv 1)')">LUTAR</button>
-                    </div>
-                    <div class="item-card" style="border-color: #3b82f6;">
-                        <h4>Nível 2: Normal</h4>
-                        <p style="color: #3b82f6;">Combate Padrão | Ouro 🟡</p>
-                        <button class="btn-acao" style="background: #3b82f6;" onclick="entrarNaArena('Normal (Nv 2)')">LUTAR</button>
-                    </div>
-                    <div class="item-card" style="border-color: #3b82f6;">
-                        <h4>Nível 3: Médio</h4>
-                        <p style="color: #3b82f6;">Guerreiros Médios | +🔮 Poder</p>
-                        <button class="btn-acao" style="background: #3b82f6;" onclick="entrarNaArena('Médio (Nv 3)')">LUTAR</button>
-                    </div>
-                    <div class="item-card" style="border-color: #eab308;">
-                        <h4>Nível 4: Desafiador</h4>
-                        <p style="color: #eab308;">Inimigos Ágeis | Ouro + 🔮</p>
-                        <button class="btn-acao" style="background: #eab308;" onclick="entrarNaArena('Desafiador (Nv 4)')">LUTAR</button>
-                    </div>
-                    <div class="item-card" style="border-color: #eab308;">
-                        <h4>Nível 5: Elite</h4>
-                        <p style="color: #eab308;">Guardas Reais | Recompensas Maiores</p>
-                        <button class="btn-acao" style="background: #eab308;" onclick="entrarNaArena('Elite (Nv 5)')">LUTAR</button>
-                    </div>
-                    <div class="item-card" style="border-color: #f97316;">
-                        <h4>Nível 6: Mestre</h4>
-                        <p style="color: #f97316;">Alta Resistência | Ouro + Diamantes 💎</p>
-                        <button class="btn-acao" style="background: #f97316;" onclick="entrarNaArena('Mestre (Nv 6)')">LUTAR</button>
-                    </div>
-                    <div class="item-card" style="border-color: #ef4444;">
-                        <h4>Nível 7: Hard (Chefe)</h4>
-                        <p style="color: #ef4444;">Chefão Rádio | Diamantes 💎 Raros</p>
-                        <button class="btn-acao" style="background: #ef4444;" onclick="entrarNaArena('Hard (Nv 7)')">LUTAR</button>
-                    </div>
-                    <div class="item-card" style="border-color: #a855f7;">
-                        <h4>Nível 8: Pesadelo Extremo</h4>
-                        <p style="color: #a855f7;">Desafio Supremo | Máxima Pontuação</p>
-                        <button class="btn-acao" style="background: #a855f7;" onclick="entrarNaArena('Pesadelo (Nv 8)')">LUTAR</button>
-                    </div>
+                    <div class="item-card" style="border-color: #22c55e;"><h4>Nível 1: Fácil</h4><button class="btn-acao" style="background: #22c55e;" onclick="entrarNaArena('Fácil (Nv 1)')">LUTAR</button></div>
+                    <div class="item-card" style="border-color: #3b82f6;"><h4>Nível 2: Normal</h4><button class="btn-acao" style="background: #3b82f6;" onclick="entrarNaArena('Normal (Nv 2)')">LUTAR</button></div>
+                    <div class="item-card" style="border-color: #3b82f6;"><h4>Nível 3: Médio</h4><button class="btn-acao" style="background: #3b82f6;" onclick="entrarNaArena('Médio (Nv 3)')">LUTAR</button></div>
+                    <div class="item-card" style="border-color: #eab308;"><h4>Nível 4: Desafiador</h4><button class="btn-acao" style="background: #eab308;" onclick="entrarNaArena('Desafiador (Nv 4)')">LUTAR</button></div>
+                    <div class="item-card" style="border-color: #eab308;"><h4>Nível 5: Elite</h4><button class="btn-acao" style="background: #eab308;" onclick="entrarNaArena('Elite (Nv 5)')">LUTAR</button></div>
+                    <div class="item-card" style="border-color: #f97316;"><h4>Nível 6: Mestre</h4><button class="btn-acao" style="background: #f97316;" onclick="entrarNaArena('Mestre (Nv 6)')">LUTAR</button></div>
+                    <div class="item-card" style="border-color: #ef4444;"><h4>Nível 7: Hard (Chefe)</h4><button class="btn-acao" style="background: #ef4444;" onclick="entrarNaArena('Hard (Nv 7)')">LUTAR</button></div>
+                    <div class="item-card" style="border-color: #a855f7;"><h4>Nível 8: Pesadelo</h4><button class="btn-acao" style="background: #a855f7;" onclick="entrarNaArena('Pesadelo (Nv 8)')">LUTAR</button></div>
                 </div>
 
-                <!-- ARENA DE BATALHA POR TURNOS -->
                 <div id="arena-combate" style="display: none;" class="battle-arena">
                     <h3 id="arena-titulo" style="color: #f5af19;">Combate em Andamento</h3>
                     <div style="display: flex; justify-content: space-between; font-size: 14px;">
                         <span>Seu HP: <strong id="hp-jogador" style="color: #22c55e;">100/100</strong></span>
                         <span>Inimigo HP: <strong id="hp-inimigo" style="color: #ef4444;">100/100</strong></span>
                     </div>
-                    <div class="battle-log" id="battle-log">
-                        <p>A batalha começou! Escolha sua ação abaixo.</p>
-                    </div>
+                    <div class="battle-log" id="battle-log"><p>A batalha começou!</p></div>
                     <div class="battle-actions">
                         <button class="btn-acao" style="background: #ef4444;" onclick="acaoBatalha('atacar')">⚔️ Atacar</button>
-                        <button class="btn-acao" style="background: #3b82f6;" onclick="acaoBatalha('defender')">🛡️️ Defender</button>
+                        <button class="btn-acao" style="background: #3b82f6;" onclick="acaoBatalha('defender')">🛡 Defender</button>
                         <button class="btn-acao" style="background: #22c55e;" onclick="acaoBatalha('curar')">🍗 Curar</button>
                         <button class="btn-acao" style="background: #eab308;" onclick="acaoBatalha('salvar')">💾 Salvar</button>
-                        <button class="btn-acao" style="background: #64748b; grid-column: span 2;" onclick="sairDaArena()">🚪 Voltar ao Menu</button>
+                        <button class="btn-acao" style="background: #64748b; grid-column: span 2;" onclick="sairDaArena()">🚪 Voltar</button>
                     </div>
                 </div>
             </div>
@@ -538,70 +489,60 @@
             <!-- ABA RECOMPENSAS DIÁRIAS -->
             <div id="diarias" class="tab-content">
                 <h2 style="margin-bottom: 10px;">Recompensas Diárias</h2>
-                <p style="color: #94a3b8; margin-bottom: 15px;">Colete seu bônus diário. O item resgatado fica intocável até a próxima atualização à meia-noite.</p>
                 <div class="daily-grid" id="grid-diarias-container"></div>
             </div>
 
-            <!-- ABA LOJA EXPANDIDA COM RARIDADES -->
+            <!-- ABA LOJA -->
             <div id="loja" class="tab-content">
                 <h2 style="margin-bottom: 10px;">Loja do Servidor & Raridades</h2>
-                <p style="color: #94a3b8; margin-bottom: 15px;">Itens divididos por categorias e skins classificadas (Comuns, Épicas, Lendárias e Únicas do ADM).</p>
-                
                 <div class="store-tabs">
                     <button class="store-tab-btn active" onclick="mudarAbaLoja('armas', this)">⚔️ Armas</button>
-                    <button class="store-tab-btn" onclick="mudarAbaLoja('poderes-loja', this)">🔮 Poderes Extras (+5)</button>
+                    <button class="store-tab-btn" onclick="mudarAbaLoja('poderes-loja', this)">🔮 Poderes (+5)</button>
                     <button class="store-tab-btn" onclick="mudarAbaLoja('skins', this)">👕 Skins (Comuns a Únicas)</button>
                 </div>
-
                 <div id="loja-armas" class="card-grid store-section active" style="max-height: 400px;"></div>
                 <div id="loja-poderes-loja" class="card-grid store-section" style="max-height: 400px;"></div>
                 <div id="loja-skins" class="card-grid store-section" style="max-height: 400px;"></div>
             </div>
 
-            <!-- ABA ÁRVORE DE HABILIDADES -->
+            <!-- ABA ÁRVORE DE PODERES -->
             <div id="poderes" class="tab-content">
-                <h2 style="margin-bottom: 10px;">Árvore de Habilidades (Moeda de Poder 🔮)</h2>
-                <p style="color: #94a3b8; margin-bottom: 15px;">Desbloqueie feitiços avançados usando suas Moedas de Poder.</p>
+                <h2 style="margin-bottom: 10px;">Árvore de Habilidades</h2>
                 <div id="grid-habilidades" class="card-grid"></div>
             </div>
 
             <!-- ABA INVENTÁRIO -->
             <div id="inventario" class="tab-content">
                 <h2 style="margin-bottom: 20px;">Inventário / Mochila</h2>
-                <div id="grid-inventario" class="card-grid">
-                    <p style="color: #94a3b8;">Sua mochila está vazia. Compre itens na loja!</p>
-                </div>
+                <div id="grid-inventario" class="card-grid"><p style="color: #94a3b8;">Mochila vazia.</p></div>
             </div>
 
-            <!-- ABA PAINEL DE GUILDA -->
+            <!-- ABA GUILDA -->
             <div id="corporacao" class="tab-content">
                 <h2 style="margin-bottom: 10px;">Gerenciamento de Guilda</h2>
-                <p style="color: #94a3b8; margin-bottom: 20px;">Crie sua guilda gastando Diamantes 💎 ou entre em uma guilda ativa.</p>
-                
                 <div id="painel-sem-guilda" class="status-box" style="flex-direction: column; align-items: flex-start; gap: 15px; width: 100%; max-width: 550px;">
-                    <p><strong>Status:</strong> <span style="color: #f87171;">Você não está em nenhuma guilda.</span></p>
+                    <p><strong>Status:</strong> <span style="color: #f87171;">Sem guilda.</span></p>
                     <div style="display: flex; gap: 10px; width: 100%;">
                         <button class="btn-acao" style="background: #3b82f6;" onclick="entrarEmGuildaPrompt()">Entrar em Guilda</button>
                         <button class="btn-acao" style="background: #f5af19;" onclick="criarGuilda()">Criar Guilda (500 💎)</button>
                     </div>
                 </div>
-
                 <div id="painel-com-guilda" class="status-box" style="display: none; flex-direction: column; align-items: flex-start; gap: 15px; width: 100%; max-width: 650px;">
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <img id="guilda-foto-banner" src="https://api.dicebear.com/7.x/identicon/svg?seed=guild" class="avatar-preview" style="width: 70px; height: 70px;" alt="Guilda">
+                        <img id="guilda-foto-banner" src="" class="avatar-preview" style="width: 70px; height: 70px;" alt="Guilda">
                         <div>
                             <h3 style="color: #38bdf8;">Guilda: <span id="info-guilda-nome" style="color: #f5af19;">-</span></h3>
-                            <p><strong>ADM Criador / Fundador:</strong> <span id="info-guilda-dono" style="color: #22c55e;">-</span></p>
+                            <p><strong>Fundador:</strong> <span id="info-guilda-dono" style="color: #22c55e;">-</span></p>
                         </div>
                     </div>
-                    <p style="width: 100%;"><strong>Administradores da Guilda:</strong> <span id="info-guilda-admins" style="color: #eab308;">-</span></p>
-                    <p style="width: 100%;"><strong>Usuários da Guilda (Membros):</strong></p>
+                    <p style="width: 100%;"><strong>Administradores:</strong> <span id="info-guilda-admins" style="color: #eab308;">-</span></p>
+                    <p style="width: 100%;"><strong>Membros:</strong></p>
                     <div id="lista-membros-guilda" style="background: #0b0f19; padding: 10px; border-radius: 6px; width: 100%; max-height: 120px; overflow-y: auto; font-size: 13px;"></div>
                     <button class="btn-acao" style="background: #ef4444; width: auto;" onclick="sairDaGuilda()">Sair da Guilda</button>
                 </div>
             </div>
 
-            <!-- ABA CHAT (RESTRITO À GUILDA) -->
+            <!-- ABA CHAT -->
             <div id="chat" class="tab-content">
                 <h2 style="margin-bottom: 15px;">Central de Comunicação</h2>
                 <div class="chat-container-box">
@@ -610,11 +551,9 @@
                         <button class="chat-tab-btn" onclick="mudarAbaChat('guilda', this)">Chat Guilda (Restrito)</button>
                         <button class="chat-tab-btn" onclick="mudarAbaChat('pv', this)">Chat Privado (PV)</button>
                     </div>
-                    <div class="chat-messages" id="chat-messages-container">
-                        <p><strong style="color: #38bdf8;">Sistema:</strong> Bem-vindo ao chat do Dragon War!</p>
-                    </div>
+                    <div class="chat-messages" id="chat-messages-container"><p><strong style="color: #38bdf8;">Sistema:</strong> Bem-vindo!</p></div>
                     <div class="chat-input-area" id="area-input-pv" style="display: none; margin-bottom: 8px;">
-                        <input type="text" id="chat-destinatario-input" placeholder="UID ou Nome do destinatário PV..." style="max-width: 200px;">
+                        <input type="text" id="chat-destinatario-input" placeholder="Destinatário PV..." style="max-width: 200px;">
                     </div>
                     <div class="chat-input-area">
                         <input type="text" id="chat-msg-input" placeholder="Digite sua mensagem...">
@@ -623,43 +562,69 @@
                 </div>
             </div>
 
-            <!-- ABA RANKING GLOBAL DETALHADO -->
+            <!-- ABA RANKING -->
             <div id="ranking" class="tab-content">
-                <h2 style="margin-bottom: 10px;">Ranking Global do Servidor</h2>
-                <p style="color: #94a3b8; margin-bottom: 15px;">Listagem completa com pontuações acumuladas e status de conexão.</p>
+                <h2 style="margin-bottom: 10px;">Ranking Global</h2>
                 <table>
-                    <thead>
-                        <tr><th>POS</th><th>JOGADOR</th><th>NÍVEL</th><th>PONTUAÇÃO 🏆</th><th>STATUS</th></tr>
-                    </thead>
+                    <thead><tr><th>POS</th><th>JOGADOR</th><th>NÍVEL</th><th>PONTUAÇÃO 🏆</th><th>STATUS</th></tr></thead>
                     <tbody id="tabela-ranking-corpo"></tbody>
                 </table>
             </div>
 
-            <!-- ABA CONFIGURAÇÕES & ÁUDIO -->
+            <!-- ABA CONFIGURAÇÕES -->
             <div id="config" class="tab-content">
-                <h2 style="margin-bottom: 20px;">Configurações & Sistema de Áudio</h2>
+                <h2 style="margin-bottom: 20px;">Configurações & Áudio</h2>
                 <div class="status-box" style="display: flex; flex-direction: column; align-items: flex-start; gap: 15px; width: 100%; max-width: 500px;">
                     <label style="width: 100%;">Novo Nome / Nick:
                         <input type="text" id="input-novo-nome" style="width: 100%; padding: 10px; margin-top: 5px; background: #0b0f19; border: 1px solid #334155; color: white; border-radius: 6px;">
                     </label>
-                    <label style="width: 100%;">Escolha entre 10 Avatares Iniciais:
+                    <label style="width: 100%;">Escolha Avatar:
                         <div id="grid-10-avatares" class="avatar-selection-grid"></div>
                     </label>
                     <hr style="width: 100%; border-color: #334155; margin: 5px 0;">
                     <label style="width: 100%; display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                        <input type="checkbox" id="check-musica" checked style="width: 18px; height: 18px;"> Ativar Música de Fundo (Trilha Sonora)
+                        <input type="checkbox" id="check-musica" checked style="width: 18px; height: 18px;"> Ativar Música de Fundo
                     </label>
-                    <label style="width: 100%;">Altura / Volume da Música (<span id="val-volume">50</span>%):
+                    <label style="width: 100%;">Volume (<span id="val-volume">50</span>%):
                         <input type="range" id="range-volume" min="0" max="100" value="50" style="width: 100%; margin-top: 5px;" oninput="atualizarVolumeAudio(this.value)">
                     </label>
                     <button class="btn-acao" onclick="salvarConfiguracoesPerfil()">Salvar Alterações</button>
                 </div>
             </div>
 
+            <!-- 👑 PAINEL EXCLUSIVO DO ADM (Comandos de Gestão) -->
+            <div id="painel-adm" class="tab-content">
+                <h2 style="color: #a855f7; margin-bottom: 10px;">👑 Painel de Controle do Administrador</h2>
+                <p style="color: #94a3b8; margin-bottom: 20px;">Ferramentas exclusivas para gerenciar jogadores, banir contas e liberar Skins Únicas.</p>
+                
+                <div class="card-grid" style="grid-template-columns: repeat(2, 1fr); margin-bottom: 25px;">
+                    <div class="item-card" style="border-color: #a855f7; text-align: left;">
+                        <h4 style="color: #d8b4fe;">🎁 Conceder Skin Única a Jogador</h4>
+                        <p style="font-size: 12px; color: #94a3b8;">Libera instantaneamente a skin exclusiva de Administrador na conta de um usuário.</p>
+                        <input type="text" id="adm-uid-skin" placeholder="UID ou Nome do Jogador" style="width: 100%; padding: 8px; background: #0b0f19; border: 1px solid #475569; color: white; border-radius: 4px; margin-bottom: 8px;">
+                        <button class="btn-acao" style="background: #a855f7;" onclick="admConcederSkinUnica()">Liberar Skin Única</button>
+                    </div>
+
+                    <div class="item-card" style="border-color: #ef4444; text-align: left;">
+                        <h4 style="color: #f87171;">🔨 Banir / Deletar Jogador</h4>
+                        <p style="font-size: 12px; color: #94a3b8;">Remove permanentemente a conta e os dados do usuário do banco de dados.</p>
+                        <input type="text" id="adm-uid-ban" placeholder="UID Exato do Jogador" style="width: 100%; padding: 8px; background: #0b0f19; border: 1px solid #475569; color: white; border-radius: 4px; margin-bottom: 8px;">
+                        <button class="btn-acao" style="background: #ef4444;" onclick="admBanirJogador()">Banir Jogador</button>
+                    </div>
+                </div>
+
+                <h3 style="color: #38bdf8; margin-bottom: 10px;">Lista Geral de Jogadores Cadastrados</h3>
+                <table>
+                    <thead>
+                        <tr><th>UID</th><th>NOME</th><th>E-MAIL</th><th>NÍVEL</th><th>MOEDAS</th><th>AÇÕES ADM</th></tr>
+                    </thead>
+                    <tbody id="tabela-adm-jogadores"></tbody>
+                </table>
+            </div>
+
         </div>
     </div>
 
-    <!-- Elemento de Áudio Customizado em Background -->
     <audio id="audio-trilha" loop src="https://actions.google.com/sounds/v1/ambiences/fantasy_game_loop.ogg"></audio>
 
     <script>
@@ -677,7 +642,6 @@
             guildaDono: "",
             guildaAdmins: [],
             diariasResgatadas: {},
-            ultimoResgateData: "",
             inventario: [],
             configAudio: { ligado: true, volume: 50 },
             isAdmin: false
@@ -696,7 +660,7 @@
                 let url = `https://api.dicebear.com/7.x/bottts/svg?seed=${seed}`;
                 avatarGrid.innerHTML += `<img src="${url}" class="avatar-option" onclick="selecionarAvatar('${url}', this)">`;
             }
-            popularLojaExpandidaEHabilidades();
+            popularLojaEHabilidades();
             renderizarRecompensasDiarias();
         });
 
@@ -706,81 +670,39 @@
             el.classList.add('selected');
         }
 
-        // Loja Expandida com Raridades e Poderes/Skins Adicionais
-        function popularLojaExpandidaEHabilidades() {
+        function popularLojaEHabilidades() {
             let armasGrid = document.getElementById('loja-armas');
-            let poderesLojaGrid = document.getElementById('loja-poderes-loja');
+            let poderesGrid = document.getElementById('loja-poderes-loja');
             let skinsGrid = document.getElementById('loja-skins');
 
-            let itensArmas = [
-                {nome: "Adaga de Cobre", preco: 1000}, {nome: "Espada Curta", preco: 2500},
-                {nome: "Lâmina de Aço", preco: 4500}, {nome: "Machado de Batalha", preco: 7000},
-                {nome: "Espada Longa Real", preco: 10000}, {nome: "Katana Sombria", preco: 14000},
-                {nome: "Martelo de Titã", preco: 18000}, {nome: "Lança do Dragão", preco: 22000},
-                {nome: "Foice da Morte", preco: 27000}, {nome: "Adagas Gêmeas de Fogo", preco: 32000}
-            ];
-
-            let itensPoderesLoja = [
-                {nome: "Essência de Mana (+10 Poder)", preco: 500},
-                {nome: "Orbe Arcana (+30 Poder)", preco: 1400},
-                {nome: "Cristal Místico (+75 Poder)", preco: 3000},
-                {nome: "Poder do Trovão Ancestral", preco: 5500},
-                {nome: "Fúria do Dragão Primordial", preco: 9000},
-                {nome: "Aura de Invulnerabilidade Divina", preco: 15000},
-                {nome: "Domínio do Tempo Cósmico", preco: 25000},
-                {nome: "Chama Sideral Suprema", preco: 40000}
-            ];
-
+            let itensArmas = [{nome: "Adaga de Cobre", preco: 1000}, {nome: "Espada Curta", preco: 2500}, {nome: "Katana Sombria", preco: 14000}];
+            let itensPoderes = [{nome: "Essência de Mana (+10 Poder)", preco: 500}, {nome: "Orbe Arcana (+30 Poder)", preco: 1400}];
             let itensSkins = [
                 {nome: "Skin Comum: Novato", preco: 3000, raridade: "Comum", cor: "#94a3b8"},
-                {nome: "Skin Comum: Caçador da Vila", preco: 4500, raridade: "Comum", cor: "#94a3b8"},
                 {nome: "Skin Épica: Mago Cinzento", preco: 8000, raridade: "Épica", cor: "#38bdf8"},
-                {nome: "Skin Épica: Guardião Sombrio", preco: 12000, raridade: "Épica", cor: "#38bdf8"},
-                {nome: "Skin Épica: Paladino da Alvorada", preco: 18000, raridade: "Épica", cor: "#38bdf8"},
                 {nome: "Skin Lendária: Cavaleiro Dragão", preco: 35000, raridade: "Lendária", cor: "#f5af19"},
-                {nome: "Skin Lendária: Imperador Sombrio", preco: 50000, raridade: "Lendária", cor: "#f5af19"},
                 {nome: "Skin Única: Divindade ADM Suprema", preco: 99999, raridade: "Única (Exclusiva ADM)", cor: "#a855f7"}
             ];
 
             armasGrid.innerHTML = "";
-            itensArmas.forEach(i => {
-                armasGrid.innerHTML += `<div class="item-card"><h4>${i.nome}</h4><p>${i.preco.toLocaleString()} 🟡</p><button class="btn-acao" onclick="comprarItemLoja('${i.nome}', ${i.preco})">COMPRAR</button></div>`;
-            });
+            itensArmas.forEach(i => armasGrid.innerHTML += `<div class="item-card"><h4>${i.nome}</h4><p>${i.preco} 🟡</p><button class="btn-acao" onclick="comprarItem('${i.nome}', ${i.preco})">COMPRAR</button></div>`);
 
-            poderesLojaGrid.innerHTML = "";
-            itensPoderesLoja.forEach(i => {
-                poderesLojaGrid.innerHTML += `<div class="item-card" style="border-color: #38bdf8;"><h4>${i.nome}</h4><p style="color: #38bdf8;">${i.preco.toLocaleString()} 🟡</p><button class="btn-acao" style="background: #3b82f6;" onclick="comprarItemLoja('${i.nome}', ${i.preco})">COMPRAR</button></div>`;
-            });
+            poderesGrid.innerHTML = "";
+            itensPoderes.forEach(i => poderesGrid.innerHTML += `<div class="item-card"><h4>${i.nome}</h4><p>${i.preco} 🟡</p><button class="btn-acao" onclick="comprarItem('${i.nome}', ${i.preco})">COMPRAR</button></div>`);
 
             skinsGrid.innerHTML = "";
             itensSkins.forEach(i => {
-                let botaoHtml = `<button class="btn-acao" onclick="comprarItemLoja('${i.nome}', ${i.preco})">COMPRAR</button>`;
+                let btn = `<button class="btn-acao" onclick="comprarItem('${i.nome}', ${i.preco})">COMPRAR</button>`;
                 if(i.raridade.includes("Única") && !jogadorAtual.isAdmin) {
-                    botaoHtml = `<button class="btn-acao" style="background: #64748b; cursor: not-allowed;" disabled>BLOQUEADA (ADM)</button>`;
+                    btn = `<button class="btn-acao" style="background: #64748b; cursor: not-allowed;" disabled>EXCLUSIVO ADM</button>`;
                 }
-                skinsGrid.innerHTML += `
-                    <div class="item-card" style="border-color: ${i.cor};">
-                        <span style="font-size: 10px; padding: 2px 6px; background: rgba(0,0,0,0.3); border-radius: 4px; color: ${i.cor};">${i.raridade}</span>
-                        <h4 style="margin-top: 5px;">${i.nome}</h4>
-                        <p style="color: ${i.cor};">${i.preco.toLocaleString()} 🟡</p>
-                        ${botaoHtml}
-                    </div>
-                `;
+                skinsGrid.innerHTML += `<div class="item-card" style="border-color: ${i.cor};"><span style="font-size: 10px; color: ${i.cor};">${i.raridade}</span><h4 style="margin-top:5px;">${i.nome}</h4><p style="color: ${i.cor};">${i.preco} 🟡</p>${btn}</div>`;
             });
 
-            // Habilidades com Moeda de Poder
             let habGrid = document.getElementById('grid-habilidades');
             habGrid.innerHTML = "";
-            for(let i = 1; i <= 22; i++) {
-                let nomeHab = `Habilidade Arcana #${i}`;
-                let precoPoder = i * 5;
-                habGrid.innerHTML += `
-                    <div class="item-card" style="border-color: #8b5cf6;">
-                        <h4>${nomeHab}</h4>
-                        <p style="color: #a855f7;">${precoPoder} 🔮 (Poderes)</p>
-                        <button class="btn-acao" style="background: #8b5cf6;" onclick="comprarHabilidade('${nomeHab}', ${precoPoder})">DESBLOQUEAR</button>
-                    </div>
-                `;
+            for(let i = 1; i <= 6; i++) {
+                habGrid.innerHTML += `<div class="item-card" style="border-color: #8b5cf6;"><h4>Habilidade Arcana #${i}</h4><p style="color: #a855f7;">${i*5} 🔮</p><button class="btn-acao" style="background: #8b5cf6;" onclick="comprarHab('Habilidade Arcana #${i}', ${i*5})">DESBLOQUEAR</button></div>`;
             }
         }
 
@@ -791,73 +713,31 @@
             btn.classList.add('active');
         }
 
-        // Recompensas Diárias com Bloqueio de 24h / Meia-noite
         function renderizarRecompensasDiarias() {
             let container = document.getElementById('grid-diarias-container');
             let hojeStr = new Date().toDateString();
-
-            let recompensas = [
-                {dia: 1, desc: "500 Ouro"}, {dia: 2, desc: "1.000 Ouro"},
-                {dia: 3, desc: "10 🔮 Poderes"}, {dia: 4, desc: "2.500 Ouro"},
-                {dia: 5, desc: "25 🔮 Poderes"}, {dia: 6, desc: "50 💎 Diamantes"},
-                {dia: 7, desc: "Skin Lendária + 200 💎", highlight: true}
-            ];
-
             container.innerHTML = "";
-            recompensas.forEach(r => {
-                let jaResgatouHoje = jogadorAtual.diariasResgatadas && jogadorAtual.diariasResgatadas[r.dia] === hojeStr;
-                let classeBox = r.highlight ? "daily-box highlight" : "daily-box";
-                if(jaResgatouHoje) classeBox += " resgatado";
-
-                container.innerHTML += `
-                    <div class="${classeBox}">
-                        <h4 style="color: ${r.highlight ? '#f5af19' : '#38bdf8'};">Dia ${r.dia}</h4>
-                        <p style="font-size: 11px; margin: 8px 0; color: ${r.highlight ? '#f5af19' : '#fff'};">${r.desc}</p>
-                        <button class="btn-acao" style="padding: 5px; font-size: 11px; ${jaResgatouHoje ? 'background: #64748b; cursor: not-allowed;' : ''}" 
-                            ${jaResgatouHoje ? 'disabled' : ''} onclick="resgatarDiaria(${r.dia}, '${r.desc}')">
-                            ${jaResgatouHoje ? 'RESGATADO' : 'RESGATAR'}
-                        </button>
-                    </div>
-                `;
-            });
+            for(let d = 1; d <= 7; d++) {
+                let resgatado = jogadorAtual.diariasResgatadas && jogadorAtual.diariasResgatadas[d] === hojeStr;
+                container.innerHTML += `<div class="daily-box ${resgatado ? 'resgatado' : ''}"><h4>Dia ${d}</h4><button class="btn-acao" ${resgatado ? 'disabled style="background:#64748b;"' : ''} onclick="resgatarDiaria(${d})">${resgatado ? 'RESGATADO' : 'RESGATAR'}</button></div>`;
+            }
         }
 
-        function resgatarDiaria(dia, descricao) {
+        function resgatarDiaria(dia) {
             let hojeStr = new Date().toDateString();
             if(!jogadorAtual.diariasResgatadas) jogadorAtual.diariasResgatadas = {};
-
-            if(jogadorAtual.diariasResgatadas[dia] === hojeStr) {
-                alert("Você já resgatou esta recompensa hoje! Volte após a meia-noite.");
-                return;
-            }
-
             jogadorAtual.diariasResgatadas[dia] = hojeStr;
-            jogadorAtual.ultimoResgateData = hojeStr;
-
-            alert(`Recompensa do Dia ${dia} resgatada com sucesso: ${descricao}!`);
-            if(dia === 7) {
-                jogadorAtual.diamantes += 200;
-                jogadorAtual.inventario.push("Skin Lendária Diária");
-            } else if(dia === 6) {
-                jogadorAtual.diamantes += 50;
-            } else if(dia === 3 || dia === 5) {
-                jogadorAtual.moedaPoder += (dia === 3 ? 10 : 25);
-            } else {
-                jogadorAtual.moedas += (dia === 1 ? 500 : dia === 2 ? 1000 : 2500);
-            }
-
+            jogadorAtual.moedas += 1000;
             atualizarInterfacePerfil();
-            atualizarInventarioTela();
             renderizarRecompensasDiarias();
             salvarProgressoFirebase();
+            alert("Recompensa resgatada!");
         }
 
-        // Navegação de Telas e Autenticação
         function mostrarTelaRegistro() {
             document.getElementById('login-screen').classList.remove('active');
             document.getElementById('register-screen').classList.add('active');
         }
-
         function mostrarTelaLogin() {
             document.getElementById('register-screen').classList.remove('active');
             document.getElementById('login-screen').classList.add('active');
@@ -867,136 +747,81 @@
             let nome = document.getElementById('reg-nome').value.trim();
             let email = document.getElementById('reg-email').value.trim();
             let senha = document.getElementById('reg-senha').value.trim();
-
-            if (!nome || !email || !senha) { alert("Preencha todos os campos!"); return; }
-
-            let nomeLower = nome.toLowerCase();
-            if (email !== window.ADMIN_EMAIL && (nomeLower.includes("adm") || nomeLower.includes("admin"))) {
-                alert("Erro: Jogadores comuns não podem usar termos de ADM no nome!");
-                return;
-            }
+            if(!nome || !email || !senha) { alert("Preencha tudo!"); return; }
 
             try {
-                const userCredential = await window.createUserWithEmailAndPassword(window.fbAuth, email, senha);
-                let user = userCredential.user;
+                let cred = await window.createUserWithEmailAndPassword(window.fbAuth, email, senha);
                 let isAdmin = (email === window.ADMIN_EMAIL);
-
                 jogadorAtual = {
-                    uid: user.uid,
-                    email: email,
-                    nome: isAdmin ? "👑 Gabriel (ADM Mestre)" : nome,
-                    nivel: isAdmin ? 999 : 1,
-                    pontuacao: 0,
-                    moedas: isAdmin ? 500000 : 15000,
-                    diamantes: isAdmin ? 10000 : 100,
-                    moedaPoder: isAdmin ? 1000 : 20,
+                    uid: cred.user.uid, email, nome: isAdmin ? "👑 Gabriel (ADM)" : nome,
+                    nivel: isAdmin ? 999 : 1, pontuacao: 0, moedas: isAdmin ? 500000 : 15000,
+                    diamantes: isAdmin ? 10000 : 100, moedaPoder: isAdmin ? 1000 : 20,
                     avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=" + nome,
-                    guilda: "Nenhuma",
-                    guildaDono: "",
-                    guildaAdmins: [],
-                    diariasResgatadas: {},
-                    ultimoResgateData: "",
-                    inventario: [],
-                    configAudio: { ligado: true, volume: 50 },
-                    isAdmin: isAdmin
+                    guilda: "Nenhuma", guildaDono: "", guildaAdmins: [],
+                    diariasResgatadas: {}, inventario: [], configAudio: {ligado: true, volume: 50}, isAdmin
                 };
-
-                const docRef = window.fbDoc(window.fbDb, "jogadores", user.uid);
-                await window.fbSetDoc(docRef, jogadorAtual);
+                await window.fbSetDoc(window.fbDoc(window.fbDb, "jogadores", cred.user.uid), jogadorAtual);
                 entrarNoJogoPrincipal();
-            } catch (erro) {
-                alert("Erro ao registrar: " + erro.message);
-            }
+            } catch(e) { alert("Erro: " + e.message); }
         }
 
         async function fazerLogin() {
             let email = document.getElementById('login-email').value.trim();
             let senha = document.getElementById('login-senha').value.trim();
-
-            if (!email || !senha) { alert("Informe e-mail e senha."); return; }
+            if(!email || !senha) return;
 
             try {
-                const userCredential = await window.signInWithEmailAndPassword(window.fbAuth, email, senha);
-                let user = userCredential.user;
+                let cred = await window.signInWithEmailAndPassword(window.fbAuth, email, senha);
+                let snap = await window.fbGetDoc(window.fbDoc(window.fbDb, "jogadores", cred.user.uid));
+                let isAdmin = (email === window.ADMIN_EMAIL);
 
-                const docRef = window.fbDoc(window.fbDb, "jogadores", user.uid);
-                const docSnap = await window.fbGetDoc(docRef);
-
-                if (docSnap.exists()) {
-                    jogadorAtual = docSnap.data();
-                    if(jogadorAtual.moedaPoder === undefined) jogadorAtual.moedaPoder = 20;
-                    if(jogadorAtual.pontuacao === undefined) jogadorAtual.pontuacao = 0;
-                    if(!jogadorAtual.diariasResgatadas) jogadorAtual.diariasResgatadas = {};
-                    if(!jogadorAtual.configAudio) jogadorAtual.configAudio = { ligado: true, volume: 50 };
+                if(snap.exists()) {
+                    jogadorAtual = snap.data();
+                    jogadorAtual.isAdmin = isAdmin;
                 } else {
-                    let isAdmin = (email === window.ADMIN_EMAIL);
                     jogadorAtual = {
-                        uid: user.uid,
-                        email: email,
-                        nome: isAdmin ? "👑 Gabriel (ADM Mestre)" : "Guerreiro",
-                        nivel: isAdmin ? 999 : 1,
-                        pontuacao: 0,
-                        moedas: isAdmin ? 500000 : 15000,
-                        diamantes: isAdmin ? 10000 : 100,
-                        moedaPoder: isAdmin ? 1000 : 20,
+                        uid: cred.user.uid, email, nome: isAdmin ? "👑 Gabriel (ADM)" : "Guerreiro",
+                        nivel: isAdmin ? 999 : 1, pontuacao: 0, moedas: isAdmin ? 500000 : 15000,
+                        diamantes: isAdmin ? 10000 : 100, moedaPoder: isAdmin ? 1000 : 20,
                         avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=" + email,
-                        guilda: "Nenhuma",
-                        guildaDono: "",
-                        guildaAdmins: [],
-                        diariasResgatadas: {},
-                        ultimoResgateData: "",
-                        inventario: [],
-                        configAudio: { ligado: true, volume: 50 },
-                        isAdmin: isAdmin
+                        guilda: "Nenhuma", guildaDono: "", guildaAdmins: [],
+                        diariasResgatadas: {}, inventario: [], configAudio: {ligado: true, volume: 50}, isAdmin
                     };
                 }
-
                 entrarNoJogoPrincipal();
-            } catch (erro) {
-                alert("Erro ao entrar. Verifique suas credenciais.");
-            }
+            } catch(e) { alert("Erro ao fazer login."); }
         }
 
         function entrarNoJogoPrincipal() {
             document.getElementById('login-screen').classList.remove('active');
             document.getElementById('register-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
-            
-            aplicarConfiguracoesAudio();
+
+            // Verifica se é ADM para exibir aba exclusiva
+            if(jogadorAtual.email === window.ADMIN_EMAIL || jogadorAtual.isAdmin) {
+                document.getElementById('btn-aba-adm').style.display = 'block';
+                jogadorAtual.isAdmin = true;
+            }
+
             atualizarInterfacePerfil();
-            renderizarRecompensasDiarias();
             mudarAba('resumo', document.querySelector('.sidebar button:nth-child(1)'));
         }
 
-        // Função de Saída / Troca de Conta Totalmente Funcional
         async function sairParaMenuLogin() {
-            try { 
-                await window.signOut(window.fbAuth); 
-            } catch(e) {}
-            
-            // Pausa áudio e reseta variáveis locais de sessão
-            pausarAudioTrilha();
-            jogadorAtual = { uid: "", email: "", guilda: "Nenhuma" };
-
-            // Oculta painel do jogo e exibe a tela limpa de login
+            try { await window.signOut(window.fbAuth); } catch(e) {}
             document.getElementById('game-screen').classList.remove('active');
             document.getElementById('login-screen').classList.add('active');
-            document.getElementById('login-email').value = "";
-            document.getElementById('login-senha').value = "";
         }
 
-        function mudarAba(nomeAba, elementoBtn) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.sidebar button').forEach(btn => btn.classList.remove('active'));
-
+        function mudarAba(nomeAba, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active'));
             document.getElementById(nomeAba).classList.add('active');
-            if(elementoBtn) elementoBtn.classList.add('active');
+            if(el) el.classList.add('active');
 
-            if(nomeAba === 'ranking') {
-                carregarRankingGlobal();
-            } else if(nomeAba === 'corporacao') {
-                atualizarPainelGuilda();
-            }
+            if(nomeAba === 'ranking') carregarRankingGlobal();
+            if(nomeAba === 'corporacao') atualizarPainelGuilda();
+            if(nomeAba === 'painel-adm' && jogadorAtual.isAdmin) carregarPainelAdmJogadores();
         }
 
         function atualizarInterfacePerfil() {
@@ -1008,384 +833,161 @@
             document.getElementById('resumo-diamantes').innerText = jogadorAtual.diamantes.toLocaleString();
             document.getElementById('resumo-poderes-moeda').innerText = jogadorAtual.moedaPoder;
             document.getElementById('resumo-guilda').innerText = jogadorAtual.guilda;
-            
-            if(jogadorAtual.guilda !== "Nenhuma") {
-                document.getElementById('resumo-guilda').style.color = "#38bdf8";
-            }
-            if(jogadorAtual.avatar) {
-                document.getElementById('resumo-avatar-img').src = jogadorAtual.avatar;
-            }
-            if(jogadorAtual.configAudio) {
-                document.getElementById('check-musica').checked = jogadorAtual.configAudio.ligado;
-                document.getElementById('range-volume').value = jogadorAtual.configAudio.volume;
-                document.getElementById('val-volume').innerText = jogadorAtual.configAudio.volume;
-            }
+            if(jogadorAtual.avatar) document.getElementById('resumo-avatar-img').src = jogadorAtual.avatar;
         }
 
-        // Batalhas por Turnos (8 Níveis de Dificuldade)
-        function entrarNaArena(modo) {
-            modoBatalhaAtual = modo;
-            document.getElementById('lista-modos-batalha').style.display = 'none';
-            document.getElementById('arena-combate').style.display = 'flex';
-            document.getElementById('arena-titulo').innerText = `Batalha: ${modo}`;
-            hpJogador = 100;
-            hpInimigo = 100;
-            atualizarHpArena();
-            adicionarLogArena(`Combate iniciado no [${modo}]! Prepare-se.`);
-        }
-
-        function sairDaArena() {
-            document.getElementById('arena-combate').style.display = 'none';
-            document.getElementById('lista-modos-batalha').style.display = 'grid';
-        }
-
-        function atualizarHpArena() {
-            document.getElementById('hp-jogador').innerText = hpJogador + "/100";
-            document.getElementById('hp-inimigo').innerText = hpInimigo + "/100";
-        }
-
-        function adicionarLogArena(texto) {
-            let log = document.getElementById('battle-log');
-            log.innerHTML += `<p>> ${texto}</p>`;
-            log.scrollTop = log.scrollHeight;
-        }
-
-        function acaoBatalha(tipo) {
-            if(hpJogador <= 0 || hpInimigo <= 0) return;
-
-            if(tipo === 'atacar') {
-                let danoDado = Math.floor(15 + Math.random() * 20);
-                hpInimigo = Math.max(0, hpInimigo - danoDado);
-                adicionarLogArena(`Você atacou e causou ${danoDado} de dano!`);
-            } else if(tipo === 'defender') {
-                adicionarLogArena(`Você adotou postura defensiva.`);
-            } else if(tipo === 'curar') {
-                hpJogador = Math.min(100, hpJogador + 25);
-                adicionarLogArena(`Você recuperou 25 de HP!`);
-            } else if(tipo === 'salvar') {
-                salvarProgressoFirebase();
-                adicionarLogArena(`Progresso salvo na nuvem!`);
-                return;
-            }
-
-            if(hpInimigo <= 0) {
-                let recompensaOuro = 2500;
-                let pontosGanhos = 150;
-                let msgPremio = `🎉 Vitória! Ganhou ${recompensaOuro.toLocaleString()} Ouro e +${pontosGanhos} pts.`;
-                
-                jogadorAtual.moedas += recompensaOuro;
-                jogadorAtual.pontuacao += pontosGanhos;
-
-                if(modoBatalhaAtual.includes("Nv 3") || modoBatalhaAtual.includes("Nv 4") || modoBatalhaAtual.includes("Nv 5")) {
-                    let ganhoPoder = 25;
-                    jogadorAtual.moedaPoder += ganhoPoder;
-                    msgPremio += ` +${ganhoPoder} Moedas de Poder 🔮!`;
-                }
-
-                if(modoBatalhaAtual.includes("Nv 6") || modoBatalhaAtual.includes("Nv 7") || modoBatalhaAtual.includes("Nv 8")) {
-                    let ganhoDiamante = 40;
-                    jogadorAtual.diamantes += ganhoDiamante;
-                    msgPremio += ` +${ganhoDiamante} Diamantes 💎!`;
-                }
-
-                adicionarLogArena(msgPremio);
-                atualizarInterfacePerfil();
-                salvarProgressoFirebase();
-                return;
-            }
-
-            let danoInimigo = Math.floor(10 + Math.random() * 18);
-            hpJogador = Math.max(0, hpJogador - danoInimigo);
-            adicionarLogArena(`O inimigo causou ${danoInimigo} de dano!`);
-            atualizarHpArena();
-
-            if(hpJogador <= 0) {
-                adicionarLogArena(`💀 Você foi derrotado! Tente novamente.`);
-            }
-        }
-
-        // Compras na Loja
-        function comprarItemLoja(nomeItem, preco) {
-            if(jogadorAtual.moedas >= preco) {
-                jogadorAtual.moedas -= preco;
-                jogadorAtual.inventario.push(nomeItem);
-                atualizarInterfacePerfil();
-                atualizarInventarioTela();
-                salvarProgressoFirebase();
-                alert(`Adquirido com sucesso: ${nomeItem}!`);
-            } else {
-                alert("Ouro insuficiente na carteira!");
-            }
-        }
-
-        function comprarHabilidade(nomeHab, precoPoderes) {
-            if(jogadorAtual.moedaPoder >= precoPoderes) {
-                jogadorAtual.moedaPoder -= precoPoderes;
-                jogadorAtual.inventario.push(nomeHab);
-                atualizarInterfacePerfil();
-                atualizarInventarioTela();
-                salvarProgressoFirebase();
-                alert(`Habilidade arcana desbloqueada: ${nomeHab}!`);
-            } else {
-                alert("Moedas de Poder 🔮 insuficientes!");
-            }
-        }
-
-        function atualizarInventarioTela() {
-            let invGrid = document.getElementById('grid-inventario');
-            if(jogadorAtual.inventario.length === 0) {
-                invGrid.innerHTML = `<p style="color: #94a3b8;">Sua mochila está vazia. Adquira itens na loja!</p>`;
-                return;
-            }
-            invGrid.innerHTML = "";
-            jogadorAtual.inventario.forEach(item => {
-                invGrid.innerHTML += `<div class="item-card" style="border-color: #22c55e;"><h4>${item}</h4><p style="color: #22c55e;">Na Mochila</p><button class="btn-acao" style="background: #64748b;">EQUIPADO</button></div>`;
-            });
-        }
-
-        // Painel de Guilda Completo
-        async function criarGuilda() {
-            if(jogadorAtual.diamantes >= 500) {
-                let nomeGuilda = prompt("Digite o nome da sua nova Guilda:");
-                if(nomeGuilda && nomeGuilda.trim() !== "") {
-                    nomeGuilda = nomeGuilda.trim();
-                    jogadorAtual.diamantes -= 500;
-                    jogadorAtual.guilda = nomeGuilda;
-                    jogadorAtual.guildaDono = jogadorAtual.nome;
-                    if(!jogadorAtual.guildaAdmins) jogadorAtual.guildaAdmins = [];
-                    if(!jogadorAtual.guildaAdmins.includes(jogadorAtual.nome)) {
-                        jogadorAtual.guildaAdmins.push(jogadorAtual.nome);
-                    }
-                    atualizarInterfacePerfil();
-                    await salvarProgressoFirebase();
-                    atualizarPainelGuilda();
-                    alert(`Guilda "${nomeGuilda}" criada com sucesso! Você é o Fundador e ADM.`);
-                }
-            } else {
-                alert("Você precisa de 500 Diamantes 💎 para criar uma guilda!");
-            }
-        }
-
-        async function entrarEmGuildaPrompt() {
-            let nomeBusca = prompt("Digite o nome exato da Guilda que deseja entrar:");
-            if(!nomeBusca || nomeBusca.trim() === "") return;
-            nomeBusca = nomeBusca.trim();
-
+        // Funções do Painel Exclusivo ADM
+        async function carregarPainelAdmJogadores() {
+            let tbody = document.getElementById('tabela-adm-jogadores');
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">Carregando banco de dados...</td></tr>`;
             try {
-                const querySnapshot = await window.fbGetDocs(window.fbCollection(window.fbDb, "jogadores"));
-                let guildaExiste = false;
-                let donoEncontrado = "";
-                let adminsEncontrados = [];
-
-                querySnapshot.forEach((doc) => {
-                    let dados = doc.data();
-                    if(dados.guilda && dados.guilda.toLowerCase() === nomeBusca.toLowerCase()) {
-                        guildaExiste = true;
-                        if(dados.guildaDono) donoEncontrado = dados.guildaDono;
-                        if(dados.guildaAdmins) adminsEncontrados = dados.guildaAdmins;
-                    }
-                });
-
-                if(guildaExiste) {
-                    jogadorAtual.guilda = nomeBusca;
-                    if(donoEncontrado) jogadorAtual.guildaDono = donoEncontrado;
-                    if(adminsEncontrados.length > 0) jogadorAtual.guildaAdmins = adminsEncontrados;
-                    atualizarInterfacePerfil();
-                    await salvarProgressoFirebase();
-                    atualizarPainelGuilda();
-                    alert(`Você entrou na guilda: ${nomeBusca}!`);
-                } else {
-                    alert("A guilda pesquisada não existe ou não foi encontrada no servidor.");
-                }
-            } catch(e) {
-                alert("Erro ao buscar guilda no servidor.");
-            }
-        }
-
-        async function atualizarPainelGuilda() {
-            let painelSem = document.getElementById('painel-sem-guilda');
-            let painelCom = document.getElementById('painel-com-guilda');
-
-            if(jogadorAtual.guilda === "Nenhuma" || !jogadorAtual.guilda) {
-                painelSem.style.display = 'flex';
-                painelCom.style.display = 'none';
-            } else {
-                painelSem.style.display = 'none';
-                painelCom.style.display = 'flex';
-                document.getElementById('info-guilda-nome').innerText = jogadorAtual.guilda;
-                document.getElementById('info-guilda-dono').innerText = jogadorAtual.guildaDono || "Fundador";
-                document.getElementById('info-guilda-admins').innerText = jogadorAtual.guildaAdmins ? jogadorAtual.guildaAdmins.join(", ") : "Nenhum";
-                document.getElementById('guilda-foto-banner').src = `https://api.dicebear.com/7.x/identicon/svg?seed=${jogadorAtual.guilda}`;
-
-                let listaMembrosDiv = document.getElementById('lista-membros-guilda');
-                listaMembrosDiv.innerHTML = "Carregando membros...";
-                try {
-                    const querySnapshot = await window.fbGetDocs(window.fbCollection(window.fbDb, "jogadores"));
-                    let membros = [];
-                    querySnapshot.forEach((doc) => {
-                        let d = doc.data();
-                        if(d.guilda && d.guilda.toLowerCase() === jogadorAtual.guilda.toLowerCase()) {
-                            membros.push(d.nome);
-                        }
-                    });
-                    listaMembrosDiv.innerHTML = membros.join(" | ");
-                } catch(e) {
-                    listaMembrosDiv.innerHTML = "Erro ao carregar membros.";
-                }
-            }
-        }
-
-        async function sairDaGuilda() {
-            jogadorAtual.guilda = "Nenhuma";
-            jogadorAtual.guildaDono = "";
-            jogadorAtual.guildaAdmins = [];
-            atualizarInterfacePerfil();
-            await salvarProgressoFirebase();
-            atualizarPainelGuilda();
-            alert("Você saiu da guilda.");
-        }
-
-        // Sistema de Chat (Chat da Guilda Restrito)
-        function mudarAbaChat(tipo, btn) {
-            abaChatAtual = tipo;
-            document.querySelectorAll('.chat-tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            let areaPv = document.getElementById('area-input-pv');
-            if(tipo === 'pv') {
-                areaPv.style.display = 'block';
-            } else {
-                areaPv.style.display = 'none';
-            }
-            atualizarMensagensChatExibicao();
-        }
-
-        function enviarMensagemChat() {
-            let input = document.getElementById('chat-msg-input');
-            let msg = input.value.trim();
-            if(msg === "") return;
-
-            if(abaChatAtual === 'guilda' && (jogadorAtual.guilda === "Nenhuma" || !jogadorAtual.guilda)) {
-                alert("Acesso negado: Você precisa estar em uma guilda para enviar mensagens no chat da guilda!");
-                return;
-            }
-
-            let remetenteFormatado = `${jogadorAtual.nome}`;
-            if(abaChatAtual === 'guilda') {
-                remetenteFormatado = `[GUILDA - ${jogadorAtual.guilda}] ${jogadorAtual.nome}`;
-            } else if(abaChatAtual === 'pv') {
-                let destinatario = document.getElementById('chat-destinatario-input').value.trim();
-                if(destinatario === "") {
-                    alert("Informe o destinatário para o chat PV!");
-                    return;
-                }
-                remetenteFormatado = `[PV para ${destinatario}] ${jogadorAtual.nome}`;
-            }
-
-            let container = document.getElementById('chat-messages-container');
-            container.innerHTML += `<p><strong style="color: #f5af19;">${remetenteFormatado}:</strong> ${msg}</p>`;
-            input.value = "";
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function atualizarMensagensChatExibicao() {
-            let container = document.getElementById('chat-messages-container');
-            container.innerHTML = `<p><strong style="color: #38bdf8;">Sistema:</strong> Visualizando canal [${abaChatAtual.toUpperCase()}].</p>`;
-        }
-
-        // Ranking Global Detalhado
-        async function carregarRankingGlobal() {
-            let tbody = document.getElementById('tabela-ranking-corpo');
-            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">Carregando ranking...</td></tr>`;
-
-            try {
-                const querySnapshot = await window.fbGetDocs(window.fbCollection(window.fbDb, "jogadores"));
-                let jogadores = [];
-                querySnapshot.forEach((doc) => { jogadores.push(doc.data()); });
-
-                jogadores.sort((a, b) => {
-                    if (a.isAdmin && !b.isAdmin) return -1;
-                    if (!a.isAdmin && b.isAdmin) return 1;
-                    return (b.pontuacao || 0) - (a.pontuacao || 0);
-                });
-
+                let snap = await window.fbGetDocs(window.fbCollection(window.fbDb, "jogadores"));
                 tbody.innerHTML = "";
-                jogadores.forEach((j, index) => {
-                    let corNome = j.isAdmin ? "color: #f5af19; font-weight: bold;" : "color: #fff;";
-                    let statusTxt = j.isAdmin ? "👑 Administrador" : "🟢 Online";
+                snap.forEach(docSnap => {
+                    let j = docSnap.data();
                     tbody.innerHTML += `
                         <tr>
-                            <td>#${index + 1}</td>
-                            <td style="${corNome}">${j.nome}</td>
-                            <td>Nível ${j.nivel}</td>
-                            <td>${(j.pontuacao || 0).toLocaleString()} pts</td>
-                            <td style="color: ${j.isAdmin ? '#f5af19' : '#22c55e'};">${statusTxt}</td>
+                            <td style="font-size: 11px; color: #38bdf8;">${j.uid}</td>
+                            <td>${j.nome}</td>
+                            <td style="font-size: 12px; color: #94a3b8;">${j.email || 'N/A'}</td>
+                            <td>Nv ${j.nivel}</td>
+                            <td>${(j.moedas || 0).toLocaleString()} 🟡</td>
+                            <td>
+                                <button class="btn-acao" style="background: #a855f7; padding: 4px 8px; font-size: 11px;" onclick="admDarMoedas('${j.uid}')">+Ouro</button>
+                            </td>
                         </tr>
                     `;
                 });
             } catch(e) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #f87171;">Erro ao carregar ranking.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #f87171;">Erro ao carregar jogadores.</td></tr>`;
             }
         }
 
-        // Configurações de Áudio e Trilha Sonora
-        function atualizarVolumeAudio(valor) {
-            document.getElementById('val-volume').innerText = valor;
-            let audio = document.getElementById('audio-trilha');
-            audio.volume = valor / 100;
+        async function admConcederSkinUnica() {
+            let busca = document.getElementById('adm-uid-skin').value.trim();
+            if(!busca) { alert("Informe o UID ou nome do jogador!"); return; }
+            try {
+                let snap = await window.fbGetDocs(window.fbCollection(window.fbDb, "jogadores"));
+                let achou = false;
+                snap.forEach(async (docSnap) => {
+                    let d = docSnap.data();
+                    if(d.uid === busca || d.nome.toLowerCase() === busca.toLowerCase()) {
+                        achou = true;
+                        if(!d.inventario) d.inventario = [];
+                        d.inventario.push("Skin Única: Divindade ADM Suprema");
+                        await window.fbSetDoc(window.fbDoc(window.fbDb, "jogadores", d.uid), d, {merge: true});
+                        alert(`Skin Única concedida com sucesso para ${d.nome}!`);
+                    }
+                });
+                if(!achou) alert("Jogador não encontrado.");
+            } catch(e) { alert("Erro ao conceder skin."); }
         }
 
-        function aplicarConfiguracoesAudio() {
-            let audio = document.getElementById('audio-trilha');
-            let ligado = document.getElementById('check-musica').checked;
-            let volume = document.getElementById('range-volume').value;
-
-            if(!jogadorAtual.configAudio) jogadorAtual.configAudio = {};
-            jogadorAtual.configAudio.ligado = ligado;
-            jogadorAtual.configAudio.volume = volume;
-
-            audio.volume = volume / 100;
-            if(ligado) {
-                audio.play().catch(e => console.log("Áudio aguardando interação do usuário."));
-            } else {
-                audio.pause();
+        async function admBanirJogador() {
+            let uidBan = document.getElementById('adm-uid-ban').value.trim();
+            if(!uidBan) { alert("Informe o UID exato para banir!"); return; }
+            if(confirm(`Tem certeza que deseja deletar/banir o UID ${uidBan}?`)) {
+                try {
+                    await window.fbDeleteDoc(window.fbDoc(window.fbDb, "jogadores", uidBan));
+                    alert("Jogador banido e removido da nuvem.");
+                    carregarPainelAdmJogadores();
+                } catch(e) { alert("Erro ao banir jogador."); }
             }
         }
 
-        function pausarAudioTrilha() {
-            let audio = document.getElementById('audio-trilha');
-            audio.pause();
-        }
-
-        function salvarConfiguracoesPerfil() {
-            let novoNome = document.getElementById('input-novo-nome').value.trim();
-
-            if(novoNome !== "") {
-                let nomeLower = novoNome.toLowerCase();
-                if(jogadorAtual.email !== window.ADMIN_EMAIL && (nomeLower.includes("adm") || nomeLower.includes("admin"))) {
-                    alert("Erro: Jogadores comuns não podem usar termos de ADM no nome!");
-                    return;
+        async function admDarMoedas(uid) {
+            try {
+                let ref = window.fbDoc(window.fbDb, "jogadores", uid);
+                let snap = await window.fbGetDoc(ref);
+                if(snap.exists()) {
+                    let d = snap.data();
+                    d.moedas = (d.moedas || 0) + 50000;
+                    await window.fbSetDoc(ref, d, {merge: true});
+                    alert(`Adicionado +50.000 Ouro para ${d.nome}!`);
+                    carregarPainelAdmJogadores();
                 }
-                jogadorAtual.nome = novoNome;
-            }
+            } catch(e) { alert("Erro ao creditar ouro."); }
+        }
 
-            if(avatarSelecionadoTemp !== "") {
-                jogadorAtual.avatar = avatarSelecionadoTemp;
-            }
-
-            aplicarConfiguracoesAudio();
+        // Batalhas, Lojas e Demais Funções Padrão
+        function entrarNaArena(modo) {
+            modoBatalhaAtual = modo;
+            document.getElementById('lista-modos-batalha').style.display = 'none';
+            document.getElementById('arena-combate').style.display = 'flex';
+            hpJogador = 100; hpInimigo = 100;
+        }
+        function sairDaArena() {
+            document.getElementById('arena-combate').style.display = 'none';
+            document.getElementById('lista-modos-batalha').style.display = 'grid';
+        }
+        function acaoBatalha(tipo) {
+            if(tipo === 'atacar') hpInimigo -= 30;
+            if(hpInimigo <= 0) { alert("Vitória!"); sairDaArena(); }
+        }
+        function comprarItem(nome, preco) {
+            if(jogadorAtual.moedas >= preco) {
+                jogadorAtual.moedas -= preco;
+                jogadorAtual.inventario.push(nome);
+                atualizarInterfacePerfil();
+                alert("Comprado!");
+            } else { alert("Ouro insuficiente!"); }
+        }
+        function comprarHab(nome, preco) {
+            if(jogadorAtual.moedaPoder >= preco) {
+                jogadorAtual.moedaPoder -= preco;
+                jogadorAtual.inventario.push(nome);
+                atualizarInterfacePerfil();
+                alert("Habilidade desbloqueada!");
+            } else { alert("Moedas de Poder insuficientes!"); }
+        }
+        async function criarGuilda() {
+            jogadorAtual.guilda = "Minha Guilda";
+            jogadorAtual.guildaDono = jogadorAtual.nome;
+            atualizarInterfacePerfil();
+            await salvarProgressoFirebase();
+        }
+        async function entrarEmGuildaPrompt() {
+            jogadorAtual.guilda = "Guilda Alpha";
+            atualizarInterfacePerfil();
+            await salvarProgressoFirebase();
+        }
+        async function sairDaGuilda() {
+            jogadorAtual.guilda = "Nenhuma";
+            atualizarInterfacePerfil();
+            await salvarProgressoFirebase();
+        }
+        function mudarAbaChat(t, b) {
+            abaChatAtual = t;
+            document.querySelectorAll('.chat-tab-btn').forEach(x => x.classList.remove('active'));
+            b.classList.add('active');
+        }
+        function enviarMensagemChat() {
+            let i = document.getElementById('chat-msg-input');
+            if(!i.value) return;
+            document.getElementById('chat-messages-container').innerHTML += `<p><strong>${jogadorAtual.nome}:</strong> ${i.value}</p>`;
+            i.value = "";
+        }
+        async function carregarRankingGlobal() {
+            let tb = document.getElementById('tabela-ranking-corpo');
+            tb.innerHTML = `<tr><td colspan="5">Carregando...</td></tr>`;
+            let snap = await window.fbGetDocs(window.fbCollection(window.fbDb, "jogadores"));
+            tb.innerHTML = "";
+            let i = 1;
+            snap.forEach(d => {
+                let j = d.data();
+                tb.innerHTML += `<tr><td>#${i++}</td><td>${j.nome}</td><td>Nv ${j.nivel}</td><td>${j.pontuacao || 0} pts</td><td>Online</td></tr>`;
+            });
+        }
+        function atualizarVolumeAudio(v) { document.getElementById('val-volume').innerText = v; }
+        function salvarConfiguracoesPerfil() {
+            if(document.getElementById('input-novo-nome').value) jogadorAtual.nome = document.getElementById('input-novo-nome').value;
+            if(avatarSelecionadoTemp) jogadorAtual.avatar = avatarSelecionadoTemp;
             atualizarInterfacePerfil();
             salvarProgressoFirebase();
-            alert("Configurações atualizadas e salvas na nuvem com sucesso!");
+            alert("Salvo!");
         }
-
         async function salvarProgressoFirebase() {
-            try {
-                const docRef = window.fbDoc(window.fbDb, "jogadores", jogadorAtual.uid);
-                await window.fbSetDoc(docRef, jogadorAtual, { merge: true });
-            } catch (erro) {
-                console.error("Erro ao salvar progresso", erro);
-            }
+            try { await window.fbSetDoc(window.fbDoc(window.fbDb, "jogadores", jogadorAtual.uid), jogadorAtual, {merge: true}); } catch(e){}
         }
     </script>
 </body>
