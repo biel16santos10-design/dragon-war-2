@@ -67,7 +67,6 @@
         .powers-wheel { position: relative; width: 380px; height: 380px; margin: 30px auto; border: 2px dashed #334155; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
         .power-node { position: absolute; width: 65px; height: 65px; background: #162032; border: 2px solid #3b82f6; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 22px; transition: 0.2s; box-shadow: 0 0 15px rgba(59,130,246,0.3); }
         .power-node:hover { transform: scale(1.15); border-color: #f97316; }
-        .power-node.locked-power { opacity: 0.4; filter: grayscale(1); border-color: #475569; }
 
         /* ARENA DE COMBATE INTERATIVA */
         .combat-arena-box { background: #0f172a; border: 2px solid #334155; border-radius: 12px; padding: 25px; display: none; text-align: center; }
@@ -78,14 +77,13 @@
         .combat-actions { display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
         .combat-log { background: #0b0f19; border: 1px solid #334155; border-radius: 8px; padding: 15px; height: 120px; overflow-y: auto; text-align: left; font-size: 13px; color: #94a3b8; margin-top: 15px; }
 
-        /* SELEÇÃO DE AVATARS NO PERFIL (SPRITE SHEET CROPPING) */
+        /* SELEÇÃO DE AVATARS NO PERFIL */
         .avatar-grid { display: flex; gap: 15px; flex-wrap: wrap; margin: 15px 0; max-height: 250px; overflow-y: auto; padding: 5px; border: 1px solid #334155; border-radius: 8px; background: #0f172a; }
         .avatar-option-wrap { text-align: center; display: inline-block; margin: 5px; cursor: pointer; }
         .avatar-sprite { width: 70px; height: 70px; border-radius: 50%; border: 3px solid #334155; background-image: url('89078_2.png'); background-size: 500% 200%; background-repeat: no-repeat; transition: 0.2s; }
         .avatar-option-wrap.selected .avatar-sprite { border-color: #f97316; box-shadow: 0 0 15px rgba(249,115,22,0.5); }
         .avatar-option-wrap.locked { opacity: 0.4; filter: grayscale(1); cursor: not-allowed; }
 
-        /* POSIÇÕES DO SPRITE SHEET DA IMAGEM ENVIADA */
         .pos-guerreiro { background-position: 0% 0%; }
         .pos-mago      { background-position: 25% 0%; }
         .pos-arqueiro  { background-position: 50% 0%; }
@@ -97,7 +95,11 @@
         .pos-dragao    { background-position: 75% 100%; }
         .pos-demonio   { background-position: 100% 100%; }
 
-        /* CHAT E TABELA */
+        /* CONTROLES DE VOLUME */
+        .audio-slider-group { margin-bottom: 20px; max-width: 400px; }
+        .audio-slider-group label { display: flex; justify-content: space-between; font-size: 14px; color: #94a3b8; margin-bottom: 8px; font-weight: bold; }
+        .audio-slider-group input[type=range] { width: 100%; accent-color: #f97316; cursor: pointer; }
+
         .chat-box { height: 260px; background: #0f172a; border: 1px solid #475569; border-radius: 8px; padding: 15px; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
         .chat-input-area { display: flex; gap: 12px; }
         .ranking-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
@@ -115,8 +117,8 @@
             <p style="color: #94a3b8; font-size: 14px; margin-bottom: 20px;">Rise of Power</p>
             
             <div class="auth-tabs">
-                <button type="button" class="auth-tab-btn active-auth" id="btn-tab-entrar" onclick="alternarModoAuth('entrar')">Entrar</button>
-                <button type="button" class="auth-tab-btn" id="btn-tab-cadastrar" onclick="alternarModoAuth('cadastrar')">Criar Conta</button>
+                <button type="button" class="auth-tab-btn active-auth" id="btn-tab-entrar" onclick="tocarSomClique(); alternarModoAuth('entrar')">Entrar</button>
+                <button type="button" class="auth-tab-btn" id="btn-tab-cadastrar" onclick="tocarSomClique(); alternarModoAuth('cadastrar')">Criar Conta</button>
             </div>
 
             <form onsubmit="realizarAutenticacao(event)">
@@ -125,7 +127,7 @@
                 </div>
                 <input type="email" id="auth-email" class="form-control" placeholder="Seu E-mail" required>
                 <input type="password" id="auth-senha" class="form-control" placeholder="Sua Senha" required>
-                <button type="submit" id="btn-submit-auth" class="btn-main">ENTRAR NO JOGO</button>
+                <button type="submit" class="btn-main" onclick="tocarSomClique()">ENTRAR NO JOGO</button>
             </form>
         </div>
     </div>
@@ -171,7 +173,7 @@
                 <div id="tab-inicio" class="tab-panel active">
                     <div class="card-box" style="text-align: center; padding: 40px;">
                         <h2 style="color: #f97316; font-size: 32px; margin-bottom: 15px;">Bem-vindo ao Dragon War!</h2>
-                        <p style="color: #94a3b8; max-width: 600px; margin: 0 auto 25px auto; line-height: 1.6;">Prepare seu guerreiro, colete as 16 armas lendárias e skins na loja mercadora, domine magias elementais com seus pontos de poder e conquiste o topo do ranking global!</p>
+                        <p style="color: #94a3b8; max-width: 600px; margin: 0 auto 25px auto; line-height: 1.6;">Prepare seu guerreiro, colete as 16 armas lendárias e skins na loja mercadora, domine magias elementais e conquiste o topo do ranking global!</p>
                         <button class="btn-action" style="max-width: 250px; margin: 0 auto; font-size: 16px; padding: 14px;" onclick="trocarTab('jogar', document.querySelectorAll('.nav-menu li')[1])">COMEÇAR A JOGAR</button>
                     </div>
                 </div>
@@ -184,7 +186,7 @@
                         <div class="item-card" style="cursor: pointer;" onclick="trocarTab('combate', document.querySelectorAll('.nav-menu li')[4])">
                             <span style="font-size: 40px; margin-bottom: 10px;">⚔️</span>
                             <h3>Arena de Combate</h3>
-                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Batalhas do Fácil ao Hard com turnos e ganho de Pontos de Poder.</p>
+                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Batalhas com turnos e ganho de Pontos de Poder.</p>
                         </div>
                         <div class="item-card" style="cursor: pointer;" onclick="trocarTab('loja', document.querySelectorAll('.nav-menu li')[2])">
                             <span style="font-size: 40px; margin-bottom: 10px;">🛒</span>
@@ -210,28 +212,17 @@
                         <button class="sub-tab-btn" onclick="trocarSubLoja('suprimentos', this)">🧪 Suprimentos</button>
                     </div>
 
-                    <div id="subloja-armas" class="sub-panel active-sub-panel">
-                        <div class="grid-cards" id="container-16-armas"></div>
-                    </div>
-
-                    <div id="subloja-skins" class="sub-panel">
-                        <div class="grid-cards" id="container-skins"></div>
-                    </div>
-
-                    <div id="subloja-suprimentos" class="sub-panel">
-                        <div class="grid-cards" id="container-suprimentos"></div>
-                    </div>
+                    <div id="subloja-armas" class="sub-panel active-sub-panel"><div class="grid-cards" id="container-16-armas"></div></div>
+                    <div id="subloja-skins" class="sub-panel"><div class="grid-cards" id="container-skins"></div></div>
+                    <div id="subloja-suprimentos" class="sub-panel"><div class="grid-cards" id="container-suprimentos"></div></div>
                 </div>
 
                 <!-- ABA: PODERES -->
                 <div id="tab-poderes" class="tab-panel">
                     <h2>Árvore de Poderes Elementais</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Melhore suas habilidades para causar mais dano nos combates (gasta 1 Ponto de Poder por melhoria).</p>
-                    
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Melhore suas habilidades para causar mais dano nos combates.</p>
                     <div class="card-box" style="text-align: center;">
-                        <div class="powers-wheel" id="container-arvore-poderes">
-                            <!-- Gerado dinamicamente via JS -->
-                        </div>
+                        <div class="powers-wheel" id="container-arvore-poderes"></div>
                         <h3 id="poder-selecionado-titulo" style="margin-top: 15px;">Selecione um poder acima</h3>
                         <p id="poder-selecionado-desc" style="color: #94a3b8; font-size: 14px; margin-bottom: 15px;">Clique em um ícone circular para ver os detalhes e evoluir.</p>
                         <button class="btn-action" style="max-width: 250px; margin: 0 auto; display:none;" id="btn-melhorar-poder" onclick="melhorarPoderSelecionado()">MELHORAR PODER (-1 Ponto)</button>
@@ -242,17 +233,12 @@
                 <div id="tab-combate" class="tab-panel">
                     <div id="seletor-mobs-container">
                         <h2>Arena de Combate — Selecione o Inimigo</h2>
-                        <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Escolha o nível de dificuldade ideal. Vencer garante Ouro, Nível, avanço de fase e 1 Ponto de Poder!</p>
-                        
-                        <div class="grid-cards" id="container-lista-mobs">
-                            <!-- Inimigos gerados dinamicamente -->
-                        </div>
+                        <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Escolha o nível de dificuldade ideal. Vencer garante Ouro, Nível e 1 Ponto de Poder!</p>
+                        <div class="grid-cards" id="container-lista-mobs"></div>
                     </div>
 
-                    <!-- PAINEL DE BATALHA INTERATIVO -->
                     <div id="painel-batalha-ativo" class="combat-arena-box">
                         <h3 id="combate-titulo-inimigo" style="color: #f97316; font-size: 22px;">Batalha em Andamento</h3>
-                        
                         <div class="combat-stats-grid">
                             <div class="combat-entity">
                                 <h4 id="label-nome-guerreiro">Seu Herói</h4>
@@ -268,19 +254,14 @@
                         </div>
 
                         <div class="combat-actions" id="botoes-acoes-combate">
-                            <button class="btn-action" style="width: 22%; background: #3b82f6;" onclick="acaoCombate('atacar')">⚔️️ Atacar</button>
-                            <button class="btn-action" style="width: 22%; background: #16a34a;" onclick="acaoCombate('defender')">🛡️ Defender</button>
+                            <button class="btn-action" style="width: 22%; background: #3b82f6;" onclick="acaoCombate('atacar')">⚔ Atacar</button>
+                            <button class="btn-action" style="width: 22%; background: #16a34a;" onclick="acaoCombate('defender')">🛡️️ Defender</button>
                             <button class="btn-action" style="width: 22%; background: #eab308; color:#000;" onclick="acaoCombate('poder')">⚡ Usar Poder</button>
                             <button class="btn-action" style="width: 22%; background: #dc2626;" onclick="acaoCombate('pocao')">🧪 Usar Poção</button>
                         </div>
 
-                        <div class="combat-log" id="combate-log-texto">
-                            <div>Início do combate! Escolha sua ação estrategicamente.</div>
-                        </div>
-
-                        <!-- Botão de Próxima Fase que aparece ao vencer -->
+                        <div class="combat-log" id="combate-log-texto"><div>Início do combate! Escolha sua ação estrategicamente.</div></div>
                         <div id="container-btn-proxima-fase" style="margin-top: 15px;"></div>
-
                         <button class="btn-action" id="btn-fugir-arena" style="margin-top: 15px; background: #475569;" onclick="encerrarCombateFuga()">Fugir / Voltar</button>
                     </div>
                 </div>
@@ -289,88 +270,46 @@
                 <div id="tab-inventario" class="tab-panel">
                     <h2>Inventário do Jogador</h2>
                     <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Gerencie suas armas, armaduras e skins adquiridas.</p>
-                    <div class="card-box">
-                        <div id="lista-inventario" class="grid-cards">
-                            <p style="color: #94a3b8;">Seu inventário está vazio.</p>
-                        </div>
-                    </div>
+                    <div class="card-box"><div id="lista-inventario" class="grid-cards"><p style="color: #94a3b8;">Seu inventário está vazio.</p></div></div>
                 </div>
 
                 <!-- ABA: RANKING -->
                 <div id="tab-ranking" class="tab-panel">
                     <h2>Ranking Global e Jogadores Online</h2>
                     <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Os melhores guerreiros reais do servidor e lista de conexões ativas.</p>
-                    
                     <div class="card-box" style="padding: 10px; margin-bottom: 25px;">
                         <h3 style="padding: 10px 10px 0 10px; color: #f97316;">🏆 Top 10 Servidor</h3>
-                        <table class="ranking-table">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Jogador</th>
-                                    <th>Nível</th>
-                                    <th>Pontuação</th>
-                                </tr>
-                            </thead>
-                            <tbody id="ranking-tabela-corpo"></tbody>
-                        </table>
+                        <table class="ranking-table"><thead><tr><th>#</th><th>Jogador</th><th>Nível</th><th>Pontuação</th></tr></thead><tbody id="ranking-tabela-corpo"></tbody></table>
                     </div>
-
                     <div class="card-box" style="padding: 10px;">
                         <h3 style="padding: 10px 10px 0 10px; color: #38bdf8;">🟢 Jogadores Online no Servidor</h3>
-                        <table class="ranking-table">
-                            <thead>
-                                <tr>
-                                    <th>Status</th>
-                                    <th>Jogador</th>
-                                    <th>Nível</th>
-                                    <th>Guilda</th>
-                                </tr>
-                            </thead>
-                            <tbody id="online-tabela-corpo"></tbody>
-                        </table>
+                        <table class="ranking-table"><thead><tr><th>Status</th><th>Jogador</th><th>Nível</th><th>Guilda</th></tr></thead><tbody id="online-tabela-corpo"></tbody></table>
                     </div>
                 </div>
 
                 <!-- ABA: EVENTOS -->
                 <div id="tab-eventos" class="tab-panel">
                     <h2>Eventos e Recompensas</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Participe dos eventos diários e aleatórios para ganhar bônus exclusivos.</p>
-                    <div class="grid-cards" id="container-eventos-extras">
-                        <div class="item-card">
-                            <h3>Caixa Diária</h3>
-                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Abra uma vez por dia para receber moedas ou gemas reais.</p>
-                            <button class="btn-action" onclick="reclamarCaixaDiaria()">ABRIR CAIXA</button>
-                        </div>
-                        <div class="item-card">
-                            <h3>Tesouro Raro</h3>
-                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Gemas acumuladas podem ser usadas para itens especiais na loja.</p>
-                            <button class="btn-action" onclick="trocarTab('loja', document.querySelectorAll('.nav-menu li')[2])">IR PARA LOJA</button>
-                        </div>
-                    </div>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Participe dos eventos diários e aleatórios.</p>
+                    <div class="grid-cards" id="container-eventos-extras"></div>
                 </div>
 
                 <!-- ABA: GUILDAS & CHAT -->
                 <div id="tab-guilda" class="tab-panel">
                     <h2>Sistemas de Guildas & Chat</h2>
                     <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Converse com a comunidade e gerencie sua facção.</p>
-                    
                     <div class="sub-tabs">
                         <button class="sub-tab-btn active-sub" onclick="trocarSubChat('global', this)">💬 Chat Global</button>
                         <button class="sub-tab-btn" onclick="trocarSubChat('pv', this)">👤 Mensagens PV</button>
                         <button class="sub-tab-btn" onclick="trocarSubChat('guilda', this)">🛡 Chat da Guilda</button>
                     </div>
-
                     <div class="card-box">
-                        <div class="chat-box" id="chat-mensagens">
-                            <div><strong>[Sistema]:</strong> Bem-vindo ao chat oficial do Dragon War!</div>
-                        </div>
+                        <div class="chat-box" id="chat-mensagens"><div><strong>[Sistema]:</strong> Bem-vindo ao chat oficial do Dragon War!</div></div>
                         <div class="chat-input-area">
                             <input type="text" id="input-chat-msg" class="form-control" placeholder="Digite sua mensagem..." style="margin-bottom:0;" onkeypress="if(event.key==='Enter') enviarMensagemChat()">
                             <button class="btn-action" style="width: 120px; margin-top: 0;" onclick="enviarMensagemChat()">Enviar</button>
                         </div>
                     </div>
-
                     <div class="grid-cards" style="margin-top: 20px;">
                         <div class="card-box" style="margin-bottom: 0;">
                             <h3>Criar Guilda (🪙 5.000)</h3>
@@ -385,24 +324,51 @@
                     </div>
                 </div>
 
-                <!-- ABA: CONFIGURAÇÕES E PERFIL -->
+                <!-- ABA: CONFIGURAÇÕES E ÁUDIO -->
                 <div id="tab-config" class="tab-panel">
-                    <h2>Configurações e Perfil do Jogador</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Altere seu nome e escolha sua skin de avatar épica.</p>
+                    <h2>Configurações de Áudio e Perfil</h2>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Personalize o volume de som do jogo, trilha sonora do YouTube e escolha sua skin de avatar.</p>
                     
                     <div class="card-box">
-                        <h3>Escolha sua Classe / Avatar</h3>
-                        <p style="color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Escolha entre as 10 classes disponíveis integradas da imagem oficial[span_1](start_span)[span_1](end_span).</p>
+                        <h3>🔊 Painel de Controle de Áudio</h3>
                         
+                        <div class="audio-slider-group">
+                            <label><span>Volume Geral (Master)</span> <span id="val-geral">80%</span></label>
+                            <input type="range" id="slider-volume-geral" min="0" max="100" value="80" oninput="atualizarVolumes()">
+                        </div>
+
+                        <div class="audio-slider-group">
+                            <label><span>Volume de Música (Trilha Sonora YouTube)</span> <span id="val-musica">50%</span></label>
+                            <input type="range" id="slider-volume-musica" min="0" max="100" value="50" oninput="atualizarVolumes()">
+                        </div>
+
+                        <div class="audio-slider-group">
+                            <label><span>Volume de Jogo / Efeitos (Cliques e Telas)</span> <span id="val-jogo">70%</span></label>
+                            <input type="range" id="slider-volume-jogo" min="0" max="100" value="70" oninput="atualizarVolumes()">
+                        </div>
+
+                        <!-- Player de Fundo do YouTube (Áudio Embutido Oculto / Contido) -->
+                        <div style="margin-top: 15px; background: #0f172a; padding: 12px; border-radius: 8px; border: 1px solid #334155; display: flex; align-items: center; justify-content: space-between;">
+                            <span style="font-size: 13px; color: #94a3b8;">🎵 Música Épica YouTube (Fundo)</span>
+                            <button class="btn-action" style="width: 140px; margin-top:0; padding:6px;" onclick="alternarPlayMusicaYT()" id="btn-toggle-yt">Play / Pause</button>
+                        </div>
+                        <!-- iframe oculto do youtube para tocar a trilha sonora escolhida -->
+                        <div style="display:none;">
+                            <iframe id="youtube-audio-player" width="200" height="200" src="https://www.youtube.com/embed/jfKfPfyJRdk?enablejsapi=1&autoplay=1&loop=1&playlist=jfKfPfyJRdk" allow="autoplay"></iframe>
+                        </div>
+                    </div>
+
+                    <div class="card-box" style="margin-top: 20px;">
+                        <h3>Escolha sua Classe / Avatar</h3>
                         <div class="avatar-grid" id="lista-avatares-perfil"></div>
 
-                        <label style="display:block; font-size:13px; color:#94a3b8; margin: 15px 0 5px 0;">ID do Jogador (Somente leitura):</label>
+                        <label style="display:block; font-size:13px; color:#94a3b8; margin: 15px 0 5px 0;">ID do Jogador:</label>
                         <input type="text" id="input-id-jogador" class="form-control" style="max-width:350px; background:#0b0f19; color:#f97316; font-weight:bold;" readonly>
 
                         <label style="display:block; font-size:13px; color:#94a3b8; margin: 15px 0 5px 0;">Nome do jogador:</label>
                         <input type="text" id="input-novo-nome" class="form-control" style="max-width:350px;">
                         
-                        <button class="btn-action" style="max-width: 200px;" onclick="salvarConfiguracoes()">SALVAR PERFIL</button>
+                        <button class="btn-action" style="max-width: 200px;" onclick="tocarSomClique(); salvarConfiguracoes()">SALVAR PERFIL</button>
                     </div>
                 </div>
 
@@ -448,63 +414,87 @@
             skinsDesbloqueadas: ["pos-guerreiro", "pos-mago"]
         };
 
-        let chatCanalAtual = 'global';
-        let combateAtual = { ativo: false, dificuldade: '', mobNome: '', mobHp: 0, mobMaxHp: 0, mobDano: 0, defendendo: false };
-        let poderSelecionadoNome = null;
+        // VARIÁVEIS DE CONTROLE DE ÁUDIO
+        let audioConfig = { geral: 80, musica: 50, jogo: 70 };
+        let ytTocando = true;
 
-        // 16 ARMAS DA LOJA
+        // GERADOR DE EFEITOS SONOROS DE INTERFACE (Web Audio API)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function tocarSomClique() {
+            if (audioConfig.geral <= 0 || audioConfig.jogo <= 0) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            let osc = audioCtx.createOscillator();
+            let gainNode = audioCtx.createGain();
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(450, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.08);
+            
+            let volumeCalculado = (audioConfig.geral / 100) * (audioConfig.jogo / 100) * 0.15;
+            gainNode.gain.setValueAtTime(volumeCalculado, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+            
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.08);
+        }
+
+        function atualizarVolumes() {
+            audioConfig.geral = parseInt(document.getElementById('slider-volume-geral').value);
+            audioConfig.musica = parseInt(document.getElementById('slider-volume-musica').value);
+            audioConfig.jogo = parseInt(document.getElementById('slider-volume-jogo').value);
+
+            document.getElementById('val-geral').innerText = audioConfig.geral + '%';
+            document.getElementById('val-musica').innerText = audioConfig.musica + '%';
+            document.getElementById('val-jogo').innerText = audioConfig.jogo + '%';
+
+            // Simulação de ajuste de volume do player YouTube (via postMessage)
+            let iframe = document.getElementById('youtube-audio-player');
+            let volEfetivo = Math.floor((audioConfig.geral / 100) * (audioConfig.musica / 100) * 100);
+            iframe.contentWindow.postMessage(JSON.stringify({event: 'command', func: 'setVolume', args: [volEfetivo]}), '*');
+        }
+
+        function alternarPlayMusicaYT() {
+            tocarSomClique();
+            let iframe = document.getElementById('youtube-audio-player');
+            ytTocando = !ytTocando;
+            let cmd = ytTocando ? 'playVideo' : 'pauseVideo';
+            iframe.contentWindow.postMessage(JSON.stringify({event: 'command', func: cmd, args: []}), '*');
+        }
+
         const listaArmasLoja = [
-            { id: 1, nome: "Adaga de Cobre", preco: 250 },
-            { id: 2, nome: "Espada Curta do Novato", preco: 450 },
-            { id: 3, nome: "Lâmina de Ferro Sombrio", preco: 800 },
-            { id: 4, nome: "Machado de Batalha Orc", preco: 1200 },
-            { id: 5, nome: "Espada Longa Real", preco: 1800 },
-            { id: 6, nome: "Foice da Névoa", preco: 2400 },
-            { id: 7, nome: "Martelo de Guerra Titã", preco: 3200 },
-            { id: 8, nome: "Lança do Relâmpago", preco: 4100 },
-            { id: 9, nome: "Katana da Lua Sangrenta", preco: 5500 },
-            { id: 10, nome: "Cajado do Mago Supremo", preco: 7000 },
-            { id: 11, nome: "Espada de Plasma Estelar", preco: 9500 },
-            { id: 12, nome: "Lâmina do Fênix Ardente", preco: 12000 },
-            { id: 13, nome: "Machado Glacial Ancestral", preco: 15500 },
-            { id: 14, nome: "Foice do Submundo", preco: 20000 },
-            { id: 15, nome: "Espada Divina do Sol", preco: 28000 },
-            { id: 16, nome: "Lâmina do Dragão Celestial", preco: 40000 }
+            { id: 1, nome: "Adaga de Cobre", preco: 250 }, { id: 2, nome: "Espada Curta do Novato", preco: 450 },
+            { id: 3, nome: "Lâmina de Ferro Sombrio", preco: 800 }, { id: 4, nome: "Machado de Batalha Orc", preco: 1200 },
+            { id: 5, nome: "Espada Longa Real", preco: 1800 }, { id: 6, nome: "Foice da Névoa", preco: 2400 },
+            { id: 7, nome: "Martelo de Guerra Titã", preco: 3200 }, { id: 8, nome: "Lança do Relâmpago", preco: 4100 },
+            { id: 9, nome: "Katana da Lua Sangrenta", preco: 5500 }, { id: 10, nome: "Cajado do Mago Supremo", preco: 7000 },
+            { id: 11, nome: "Espada de Plasma Estelar", preco: 9500 }, { id: 12, nome: "Lâmina do Fênix Ardente", preco: 12000 },
+            { id: 13, nome: "Machado Glacial Ancestral", preco: 15500 }, { id: 14, nome: "Foice do Submundo", preco: 20000 },
+            { id: 15, nome: "Espada Divina do Sol", preco: 28000 }, { id: 16, nome: "Lâmina do Dragão Celestial", preco: 40000 }
         ];
 
-        // 6 SKINS DA LOJA ANTIGA
         const listaSkinsLoja = [
-            { id: 101, nome: "Skin Guerreiro Iniciante", preco: 500 },
-            { id: 102, nome: "Skin Cavaleiro de Prata", preco: 1500 },
-            { id: 103, nome: "Skin Mago Sombrio", preco: 3000 },
-            { id: 104, nome: "Skin Guardião de Magma", preco: 6000 },
-            { id: 105, nome: "Skin Paladino Dourado", preco: 10000 },
-            { id: 106, nome: "Skin Senhor do Dragão", preco: 25000 }
+            { id: 101, nome: "Skin Guerreiro Iniciante", preco: 500 }, { id: 102, nome: "Skin Cavaleiro de Prata", preco: 1500 },
+            { id: 103, nome: "Skin Mago Sombrio", preco: 3000 }, { id: 104, nome: "Skin Guardião de Magma", preco: 6000 },
+            { id: 105, nome: "Skin Paladino Dourado", preco: 10000 }, { id: 106, nome: "Skin Senhor do Dragão", preco: 25000 }
         ];
 
-        // SUPRIMENTOS
         const listaSuprimentosLoja = [
-            { id: 201, nome: "Poção de Cura Pequena (+30 HP)", preco: 100 },
-            { id: 202, nome: "Poção de Cura Média (+60 HP)", preco: 250 },
-            { id: 203, nome: "Poção de Cura Superior (Cura Total)", preco: 600 },
-            { id: 204, nome: "Elixir de Força Ancestral", preco: 1500 }
+            { id: 201, nome: "Poção de Cura Pequena (+30 HP)", preco: 100 }, { id: 202, nome: "Poção de Cura Média (+60 HP)", preco: 250 },
+            { id: 203, nome: "Poção de Cura Superior (Cura Total)", preco: 600 }, { id: 204, nome: "Elixir de Força Ancestral", preco: 1500 }
         ];
 
-        // 10 AVATARES EXCLUSIVOS DA IMAGEM OFICIAL
         const listaSkinsAvatares = [
-            { id: "pos-guerreiro", nome: "Guerreiro", bloqueado: false, preco: 0 },
-            { id: "pos-mago", nome: "Mago", bloqueado: false, preco: 0 },
-            { id: "pos-arqueiro", nome: "Arqueiro", bloqueado: true, preco: 300 },
-            { id: "pos-assassino", nome: "Assassino", bloqueado: true, preco: 500 },
-            { id: "pos-cavaleiro", nome: "Cavaleiro", bloqueado: true, preco: 800 },
-            { id: "pos-elfa", nome: "Elfa", bloqueado: true, preco: 1000 },
-            { id: "pos-barbaro", nome: "Bárbaro", bloqueado: true, preco: 1200 },
-            { id: "pos-necromante", nome: "Necromante", bloqueado: true, preco: 1500 },
-            { id: "pos-dragao", nome: "Dragão", bloqueado: true, preco: 2500 },
-            { id: "pos-demonio", nome: "Demônio", bloqueado: true, preco: 3500 }
+            { id: "pos-guerreiro", nome: "Guerreiro", bloqueado: false, preco: 0 }, { id: "pos-mago", nome: "Mago", bloqueado: false, preco: 0 },
+            { id: "pos-arqueiro", nome: "Arqueiro", bloqueado: true, preco: 300 }, { id: "pos-assassino", nome: "Assassino", bloqueado: true, preco: 500 },
+            { id: "pos-cavaleiro", nome: "Cavaleiro", bloqueado: true, preco: 800 }, { id: "pos-elfa", nome: "Elfa", bloqueado: true, preco: 1000 },
+            { id: "pos-barbaro", nome: "Bárbaro", bloqueado: true, preco: 1200 }, { id: "pos-necromante", nome: "Necromante", bloqueado: true, preco: 1500 },
+            { id: "pos-dragao", nome: "Dragão", bloqueado: true, preco: 2500 }, { id: "pos-demonio", nome: "Demônio", bloqueado: true, preco: 3500 }
         ];
 
-        // 9 INIMIGOS NA ARENA
         const listaInimigosArena = [
             { id: 'facil', nome: "Goblin Selvagem", hp: 80, dano: 12, nivelReq: 1, cor: "#16a34a", icone: "🟢" },
             { id: 'medio', nome: "Orc Guerreiro", hp: 150, dano: 22, nivelReq: 2, cor: "#3b82f6", icone: "🔵" },
@@ -522,7 +512,7 @@
             let btnEntrar = document.getElementById('btn-tab-entrar');
             let btnCadastrar = document.getElementById('btn-tab-cadastrar');
             let campoNome = document.getElementById('campo-nome-wrapper');
-            let btnSubmit = document.getElementById('btn-submit-auth');
+            let btnSubmit = document.querySelector('#login-screen form button[type="submit"]');
 
             if(modo === 'entrar') {
                 btnEntrar.classList.add('active-auth');
@@ -643,34 +633,19 @@
             let cArmas = document.getElementById('container-16-armas');
             cArmas.innerHTML = "";
             listaArmasLoja.forEach(item => {
-                cArmas.innerHTML += `
-                    <div class="item-card">
-                        <h4 style="font-size: 14px; color: #f97316; margin-bottom: 5px;">${item.nome}</h4>
-                        <p style="color: #facc15; font-size: 13px; margin: 8px 0;">🪙 ${item.preco}</p>
-                        <button class="btn-action" onclick="comprarItemLoja('${item.nome}', ${item.preco}, 'arma')">COMPRAR</button>
-                    </div>`;
+                cArmas.innerHTML += `<div class="item-card"><h4 style="font-size: 14px; color: #f97316; margin-bottom: 5px;">${item.nome}</h4><p style="color: #facc15; font-size: 13px; margin: 8px 0;">🪙 ${item.preco}</p><button class="btn-action" onclick="tocarSomClique(); comprarItemLoja('${item.nome}', ${item.preco}, 'arma')">COMPRAR</button></div>`;
             });
 
             let cSkins = document.getElementById('container-skins');
             cSkins.innerHTML = "";
             listaSkinsLoja.forEach(item => {
-                cSkins.innerHTML += `
-                    <div class="item-card">
-                        <h4 style="font-size: 14px; color: #38bdf8; margin-bottom: 5px;">${item.nome}</h4>
-                        <p style="color: #facc15; font-size: 13px; margin: 8px 0;">🪙 ${item.preco}</p>
-                        <button class="btn-action" onclick="comprarItemLoja('${item.nome}', ${item.preco}, 'skin')">COMPRAR</button>
-                    </div>`;
+                cSkins.innerHTML += `<div class="item-card"><h4 style="font-size: 14px; color: #38bdf8; margin-bottom: 5px;">${item.nome}</h4><p style="color: #facc15; font-size: 13px; margin: 8px 0;">🪙 ${item.preco}</p><button class="btn-action" onclick="tocarSomClique(); comprarItemLoja('${item.nome}', ${item.preco}, 'skin')">COMPRAR</button></div>`;
             });
 
             let cSupr = document.getElementById('container-suprimentos');
             cSupr.innerHTML = "";
             listaSuprimentosLoja.forEach(item => {
-                cSupr.innerHTML += `
-                    <div class="item-card">
-                        <h4 style="font-size: 14px; color: #ef4444; margin-bottom: 5px;">${item.nome}</h4>
-                        <p style="color: #facc15; font-size: 13px; margin: 8px 0;">🪙 ${item.preco}</p>
-                        <button class="btn-action" onclick="comprarItemLoja('${item.nome}', ${item.preco}, 'suprimento')">COMPRAR</button>
-                    </div>`;
+                cSupr.innerHTML += `<div class="item-card"><h4 style="font-size: 14px; color: #ef4444; margin-bottom: 5px;">${item.nome}</h4><p style="color: #facc15; font-size: 13px; margin: 8px 0;">🪙 ${item.preco}</p><button class="btn-action" onclick="tocarSomClique(); comprarItemLoja('${item.nome}', ${item.preco}, 'suprimento')">COMPRAR</button></div>`;
             });
         }
 
@@ -683,11 +658,10 @@
                 let classeEstado = jaDesbloqueada ? selecionado : "locked";
 
                 container.innerHTML += `
-                    <div class="avatar-option-wrap ${classeEstado}" onclick="clicarSkinAvatar('${skin.id}')">
+                    <div class="avatar-option-wrap ${classeEstado}" onclick="tocarSomClique(); clicarSkinAvatar('${skin.id}')">
                         <div class="avatar-sprite ${skin.id}"></div>
                         <small style="display:block; font-size:10px; color:#94a3b8; margin-top:4px;">${jaDesbloqueada ? skin.nome : '🔒 ' + skin.preco + 'G'}</small>
-                    </div>
-                `;
+                    </div>`;
             });
         }
 
@@ -701,32 +675,27 @@
                 salvarDadosNoBanco();
                 sincronizarInterface();
             } else {
-                if(dadosJogador.ouro < skin.preco) {
-                    alert(`Você precisa de 🪙 ${skin.preco} de ouro para desbloquear a classe "${skin.nome}".`);
-                    return;
-                }
-                if(confirm(`Deseja desbloquear e usar a classe "${skin.nome}" por 🪙 ${skin.preco} de ouro?`)) {
+                if(dadosJogador.ouro < skin.preco) { alert(`Ouro insuficiente.`); return; }
+                if(confirm(`Deseja desbloquear por 🪙 ${skin.preco}?`)) {
                     dadosJogador.ouro -= skin.preco;
                     dadosJogador.skinsDesbloqueadas.push(skinId);
                     dadosJogador.avatarClass = skin.id;
                     salvarDadosNoBanco();
                     sincronizarInterface();
-                    alert(`Classe "${skin.nome}" desbloqueada com sucesso!`);
                 }
             }
         }
 
         function renderizarArvorePoderes() {
-            let container = document.getElementById('container-arvore-poderes');
-            container.innerHTML = `
-                <div class="power-node" style="top: 15px; left: 145px;" onclick="selecionarPoder('Sopro de Fogo', 35)">🔥</div>
-                <div class="power-node" style="top: 80px; right: 40px;" onclick="selecionarPoder('Golpe de Raio', 50)">⚡</div>
-                <div class="power-node" style="top: 160px; right: 15px;" onclick="selecionarPoder('Nova de Gelo', 65)">❄️</div>
-                <div class="power-node" style="bottom: 50px; right: 60px;" onclick="selecionarPoder('Tormenta de Vento', 80)">🌪️</div>
-                <div class="power-node" style="bottom: 10px; left: 145px;" onclick="selecionarPoder('Chama Sombria', 100)">🖤</div>
-                <div class="power-node" style="bottom: 50px; left: 60px;" onclick="selecionarPoder('Meteorito Estelar', 130)">☄️</div>
-                <div class="power-node" style="top: 160px; left: 15px;" onclick="selecionarPoder('Fúria do Trovão', 160)">⚡</div>
-                <div class="power-node" style="top: 80px; left: 40px;" onclick="selecionarPoder('Coração de Dragão', 200)">🐉</div>
+            document.getElementById('container-arvore-poderes').innerHTML = `
+                <div class="power-node" style="top: 15px; left: 145px;" onclick="tocarSomClique(); selecionarPoder('Sopro de Fogo', 35)">🔥</div>
+                <div class="power-node" style="top: 80px; right: 40px;" onclick="tocarSomClique(); selecionarPoder('Golpe de Raio', 50)">⚡</div>
+                <div class="power-node" style="top: 160px; right: 15px;" onclick="tocarSomClique(); selecionarPoder('Nova de Gelo', 65)">❄️</div>
+                <div class="power-node" style="bottom: 50px; right: 60px;" onclick="tocarSomClique(); selecionarPoder('Tormenta de Vento', 80)">🌪️</div>
+                <div class="power-node" style="bottom: 10px; left: 145px;" onclick="tocarSomClique(); selecionarPoder('Chama Sombria', 100)">🖤</div>
+                <div class="power-node" style="bottom: 50px; left: 60px;" onclick="tocarSomClique(); selecionarPoder('Meteorito Estelar', 130)">☄️</div>
+                <div class="power-node" style="top: 160px; left: 15px;" onclick="tocarSomClique(); selecionarPoder('Fúria do Trovão', 160)">⚡</div>
+                <div class="power-node" style="top: 80px; left: 40px;" onclick="tocarSomClique(); selecionarPoder('Coração de Dragão', 200)">🐉</div>
             `;
         }
 
@@ -737,31 +706,31 @@
                 let bloqueado = dadosJogador.nivel < mob.nivelReq;
                 container.innerHTML += `
                     <div class="item-card" style="border-color: ${mob.cor};">
-                        <span style="font-size: 45px;">${mob.icone || '⚔️️'}</span>
+                        <span style="font-size: 45px;">${mob.icone || '⚔'}</span>
                         <h4 style="color: ${mob.cor}; margin-top: 10px;">${mob.nome}</h4>
                         <p style="font-size: 13px; color: #94a3b8; margin: 8px 0;">HP: ${mob.hp} ${bloqueado ? '<br><span style="color:#ef4444;">Req. Nível ' + mob.nivelReq + '</span>' : ''}</p>
-                        <button class="btn-action" style="background: ${bloqueado ? '#475569' : mob.cor};" ${bloqueado ? 'disabled' : ''} onclick="iniciarCombatePorId('${mob.id}')">${bloqueado ? 'BLOQUEADO' : 'ENTRAR NA BATALHA'}</button>
+                        <button class="btn-action" style="background: ${bloqueado ? '#475569' : mob.cor};" ${bloqueado ? 'disabled' : ''} onclick="tocarSomClique(); iniciarCombatePorId('${mob.id}')">${bloqueado ? 'BLOQUEADO' : 'ENTRAR NA BATALHA'}</button>
                     </div>`;
             });
         }
 
         function renderizarEventosExtras() {
-            let container = document.getElementById('container-eventos-extras');
-            container.innerHTML = `
+            document.getElementById('container-eventos-extras').innerHTML = `
                 <div class="item-card">
                     <h3>Caixa Diária</h3>
-                    <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Abra uma vez por dia para receber moedas ou gemas reais.</p>
-                    <button class="btn-action" onclick="reclamarCaixaDiaria()">ABRIR CAIXA</button>
+                    <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Abra uma vez por dia.</p>
+                    <button class="btn-action" onclick="tocarSomClique(); reclamarCaixaDiaria()">ABRIR CAIXA</button>
                 </div>
                 <div class="item-card">
                     <h3>Tesouro Raro</h3>
-                    <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Gemas acumuladas podem ser usadas para itens especiais na loja.</p>
-                    <button class="btn-action" onclick="trocarTab('loja', document.querySelectorAll('.nav-menu li')[2])">IR PARA LOJA</button>
+                    <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Gemas para itens especiais.</p>
+                    <button class="btn-action" onclick="tocarSomClique(); trocarTab('loja', document.querySelectorAll('.nav-menu li')[2])">IR PARA LOJA</button>
                 </div>
             `;
         }
 
         function trocarTab(tabId, element) {
+            tocarSomClique();
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-menu li').forEach(l => l.classList.remove('active-tab'));
             document.getElementById('tab-' + tabId).classList.add('active');
@@ -770,6 +739,7 @@
         }
 
         function trocarSubLoja(subId, element) {
+            tocarSomClique();
             document.querySelectorAll('#tab-loja .sub-panel').forEach(p => p.classList.remove('active-sub-panel'));
             document.querySelectorAll('#tab-loja .sub-tab-btn').forEach(b => b.classList.remove('active-sub'));
             document.getElementById('subloja-' + subId).classList.add('active-sub-panel');
@@ -777,65 +747,49 @@
         }
 
         function trocarSubChat(canal, element) {
-            chatCanalAtual = canal;
+            tocarSomClique();
             document.querySelectorAll('#tab-guilda .sub-tab-btn').forEach(b => b.classList.remove('active-sub'));
             element.classList.add('active-sub');
-            document.getElementById('chat-mensagens').innerHTML = `<div><strong>[Sistema - Canal ${canal.toUpperCase()}]:</strong> Conectado com sucesso.</div>`;
+            document.getElementById('chat-mensagens').innerHTML = `<div><strong>[Sistema]:</strong> Conectado ao canal ${canal.toUpperCase()}.</div>`;
         }
 
         function comprarItemLoja(nome, custo, tipo) {
-            if(dadosJogador.ouro < custo) {
-                alert("Ouro insuficiente! Participe de combates ou abra caixas diárias para conseguir mais.");
-                return;
-            }
+            if(dadosJogador.ouro < custo) { alert("Ouro insuficiente."); return; }
             dadosJogador.ouro -= custo;
             if(!dadosJogador.inventario) dadosJogador.inventario = [];
             dadosJogador.inventario.push({ nome, tipo });
             salvarDadosNoBanco();
             sincronizarInterface();
-            alert(`Parabéns! ${nome} foi adquirido com sucesso.`);
+            alert(`${nome} adquirido com sucesso!`);
         }
 
         function selecionarPoder(nome, dano) {
-            poderSelecionadoNome = nome;
+            window.poderSelecionadoNome = nome;
             document.getElementById('poder-selecionado-titulo').innerText = nome;
             document.getElementById('poder-selecionado-desc').innerText = `Dano base: ${dano} • Custo: 1 Ponto de Poder`;
             document.getElementById('btn-melhorar-poder').style.display = 'block';
         }
 
         function melhorarPoderSelecionado() {
-            if(!poderSelecionadoNome) return;
-            if(dadosJogador.pontosPoder <= 0) {
-                alert("Você não possui Pontos de Poder! Venca batalhas na Arena para ganhar Pontos de Poder.");
-                return;
-            }
+            tocarSomClique();
+            if(!window.poderSelecionadoNome) return;
+            if(dadosJogador.pontosPoder <= 0) { alert("Sem Pontos de Poder!"); return; }
             dadosJogador.pontosPoder -= 1;
             salvarDadosNoBanco();
             sincronizarInterface();
-            alert(`Magia "${poderSelecionadoNome}" aprimorada com sucesso!`);
+            alert(`Poder aprimorado!`);
         }
 
-        function iniciarCombatePorId(mobId) {
-            if(dadosJogador.vida <= 0) {
-                alert("Sua vida está esgotada! Você foi derrotado e vai reiniciar do começo.");
-                localStorage.clear();
-                location.reload();
-                return;
-            }
+        let combateAtual = { ativo: false, dificuldade: '', mobNome: '', mobHp: 0, mobMaxHp: 0, mobDano: 0, defendendo: false };
 
+        function iniciarCombatePorId(mobId) {
             let mobEncontrado = listaInimigosArena.find(m => m.id === mobId);
             if(!mobEncontrado) return;
 
-            combateAtual.dificuldade = mobId;
-            combateAtual.ativo = true;
-            combateAtual.mobNome = mobEncontrado.nome;
-            combateAtual.mobHp = mobEncontrado.hp; 
-            combateAtual.mobMaxHp = mobEncontrado.hp; 
-            combateAtual.mobDano = mobEncontrado.dano;
+            combateAtual = { ativo: true, dificuldade: mobId, mobNome: mobEncontrado.nome, mobHp: mobEncontrado.hp, mobMaxHp: mobEncontrado.hp, mobDano: mobEncontrado.dano, defendendo: false };
 
             document.getElementById('botoes-acoes-combate').style.display = 'flex';
             document.getElementById('container-btn-proxima-fase').innerHTML = '';
-
             document.getElementById('seletor-mobs-container').style.display = 'none';
             document.getElementById('painel-batalha-ativo').style.display = 'block';
             document.getElementById('combate-titulo-inimigo').innerText = `Batalha contra: ${combateAtual.mobNome}`;
@@ -843,7 +797,7 @@
             document.getElementById('label-nome-mob').innerText = combateAtual.mobNome;
             
             atualizarBarrasBatalha();
-            adicionarLogCombate(`Um ${combateAtual.mobNome} feroz apareceu! Prepare-se para lutar.`);
+            adicionarLogCombate(`Um ${combateAtual.mobNome} apareceu!`);
         }
 
         function atualizarBarrasBatalha() {
@@ -861,47 +815,38 @@
         }
 
         function acaoCombate(tipoAcao) {
+            tocarSomClique();
             if(!combateAtual.ativo) return;
             combateAtual.defendendo = false;
-
             let danoCausado = 0;
+
             if(tipoAcao === 'atacar') {
                 danoCausado = Math.floor(Math.random() * 20) + 15;
                 combateAtual.mobHp -= danoCausado;
-                adicionarLogCombate(`Você atacou o ${combateAtual.mobNome} e causou ${danoCausado} de dano!`);
+                adicionarLogCombate(`Você causou ${danoCausado} de dano!`);
             } else if(tipoAcao === 'defender') {
                 combateAtual.defendendo = true;
-                adicionarLogCombate(`Você adotou uma postura defensiva.`);
+                adicionarLogCombate(`Você se defendeu.`);
             } else if(tipoAcao === 'poder') {
                 danoCausado = Math.floor(Math.random() * 35) + 25;
                 combateAtual.mobHp -= danoCausado;
-                adicionarLogCombate(`Você lançou um Poder Elemental causando ${danoCausado} de dano massivo!`);
+                adicionarLogCombate(`Poder elemental causou ${danoCausado} de dano!`);
             } else if(tipoAcao === 'pocao') {
                 dadosJogador.vida = Math.min(100, dadosJogador.vida + 40);
-                adicionarLogCombate(`Você usou uma Poção e recuperou 40 de HP!`);
+                adicionarLogCombate(`Poção usada (+40 HP).`);
             }
 
             atualizarBarrasBatalha();
-
-            if(combateAtual.mobHp <= 0) {
-                finalizarVitoriaCombate();
-                return;
-            }
+            if(combateAtual.mobHp <= 0) { finalizarVitoriaCombate(); return; }
 
             setTimeout(() => {
                 if(!combateAtual.ativo) return;
-                let danoRecebido = Math.floor(Math.random() * combateAtual.mobDano) + 5;
-                if(combateAtual.defendendo) danoRecebido = Math.floor(danoRecebido / 2);
-                
-                dadosJogador.vida -= danoRecebido;
-                if(dadosJogador.vida < 0) dadosJogador.vida = 0;
-
-                adicionarLogCombate(`O ${combateAtual.mobNome} contra-atacou e causou ${danoRecebido} de dano em você!`);
+                let danoRec = Math.floor(Math.random() * combateAtual.mobDano) + 5;
+                if(combateAtual.defendendo) danoRec = Math.floor(danoRec / 2);
+                dadosJogador.vida = Math.max(0, dadosJogador.vida - danoRec);
+                adicionarLogCombate(`Inimigo causou ${danoRec} de dano.`);
                 atualizarBarrasBatalha();
-
-                if(dadosJogador.vida <= 0) {
-                    finalizarDerrotaCombate();
-                }
+                if(dadosJogador.vida <= 0) finalizarDerrotaCombate();
             }, 600);
         }
 
@@ -912,45 +857,30 @@
             dadosJogador.pontosPoder += 1;
             salvarDadosNoBanco();
             sincronizarInterface();
-            
-            adicionarLogCombate(`🎉 VITÓRIA! +🪙 ${ouroPremio} Ouro, Nível ${dadosJogador.nivel} e +1 ⚡ Ponto de Poder!`);
+            adicionarLogCombate(`🎉 VITÓRIA! +🪙 ${ouroPremio} Ouro, Nível ${dadosJogador.nivel} e +1 Ponto de Poder!`);
             combateAtual.ativo = false;
-
             document.getElementById('botoes-acoes-combate').style.display = 'none';
-            let containerBtn = document.getElementById('container-btn-proxima-fase');
-            containerBtn.innerHTML = `
-                <button class="btn-action" style="background: #16a34a; font-size: 15px; padding: 12px;" onclick="irParaProximaFase()">▶ Ir para a Próxima Fase</button>
-            `;
+            document.getElementById('container-btn-proxima-fase').innerHTML = `<button class="btn-action" style="background: #16a34a; padding: 12px;" onclick="tocarSomClique(); irParaProximaFase()">▶ Próxima Fase</button>`;
         }
 
         function irParaProximaFase() {
             document.getElementById('container-btn-proxima-fase').innerHTML = '';
             document.getElementById('painel-batalha-ativo').style.display = 'none';
             document.getElementById('seletor-mobs-container').style.display = 'block';
-            adicionarLogCombate("Avançando para o próximo desafio da fase!");
         }
 
         function finalizarDerrotaCombate() {
             dadosJogador.vida = 0;
             salvarDadosNoBanco();
-            sincronizarInterface();
-
-            adicionarLogCombate(`💀 Você perdeu o combate! Sua vida zerou e o jogo será reiniciado.`);
-            document.getElementById('botoes-acoes-combate').style.display = 'none';
-            combateAtual.ativo = false;
-
-            setTimeout(() => {
-                alert("Sua vida chegou a zero! Você foi derrotado e vai reiniciar do começo.");
-                localStorage.clear();
-                location.reload();
-            }, 1000);
+            adicionarLogCombate(`💀 Derrota! Reiniciando...`);
+            setTimeout(() => { location.reload(); }, 1200);
         }
 
         function encerrarCombateFuga() {
+            tocarSomClique();
             dadosJogador.vida = 100;
             salvarDadosNoBanco();
             sincronizarInterface();
-
             document.getElementById('painel-batalha-ativo').style.display = 'none';
             document.getElementById('seletor-mobs-container').style.display = 'block';
         }
@@ -959,21 +889,11 @@
             db.collection("jogadores").orderBy("pontos", "desc").limit(10).get().then(snapshot => {
                 let tbody = document.getElementById('ranking-tabela-corpo');
                 tbody.innerHTML = "";
-                let posicao = 1;
+                let pos = 1;
                 snapshot.forEach(doc => {
-                    let data = doc.data();
-                    let eMeu = doc.id === usuarioAtualId ? "style='background: rgba(249,115,22,0.1);'" : "";
-                    tbody.innerHTML += `
-                        <tr ${eMeu}>
-                            <td>#${posicao}</td>
-                            <td>${data.nome || 'Guerreiro'}</td>
-                            <td>Nível ${data.nivel || 1}</td>
-                            <td>${data.pontos || 0} pts</td>
-                        </tr>`;
-                    posicao++;
+                    let d = doc.data();
+                    tbody.innerHTML += `<tr><td>#${pos++}</td><td>${d.nome}</td><td>Nível ${d.nivel}</td><td>${d.pontos} pts</td></tr>`;
                 });
-            }).catch(err => {
-                console.error("Erro ao carregar ranking real:", err);
             });
         }
 
@@ -982,18 +902,9 @@
                 let tbody = document.getElementById('online-tabela-corpo');
                 tbody.innerHTML = "";
                 snapshot.forEach(doc => {
-                    let data = doc.data();
-                    let eMeu = doc.id === usuarioAtualId ? "style='background: rgba(56,189,248,0.1);'" : "";
-                    tbody.innerHTML += `
-                        <tr ${eMeu}>
-                            <td>🟢 Online</td>
-                            <td>${data.nome || 'Guerreiro'}</td>
-                            <td>Nível ${data.nivel || 1}</td>
-                            <td>${data.guildaNome || 'Sem Guilda'}</td>
-                        </tr>`;
+                    let d = doc.data();
+                    tbody.innerHTML += `<tr><td>🟢 Online</td><td>${d.nome}</td><td>Nível ${d.nivel}</td><td>${d.guildaNome || 'Sem Guilda'}</td></tr>`;
                 });
-            }).catch(err => {
-                console.error("Erro ao carregar online:", err);
             });
         }
 
@@ -1002,33 +913,36 @@
             dadosJogador.gemas += 5;
             salvarDadosNoBanco();
             sincronizarInterface();
-            alert("Você abriu a Caixa Diária e ganhou 🪙 500 Ouro e 💎 5 Gemas reais!");
+            alert("Caixa Diária aberta: 🪙 500 Ouro e 💎 5 Gemas!");
         }
 
         function criarGuilda() {
+            tocarSomClique();
             let nome = document.getElementById('guilda-nome-input').value.trim();
-            if(!nome) { alert("Digite o nome da guilda."); return; }
-            if(dadosJogador.ouro < 5000) { alert("Você precisa de 🪙 5.000 para fundar uma guilda."); return; }
+            if(!nome) return;
+            if(dadosJogador.ouro < 5000) { alert("Ouro insuficiente (5000 necessários)."); return; }
             dadosJogador.ouro -= 5000;
             dadosJogador.guildaNome = nome;
             salvarDadosNoBanco();
             sincronizarInterface();
-            alert(`Guilda "${nome}" fundada com sucesso!`);
+            alert(`Guilda "${nome}" criada!`);
         }
 
         function entrarGuildaAleatoria() {
+            tocarSomClique();
             dadosJogador.guildaNome = "Guerreiros Livres";
             salvarDadosNoBanco();
             sincronizarInterface();
-            alert("Você entrou para a guilda pública: Guerreiros Livres!");
+            alert("Você entrou na guilda Guerreiros Livres!");
         }
 
         function enviarMensagemChat() {
+            tocarSomClique();
             let input = document.getElementById('input-chat-msg');
             let msg = input.value.trim();
             if(!msg) return;
             let chatBox = document.getElementById('chat-mensagens');
-            chatBox.innerHTML += `<div><strong>[${chatCanalAtual.toUpperCase()}] ${dadosJogador.nome}:</strong> ${msg}</div>`;
+            chatBox.innerHTML += `<div><strong>${dadosJogador.nome}:</strong> ${msg}</div>`;
             chatBox.scrollTop = chatBox.scrollHeight;
             input.value = "";
         }
@@ -1038,10 +952,8 @@
             if(novoNome) {
                 dadosJogador.nome = novoNome;
                 salvarDadosNoBanco();
-                carregarRankingGlobal();
-                carregarListaJogadoresOnline();
                 sincronizarInterface();
-                alert("Perfil alterado e salvo com sucesso!");
+                alert("Perfil salvo com sucesso!");
             }
         }
     </script>
