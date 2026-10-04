@@ -117,10 +117,10 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <h2>Modo Batalha - Sistema de Fases</h2>
 <p style="color:#94a3b8;margin-top:5px">Progressão salva por jogador no Firestore.</p>
 <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-top:20px">
-<div class="box-item" style="cursor:pointer" onclick="iniciarFases('normal')"><h3 style="color:var(--accent-color)">Fase Fácil — 30 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Progressão acessível.</p></div>
-<div class="box-item" style="cursor:pointer" onclick="iniciarFases('dificil')"><h3 style="color:var(--accent-color)">Fase Difícil — 30 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Inimigos mais resistentes.</p></div>
-<div class="box-item" style="cursor:pointer" onclick="iniciarFases('avancada')"><h3 style="color:var(--accent-color)">Fase Avançada — 25 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Alta resistência e recompensas.</p></div>
-<div class="box-item" style="cursor:pointer;border-color:var(--adm-color)" onclick="iniciarFases('hardcore')"><h3 style="color:var(--adm-color)">🔥 Hardcore Elite — 25 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Requer nível 25.</p></div>
+<div class="box-item" style="cursor:pointer" onclick="iniciarFases('normal')"><h3 style="color:var(--accent-color)">⚔️ Fácil — 30 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Níveis 1–10 tranquilos • 11–24 intermediários • 25–30 difíceis e com recompensas maiores.</p><div style="font-size:11px;color:#f59e0b;margin-top:8px">🎁 Recompensa aumenta a partir do nível 25</div></div>
+<div class="box-item" style="cursor:pointer" onclick="iniciarFases('dificil')"><h3 style="color:var(--accent-color)">💀 Difícil — 30 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Requer nível 10 • inimigos mais fortes e recompensas maiores.</p><div style="font-size:11px;color:#f59e0b;margin-top:8px">🎁 Nível 25+ = recompensa Elite</div></div>
+<div class="box-item" style="cursor:pointer" onclick="iniciarFases('avancada')"><h3 style="color:var(--accent-color)">🔥 Avançado — 25 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Requer nível 16 • alta resistência e grande recompensa.</p><div style="font-size:11px;color:#f59e0b;margin-top:8px">👑 Nível 25 = Elite</div></div>
+<div class="box-item" style="cursor:pointer;border-color:var(--adm-color)" onclick="iniciarFases('hardcore')"><h3 style="color:var(--adm-color)">☠️ Hardcore Elite — 25 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Requer nível 25 • dificuldade máxima e recompensas especiais.</p><div style="font-size:11px;color:#f59e0b;margin-top:8px">💎 Recompensa especial</div></div>
 </div>
 <div id="arena-fases-container" class="hidden" style="margin-top:20px;background:var(--panel-bg);padding:20px;border-radius:8px;border:1px solid var(--panel-border)">
 <h3 id="fases-titulo-cat" style="color:var(--accent-color)">Fase Ativa</h3>
@@ -269,7 +269,27 @@ let categoriaLoja="all", jogadorSelecionadoModal={id:"",nome:"",data:{}}, salaAt
 let usuarioAtual={uid:"",email:"",displayName:"",avatar:"",isAdm:false,isSubAdm:false,coins:150,diamonds:10,level:5,xp:0,inventory:[],phaseProgress:{normal:1,dificil:1,avancada:1,hardcore:1},achievements:[],dailyRewardLastClaim:0,dailyRewardCount:0,mana:100,maxMana:100,banned:false};
 let faseAtualInfo={categoria:"",etapa:1,hpMovel:100,maxHp:100,playerHp:100,playerMp:100,defend:false};
 
-const categorias={normal:{nome:"Fácil",max:30,mult:1,hp:100},dificil:{nome:"Difícil",max:30,mult:1.6,hp:180},avancada:{nome:"Avançado",max:25,mult:2.5,hp:300},hardcore:{nome:"Hardcore Elite",max:25,mult:4,hp:500}};
+const categorias={
+ normal:{nome:"Fácil",max:30,mult:1,hp:100,requisito:1},
+ dificil:{nome:"Difícil",max:30,mult:1.6,hp:180,requisito:10},
+ avancada:{nome:"Avançado",max:25,mult:2.5,hp:300,requisito:16},
+ hardcore:{nome:"Hardcore Elite",max:25,mult:4,hp:500,requisito:25}
+};
+
+function faixaBatalha(etapa){
+ if(etapa>=25)return {nome:"ELITE",fatorInimigo:1.9,recompensa:3.2,xp:2.2};
+ if(etapa>=11)return {nome:"INTERMEDIÁRIO",fatorInimigo:1.35,recompensa:1.7,xp:1.35};
+ return {nome:"INICIAL",fatorInimigo:1,recompensa:1,xp:1};
+}
+function dadosNivelBatalha(cat,etapa){
+ const c=categorias[cat],faixa=faixaBatalha(etapa);
+ const hp=Math.round(c.hp*(1+(etapa-1)*0.78)*c.mult*faixa.fatorInimigo);
+ const dano=Math.max(8,Math.round((10+etapa*1.7)*c.mult*faixa.fatorInimigo));
+ const moedas=Math.round((45+etapa*12)*c.mult*faixa.recompensa);
+ const diamantes=etapa>=25?Math.max(3,Math.round(c.mult*faixa.recompensa)):Math.max(1,Math.floor(c.mult));
+ const xp=Math.round((25+etapa*5)*faixa.xp);
+ return {hp,dano,moedas,diamantes,xp,faixa:faixa.nome};
+}
 const alvos={normal:["Goblin de Cinzas","Cadeira de Ferro","Lobo Sombrio","Guardião de Madeira","Dragão Jovem"],dificil:["Orc de Aço","Golem Pesado","Cavaleiro Negro","Dragão de Gelo","Guardião Real"],avancada:["Titã Arcano","Golem Mítico","Dragão Ancião","Rei Sombrio","Colosso"],hardcore:["Elite Infernal","Titã do Caos","Dragão Supremo","Rei Demônio","Monarca do Abismo"]};
 
 const achievementsCatalog=[
@@ -374,23 +394,83 @@ window.salvarPerfilJogador=async()=>{
 };
 
 window.iniciarFases=async(cat)=>{
- if(cat==="hardcore"&&usuarioAtual.level<25)return alert("Hardcore Elite requer nível 25.");
- faseAtualInfo.categoria=cat;faseAtualInfo.etapa=Math.min(usuarioAtual.phaseProgress?.[cat]||1,categorias[cat].max);faseAtualInfo.maxHp=Math.round(categorias[cat].hp*faseAtualInfo.etapa*categorias[cat].mult);faseAtualInfo.hpMovel=faseAtualInfo.maxHp;faseAtualInfo.playerHp=100;faseAtualInfo.playerMp=Math.max(0,Number(usuarioAtual.mana??100));faseAtualInfo.defend=false;
- document.getElementById("fases-titulo-cat").innerText=categorias[cat].nome.toUpperCase();atualizarBatalhaUI();document.querySelector("#section-jogar>div:nth-child(2)").classList.add("hidden");document.getElementById("arena-fases-container").classList.remove("hidden");adicionarLogBatalha("Nível "+faseAtualInfo.etapa+" iniciado.");
+ const c=categorias[cat];
+ if(!c)return;
+ if(usuarioAtual.level<c.requisito){
+   return alert(`🔒 ${c.nome} requer nível ${c.requisito}. Seu nível atual é ${usuarioAtual.level}.`);
+ }
+ const progresso=Number(usuarioAtual.phaseProgress?.[cat]||1);
+ faseAtualInfo.categoria=cat;
+ faseAtualInfo.etapa=Math.min(Math.max(1,progresso),c.max);
+ const nivel=dadosNivelBatalha(cat,faseAtualInfo.etapa);
+ faseAtualInfo.maxHp=nivel.hp;
+ faseAtualInfo.hpMovel=nivel.hp;
+ faseAtualInfo.playerHp=100;
+ faseAtualInfo.playerMp=Math.max(0,Number(usuarioAtual.mana??usuarioAtual.maxMana??100));
+ faseAtualInfo.defend=false;
+ document.getElementById("fases-titulo-cat").innerText=`${c.nome.toUpperCase()} • ${nivel.faixa}`;
+ atualizarBatalhaUI();
+ document.querySelector("#section-jogar>div:nth-child(2)").classList.add("hidden");
+ document.getElementById("arena-fases-container").classList.remove("hidden");
+ document.getElementById("log-batalha").innerHTML="Início da batalha!<div>> Ataque inicial preparado.</div>";
+ adicionarLogBatalha(`Nível ${faseAtualInfo.etapa} iniciado • ${nivel.faixa} • ❤️ ${nivel.hp} HP`);
 };
-window.desistirBatalha=()=>{if(confirm("Desistir da batalha?"))voltarSelecaoFases()};
+window.desistirBatalha=()=>{if(confirm("Desistir da batalha? Seu progresso já concluído continua salvo."))voltarSelecaoFases()};
 window.voltarSelecaoFases=()=>{document.getElementById("arena-fases-container").classList.add("hidden");document.querySelector("#section-jogar>div:nth-child(2)").classList.remove("hidden")};
-function atualizarBatalhaUI(){let c=categorias[faseAtualInfo.categoria],nome=alvos[faseAtualInfo.categoria][(faseAtualInfo.etapa-1)%5],p=Math.max(0,faseAtualInfo.hpMovel/faseAtualInfo.maxHp*100);document.getElementById("fases-etapa-info").innerText=`Nível ${faseAtualInfo.etapa}/${c.max} • Alvo: ${nome}`;document.getElementById("inimigo-alvo-nome").innerText=nome;document.getElementById("movel-hp").innerText=Math.round(p)+"%";document.getElementById("movel-hp-bar").style.width=p+"%";document.getElementById("player-hp-txt").innerText=`${faseAtualInfo.playerHp}/100`;document.getElementById("player-hp-bar").style.width=faseAtualInfo.playerHp+"%";document.getElementById("player-mp-txt").innerText=`${faseAtualInfo.playerMp}/${usuarioAtual.maxMana||100}`;document.getElementById("player-mp-bar").style.width=Math.min(100,(faseAtualInfo.playerMp/(usuarioAtual.maxMana||100))*100)+"%"}
+function atualizarBatalhaUI(){
+ let c=categorias[faseAtualInfo.categoria],nivel=dadosNivelBatalha(faseAtualInfo.categoria,faseAtualInfo.etapa),nome=alvos[faseAtualInfo.categoria][(faseAtualInfo.etapa-1)%5],p=Math.max(0,faseAtualInfo.hpMovel/faseAtualInfo.maxHp*100);
+ document.getElementById("fases-titulo-cat").innerText=`${c.nome.toUpperCase()} • ${nivel.faixa}`;
+ document.getElementById("fases-etapa-info").innerText=`Nível ${faseAtualInfo.etapa}/${c.max} • ${nivel.faixa} • Alvo: ${nome} • 🎁 ${nivel.moedas} 🪙 + ${nivel.diamantes} 💎`;
+ document.getElementById("inimigo-alvo-nome").innerText=nome;
+ document.getElementById("movel-hp").innerText=Math.round(p)+"%";
+ document.getElementById("movel-hp-bar").style.width=p+"%";
+ document.getElementById("player-hp-txt").innerText=`${faseAtualInfo.playerHp}/100`;
+ document.getElementById("player-hp-bar").style.width=faseAtualInfo.playerHp+"%";
+ document.getElementById("player-mp-txt").innerText=`${faseAtualInfo.playerMp}/${usuarioAtual.maxMana||100}`;
+ document.getElementById("player-mp-bar").style.width=Math.min(100,(faseAtualInfo.playerMp/(usuarioAtual.maxMana||100))*100)+"%";
+}
 function adicionarLogBatalha(t){let x=document.getElementById("log-batalha");x.innerHTML+="<div>> "+t+"</div>";x.scrollTop=x.scrollHeight}
 function notificar(msg,tipo="info"){const box=document.getElementById("notificacoes-box");if(!box)return;const n=document.createElement("div");n.className="dw-notificacao "+tipo;n.textContent=msg;box.appendChild(n);setTimeout(()=>n.remove(),4500)}
 function calcularDanoBase(){return 30+(Number(usuarioAtual.level)||1)*3}
-async function iniciarProximaFase(){const cat=categorias[faseAtualInfo.categoria];if(faseAtualInfo.etapa>=cat.max){const reward=120+faseAtualInfo.etapa*20+(faseAtualInfo.categoria==="hardcore"?500:0);usuarioAtual.coins+=reward;usuarioAtual.diamonds+=faseAtualInfo.categoria==="hardcore"?25:5;usuarioAtual.xp+=200;usuarioAtual.level=Math.max(usuarioAtual.level,Math.floor(usuarioAtual.xp/100)+5);await salvarProgresso();notificar(`🏆 ${cat.nome} concluído! +${reward} moedas.` ,"success");voltarSelecaoFases();return false}
-faseAtualInfo.etapa=Math.min(faseAtualInfo.etapa+1,cat.max);faseAtualInfo.maxHp=Math.round(cat.hp*faseAtualInfo.etapa*cat.mult);faseAtualInfo.hpMovel=faseAtualInfo.maxHp;faseAtualInfo.playerHp=100;faseAtualInfo.playerMp=Math.max(0,Number(usuarioAtual.mana??100));faseAtualInfo.defend=false;usuarioAtual.phaseProgress[faseAtualInfo.categoria]=faseAtualInfo.etapa;usuarioAtual.xp+=50;usuarioAtual.level=Math.max(usuarioAtual.level,Math.floor(usuarioAtual.xp/100)+5);await salvarProgresso();atualizarBatalhaUI();adicionarLogBatalha(`Nível ${faseAtualInfo.etapa} iniciado.`);notificar(`➡️ Avançou para o nível ${faseAtualInfo.etapa}!`,"success");return true}
+async function iniciarProximaFase(){
+ const cat=categorias[faseAtualInfo.categoria];
+ const atual=faseAtualInfo.etapa;
+ const nivelAtual=dadosNivelBatalha(faseAtualInfo.categoria,atual);
+ if(atual>=cat.max){
+   usuarioAtual.coins+=nivelAtual.moedas;
+   usuarioAtual.diamonds+=nivelAtual.diamantes;
+   usuarioAtual.xp+=nivelAtual.xp;
+   usuarioAtual.level=Math.max(usuarioAtual.level,Math.floor(usuarioAtual.xp/100)+5);
+   await salvarProgresso();
+   notificar(`🏆 ${cat.nome} concluído! +${nivelAtual.moedas} moedas • +${nivelAtual.diamantes} 💎 • +${nivelAtual.xp} XP.` ,"success");
+   voltarSelecaoFases();
+   return false;
+ }
+ usuarioAtual.coins+=nivelAtual.moedas;
+ usuarioAtual.diamonds+=nivelAtual.diamantes;
+ usuarioAtual.xp+=nivelAtual.xp;
+ faseAtualInfo.etapa=atual+1;
+ usuarioAtual.phaseProgress[faseAtualInfo.categoria]=faseAtualInfo.etapa;
+ usuarioAtual.level=Math.max(usuarioAtual.level,Math.floor(usuarioAtual.xp/100)+5);
+ const proximo=dadosNivelBatalha(faseAtualInfo.categoria,faseAtualInfo.etapa);
+ faseAtualInfo.maxHp=proximo.hp;
+ faseAtualInfo.hpMovel=proximo.hp;
+ faseAtualInfo.playerHp=100;
+ faseAtualInfo.playerMp=Math.max(0,Number(usuarioAtual.mana??usuarioAtual.maxMana??100));
+ faseAtualInfo.defend=false;
+ await salvarProgresso();
+ atualizarBatalhaUI();
+ adicionarLogBatalha(`🏆 Vitória! +${nivelAtual.moedas} 🪙 +${nivelAtual.diamantes} 💎 +${nivelAtual.xp} XP.`);
+ adicionarLogBatalha(`➡️ Próximo nível: ${faseAtualInfo.etapa} • ${proximo.faixa} • ❤️ ${proximo.hp} HP.`);
+ notificar(`🏆 Vitória! Você avançou para o nível ${faseAtualInfo.etapa}. +${nivelAtual.moedas} 🪙 +${nivelAtual.diamantes} 💎`,"success");
+ return true;
+}
 window.batalhaAcao=async acao=>{
- if(faseAtualInfo.playerHp<=0)return;
+ if(!faseAtualInfo.categoria||faseAtualInfo.playerHp<=0)return;
  let dano=0;
+ const nivel=dadosNivelBatalha(faseAtualInfo.categoria,faseAtualInfo.etapa);
  const consumirMana=(q)=>{if(faseAtualInfo.playerMp<q){notificar(`🔥 Mana insuficiente. Necessário: ${q}.`,'danger');return false}faseAtualInfo.playerMp-=q;return true};
- if(acao==="fugir"){notificar("🏃 Você fugiu da batalha.","danger");voltarSelecaoFases();return}
+ if(acao==="fugir"){notificar("🏃 Você saiu da batalha. Seu nível já concluído continua salvo.","danger");voltarSelecaoFases();return}
  if(acao==="atacar"){if(!consumirMana(5))return;dano=calcularDanoBase();faseAtualInfo.hpMovel=Math.max(0,faseAtualInfo.hpMovel-dano);adicionarLogBatalha(`⚔️ Você causou ${dano} de dano. -5 Mana`);notificar(`⚔️ Ataque: -${dano} HP no inimigo. -5 Mana`)}
  else if(acao==="defender"){if(!consumirMana(8))return;faseAtualInfo.defend=true;adicionarLogBatalha("🛡️ Defesa ativada. -8 Mana");notificar("🛡️ Defesa ativada! -8 Mana","info")}
  else if(acao==="poder"){if(!consumirMana(30))return;dano=calcularDanoBase()+35;faseAtualInfo.hpMovel=Math.max(0,faseAtualInfo.hpMovel-dano);adicionarLogBatalha(`🔥 Poder usado: ${dano} de dano. -30 Mana`);notificar(`🔥 Poder usado: -${dano} HP. -30 Mana`)}
@@ -406,10 +486,23 @@ window.batalhaAcao=async acao=>{
  }
  usuarioAtual.mana=faseAtualInfo.playerMp;
  if(faseAtualInfo.hpMovel<=0){const avancou=await iniciarProximaFase();if(!avancou)return;atualizarMoedasDiamantesUI();return}
- const danoInimigo=faseAtualInfo.defend?8+Math.floor(faseAtualInfo.etapa/3):18+Math.floor(faseAtualInfo.etapa/2);faseAtualInfo.defend=false;faseAtualInfo.playerHp=Math.max(0,faseAtualInfo.playerHp-danoInimigo);adicionarLogBatalha(`👹 O inimigo contra-atacou: ${danoInimigo} de dano.`);notificar(`👹 Inimigo contra-atacou: -${danoInimigo} Vida.` ,"danger");
+ const danoInimigo=faseAtualInfo.defend?Math.max(4,Math.round(nivel.dano*0.35)):nivel.dano;
+ faseAtualInfo.defend=false;
+ faseAtualInfo.playerHp=Math.max(0,faseAtualInfo.playerHp-danoInimigo);
+ adicionarLogBatalha(`👹 O inimigo contra-atacou causando ${danoInimigo} de dano.`);
+ notificar(`👹 Inimigo contra-atacou: -${danoInimigo} Vida.` ,"danger");
  if(faseAtualInfo.playerHp<=0){
-   faseAtualInfo.playerHp=100;faseAtualInfo.playerMp=Number(usuarioAtual.maxMana||100);usuarioAtual.mana=faseAtualInfo.playerMp;faseAtualInfo.hpMovel=faseAtualInfo.maxHp;faseAtualInfo.defend=false;
-   await salvarProgresso();atualizarBatalhaUI();notificar("💀 Você perdeu a batalha. ❤️ Vida e 🔥 Mana foram restauradas!","danger");adicionarLogBatalha("💚 Batalha perdida: recursos de batalha restaurados.");voltarSelecaoFases();return
+   faseAtualInfo.playerHp=100;
+   faseAtualInfo.playerMp=Number(usuarioAtual.maxMana||100);
+   usuarioAtual.mana=faseAtualInfo.playerMp;
+   faseAtualInfo.hpMovel=faseAtualInfo.maxHp;
+   faseAtualInfo.defend=false;
+   await salvarProgresso();
+   atualizarBatalhaUI();
+   notificar("💀 Você perdeu a batalha. ❤️ Vida e 🔥 Mana foram restauradas!","danger");
+   adicionarLogBatalha("💚 Batalha perdida: recursos de batalha restaurados.");
+   voltarSelecaoFases();
+   return;
  }
  atualizarBatalhaUI();atualizarMoedasDiamantesUI();
 };
