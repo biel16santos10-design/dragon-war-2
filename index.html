@@ -253,14 +253,63 @@
             color: #38bdf8;
             background: rgba(15, 23, 42, 0.6);
         }
-        .chat-box {
+        /* Sistema de Abas da Loja */
+        .store-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .store-tab-btn {
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: #94a3b8;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .store-tab-btn.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+        .store-section {
+            display: none;
+        }
+        .store-section.active {
+            display: grid;
+        }
+
+        /* Sistema de Chat */
+        .chat-container-box {
             background: #020617;
             border: 1px solid #334155;
-            height: 380px;
+            height: 420px;
             border-radius: 10px;
             display: flex;
             flex-direction: column;
-            padding: 20px;
+            padding: 15px;
+        }
+        .chat-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 10px;
+        }
+        .chat-tab-btn {
+            background: #1e293b;
+            border: none;
+            color: #94a3b8;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .chat-tab-btn.active {
+            background: #f5af19;
+            color: #0b0f19;
         }
         .chat-messages {
             flex: 1;
@@ -268,11 +317,12 @@
             margin-bottom: 15px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
+            font-size: 13px;
         }
         .chat-input-area {
             display: flex;
-            gap: 12px;
+            gap: 10px;
         }
         .chat-input-area input {
             flex: 1;
@@ -283,6 +333,7 @@
             border-radius: 6px;
             outline: none;
         }
+
         /* 10 Avatares Iniciais */
         .avatar-selection-grid {
             display: grid;
@@ -348,6 +399,10 @@
             border-color: #f5af19;
             background: rgba(245, 175, 25, 0.1);
         }
+        .daily-box.resgatado {
+            opacity: 0.5;
+            border-color: #64748b;
+        }
     </style>
 </head>
 <body>
@@ -387,8 +442,8 @@
             <button onclick="mudarAba('loja', this)">🛒 Loja Geral</button>
             <button onclick="mudarAba('poderes', this)">🔮 Árvore de Poderes</button>
             <button onclick="mudarAba('inventario', this)">🎒 Inventário / Mochila</button>
-            <button onclick="mudarAba('corporacao', this)">🛡️ Guilda / Corporação</button>
-            <button onclick="mudarAba('chat', this)">💬 Chat Geral</button>
+            <button onclick="mudarAba('corporacao', this)">🛡️ Guilda / Operações</button>
+            <button onclick="mudarAba('chat', this)">💬 Sistema de Chat</button>
             <button onclick="mudarAba('ranking', this)">🏆 Ranking Global</button>
             <button onclick="mudarAba('config', this)">⚙️ Configurações</button>
             <button onclick="sairParaMenuLogin()" style="margin-top: 20px; color: #f87171; border-top: 1px solid #334155; padding-top: 12px;">⬅ Sair / Trocar Conta</button>
@@ -404,11 +459,10 @@
                         <p><strong>Nome:</strong> <span id="resumo-nome">Guerreiro</span></p>
                         <p><strong>UID:</strong> <span id="resumo-uid" style="font-size: 13px; color: #38bdf8;">-</span></p>
                         <p><strong>Nível:</strong> <span id="resumo-nivel" style="color: #f5af19;">1</span></p>
-                        <p><strong>Ranking Geral:</strong> <span id="resumo-ranking">#99</span></p>
                         <p><strong>Moedas (Ouro):</strong> <span id="resumo-moedas">15.000</span> 🟡</p>
                         <p><strong>Diamantes:</strong> <span id="resumo-diamantes">100</span> 💎</p>
                         <p><strong>Moeda de Poderes:</strong> <span id="resumo-poderes-moeda">0</span> 🔮</p>
-                        <p><strong>Guilda / Corporação:</strong> <span id="resumo-guilda" style="color: #f87171;">Nenhuma (Sem Guilda)</span></p>
+                        <p><strong>Guilda:</strong> <span id="resumo-guilda" style="color: #f87171;">Nenhuma</span></p>
                     </div>
                 </div>
             </div>
@@ -416,30 +470,20 @@
             <!-- ABA CAMPANHA / MODOS DE BATALHA -->
             <div id="campanha" class="tab-content">
                 <h2 style="margin-bottom: 10px;">Modos de Batalha</h2>
-                <p style="color: #94a3b8; margin-bottom: 20px;">Escolha o nível de combate. (Modo Médio dá Moedas de Poder 🔮 | Modo Hard/Extremo dá Diamantes 💎).</p>
+                <p style="color: #94a3b8; margin-bottom: 20px;">Modo Médio garante Moedas de Poder 🔮 | Modo Hard garante Diamantes 💎.</p>
                 <div id="lista-modos-batalha" class="card-grid" style="max-height: none;">
                     <div class="item-card" style="border-color: #22c55e;">
                         <h4>Modo Fácil</h4>
-                        <p style="color: #22c55e;">Recompensa: Apenas Ouro 🟡</p>
+                        <p style="color: #22c55e;">Recompensa: Ouro 🟡</p>
                         <button class="btn-acao" style="background: #22c55e;" onclick="entrarNaArena('Fácil')">SELECIONAR</button>
                     </div>
                     <div class="item-card" style="border-color: #3b82f6;">
-                        <h4>Modo Médio</h4>
+                        <h4>Modo Médio (Guerreiros Médios)</h4>
                         <p style="color: #3b82f6;">Recompensa: Ouro + Moeda de Poder 🔮</p>
                         <button class="btn-acao" style="background: #3b82f6;" onclick="entrarNaArena('Médio')">SELECIONAR</button>
                     </div>
-                    <div class="item-card" style="border-color: #a855f7;">
-                        <h4>Batalhas Diárias</h4>
-                        <p style="color: #a855f7;">Recompensas em dobro.</p>
-                        <button class="btn-acao" style="background: #a855f7;" onclick="entrarNaArena('Diárias')">SELECIONAR</button>
-                    </div>
-                    <div class="item-card" style="border-color: #eab308;">
-                        <h4>Modo Ferra-Doido</h4>
-                        <p style="color: #eab308;">Caótico e intenso!</p>
-                        <button class="btn-acao" style="background: #eab308;" onclick="entrarNaArena('Ferra-Doido')">SELECIONAR</button>
-                    </div>
                     <div class="item-card" style="border-color: #ef4444;">
-                        <h4>Modo Hard (Extremo)</h4>
+                        <h4>Modo Hard (Rádio / Chefe)</h4>
                         <p style="color: #ef4444;">Recompensa: Diamantes 💎 Raros!</p>
                         <button class="btn-acao" style="background: #ef4444;" onclick="entrarNaArena('Hard')">SELECIONAR</button>
                     </div>
@@ -458,8 +502,8 @@
                     <div class="battle-actions">
                         <button class="btn-acao" style="background: #ef4444;" onclick="acaoBatalha('atacar')">⚔️ Atacar</button>
                         <button class="btn-acao" style="background: #3b82f6;" onclick="acaoBatalha('defender')">🛡️ Defender</button>
-                        <button class="btn-acao" style="background: #22c55e;" onclick="acaoBatalha('curar')">🍗 Curar (Comida)</button>
-                        <button class="btn-acao" style="background: #eab308;" onclick="acaoBatalha('salvar')">💾 Salvar Progresso</button>
+                        <button class="btn-acao" style="background: #22c55e;" onclick="acaoBatalha('curar')">🍗 Curar</button>
+                        <button class="btn-acao" style="background: #eab308;" onclick="acaoBatalha('salvar')">💾 Salvar</button>
                         <button class="btn-acao" style="background: #64748b; grid-column: span 2;" onclick="sairDaArena()">🚪 Voltar ao Menu</button>
                     </div>
                 </div>
@@ -468,57 +512,32 @@
             <!-- ABA RECOMPENSAS DIÁRIAS -->
             <div id="diarias" class="tab-content">
                 <h2 style="margin-bottom: 10px;">Recompensas Diárias</h2>
-                <p style="color: #94a3b8; margin-bottom: 15px;">Colete seu bônus diário. O último dia traz Skins e Diamantes 💎 exclusivos!</p>
-                <div class="daily-grid">
-                    <div class="daily-box">
-                        <h4 style="color: #38bdf8;">Dia 1</h4>
-                        <p style="font-size: 12px; margin: 8px 0;">500 Ouro</p>
-                        <button class="btn-acao" style="padding: 5px; font-size: 11px;" onclick="resgatarDiaria(1, '500 Ouro')">RESGATAR</button>
-                    </div>
-                    <div class="daily-box">
-                        <h4 style="color: #38bdf8;">Dia 2</h4>
-                        <p style="font-size: 12px; margin: 8px 0;">1.000 Ouro</p>
-                        <button class="btn-acao" style="padding: 5px; font-size: 11px;" onclick="resgatarDiaria(2, '1000 Ouro')">RESGATAR</button>
-                    </div>
-                    <div class="daily-box">
-                        <h4 style="color: #38bdf8;">Dia 3</h4>
-                        <p style="font-size: 12px; margin: 8px 0;">10 🔮 Poderes</p>
-                        <button class="btn-acao" style="padding: 5px; font-size: 11px;" onclick="resgatarDiaria(3, '10 Poderes')">RESGATAR</button>
-                    </div>
-                    <div class="daily-box">
-                        <h4 style="color: #38bdf8;">Dia 4</h4>
-                        <p style="font-size: 12px; margin: 8px 0;">2.500 Ouro</p>
-                        <button class="btn-acao" style="padding: 5px; font-size: 11px;" onclick="resgatarDiaria(4, '2500 Ouro')">RESGATAR</button>
-                    </div>
-                    <div class="daily-box">
-                        <h4 style="color: #38bdf8;">Dia 5</h4>
-                        <p style="font-size: 12px; margin: 8px 0;">25 🔮 Poderes</p>
-                        <button class="btn-acao" style="padding: 5px; font-size: 11px;" onclick="resgatarDiaria(5, '25 Poderes')">RESGATAR</button>
-                    </div>
-                    <div class="daily-box">
-                        <h4 style="color: #38bdf8;">Dia 6</h4>
-                        <p style="font-size: 12px; margin: 8px 0;">50 💎 Diamantes</p>
-                        <button class="btn-acao" style="padding: 5px; font-size: 11px;" onclick="resgatarDiaria(6, '50 Diamantes')">RESGATAR</button>
-                    </div>
-                    <div class="daily-box highlight">
-                        <h4 style="color: #f5af19;">Dia 7 (Bônus)</h4>
-                        <p style="font-size: 11px; margin: 8px 0; color: #f5af19;">Skin Lendária + 200 💎</p>
-                        <button class="btn-acao" style="padding: 5px; font-size: 11px; background: #f5af19;" onclick="resgatarDiaria(7, 'Skin Lendária + 200 Diamantes')">RESGATAR</button>
-                    </div>
+                <p style="color: #94a3b8; margin-bottom: 15px;">Colete seu bônus diário. O item resgatado fica intocável até a próxima atualização à meia-noite.</p>
+                <div class="daily-grid" id="grid-diarias-container">
+                    <!-- Gerado dinamicamente via JS -->
                 </div>
             </div>
 
-            <!-- ABA LOJA -->
+            <!-- ABA LOJA SEPARADA -->
             <div id="loja" class="tab-content">
                 <h2 style="margin-bottom: 10px;">Loja do Servidor</h2>
-                <p style="color: #94a3b8; margin-bottom: 15px;">Adquira armamentos, visuais e itens de sobrevivência com Ouro.</p>
-                <div id="grid-loja" class="card-grid"></div>
+                <p style="color: #94a3b8; margin-bottom: 15px;">Adquira itens separados por categorias.</p>
+                
+                <div class="store-tabs">
+                    <button class="store-tab-btn active" onclick="mudarAbaLoja('armas', this)">⚔️ Armas</button>
+                    <button class="store-tab-btn" onclick="mudarAbaLoja('poderes-loja', this)">🔮 Poderes</button>
+                    <button class="store-tab-btn" onclick="mudarAbaLoja('skins', this)">👕 Skins</button>
+                </div>
+
+                <div id="loja-armas" class="card-grid store-section active" style="max-height: 420px;"></div>
+                <div id="loja-poderes-loja" class="card-grid store-section" style="max-height: 420px;"></div>
+                <div id="loja-skins" class="card-grid store-section" style="max-height: 420px;"></div>
             </div>
 
-            <!-- ABA PODERES (Árvore de Habilidades com Moeda de Poder) -->
+            <!-- ABA ÁRVORE DE HABILIDADES -->
             <div id="poderes" class="tab-content">
-                <h2 style="margin-bottom: 10px;">Árvore de Habilidades (Uso de Moeda 🔮)</h2>
-                <p style="color: #94a3b8; margin-bottom: 15px;">Desbloqueie feitiços usando suas Moedas de Poder ganhas no Modo Médio/Hard.</p>
+                <h2 style="margin-bottom: 10px;">Árvore de Habilidades (Moeda de Poder 🔮)</h2>
+                <p style="color: #94a3b8; margin-bottom: 15px;">Desbloqueie feitiços usando suas Moedas de Poder ganhas no Modo Médio.</p>
                 <div id="grid-habilidades" class="card-grid"></div>
             </div>
 
@@ -530,25 +549,42 @@
                 </div>
             </div>
 
-            <!-- ABA GUILDA -->
+            <!-- ABA GUILDA / OPERAÇÕES -->
             <div id="corporacao" class="tab-content">
                 <h2 style="margin-bottom: 10px;">Gerenciamento de Guilda</h2>
-                <p style="color: #94a3b8; margin-bottom: 20px;">Crie sua guilda gastando Diamantes 💎 ou entre em uma existente.</p>
-                <div class="status-box" style="flex-direction: column; align-items: flex-start; gap: 15px; width: 100%; max-width: 550px;">
-                    <p><strong>Sua Guilda Atual:</strong> <span id="guilda-status-nome" style="color: #f87171;">Nenhuma</span></p>
+                <p style="color: #94a3b8; margin-bottom: 20px;">Crie sua guilda gastando Diamantes 💎 ou entre em uma guilda ativa.</p>
+                
+                <div id="painel-sem-guilda" class="status-box" style="flex-direction: column; align-items: flex-start; gap: 15px; width: 100%; max-width: 550px;">
+                    <p><strong>Status:</strong> <span style="color: #f87171;">Você não está em nenhuma guilda.</span></p>
                     <div style="display: flex; gap: 10px; width: 100%;">
-                        <button class="btn-acao" style="background: #3b82f6;" onclick="abrirModalEntrarGuilda()">Entrar em Guilda</button>
+                        <button class="btn-acao" style="background: #3b82f6;" onclick="entrarEmGuildaPrompt()">Entrar em Guilda</button>
                         <button class="btn-acao" style="background: #f5af19;" onclick="criarGuilda()">Criar Guilda (500 💎)</button>
                     </div>
                 </div>
+
+                <div id="painel-com-guilda" class="status-box" style="display: none; flex-direction: column; align-items: flex-start; gap: 15px; width: 100%; max-width: 600px;">
+                    <h3 style="color: #38bdf8;">Guilda: <span id="info-guilda-nome" style="color: #f5af19;">-</span></h3>
+                    <p><strong>Dono da Guilda (Fundador):</strong> <span id="info-guilda-dono" style="color: #22c55e;">-</span></p>
+                    <p style="width: 100%;"><strong>Membros Registrados:</strong></p>
+                    <div id="lista-membros-guilda" style="background: #0b0f19; padding: 10px; border-radius: 6px; width: 100%; max-height: 150px; overflow-y: auto; font-size: 13px;"></div>
+                    <button class="btn-acao" style="background: #ef4444; width: auto;" onclick="sairDaGuilda()">Sair da Guilda</button>
+                </div>
             </div>
 
-            <!-- ABA CHAT GERAL -->
+            <!-- ABA CHAT COM ABAS -->
             <div id="chat" class="tab-content">
-                <h2 style="margin-bottom: 20px;">Chat Geral da Comunidade</h2>
-                <div class="chat-box">
-                    <div class="chat-messages" id="chat-container">
-                        <p><strong style="color: #38bdf8;">Servidor:</strong> Bem-vindo ao chat global do Dragon War!</p>
+                <h2 style="margin-bottom: 15px;">Central de Comunicação</h2>
+                <div class="chat-container-box">
+                    <div class="chat-tabs">
+                        <button class="chat-tab-btn active" onclick="mudarAbaChat('geral', this)">Chat Geral</button>
+                        <button class="chat-tab-btn" onclick="mudarAbaChat('guilda', this)">Chat Guilda</button>
+                        <button class="chat-tab-btn" onclick="mudarAbaChat('pv', this)">Chat Privado (PV)</button>
+                    </div>
+                    <div class="chat-messages" id="chat-messages-container">
+                        <p><strong style="color: #38bdf8;">Sistema:</strong> Bem-vindo ao chat do Dragon War!</p>
+                    </div>
+                    <div class="chat-input-area" id="area-input-pv" style="display: none; margin-bottom: 8px;">
+                        <input type="text" id="chat-destinatario-input" placeholder="UID ou Nome do destinatário PV..." style="max-width: 200px;">
                     </div>
                     <div class="chat-input-area">
                         <input type="text" id="chat-msg-input" placeholder="Digite sua mensagem...">
@@ -597,6 +633,8 @@
             moedaPoder: 20,
             avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=hero1",
             guilda: "Nenhuma",
+            diariasResgatadas: {}, // { dia: dataResgate }
+            ultimoResgateData: "",
             inventario: [],
             isAdmin: false
         };
@@ -605,6 +643,7 @@
         let hpJogador = 100;
         let hpInimigo = 100;
         let modoBatalhaAtual = "Fácil";
+        let abaChatAtual = "geral";
 
         window.addEventListener('DOMContentLoaded', () => {
             let avatarGrid = document.getElementById('grid-10-avatares');
@@ -613,7 +652,8 @@
                 let url = `https://api.dicebear.com/7.x/bottts/svg?seed=${seed}`;
                 avatarGrid.innerHTML += `<img src="${url}" class="avatar-option" onclick="selecionarAvatar('${url}', this)">`;
             }
-            popularLojaEHabilidades();
+            popularLojaSeparadaEHabilidades();
+            renderizarRecompensasDiarias();
         });
 
         function selecionarAvatar(url, el) {
@@ -622,42 +662,49 @@
             el.classList.add('selected');
         }
 
-        function popularLojaEHabilidades() {
-            let lojaGrid = document.getElementById('grid-loja');
-            let itensLoja = [
-                {nome: "Adaga de Cobre", tipo: "Arma", preco: 1000},
-                {nome: "Espada Curta", tipo: "Arma", preco: 2500},
-                {nome: "Lâmina de Aço", tipo: "Arma", preco: 4500},
-                {nome: "Machado de Batalha", tipo: "Arma", preco: 7000},
-                {nome: "Espada Longa Real", tipo: "Arma", preco: 10000},
-                {nome: "Katana Sombria", tipo: "Arma", preco: 14000},
-                {nome: "Martelo de Titã", tipo: "Arma", preco: 18000},
-                {nome: "Lança do Dragão", tipo: "Arma", preco: 22000},
-                {nome: "Foice da Morte", tipo: "Arma", preco: 27000},
-                {nome: "Adagas Gêmeas de Fogo", tipo: "Arma", preco: 32000},
-                {nome: "Espada do Vazio", tipo: "Arma", preco: 38000},
-                {nome: "Martelo Estelar", tipo: "Arma", preco: 45000},
-                {nome: "Lâmina de Cristal", tipo: "Arma", preco: 55000},
-                {nome: "Arco Ancestral", tipo: "Arma", preco: 65000},
-                {nome: "Espada Lendária Excalibur", tipo: "Arma", preco: 90000},
-                {nome: "Skin: Cavaleiro Novato", tipo: "Skin", preco: 5000},
-                {nome: "Skin: Mago Cinzento", tipo: "Skin", preco: 6000},
-                {nome: "Frango Assado (+20 HP)", tipo: "Comida", preco: 300},
-                {nome: "Poção de Vida Média (+50 HP)", tipo: "Comida", preco: 700}
+        // Loja Separada em Armas, Poderes e Skins
+        function popularLojaSeparadaEHabilidades() {
+            let armasGrid = document.getElementById('loja-armas');
+            let poderesLojaGrid = document.getElementById('loja-poderes-loja');
+            let skinsGrid = document.getElementById('loja-skins');
+
+            let itensArmas = [
+                {nome: "Adaga de Cobre", preco: 1000}, {nome: "Espada Curta", preco: 2500},
+                {nome: "Lâmina de Aço", preco: 4500}, {nome: "Machado de Batalha", preco: 7000},
+                {nome: "Espada Longa Real", preco: 10000}, {nome: "Katana Sombria", preco: 14000},
+                {nome: "Martelo de Titã", preco: 18000}, {nome: "Lança do Dragão", preco: 22000},
+                {nome: "Foice da Morte", preco: 27000}, {nome: "Adagas Gêmeas de Fogo", preco: 32000}
             ];
 
-            lojaGrid.innerHTML = "";
-            itensLoja.forEach(item => {
-                lojaGrid.innerHTML += `
-                    <div class="item-card">
-                        <h4>${item.nome}</h4>
-                        <p>${item.preco.toLocaleString()} 🟡</p>
-                        <button class="btn-acao" onclick="comprarItemLoja('${item.nome}', ${item.preco})">COMPRAR</button>
-                    </div>
-                `;
+            let itensPoderesLoja = [
+                {nome: "Essência de Mana (+10 Poder)", preco: 500},
+                {nome: "Orbe Arcana (+30 Poder)", preco: 1400},
+                {nome: "Cristal Místico (+75 Poder)", preco: 3000}
+            ];
+
+            let itensSkins = [
+                {nome: "Skin: Cavaleiro Novato", preco: 5000},
+                {nome: "Skin: Mago Cinzento", preco: 6000},
+                {nome: "Skin: Guerreiro Sombrio", preco: 12000},
+                {nome: "Skin: Guardião Celestial", preco: 25000}
+            ];
+
+            armasGrid.innerHTML = "";
+            itensArmas.forEach(i => {
+                armasGrid.innerHTML += `<div class="item-card"><h4>${i.nome}</h4><p>${i.preco.toLocaleString()} 🟡</p><button class="btn-acao" onclick="comprarItemLoja('${i.nome}', ${i.preco})">COMPRAR</button></div>`;
             });
 
-            // 22 Habilidades custando Moeda de Poder 🔮
+            poderesLojaGrid.innerHTML = "";
+            itensPoderesLoja.forEach(i => {
+                poderesLojaGrid.innerHTML += `<div class="item-card"><h4>${i.nome}</h4><p>${i.preco.toLocaleString()} 🟡</p><button class="btn-acao" onclick="comprarItemLoja('${i.nome}', ${i.preco})">COMPRAR</button></div>`;
+            });
+
+            skinsGrid.innerHTML = "";
+            itensSkins.forEach(i => {
+                skinsGrid.innerHTML += `<div class="item-card"><h4>${i.nome}</h4><p>${i.preco.toLocaleString()} 🟡</p><button class="btn-acao" onclick="comprarItemLoja('${i.nome}', ${i.preco})">COMPRAR</button></div>`;
+            });
+
+            // Habilidades com Moeda de Poder
             let habGrid = document.getElementById('grid-habilidades');
             habGrid.innerHTML = "";
             for(let i = 1; i <= 22; i++) {
@@ -673,6 +720,80 @@
             }
         }
 
+        function mudarAbaLoja(secao, btn) {
+            document.querySelectorAll('.store-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.store-tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('loja-' + secao).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        // Recompensas Diárias com Bloqueio de 24h / Meia-noite
+        function renderizarRecompensasDiarias() {
+            let container = document.getElementById('grid-diarias-container');
+            let hojeStr = new Date().toDateString(); // Formato padrão para resetar à meia-noite
+
+            // Se mudou o dia, limpa o status de resgate diário individual se necessário
+            if(jogadorAtual.ultimoResgateData !== hojeStr && jogadorAtual.ultimoResgateData !== "") {
+                // Nova data detectada
+            }
+
+            let recompensas = [
+                {dia: 1, desc: "500 Ouro"}, {dia: 2, desc: "1.000 Ouro"},
+                {dia: 3, desc: "10 🔮 Poderes"}, {dia: 4, desc: "2.500 Ouro"},
+                {dia: 5, desc: "25 🔮 Poderes"}, {dia: 6, desc: "50 💎 Diamantes"},
+                {dia: 7, desc: "Skin Lendária + 200 💎", highlight: true}
+            ];
+
+            container.innerHTML = "";
+            recompensas.forEach(r => {
+                let jaResgatouHoje = jogadorAtual.diariasResgatadas && jogadorAtual.diariasResgatadas[r.dia] === hojeStr;
+                let classeBox = r.highlight ? "daily-box highlight" : "daily-box";
+                if(jaResgatouHoje) classeBox += " resgatado";
+
+                container.innerHTML += `
+                    <div class="${classeBox}">
+                        <h4 style="color: ${r.highlight ? '#f5af19' : '#38bdf8'};">Dia ${r.dia}</h4>
+                        <p style="font-size: 11px; margin: 8px 0; color: ${r.highlight ? '#f5af19' : '#fff'};">${r.desc}</p>
+                        <button class="btn-acao" style="padding: 5px; font-size: 11px; ${jaResgatouHoje ? 'background: #64748b; cursor: not-allowed;' : ''}" 
+                            ${jaResgatouHoje ? 'disabled' : ''} onclick="resgatarDiaria(${r.dia}, '${r.desc}')">
+                            ${jaResgatouHoje ? 'RESGATADO' : 'RESGATAR'}
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        function resgatarDiaria(dia, descricao) {
+            let hojeStr = new Date().toDateString();
+            if(!jogadorAtual.diariasResgatadas) jogadorAtual.diariasResgatadas = {};
+
+            if(jogadorAtual.diariasResgatadas[dia] === hojeStr) {
+                alert("Você já resgatou esta recompensa hoje! Volte após a meia-noite.");
+                return;
+            }
+
+            jogadorAtual.diariasResgatadas[dia] = hojeStr;
+            jogadorAtual.ultimoResgateData = hojeStr;
+
+            alert(`Recompensa do Dia ${dia} resgatada com sucesso: ${descricao}!`);
+            if(dia === 7) {
+                jogadorAtual.diamantes += 200;
+                jogadorAtual.inventario.push("Skin Lendária Diária");
+            } else if(dia === 6) {
+                jogadorAtual.diamantes += 50;
+            } else if(dia === 3 || dia === 5) {
+                jogadorAtual.moedaPoder += (dia === 3 ? 10 : 25);
+            } else {
+                jogadorAtual.moedas += (dia === 1 ? 500 : dia === 2 ? 1000 : 2500);
+            }
+
+            atualizarInterfacePerfil();
+            atualizarInventarioTela();
+            renderizarRecompensasDiarias();
+            salvarProgressoFirebase();
+        }
+
+        // Navegação de Telas e Autenticação
         function mostrarTelaRegistro() {
             document.getElementById('login-screen').classList.remove('active');
             document.getElementById('register-screen').classList.add('active');
@@ -688,10 +809,7 @@
             let email = document.getElementById('reg-email').value.trim();
             let senha = document.getElementById('reg-senha').value.trim();
 
-            if (!nome || !email || !senha) {
-                alert("Preencha todos os campos!");
-                return;
-            }
+            if (!nome || !email || !senha) { alert("Preencha todos os campos!"); return; }
 
             let nomeLower = nome.toLowerCase();
             if (email !== window.ADMIN_EMAIL && (nomeLower.includes("adm") || nomeLower.includes("admin"))) {
@@ -713,7 +831,10 @@
                     diamantes: isAdmin ? 10000 : 100,
                     moedaPoder: isAdmin ? 1000 : 20,
                     avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=" + nome,
-                    guilda: isAdmin ? "Aliança Sul (Administração)" : "Nenhuma",
+                    guilda: "Nenhuma",
+                    guildaDono: "",
+                    diariasResgatadas: {},
+                    ultimoResgateData: "",
                     inventario: [],
                     isAdmin: isAdmin
                 };
@@ -730,10 +851,7 @@
             let email = document.getElementById('login-email').value.trim();
             let senha = document.getElementById('login-senha').value.trim();
 
-            if (!email || !senha) {
-                alert("Informe e-mail e senha.");
-                return;
-            }
+            if (!email || !senha) { alert("Informe e-mail e senha."); return; }
 
             try {
                 const userCredential = await window.signInWithEmailAndPassword(window.fbAuth, email, senha);
@@ -745,6 +863,7 @@
                 if (docSnap.exists()) {
                     jogadorAtual = docSnap.data();
                     if(jogadorAtual.moedaPoder === undefined) jogadorAtual.moedaPoder = 20;
+                    if(!jogadorAtual.diariasResgatadas) jogadorAtual.diariasResgatadas = {};
                 } else {
                     let isAdmin = (email === window.ADMIN_EMAIL);
                     jogadorAtual = {
@@ -756,7 +875,9 @@
                         diamantes: isAdmin ? 10000 : 100,
                         moedaPoder: isAdmin ? 1000 : 20,
                         avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=" + email,
-                        guilda: isAdmin ? "Aliança Sul (Administração)" : "Nenhuma",
+                        guilda: "Nenhuma",
+                        diariasResgatadas: {},
+                        ultimoResgateData: "",
                         inventario: [],
                         isAdmin: isAdmin
                     };
@@ -773,11 +894,16 @@
             document.getElementById('register-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
             atualizarInterfacePerfil();
+            renderizarRecompensasDiarias();
             mudarAba('resumo', document.querySelector('.sidebar button:nth-child(1)'));
         }
 
         async function sairParaMenuLogin() {
-            try { await window.signOut(window.fbAuth); } catch(e) {}
+            try { 
+                await window.signOut(window.fbAuth); 
+            } catch(e) {}
+            
+            // Força a exibição correta da tela de login e oculta o jogo
             document.getElementById('game-screen').classList.remove('active');
             document.getElementById('login-screen').classList.add('active');
         }
@@ -791,6 +917,8 @@
 
             if(nomeAba === 'ranking') {
                 carregarRankingGlobal();
+            } else if(nomeAba === 'corporacao') {
+                atualizarPainelGuilda();
             }
         }
 
@@ -802,10 +930,9 @@
             document.getElementById('resumo-diamantes').innerText = jogadorAtual.diamantes.toLocaleString();
             document.getElementById('resumo-poderes-moeda').innerText = jogadorAtual.moedaPoder;
             document.getElementById('resumo-guilda').innerText = jogadorAtual.guilda;
+            
             if(jogadorAtual.guilda !== "Nenhuma") {
                 document.getElementById('resumo-guilda').style.color = "#38bdf8";
-                document.getElementById('guilda-status-nome').innerText = jogadorAtual.guilda;
-                document.getElementById('guilda-status-nome').style.color = "#38bdf8";
             }
             if(jogadorAtual.avatar) {
                 document.getElementById('resumo-avatar-img').src = jogadorAtual.avatar;
@@ -821,7 +948,7 @@
             hpJogador = 100;
             hpInimigo = 100;
             atualizarHpArena();
-            adicionarLogArena(`Inimigo do [Modo ${modo}] avistado na arena! Prepare-se.`);
+            adicionarLogArena(`Combate iniciado no [Modo ${modo}]! Prepare-se.`);
         }
 
         function sairDaArena() {
@@ -851,32 +978,30 @@
                 adicionarLogArena(`Você adotou postura defensiva.`);
             } else if(tipo === 'curar') {
                 hpJogador = Math.min(100, hpJogador + 25);
-                adicionarLogArena(`Você curou 25 de HP!`);
+                adicionarLogArena(`Você recuperou 25 de HP!`);
             } else if(tipo === 'salvar') {
                 salvarProgressoFirebase();
-                adicionarLogArena(`Progresso salvo na nuvem com sucesso!`);
+                adicionarLogArena(`Progresso salvo na nuvem!`);
                 return;
             }
 
             if(hpInimigo <= 0) {
-                // Lógica de Recompensas por Modo
                 let recompensaOuro = 2000;
                 let msgPremio = `🎉 Vitória! Ganhou ${recompensaOuro.toLocaleString()} Ouro.`;
-
                 jogadorAtual.moedas += recompensaOuro;
 
-                // Regra: Moeda de Poderes ganha a partir do Modo Médio
-                if(modoBatalhaAtual === 'Médio' || modoBatalhaAtual === 'Diárias' || modoBatalhaAtual === 'Ferra-Doido' || modoBatalhaAtual === 'Hard') {
-                    let ganhoPoder = 15;
+                // Moeda de Poderes ganha a partir do Modo Médio (guerreiros médios)
+                if(modoBatalhaAtual === 'Médio' || modoBatalhaAtual === 'Hard') {
+                    let ganhoPoder = 20;
                     jogadorAtual.moedaPoder += ganhoPoder;
                     msgPremio += ` +${ganhoPoder} Moedas de Poder 🔮!`;
                 }
 
-                // Regra: Diamantes ganhos no Modo Hard
+                // Diamantes ganhos ao lutar com o rádio (Modo Hard)
                 if(modoBatalhaAtual === 'Hard') {
-                    let ganhoDiamante = 30;
+                    let ganhoDiamante = 35;
                     jogadorAtual.diamantes += ganhoDiamante;
-                    msgPremio += ` +${ganhoDiamante} Diamantes 💎!`;
+                    msgPremio += ` +${ganhoDiamante} Diamantes 💎 do Chefe!`;
                 }
 
                 adicionarLogArena(msgPremio);
@@ -895,25 +1020,7 @@
             }
         }
 
-        // Recompensas Diárias
-        function resgatarDiaria(dia, descricao) {
-            alert(`Recompensa do Dia ${dia} resgatada: ${descricao}!`);
-            if(dia === 7) {
-                jogadorAtual.diamantes += 200;
-                jogadorAtual.inventario.push("Skin Lendária Diária");
-            } else if(dia === 6) {
-                jogadorAtual.diamantes += 50;
-            } else if(dia === 3 || dia === 5) {
-                jogadorAtual.moedaPoder += (dia === 3 ? 10 : 25);
-            } else {
-                jogadorAtual.moedas += (dia === 1 ? 500 : dia === 2 ? 1000 : 2500);
-            }
-            atualizarInterfacePerfil();
-            atualizarInventarioTela();
-            salvarProgressoFirebase();
-        }
-
-        // Compras
+        // Compras na Loja e Poderes
         function comprarItemLoja(nomeItem, preco) {
             if(jogadorAtual.moedas >= preco) {
                 jogadorAtual.moedas -= preco;
@@ -921,7 +1028,7 @@
                 atualizarInterfacePerfil();
                 atualizarInventarioTela();
                 salvarProgressoFirebase();
-                alert(`Adquirido: ${nomeItem}!`);
+                alert(`Adquirido com sucesso: ${nomeItem}!`);
             } else {
                 alert("Ouro insuficiente na carteira!");
             }
@@ -934,64 +1041,165 @@
                 atualizarInterfacePerfil();
                 atualizarInventarioTela();
                 salvarProgressoFirebase();
-                alert(`Habilidade desbloqueada com sucesso: ${nomeHab}!`);
+                alert(`Habilidade arcana desbloqueada: ${nomeHab}!`);
             } else {
-                alert("Moedas de Poder 🔮 insuficientes! Jogue no Modo Médio ou Hard para conseguir mais.");
+                alert("Moedas de Poder 🔮 insuficientes! Jogue no Modo Médio para conseguir mais.");
             }
         }
 
         function atualizarInventarioTela() {
             let invGrid = document.getElementById('grid-inventario');
             if(jogadorAtual.inventario.length === 0) {
-                invGrid.innerHTML = `<p style="color: #94a3b8;">Sua mochila está vazia. Adquira itens na loja ou resgate diárias!</p>`;
+                invGrid.innerHTML = `<p style="color: #94a3b8;">Sua mochila está vazia. Adquira itens na loja!</p>`;
                 return;
             }
             invGrid.innerHTML = "";
             jogadorAtual.inventario.forEach(item => {
-                invGrid.innerHTML += `
-                    <div class="item-card" style="border-color: #22c55e;">
-                        <h4>${item}</h4>
-                        <p style="color: #22c55e;">Na Mochila</p>
-                        <button class="btn-acao" style="background: #64748b;">EQUIPADO</button>
-                    </div>
-                `;
+                invGrid.innerHTML += `<div class="item-card" style="border-color: #22c55e;"><h4>${item}</h4><p style="color: #22c55e;">Na Mochila</p><button class="btn-acao" style="background: #64748b;">EQUIPADO</button></div>`;
             });
         }
 
-        function criarGuilda() {
+        // Gerenciamento de Guilda (Validação e Membros)
+        async function criarGuilda() {
             if(jogadorAtual.diamantes >= 500) {
                 let nomeGuilda = prompt("Digite o nome da sua nova Guilda:");
                 if(nomeGuilda && nomeGuilda.trim() !== "") {
+                    nomeGuilda = nomeGuilda.trim();
                     jogadorAtual.diamantes -= 500;
                     jogadorAtual.guilda = nomeGuilda;
+                    jogadorAtual.guildaDono = jogadorAtual.nome;
                     atualizarInterfacePerfil();
-                    salvarProgressoFirebase();
-                    alert(`Guilda "${nomeGuilda}" criada com sucesso!`);
+                    await salvarProgressoFirebase();
+                    atualizarPainelGuilda();
+                    alert(`Guilda "${nomeGuilda}" criada com sucesso! Você é o fundador.`);
                 }
             } else {
                 alert("Você precisa de 500 Diamantes 💎 para criar uma guilda!");
             }
         }
 
-        function abrirModalEntrarGuilda() {
-            let codigo = prompt("Digite o nome da Guilda que deseja entrar:");
-            if(codigo && codigo.trim() !== "") {
-                jogadorAtual.guilda = codigo;
-                atualizarInterfacePerfil();
-                salvarProgressoFirebase();
-                alert(`Você entrou na guilda: ${codigo}!`);
+        async function entrarEmGuildaPrompt() {
+            let nomeBusca = prompt("Digite o nome exato da Guilda que deseja entrar:");
+            if(!nomeBusca || nomeBusca.trim() === "") return;
+            nomeBusca = nomeBusca.trim();
+
+            // Varre o Firebase para verificar se a guilda existe
+            try {
+                const querySnapshot = await window.fbGetDocs(window.fbCollection(window.fbDb, "jogadores"));
+                let guildaExiste = false;
+                let donoEncontrado = "";
+
+                querySnapshot.forEach((doc) => {
+                    let dados = doc.data();
+                    if(dados.guilda && dados.guilda.toLowerCase() === nomeBusca.toLowerCase()) {
+                        guildaExiste = true;
+                        if(dados.guildaDono) donoEncontrado = dados.guildaDono;
+                    }
+                });
+
+                if(guildaExiste) {
+                    jogadorAtual.guilda = nomeBusca;
+                    if(donoEncontrado) jogadorAtual.guildaDono = donoEncontrado;
+                    atualizarInterfacePerfil();
+                    await salvarProgressoFirebase();
+                    atualizarPainelGuilda();
+                    alert(`Você entrou na guilda: ${nomeBusca}!`);
+                } else {
+                    alert("A guilda pesquisada não existe ou não foi encontrada no servidor. Verifique o nome.");
+                }
+            } catch(e) {
+                alert("Erro ao buscar guilda no servidor.");
             }
+        }
+
+        async function atualizarPainelGuilda() {
+            let painelSem = document.getElementById('painel-sem-guilda');
+            let painelCom = document.getElementById('painel-com-guilda');
+
+            if(jogadorAtual.guilda === "Nenhuma" || !jogadorAtual.guilda) {
+                painelSem.style.display = 'flex';
+                painelCom.style.display = 'none';
+            } else {
+                painelSem.style.display = 'none';
+                painelCom.style.display = 'flex';
+                document.getElementById('info-guilda-nome').innerText = jogadorAtual.guilda;
+                document.getElementById('info-guilda-dono').innerText = jogadorAtual.guildaDono || "Fundador Desconhecido";
+
+                // Buscar membros da mesma guilda
+                let listaMembrosDiv = document.getElementById('lista-membros-guilda');
+                listaMembrosDiv.innerHTML = "Carregando membros...";
+                try {
+                    const querySnapshot = await window.fbGetDocs(window.fbCollection(window.fbDb, "jogadores"));
+                    let membros = [];
+                    querySnapshot.forEach((doc) => {
+                        let d = doc.data();
+                        if(d.guilda && d.guilda.toLowerCase() === jogadorAtual.guilda.toLowerCase()) {
+                            membros.push(d.nome);
+                        }
+                    });
+                    listaMembrosDiv.innerHTML = membros.join(" | ");
+                } catch(e) {
+                    listaMembrosDiv.innerHTML = "Erro ao carregar membros.";
+                }
+            }
+        }
+
+        async function sairDaGuilda() {
+            jogadorAtual.guilda = "Nenhuma";
+            jogadorAtual.guildaDono = "";
+            atualizarInterfacePerfil();
+            await salvarProgressoFirebase();
+            atualizarPainelGuilda();
+            alert("Você saiu da guilda.");
+        }
+
+        // Sistema de Chat Separado (Geral, Guilda e PV)
+        function mudarAbaChat(tipo, btn) {
+            abaChatAtual = tipo;
+            document.querySelectorAll('.chat-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            let areaPv = document.getElementById('area-input-pv');
+            if(tipo === 'pv') {
+                areaPv.style.display = 'block';
+            } else {
+                areaPv.style.display = 'none';
+            }
+            atualizarMensagensChatExibicao();
         }
 
         function enviarMensagemChat() {
             let input = document.getElementById('chat-msg-input');
-            let msg = input.value;
-            if(msg.trim() !== "") {
-                let container = document.getElementById('chat-container');
-                container.innerHTML += `<p><strong style="color: #f5af19;">${jogadorAtual.nome}:</strong> ${msg}</p>`;
-                input.value = "";
-                container.scrollTop = container.scrollHeight;
+            let msg = input.value.trim();
+            if(msg === "") return;
+
+            let guildaTag = jogadorAtual.guilda !== "Nenhuma" ? `[${jogadorAtual.guilda}]` : "[Sem Guilda]";
+            let remetenteFormatado = `${jogadorAtual.nome} ${guildaTag}`;
+
+            if(abaChatAtual === 'guilda') {
+                if(jogadorAtual.guilda === "Nenhuma") {
+                    alert("Você precisa estar em uma guilda para usar o chat da guilda!");
+                    return;
+                }
+                remetenteFormatado = `[GUILDA - ${jogadorAtual.guilda}] ${jogadorAtual.nome}`;
+            } else if(abaChatAtual === 'pv') {
+                let destinatario = document.getElementById('chat-destinatario-input').value.trim();
+                if(destinatario === "") {
+                    alert("Informe o destinatário para o chat PV!");
+                    return;
+                }
+                remetenteFormatado = `[PV para ${destinatario}] ${jogadorAtual.nome}`;
             }
+
+            let container = document.getElementById('chat-messages-container');
+            container.innerHTML += `<p><strong style="color: #f5af19;">${remetenteFormatado}:</strong> ${msg}</p>`;
+            input.value = "";
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function atualizarMensagensChatExibicao() {
+            let container = document.getElementById('chat-messages-container');
+            container.innerHTML = `<p><strong style="color: #38bdf8;">Sistema:</strong> Visualizando canal [${abaChatAtual.toUpperCase()}].</p>`;
         }
 
         async function carregarRankingGlobal() {
@@ -1055,7 +1263,7 @@
 
             atualizarInterfacePerfil();
             salvarProgressoFirebase();
-            alert("Configurações atualizadas e salvas na nuvem!");
+            alert("Configurações atualizadas e salvas na nuvem com sucesso!");
         }
     </script>
 </body>
