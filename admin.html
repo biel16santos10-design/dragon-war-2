@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dragon War - Admin Panel</title>
+    <title>Dragon War - Painel Administrativo</title>
     <style>
         * {
             margin: 0;
@@ -12,315 +12,309 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         body {
-            background-color: #030712;
-            color: #f3f4f6;
+            background-color: #060913;
+            color: #fff;
+            display: grid;
+            grid-template-columns: 260px 1fr;
             height: 100vh;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .admin-modal {
-            width: 95vw;
-            height: 90vh;
-            background: rgba(8, 15, 28, 0.95);
-            border: 2px solid #06b6d4;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 0 30px rgba(6, 182, 212, 0.3);
-            overflow: hidden;
-        }
-        .admin-header {
-            background: linear-gradient(90deg, #0f172a, #1e293b, #0f172a);
-            padding: 15px 25px;
-            text-align: center;
-            border-bottom: 2px solid #06b6d4;
-        }
-        .admin-header h1 {
-            color: #38bdf8;
-            font-size: 20px;
-            letter-spacing: 2px;
-        }
-        .admin-header h2 {
-            color: #94a3b8;
-            font-size: 14px;
-            margin-top: 4px;
-        }
-        .admin-body {
-            display: flex;
-            flex: 1;
             overflow: hidden;
         }
         .admin-sidebar {
-            width: 220px;
-            background: #0b1329;
+            background: #0f172a;
             border-right: 1px solid #1e293b;
-            padding: 20px 10px;
+            padding: 25px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
+        }
+        .admin-sidebar h2 {
+            color: #f5af19;
+            font-size: 20px;
+            margin-bottom: 10px;
+            text-align: center;
         }
         .admin-sidebar button {
             background: transparent;
             color: #94a3b8;
             border: none;
-            padding: 12px 15px;
+            padding: 12px;
             text-align: left;
-            font-size: 14px;
+            font-size: 15px;
             border-radius: 6px;
             cursor: pointer;
             transition: 0.2s;
         }
         .admin-sidebar button.active, .admin-sidebar button:hover {
-            background: rgba(6, 182, 212, 0.2);
-            color: #22d3ee;
-            border-left: 4px solid #22d3ee;
+            background: #f5af19;
+            color: #000;
+            font-weight: bold;
         }
         .admin-content {
-            flex: 1;
-            padding: 20px;
+            padding: 40px;
             overflow-y: auto;
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
+        }
+        .admin-tab {
+            display: none;
+        }
+        .admin-tab.active {
+            display: block;
         }
         .panel-card {
-            background: rgba(15, 23, 42, 0.7);
-            border: 1px solid #1e3a8a;
-            border-radius: 8px;
-            padding: 15px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
         }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+        .form-group {
             margin-bottom: 15px;
         }
-        .stat-box {
-            background: #020617;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #334155;
-            text-align: center;
-        }
-        .stat-box span {
-            font-size: 12px;
-            color: #94a3b8;
-        }
-        .stat-box h4 {
-            font-size: 16px;
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
             color: #38bdf8;
-            margin-top: 4px;
+            font-size: 14px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            background: #0b0f19;
+            border: 1px solid #475569;
+            color: white;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+        .btn-admin {
+            background: #22c55e;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-admin:hover {
+            background: #16a34a;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            margin-top: 15px;
+            background: #1e293b;
+            border-radius: 8px;
+            overflow: hidden;
         }
         th, td {
-            padding: 10px;
+            padding: 14px;
             text-align: left;
-            font-size: 13px;
-            border-bottom: 1px solid #1e293b;
+            border-bottom: 1px solid #334155;
+            font-size: 14px;
         }
         th {
-            color: #38bdf8;
-            background: rgba(30, 41, 59, 0.5);
+            background: #0f172a;
+            color: #f5af19;
         }
-        tr:hover {
-            background: rgba(30, 41, 59, 0.3);
-            cursor: pointer;
-        }
-        .action-btn {
-            background: linear-gradient(135deg, #0284c7, #0369a1);
-            color: white;
+        .btn-acao-tabela {
+            padding: 6px 12px;
+            border-radius: 4px;
             border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
             cursor: pointer;
-            width: 100%;
-            margin-bottom: 10px;
             font-weight: bold;
-            transition: 0.2s;
-        }
-        .action-btn:hover {
-            background: linear-gradient(135deg, #0369a1, #075985);
-            transform: translateY(-1px);
-        }
-        .admin-footer {
-            background: #020617;
-            padding: 10px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid #1e293b;
             font-size: 12px;
-            color: #94a3b8;
+            margin-right: 5px;
         }
-        .logout-btn {
-            color: #ef4444;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .tab-pane {
-            display: none;
-        }
-        .tab-pane.active {
-            display: block;
-        }
+        .btn-editar { background: #3b82f6; color: white; }
+        .btn-remover { background: #ef4444; color: white; }
     </style>
 </head>
 <body>
 
-    <div class="admin-modal">
-        <!-- CABEÇALHO -->
-        <div class="admin-header">
-            <h1>DRAGON WAR: RISE OF POWER</h1>
-            <h2>ADMIN PANEL (MENU DE ADM)</h2>
-        </div>
+    <!-- MENU LATERAL DO ADM -->
+    <div class="admin-sidebar">
+        <h2>🛡️ PAINEL ADM</h2>
+        <button onclick="mudarAbaAdmin('gerenciar-loja', this)" class="active">🛒 Gerenciar Loja</button>
+        <button onclick="mudarAbaAdmin('gerenciar-jogadores', this)">👥 Gerenciar Jogadores (DM)</button>
+        <button onclick="mudarAbaAdmin('estatisticas', this)">📊 Estatísticas do Servidor</button>
+        <button onclick="voltarParaJogo()" style="margin-top: auto; color: #f87171; border-top: 1px solid #334155;">⬅ Voltar ao Jogo</button>
+    </div>
 
-        <!-- CORPO DO PAINEL -->
-        <div class="admin-body">
-            <!-- MENU LATERAL -->
-            <div class="admin-sidebar">
-                <button class="active" onclick="mudarAbaAdmin('visao-geral', this)">🛡️ VISÃO GERAL</button>
-                <button onclick="mudarAbaAdmin('jogadores', this)">👥 JOGADORES</button>
-                <button onclick="mudarAbaAdmin('eventos', this)">📅 EVENTOS</button>
-                <button onclick="mudarAbaAdmin('loja-gm', this)">🛒 LOJA DE GM</button>
-                <button onclick="mudarAbaAdmin('logs', this)">📜 LOGS</button>
-                <button onclick="mudarAbaAdmin('config', this)">⚙️ CONFIGURAÇÕES</button>
-                <button onclick="voltarParaJogo()" style="margin-top: auto; color: #38bdf8;">⬅ Voltar ao Jogo</button>
-            </div>
+    <!-- CONTEÚDO DO PAINEL -->
+    <div class="admin-content">
 
-            <!-- CONTEÚDO PRINCIPAL -->
-            <div class="admin-content">
-                
-                <!-- ABA: VISÃO GERAL -->
-                <div id="visao-geral" class="tab-pane active" style="grid-column: span 2; display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
-                    <div>
-                        <div class="panel-card">
-                            <h3 style="color: #38bdf8; margin-bottom: 10px;">ESTATÍSTICAS DO SERVIDOR</h3>
-                            <div class="stats-grid">
-                                <div class="stat-box">
-                                    <span>Total Players</span>
-                                    <h4>12.543</h4>
-                                </div>
-                                <div class="stat-box">
-                                    <span>Online</span>
-                                    <h4>1.892</h4>
-                                </div>
-                                <div class="stat-box">
-                                    <span>Ping</span>
-                                    <h4>38ms</h4>
-                                </div>
-                                <div class="stat-box">
-                                    <span>Tps</span>
-                                    <h4>19.95</h4>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="panel-card" style="margin-top: 15px;">
-                            <h3 style="color: #38bdf8;">LISTA DE JOGADORES ONLINE (Clique para Editar)</h3>
-                            <table>
-                               <thead>
-                                   <tr>
-                                       <th>NOME</th>
-                                       <th>NÍVEL</th>
-                                       <th>CLASSE</th>
-                                       <th>LOCAL</th>
-                                       <th>ESTADO</th>
-                                   </tr>
-                               </thead>
-                               <tbody>
-                                   <tr onclick="editarJogador('Gromnash', 150)">
-                                       <td>Gromnash</td>
-                                       <td>150</td>
-                                       <td>Guerreiro</td>
-                                       <td>Dragen's Peak</td>
-                                       <td style="color: #22c55e;">ONLINE</td>
-                                   </tr>
-                                   <tr onclick="editarJogador('Karansh', 150)">
-                                       <td>Karansh</td>
-                                       <td>150</td>
-                                       <td>Guerreiro</td>
-                                       <td>Dragen's Peak</td>
-                                       <td style="color: #22c55e;">ONLINE</td>
-                                   </tr>
-                                   <tr onclick="editarJogador('GabrielCabral', 150)">
-                                       <td>GabrielCabral</td>
-                                       <td>150</td>
-                                       <td>Guerreiro</td>
-                                       <td>Castelo Real</td>
-                                       <td style="color: #22c55e;">ONLINE</td>
-                                   </tr>
-                               </tbody>
-                            </table>
-                        </div>
+        <!-- ABA 1: GERENCIAR LOJA (ADICIONAR/EDITAR PRODUTOS) -->
+        <div id="gerenciar-loja" class="admin-tab active">
+            <h2>Gerenciamento da Loja de Itens</h2>
+            <p style="color: #94a3b8; margin-bottom: 20px;">Adicione novos produtos, armas ou recursos para aparecerem diretamente na loja dos jogadores.</p>
+            
+            <div class="panel-card">
+                <h3>Adicionar Novo Produto</h3>
+                <div style="margin-top: 15px;">
+                    <div class="form-group">
+                        <label>Nome do Produto / Arma:</label>
+                        <input type="text" id="novo-produto-nome" placeholder="Ex: Espada Flamejante">
                     </div>
-
-                    <div>
-                        <div class="panel-card">
-                            <h3 style="color: #38bdf8; margin-bottom: 15px;">AÇÕES RÁPIDAS (BETA)</h3>
-                            <button class="action-btn" onclick="executarAcao('Spawn de Boss')">🔥 SPAWN DE BOSS</button>
-                            <button class="action-btn" style="background: linear-gradient(135deg, #991b1b, #7f1d1d);" onclick="executarAcao('Banir Jogador')">🚫 BANIR JOGADOR</button>
-                            <button class="action-btn" style="background: linear-gradient(135deg, #15803d, #166534);" onclick="executarAcao('Dar Moedas')">💰 DAR MOEDAS</button>
-                            <button class="action-btn" style="background: linear-gradient(135deg, #7c3aed, #5b21b6);" onclick="executarAcao('Modo Deus')">🛡️ MODO DEUS</button>
-                        </div>
+                    <div class="form-group">
+                        <label>Preço em Moedas (🟡):</label>
+                        <input type="number" id="novo-produto-preco" placeholder="Ex: 2500">
                     </div>
+                    <div class="form-group">
+                        <label>Categoria:</label>
+                        <select id="novo-produto-categoria">
+                            <option value="Arma">Arma</option>
+                            <option value="Recurso">Recurso / Vida</option>
+                            <option value="Pocao">Poção</option>
+                        </select>
+                    </div>
+                    <button class="btn-admin" onclick="adicionarProdutoLoja()">Publicar na Loja</button>
                 </div>
+            </div>
 
-                <!-- OUTRAS ABAS DO PAINEL -->
-                <div id="jogadores" class="tab-pane" style="grid-column: span 2;"><div class="panel-card"><h3>Gerenciamento de Contas (Firestore)</h3><input type="text" placeholder="Digite o UID..." style="width: 100%; padding: 10px; margin-top: 10px; background: #020617; border: 1px solid #334155; color: white; border-radius: 5px;"></div></div>
-                <div id="eventos" class="tab-pane" style="grid-column: span 2;"><div class="panel-card"><h3>Criar Evento Global</h3></div></div>
-                <div id="loja-gm" class="tab-pane" style="grid-column: span 2;"><div class="panel-card"><h3>Loja de GM</h3></div></div>
-                <div id="logs" class="tab-pane" style="grid-column: span 2;"><div class="panel-card"><h3>Logs de Moderação</h3></div></div>
-                <div id="config" class="tab-pane" style="grid-column: span 2;"><div class="panel-card"><h3>Configurações do Servidor</h3></div></div>
-
+            <div class="panel-card">
+                <h3>Produtos Ativos na Loja</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Produto</th>
+                            <th>Categoria</th>
+                            <th>Preço</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-produtos-loja">
+                        <tr>
+                            <td>1</td>
+                            <td>Lâmina do Dragão</td>
+                            <td>Arma</td>
+                            <td>5.000 🟡</td>
+                            <td>
+                                <button class="btn-acao-tabela btn-editar">Editar</button>
+                                <button class="btn-acao-tabela btn-remover">Remover</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Poção de Vida Suprema</td>
+                            <td>Recurso</td>
+                            <td>300 🟡</td>
+                            <td>
+                                <button class="btn-acao-tabela btn-editar">Editar</button>
+                                <button class="btn-acao-tabela btn-remover">Remover</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <!-- RODAPÉ -->
-        <div class="admin-footer">
-            <span>Bem-vindo, ADM_KAIROS (RANK: SUPER ADM)</span>
-            <span>Server: [BR-1] ELDERSTONE</span>
-            <span>Date: 04 OUT 2026</span>
-            <button class="logout-btn" onclick="voltarParaJogo()">LOGOUT 🚪</button>
+        <!-- ABA 2: GERENCIAR JOGADORES (DM / DADOS DOS USUÁRIOS) -->
+        <div id="gerenciar-jogadores" class="admin-tab">
+            <h2>Gerenciamento de Jogadores (Banco de Dados / DM)</h2>
+            <p style="color: #94a3b8; margin-bottom: 20px;">Visualize todos os perfis cadastrados, edite dados ou remova usuários do servidor.</p>
+
+            <div class="panel-card">
+                <h3>Lista de Jogadores Cadastrados</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>UID</th>
+                            <th>Nome / Nick</th>
+                            <th>Classe</th>
+                            <th>Nível / Rank</th>
+                            <th>Ações de Gerenciamento (DM)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>12345678</td>
+                            <td>Gabriel Cabral</td>
+                            <td>Guerreiro</td>
+                            <td>Nível 48 (Avançado)</td>
+                            <td>
+                                <button class="btn-acao-tabela btn-editar" onclick="editarJogador('Gabriel Cabral')">Editar Dados</button>
+                                <button class="btn-acao-tabela btn-remover" onclick="removerJogador('Gabriel Cabral')">Remover Conta</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>87654321</td>
+                            <td>Gromnash</td>
+                            <td>Guerreiro</td>
+                            <td>Nível 150 (Mestre)</td>
+                            <td>
+                                <button class="btn-acao-tabela btn-editar" onclick="editarJogador('Gromnash')">Editar Dados</button>
+                                <button class="btn-acao-tabela btn-remover" onclick="removerJogador('Gromnash')">Remover Conta</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+
+        <!-- ABA 3: ESTATÍSTICAS -->
+        <div id="estatisticas" class="admin-tab">
+            <h2>Estatísticas Gerais do Servidor</h2>
+            <div class="panel-card">
+                <p><strong>Total de Jogadores Registrados:</strong> 1.240</p>
+                <p><strong>Jogadores Online Agora:</strong> 85</p>
+                <p><strong>Transações na Loja (Hoje):</strong> 340</p>
+                <p><strong>Status de Conexão Firebase / Banco de Dados:</strong> <span style="color: #22c55e;">Online e Estável</span></p>
+            </div>
+        </div>
+
     </div>
 
     <script>
         function mudarAbaAdmin(nomeAba, elementoBtn) {
-            document.querySelectorAll('.tab-pane').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.admin-tab').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.admin-sidebar button').forEach(btn => btn.classList.remove('active'));
 
             document.getElementById(nomeAba).classList.add('active');
             if(elementoBtn) elementoBtn.classList.add('active');
         }
 
-        function executarAcao(acao) {
-            if(acao === 'Dar Moedas') {
-                let nick = prompt("Para qual jogador?");
-                let qtd = prompt("Quantidade:");
-                if(nick && qtd) alert(`${qtd} moedas enviadas para ${nick}!`);
-            } else if(acao === 'Banir Jogador') {
-                let nick = prompt("Nick do jogador a banir:");
-                if(nick) alert(`Jogador ${nick} banido com sucesso.`);
+        function voltarParaJogo() {
+            window.location.href = 'index.html';
+        }
+
+        function adicionarProdutoLoja() {
+            let nome = document.getElementById('novo-produto-nome').value;
+            let preco = document.getElementById('novo-produto-preco').value;
+            let categoria = document.getElementById('novo-produto-categoria').value;
+
+            if(nome && preco) {
+                let tabela = document.getElementById('tabela-produtos-loja');
+                let novaLinha = document.createElement('tr');
+                novaLinha.innerHTML = `
+                    <td>#</td>
+                    <td>${nome}</td>
+                    <td>${categoria}</td>
+                    <td>${preco} 🟡</td>
+                    <td>
+                        <button class="btn-acao-tabela btn-editar">Editar</button>
+                        <button class="btn-acao-tabela btn-remover" onclick="this.closest('tr').remove()">Remover</button>
+                    </td>
+                `;
+                tabela.appendChild(novaLinha);
+                alert(`Produto "${nome}" adicionado com sucesso à loja!`);
+                document.getElementById('novo-produto-nome').value = '';
+                document.getElementById('novo-produto-preco').value = '';
             } else {
-                alert(`Ação executada: ${acao}`);
+                alert("Preencha o nome e o preço do produto.");
             }
         }
 
-        function editarJogador(nome, nivelAtual) {
-            let novoNivel = prompt(`Editar Nível de ${nome}:`, nivelAtual);
-            if(novoNivel) alert(`Nível atualizado para ${novoNivel}!`);
+        function editarJogador(nomeJogador) {
+            let novoNome = prompt(`Editar dados para o jogador ${nomeJogador}. Digite o novo nome/nick:`, nomeJogador);
+            if(novoNome) {
+                alert(`Dados do jogador ${nomeJogador} atualizados para ${novoNome} com sucesso!`);
+            }
         }
 
-        function voltarParaJogo() {
-            window.location.href = 'index.html';
+        function removerJogador(nomeJogador) {
+            if(confirm(`Tem certeza que deseja remover/banir a conta de ${nomeJogador}?`)) {
+                alert(`Conta de ${nomeJogador} removida do banco de dados (DM) com sucesso!`);
+            }
         }
     </script>
 </body>
