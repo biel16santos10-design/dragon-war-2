@@ -29,7 +29,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .avatar{width:55px;height:55px;border:2px solid #50dfff;border-radius:50%;display:grid;place-items:center;
  background:radial-gradient(circle,#426d96,#111c2d 65%);font-size:30px;box-shadow:0 0 18px #19cfff66}
 .profile b{display:block;font-size:16px}.profile small{color:#a9c2dc}.rank-badge{display:inline-block;margin-top:4px;padding:3px 8px;border:1px solid #55dfff;border-radius:8px;background:#08263a;color:#72eaff;font-size:10px;font-weight:900;letter-spacing:1px;text-shadow:0 0 8px #2bdcff}
-.bars{width:145px}.bar{height:9px;border-radius:10px;background:#17263a;margin:5px 0;overflow:hidden}.bar i{display:block;height:100%}.hp i{width:72%;background:#ff4f4f}.mp i{width:58%;background:#29aaff}
+.bars{width:145px}.bar{height:9px;border-radius:10px;background:#17263a;margin:5px 0;overflow:hidden}.bar i{display:block;height:100%;transition:width 0.3s ease}.hp i{width:100%;background:#ff4f4f}.mp i{width:100%;background:#29aaff}
 .logo{flex:1;text-align:center;font-family:Georgia,serif;font-size:27px;letter-spacing:2px;color:#ffd78b;text-shadow:0 0 14px #ff9c39aa}
 .logo small{display:block;color:#fff;font:11px Arial;letter-spacing:4px}
 .currencies{display:flex;gap:9px;align-items:center}.currency{background:#071322;border:1px solid #304b67;border-radius:18px;padding:8px 12px;white-space:nowrap}.currency b{margin-left:5px}.coin{color:#ffd15a}.gem{color:#7ee9ff}.energy{color:#baff6d}.top-icons{display:flex;gap:8px}.iconbtn{border:1px solid #31516e;background:#0b1b2e;border-radius:10px;padding:9px 11px;font-size:20px}
@@ -38,7 +38,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .sidebar{padding:18px 13px;background:linear-gradient(90deg,#050b15f5,#071323d9);border-right:1px solid #245172}
 .side-title{font-size:25px;font-weight:800;text-align:center;color:#ffcf73;margin:6px 0 16px;text-shadow:0 0 15px #ff8d2e}
 .nav{display:grid;gap:9px}.nav button{border:1px solid #24668b;background:linear-gradient(180deg,#0e2940,#071a2c);
- padding:13px 15px;border-radius:10px;text-align:left;font-weight:800;letter-spacing:.5px;box-shadow:inset 0 0 12px #1b7aa133}
+ padding:13px 15px;border-radius:10px;text-align:left;font-weight:800;letter-spacing:.5px;box-shadow:inset 0 0 12px #1b7aa133;transition:all 0.2s}
 .nav button:hover,.nav button.active{border-color:#45dfff;box-shadow:0 0 16px #18cfff55,inset 0 0 15px #1e8cff33;transform:translateX(2px)}
 .nav .gold{border-color:#9a6626;color:#ffd078}.nav .purple{border-color:#70409b;color:#d5a0ff}
 .nav .red{border-color:#963e4d;color:#ff9ca5}.nav .green{border-color:#2e8a68;color:#8dffbd}
@@ -93,14 +93,19 @@ button{font:inherit;color:inherit;cursor:pointer}
 .skill-layout{display:grid;grid-template-columns:1fr 300px;gap:15px}.tree{min-height:610px;position:relative;overflow:hidden;background:
  radial-gradient(circle at 50% 50%,#2d1c52,#090c1a 62%);border:1px solid #60488a;border-radius:14px;padding:25px}
 .tree:before{content:"";position:absolute;inset:20%;border:2px solid #873cff55;border-radius:50%;box-shadow:0 0 40px #923cff55}.skill-nodes{position:relative;z-index:2;display:grid;grid-template-columns:repeat(4,1fr);gap:45px 25px;align-items:center;height:100%}
-.node{border:2px solid #a45bff;border-radius:50%;width:82px;height:82px;margin:auto;display:grid;place-items:center;background:#140d2d;box-shadow:0 0 22px #9e43ff88;font-size:32px}.node.lock{filter:grayscale(1);opacity:.5}.node small{position:absolute;margin-top:105px;width:120px;text-align:center;font-size:11px;color:#d8c8ff}
+.node{border:2px solid #a45bff;border-radius:50%;width:82px;height:82px;margin:auto;display:grid;place-items:center;background:#140d2d;box-shadow:0 0 22px #9e43ff88;font-size:32px;cursor:pointer;transition:transform 0.2s}.node:hover{transform:scale(1.1)}.node.lock{filter:grayscale(1);opacity:.5;cursor:not-allowed}.node small{position:absolute;margin-top:105px;width:120px;text-align:center;font-size:11px;color:#d8c8ff}
 .upgrade h2{color:#d7a6ff}.upgrade .stat{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #26354b;color:#b4c4d5}.upgrade .up{margin-top:15px;width:100%;border:1px solid #c477ff;background:linear-gradient(180deg,#8f43d7,#51218c);padding:12px;border-radius:9px;font-weight:900}
 
 .combat{display:grid;grid-template-columns:1fr 360px;gap:15px}.arena{min-height:570px;position:relative;background:
  radial-gradient(circle at 50% 25%,#71331c,#151522 45%,#070b12 72%);border:1px solid #774a34;border-radius:14px;overflow:hidden}
-.arena .enemy{position:absolute;top:100px;left:50%;transform:translateX(-50%);font-size:190px;filter:drop-shadow(0 0 35px #ff4b27)}
-.arena .player{position:absolute;bottom:70px;left:23%;font-size:120px;filter:drop-shadow(0 0 20px #3adfff)}
-.combat-ui{padding:16px}.hpbig{height:15px;background:#241521;border-radius:10px;overflow:hidden}.hpbig i{display:block;width:100%;height:100%;background:#ff4f52}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}.actions button{padding:13px;border-radius:9px;border:1px solid #3a6783;background:#0b2134;font-weight:900}.actions button.power{border-color:#c25aff;background:#3e1765}.phase{color:#ffd36b;font-weight:900}
+.arena .enemy{position:absolute;top:100px;left:50%;transform:translateX(-50%);font-size:190px;filter:drop-shadow(0 0 35px #ff4b27);transition:transform 0.1s}
+.arena .player{position:absolute;bottom:70px;left:23%;font-size:120px;filter:drop-shadow(0 0 20px #3adfff);transition:transform 0.1s}
+.combat-ui{padding:16px}.hpbig{height:15px;background:#241521;border-radius:10px;overflow:hidden}.hpbig i{display:block;width:100%;height:100%;background:#ff4f52;transition:width 0.3s ease}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}.actions button{padding:13px;border-radius:9px;border:1px solid #3a6783;background:#0b2134;font-weight:900}.actions button.power{border-color:#c25aff;background:#3e1765}.phase{color:#ffd36b;font-weight:900}
+
+.shake{animation:shake 0.3s ease-in-out}
+@keyframes shake{0%{transform:translateX(-50%) translateY(0)}25%{transform:translateX(-55%) translateY(-5px)}50%{transform:translateX(-45%) translateY(5px)}100%{transform:translateX(-50%) translateY(0)}}
+
+.hit-flash{filter:brightness(2) drop-shadow(0 0 40px #ff0000) !important}
 
 .ranking{max-width:850px;margin:auto}.rankrow{display:grid;grid-template-columns:55px 1fr 120px 100px;align-items:center;gap:10px;padding:13px;border-bottom:1px solid #22354a}.rankrow.me{background:#12304866;border-left:3px solid #ffd15a}.rankpos{font-size:24px;color:#ffd56a}.rankname{font-weight:900}.rankpoints{color:#79dcff;text-align:right}
 
@@ -119,7 +124,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   <div class="profile">
     <div class="avatar">⚔️</div>
     <div><b id="topName">Gabriel Cabral</b><small>⚔️ Nível <span id="topLevel">1</span></small><div class="rank-badge" id="topRankBadge">🏅 INICIANTE</div></div>
-    <div class="bars"><div class="bar hp"><i></i></div><div class="bar mp"><i></i></div></div>
+    <div class="bars"><div class="bar hp"><i id="topBarHp"></i></div><div class="bar mp"><i id="topBarMp"></i></div></div>
   </div>
   <div class="logo">DRAGON WAR <small>RISE OF POWER</small></div>
   <div class="currencies">
@@ -130,7 +135,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   <div class="top-icons">
     <button class="iconbtn" onclick="openScreen('config')">⚙️</button>
     <button class="iconbtn" onclick="openScreen('ranking')">🏆</button>
-    <button class="iconbtn" onclick="showToast('Mensagens em breve!')">✉️</button>
+    <button class="iconbtn" onclick="showToast('Mensagens em breve!')">✉</button>
   </div>
 </header>
 
@@ -139,7 +144,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   <div class="side-title">JOGAR</div>
   <div class="nav">
     <button class="active" onclick="openScreen('home',this)">🏠 INÍCIO</button>
-    <button class="gold" onclick="openScreen('jogar',this)">⚔️ JOGAR</button>
+    <button class="gold" onclick="openScreen('jogar',this)">⚔️️ JOGAR</button>
     <button onclick="openScreen('loja',this)">🛒 LOJA</button>
     <button class="purple" onclick="openScreen('poderes',this)">✨ PODERES</button>
     <button class="red" onclick="openScreen('combate',this)">🔥 COMBATE</button>
@@ -148,7 +153,7 @@ button{font:inherit;color:inherit;cursor:pointer}
     <button onclick="openScreen('eventos',this)">🎁 EVENTOS</button>
     <button onclick="openScreen('config',this)">⚙️ CONFIGURAÇÕES</button>
   </div>
-  <div class="side-info">Seu progresso é salvo no navegador e, quando conectado, no Firebase.<br><br><b>Dragon War</b><br>Rise of Power</div>
+  <div class="side-info">Seu progresso é salvo no navegador.<br><br><b>Dragon War</b><br>Rise of Power</div>
 </aside>
 
 <main class="main">
@@ -171,9 +176,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 <section id="jogar" class="screen">
  <h1 class="section-title">⚔️ SELECIONE O INIMIGO</h1>
  <div class="grid3">
-  <article class="boss"><div class="boss-art">🐲</div><div class="boss-body"><h3>KHALDRON, O DRAGÃO DO PESADELO</h3><div class="stats">LEVEL 150<br>POWER: 950.000<br>HP: 9M</div><div class="reward">RECOMPENSAS: 💎 Gemas • 🪙 Ouro • 🛡️ Armadura</div><button class="fight" onclick="startBattle(0)">ENTRAR NA BATALHA</button></div></article>
-  <article class="boss fire"><div class="boss-art">👹</div><div class="boss-body"><h3>IGNEOUS, O DEMÔNIO DE FOGO</h3><div class="stats">LEVEL 145<br>POWER: 880.000<br>HP: 8,5M</div><div class="reward">RECOMPENSAS: 🔥 Essência • 🪙 Ouro • ⚔️ Arma</div><button class="fight" onclick="startBattle(1)">ENTRAR NA BATALHA</button></div></article>
-  <article class="boss shadow"><div class="boss-art">🧙</div><div class="boss-body"><h3>MALAKAI, O GUERREIRO DAS SOMBRAS</h3><div class="stats">LEVEL 142<br>POWER: 820.000<br>HP: 7,8M</div><div class="reward">RECOMPENSAS: 💜 Gemas • 🪙 Ouro • 🥾 Equipamento</div><button class="fight" onclick="startBattle(2)">ENTRAR NA BATALHA</button></div></article>
+  <article class="boss"><div class="boss-art">🐲</div><div class="boss-body"><h3>KHALDRON, O DRAGÃO DO PESADELO</h3><div class="stats">LEVEL 150<br>POWER: 950.000<br>HP: 100</div><div class="reward">RECOMPENSAS: 💎 2 Gemas • 🪙 80 Ouro</div><button class="fight" onclick="startBattle(0)">ENTRAR NA BATALHA</button></div></article>
+  <article class="boss fire"><div class="boss-art">👹</div><div class="boss-body"><h3>IGNEOUS, O DEMÔNIO DE FOGO</h3><div class="stats">LEVEL 145<br>POWER: 880.000<br>HP: 250</div><div class="reward">RECOMPENSAS: 💎 5 Gemas • 🪙 200 Ouro</div><button class="fight" onclick="startBattle(1)">ENTRAR NA BATALHA</button></div></article>
+  <article class="boss shadow"><div class="boss-art">🧙</div><div class="boss-body"><h3>MALAKAI, O GUERREIRO DAS SOMBRAS</h3><div class="stats">LEVEL 142<br>POWER: 820.000<br>HP: 500</div><div class="reward">RECOMPENSAS: 💎 10 Gemas • 🪙 500 Ouro</div><button class="fight" onclick="startBattle(2)">ENTRAR NA BATALHA</button></div></article>
  </div>
 </section>
 
@@ -198,7 +203,7 @@ button{font:inherit;color:inherit;cursor:pointer}
  <div class="skill-layout">
   <div class="tree"><div class="skill-nodes" id="skillNodes"></div></div>
   <div class="panel upgrade"><h2 id="skillName">🔥 SOPRO DE FOGO</h2><p id="skillDesc">Libera uma rajada de energia elemental contra o inimigo.</p>
-   <div class="stat"><span>Dano atual</span><b id="skillDamage">35</b></div><div class="stat"><span>Custo</span><b>2 pontos</b></div><div class="stat"><span>Próximo nível</span><b>+20% dano</b></div>
+   <div class="stat"><span>Dano atual</span><b id="skillDamage">35</b></div><div class="stat"><span>Custo</span><b>2 pontos</b></div><div class="stat"><span>Pontos disponíveis</span><b id="availableSkillPoints">5</b></div>
    <button class="up" onclick="upgradeSkill()">MELHORAR PODER</button>
   </div>
  </div>
@@ -207,9 +212,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 <section id="combate" class="screen">
  <h1 class="section-title">🔥 COMBATE</h1>
  <div class="combat">
-  <div class="arena"><div class="enemy" id="battleEnemy">🐲</div><div class="player">⚔️</div></div>
+  <div class="arena"><div class="enemy" id="battleEnemy">🐲</div><div class="player" id="battlePlayer">⚔️</div></div>
   <div class="panel combat-ui"><div class="phase" id="battlePhase">FASE 1/3</div><h2 id="battleName">KHALDRON</h2>
- <div id="battleReward" style="color:#ffd46c;margin-bottom:8px">RECOMPENSA: 🪙 80 • 💎 1</div><div class="hpbig"><i id="enemyHp"></i></div><p>HP: <b id="enemyHpText">100</b></p><hr>
+ <div id="battleReward" style="color:#ffd46c;margin-bottom:8px">RECOMPENSA: 🪙 80 • 💎 2</div><div class="hpbig"><i id="enemyHp"></i></div><p>HP Inimigo: <b id="enemyHpText">100</b></p><hr>
    <p>Seu HP: <b id="playerHpText">100</b></p>
    <div class="actions"><button onclick="attack()">⚔️ ATACAR</button><button class="power" onclick="usePower()">🔥 PODER</button><button onclick="heal()">💚 CURAR</button><button onclick="openScreen('jogar')">🚪 SAIR</button></div>
   </div>
@@ -220,7 +225,7 @@ button{font:inherit;color:inherit;cursor:pointer}
  <h1 class="section-title">🎒 INVENTÁRIO</h1>
  <div class="panel" style="margin-bottom:15px;text-align:center">
   <h2 style="color:#ffd47b">🎭 SKIN EQUIPADA</h2>
-  <div id="equippedSkin" style="font-size:60px">⚔️</div>
+  <div id="equippedSkin" style="font-size:60px">⚔</div>
   <div id="equippedSkinName" style="font-weight:900">Guerreiro</div>
   <div id="equippedSkinAbility" style="color:#8eeaff;margin-top:5px">Habilidade: Golpe de Guerra</div>
  </div>
@@ -245,7 +250,7 @@ button{font:inherit;color:inherit;cursor:pointer}
  <div class="panel settings">
   <h2>Perfil</h2><div class="field"><label>Nome do jogador</label><input id="nameInput" maxlength="18" value="Gabriel Cabral"><button class="fight" onclick="saveName()">SALVAR NOME</button></div>
   <div class="toggle"><span>🎵 Música de fundo</span><button class="switch on" id="musicSwitch" onclick="toggleMusic()"><i></i></button></div>
-  <div class="toggle"><span>🔊 Sons</span><button class="switch on" id="soundSwitch" onclick="this.classList.toggle('on')"><i></i></button></div>
+  <div class="toggle"><span>🔊 Sons</span><button class="switch on" id="soundSwitch" onclick="toggleSound()"><i></i></button></div>
   <div class="hero-actions"><button class="bigbtn" onclick="saveGame()">💾 SALVAR JOGO</button><button class="bigbtn secondary" onclick="loadGame()">📂 CARREGAR</button></div>
   <button class="fight" onclick="newGame()">🆕 NOVO JOGO</button>
  </div>
@@ -257,10 +262,171 @@ button{font:inherit;color:inherit;cursor:pointer}
 <div class="modal" id="modal"><div class="modalbox"><h2 id="modalTitle">Dragon War</h2><p id="modalText"></p><button class="fight" onclick="closeModal()">OK</button></div></div>
 
 <script>
+// --- SISTEMA DE ÁUDIO (WEB AUDIO API) ---
+let audioCtx = null;
+let soundEnabled = true;
+
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+}
+
+const SoundFX = {
+  sword: () => {
+    if (!soundEnabled) return;
+    initAudio();
+    const now = audioCtx.currentTime;
+    
+    // Oscilador de ataque (Espada)
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(450, now);
+    osc.frequency.exponentialRampToValueAtTime(80, now + 0.15);
+    
+    gain.gain.setValueAtTime(0.3, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+    
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    
+    osc.start(now);
+    osc.stop(now + 0.15);
+
+    // Ruído de impacto
+    const bufferSize = audioCtx.sampleRate * 0.1;
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const output = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      output[i] = Math.random() * 2 - 1;
+    }
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = buffer;
+    const noiseGain = audioCtx.createGain();
+    noiseGain.gain.setValueAtTime(0.15, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+    
+    noise.connect(noiseGain);
+    noiseGain.connect(audioCtx.destination);
+    noise.start(now);
+  },
+
+  power: () => {
+    if (!soundEnabled) return;
+    initAudio();
+    const now = audioCtx.currentTime;
+
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    const filter = audioCtx.createBiquadFilter();
+
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(600, now);
+    osc.frequency.exponentialRampToValueAtTime(100, now + 0.35);
+
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(1000, now);
+    filter.frequency.linearRampToValueAtTime(100, now + 0.35);
+
+    gain.gain.setValueAtTime(0.4, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.35);
+  },
+
+  heal: () => {
+    if (!soundEnabled) return;
+    initAudio();
+    const now = audioCtx.currentTime;
+
+    const freqs = [329.63, 440, 554.37, 659.25]; // E4, A4, C#5, E5
+    freqs.forEach((f, index) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      const startTime = now + (index * 0.06);
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(f, startTime);
+
+      gain.gain.setValueAtTime(0.2, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.25);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start(startTime);
+      osc.stop(startTime + 0.25);
+    });
+  },
+
+  hit: () => {
+    if (!soundEnabled) return;
+    initAudio();
+    const now = audioCtx.currentTime;
+
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(120, now);
+    osc.frequency.exponentialRampToValueAtTime(30, now + 0.2);
+
+    gain.gain.setValueAtTime(0.3, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.2);
+  },
+
+  win: () => {
+    if (!soundEnabled) return;
+    initAudio();
+    const now = audioCtx.currentTime;
+    const notes = [261.63, 329.63, 392.00, 523.25]; // C, E, G, C
+    notes.forEach((f, index) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      const startTime = now + (index * 0.1);
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(f, startTime);
+
+      gain.gain.setValueAtTime(0.25, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start(startTime);
+      osc.stop(startTime + 0.3);
+    });
+  }
+};
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  $("soundSwitch").classList.toggle("on", soundEnabled);
+  localStorage.setItem("dragonSound", soundEnabled);
+  showToast(soundEnabled ? "🔊 Sons ativados" : "🔇 Sons desativados");
+}
+
 const enemies=[
- {name:"KHALDRON, O DRAGÃO DO PESADELO",emoji:"🐲",hp:100,dmg:8,reward:80,points:50},
- {name:"IGNEOUS, O DEMÔNIO DE FOGO",emoji:"👹",hp:250,dmg:18,reward:200,points:120},
- {name:"MALAKAI, O GUERREIRO DAS SOMBRAS",emoji:"🧙",hp:500,dmg:30,reward:500,points:300}
+ {name:"KHALDRON, O DRAGÃO DO PESADELO",emoji:"🐲",hp:100,dmg:8,reward:80,gems:2,points:50},
+ {name:"IGNEOUS, O DEMÔNIO DE FOGO",emoji:"👹",hp:250,dmg:18,reward:200,gems:5,points:120},
+ {name:"MALAKAI, O GUERREIRO DAS SOMBRAS",emoji:"🧙",hp:500,dmg:30,reward:500,gems:10,points:300}
 ];
 const shop=[
  {name:"Lâmina do Dragão Celestial",emoji:"🗡️",price:750,currency:"gem",type:"Arma",category:"equipamentos"},
@@ -287,10 +453,11 @@ const skins=[
 ];
 const skills=[
  ["🔥","Sopro de Fogo",35],["⚡","Golpe de Raio",50],["❄️","Nova de Gelo",60],["🌀","Torrente do Vazio",80],
- ["⚔️","Corte",20],["🗡️","Golpe Duplo",45],["🛡️","Aparar",0],["🐍","Golpe Serpente",70]
+ ["⚔️","Corte",20],["🗡️","Golpe Duplo",45],["🛡","Aparar",10],["🐍","Golpe Serpente",70]
 ];
 let state={name:"Gabriel Cabral",level:1,rank:"Iniciante",coins:1000,gems:20,energy:100,points:0,skillPoints:5,inventory:[],skinsOwned:["guerreiro"],equippedSkin:"guerreiro",music:true,phase:0};
 let battle=null;
+let selectedSkillIndex = 0;
 
 function $(id){return document.getElementById(id)}
 function fmt(n){return Number(n).toLocaleString("pt-BR")}
@@ -303,6 +470,7 @@ function openScreen(id,btn){
  if(id==="ranking")renderRanking();
  if(id==="loja")renderShop();
  if(id==="inventario")renderInventory();
+ if(id==="poderes")renderSkills();
 }
 function updateUI(){
  updateRank();
@@ -317,6 +485,9 @@ function updateUI(){
  $("myRankBig").textContent="🏅 "+state.rank.toUpperCase();
  $("myRankPoints").textContent=fmt(state.points)+" pontos";
  $("nameInput").value=state.name;
+ $("availableSkillPoints").textContent=state.skillPoints;
+ const skin=skins.find(x=>x.id===state.equippedSkin)||skins[0];
+ $("battlePlayer").textContent=skin.emoji;
 }
 let shopCategory="equipamentos";
 function setShopCategory(category,btn){
@@ -354,7 +525,7 @@ function renderInventory(){
 }
 function equipSkin(id){
  if(!state.skinsOwned.includes(id))return showToast("Você ainda não possui essa skin.");
- state.equippedSkin=id;renderInventory();renderShop();saveGame(false);
+ state.equippedSkin=id;renderInventory();renderShop();updateUI();saveGame(false);
  showToast("🎭 Skin equipada: "+skins.find(x=>x.id===id).name);
 }
 function buySkin(id){
@@ -376,11 +547,20 @@ function buyItem(i){
 }
 function renderSkills(){
  $("skillNodes").innerHTML=skills.map((s,i)=>`<div class="node ${i>4?"lock":""}" onclick="selectSkill(${i})">${s[0]}<small>${s[1]}</small></div>`).join("");
+ $("availableSkillPoints").textContent=state.skillPoints;
 }
-function selectSkill(i){$("skillName").textContent=skills[i][0]+" "+skills[i][1];$("skillDamage").textContent=skills[i][2]||0}
+function selectSkill(i){
+ selectedSkillIndex = i;
+ $("skillName").textContent=skills[i][0]+" "+skills[i][1];
+ $("skillDamage").textContent=skills[i][2]||0;
+}
 function upgradeSkill(){
  if(state.skillPoints<2)return showToast("Você precisa de 2 pontos de habilidade.");
- state.skillPoints-=2;showToast("Poder melhorado!");renderSkills();
+ state.skillPoints-=2;
+ skills[selectedSkillIndex][2] = Math.round((skills[selectedSkillIndex][2] || 20) * 1.2);
+ selectSkill(selectedSkillIndex);
+ updateUI();
+ showToast("Poder melhorado!");renderSkills();
 }
 function startBattle(i){
  battle={index:i,hp:enemies[i].hp,max:enemies[i].hp,playerHp:100};
@@ -390,15 +570,55 @@ function startBattle(i){
  $("battleReward").textContent="RECOMPENSA: 🪙 "+fmt(enemies[i].reward)+" • 💎 "+enemies[i].gems;
  updateBattle();openScreen("combate");
 }
-function updateBattle(){if(!battle)return;$("enemyHpText").textContent=Math.max(0,battle.hp);$("enemyHp").style.width=Math.max(0,battle.hp/battle.max*100)+"%";$("playerHpText").textContent=battle.playerHp}
-function enemyTurn(){if(!battle)return;battle.playerHp=Math.max(0,battle.playerHp-enemies[battle.index].dmg);if(battle.playerHp<=0){showToast("Você foi derrotado. Tente novamente!");battle=null;openScreen("jogar")}updateBattle()}
-function attack(){if(!battle)return;let dmg=25+state.level*3;battle.hp-=dmg;if(battle.hp<=0)return winBattle();enemyTurn()}
-function usePower(){if(!battle)return;if(state.energy<15)return showToast("Energia insuficiente.");state.energy-=15;let dmg=50+state.level*5;battle.hp-=dmg;if(battle.hp<=0)return winBattle();enemyTurn();updateUI()}
+function updateBattle(){
+ if(!battle)return;
+ $("enemyHpText").textContent=Math.max(0,battle.hp);
+ $("enemyHp").style.width=Math.max(0,battle.hp/battle.max*100)+"%";
+ $("playerHpText").textContent=battle.playerHp;
+ $("topBarHp").style.width=battle.playerHp+"%";
+}
+function enemyTurn(){
+ if(!battle)return;
+ battle.playerHp=Math.max(0,battle.playerHp-enemies[battle.index].dmg);
+ SoundFX.hit();
+ $("battlePlayer").classList.add("hit-flash");
+ setTimeout(()=>$("battlePlayer").classList.remove("hit-flash"),200);
+ if(battle.playerHp<=0){
+   showToast("Você foi derrotado. Tente novamente!");
+   battle=null;
+   openScreen("jogar");
+ }
+ updateBattle();
+}
+function attack(){
+ if(!battle)return;
+ SoundFX.sword();
+ let dmg=25+state.level*3;
+ battle.hp-=dmg;
+ $("battleEnemy").classList.add("shake","hit-flash");
+ setTimeout(()=>$("battleEnemy").classList.remove("shake","hit-flash"),300);
+ if(battle.hp<=0)return winBattle();
+ enemyTurn();
+}
+function usePower(){
+ if(!battle)return;
+ if(state.energy<15)return showToast("Energia insuficiente.");
+ state.energy-=15;
+ SoundFX.power();
+ let dmg=50+state.level*5;
+ battle.hp-=dmg;
+ $("battleEnemy").classList.add("shake","hit-flash");
+ setTimeout(()=>$("battleEnemy").classList.remove("shake","hit-flash"),300);
+ if(battle.hp<=0)return winBattle();
+ enemyTurn();
+ updateUI();
+}
 function heal(){
  if(!battle)return;
  if(battle.playerHp>=100)return showToast("Sua vida já está cheia.");
  if(state.energy<5)return showToast("Energia insuficiente para curar.");
  state.energy-=5;
+ SoundFX.heal();
  const before=battle.playerHp;
  battle.playerHp=Math.min(100,battle.playerHp+35);
  updateBattle();updateUI();
@@ -406,13 +626,22 @@ function heal(){
 }
 function winBattle(){
  const e=enemies[battle.index];
+ SoundFX.win();
  state.coins+=e.reward;
  state.gems+=e.gems;
  state.points+=e.points;
- state.level=Math.max(state.level,Math.floor(state.points/100)+1);state.skillPoints+=1;
- const next=battle.index+1;battle=null;updateRank();
- if(next<3){showToast("Vitória! Próxima fase liberada.");setTimeout(()=>startBattle(next),700)}
- else{showModal("🏆 VITÓRIA COMPLETA","Você derrotou os 3 inimigos e concluiu a campanha!");openScreen("jogar")}
+ state.level=Math.max(state.level,Math.floor(state.points/100)+1);
+ state.skillPoints+=1;
+ const next=battle.index+1;
+ battle=null;
+ updateRank();
+ if(next<3){
+   showToast("Vitória! Próxima fase liberada.");
+   setTimeout(()=>startBattle(next),700);
+ } else {
+   showModal("🏆 VITÓRIA COMPLETA","Você derrotou todos os inimigos e concluiu a campanha!");
+   openScreen("jogar");
+ }
  updateUI();saveGame(false);
 }
 function updateRank(){
@@ -447,11 +676,11 @@ function loadGame(){
  const raw=localStorage.getItem("dragonWarSave");
  if(!raw)return showToast("Nenhum jogo salvo neste aparelho.");
  try{
- state={...state,...JSON.parse(raw)};
- if(!Array.isArray(state.skinsOwned)||!state.skinsOwned.length)state.skinsOwned=["guerreiro"];
- if(!state.equippedSkin)state.equippedSkin="guerreiro";
- updateUI();renderInventory();renderShop();showToast("Jogo carregado!");
-}catch(e){showToast("Não foi possível carregar.")}
+   state={...state,...JSON.parse(raw)};
+   if(!Array.isArray(state.skinsOwned)||!state.skinsOwned.length)state.skinsOwned=["guerreiro"];
+   if(!state.equippedSkin)state.equippedSkin="guerreiro";
+   updateUI();renderInventory();renderShop();showToast("Jogo carregado!");
+ }catch(e){showToast("Não foi possível carregar.")}
 }
 function newGame(){
  if(!confirm("Começar um novo jogo? Seu progresso local será reiniciado."))return;
@@ -467,10 +696,10 @@ function dailyReward(){
  if(roll===0){state.coins+=500;showToast("🎁 Você ganhou 500 moedas!")}
  else if(roll===1){state.gems+=3;showToast("💎 Você ganhou 3 gemas!")}
  else{
- if(!state.skinsOwned.includes("dragao"))state.skinsOwned.push("dragao");
- state.equippedSkin="dragao";
- showToast("🐉 Você ganhou a Skin Dragão Sombrio!");
-}
+   if(!state.skinsOwned.includes("dragao"))state.skinsOwned.push("dragao");
+   state.equippedSkin="dragao";
+   showToast("🐉 Você ganhou a Skin Dragão Sombrio!");
+ }
  updateUI();saveGame(false);renderInventory();
 }
 function toggleMusic(){
@@ -480,8 +709,16 @@ function toggleMusic(){
 function showModal(t,m){$("modalTitle").textContent=t;$("modalText").textContent=m;$("modal").classList.add("show")}
 function closeModal(){$("modal").classList.remove("show")}
 
+setInterval(()=>{
+ if(state.energy<100){
+  state.energy=Math.min(100,state.energy+10);
+  updateUI();
+ }
+},5000);
+
 loadGame();updateRank();renderShop();renderInventory();renderSkills();renderRanking();updateUI();
 const savedMusic=localStorage.getItem("dragonMusic");if(savedMusic!==null){state.music=savedMusic==="true";$("musicSwitch").classList.toggle("on",state.music)}
+const savedSound=localStorage.getItem("dragonSound");if(savedSound!==null){soundEnabled=savedSound==="true";$("soundSwitch").classList.toggle("on",soundEnabled)}
 </script>
 </body>
 </html>
