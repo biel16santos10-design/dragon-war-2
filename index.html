@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Dragon War — Painel ADM</title>
+<title>Dragon War — Jogo</title>
 <style>
 *{box-sizing:border-box}
 body{
@@ -26,17 +26,6 @@ button{cursor:pointer}
 .topo p{margin:0;color:#cbd5e1}
 .coroa{font-size:30px}
 .container{max-width:1150px;margin:auto;padding:16px}
-.menu{
-  display:flex;gap:8px;overflow-x:auto;
-  padding:10px 0 14px;
-}
-.menu button{
-  border:1px solid #4c1d95;
-  background:#111827;color:#fff;
-  padding:11px 14px;border-radius:10px;
-  white-space:nowrap;
-}
-.menu button:hover{background:#24133f}
 .painel{
   background:#0b1220;
   border:1px solid #263247;
@@ -45,8 +34,6 @@ button{cursor:pointer}
   margin-bottom:16px;
   box-shadow:0 10px 30px #0006;
 }
-.hidden{display:none!important}
-h2{margin-top:0}
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
@@ -71,7 +58,6 @@ input,select{
 .btn.vermelho{background:#dc2626}
 .btn.amarelo{background:#d97706}
 .btn.azul{background:#2563eb}
-.btn.cinza{background:#334155}
 .info{
   background:#111827;border-left:4px solid #8b5cf6;
   padding:12px;border-radius:8px;margin:10px 0 15px;
@@ -86,215 +72,57 @@ input,select{
 }
 .card h3{margin:0 0 8px}
 .lista{display:grid;gap:10px}
-.jogador{
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:10px;
-  align-items:center;
-  border:1px solid #293548;
-  background:#0f172a;
-  padding:14px;border-radius:12px;
-}
-.acoes{display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-end}
 .badge{
   display:inline-block;padding:4px 8px;border-radius:999px;
   background:#312e81;color:#ddd6fe;font-size:12px;
 }
-.badge.ban{background:#7f1d1d;color:#fecaca}
-.nome-dono{
-  font-weight:800;
-  background:linear-gradient(90deg,#facc15,#fb7185,#a78bfa,#22d3ee);
-  -webkit-background-clip:text;
-  background-clip:text;
-  color:transparent;
-}
-.erro{
-  background:#450a0a;border:1px solid #ef4444;
-  color:#fecaca;padding:14px;border-radius:10px;
-}
-.sucesso{
-  background:#052e16;border:1px solid #22c55e;
-  color:#bbf7d0;padding:14px;border-radius:10px;
-}
-.ranking-item{
-  display:grid;
-  grid-template-columns:55px 1fr auto;
-  gap:10px;align-items:center;
-  padding:12px;border-bottom:1px solid #243047;
-}
-.posicao{font-size:24px;text-align:center}
+.badge.bloqueado{background:#7f1d1d;color:#fecaca}
 .mini{color:#94a3b8;font-size:13px}
 #status{margin:8px 0}
-@media(max-width:650px){
-  .jogador{grid-template-columns:1fr}
-  .acoes{justify-content:flex-start}
-  .ranking-item{grid-template-columns:45px 1fr}
-  .ranking-item>div:last-child{grid-column:2}
-}
 </style>
 </head>
 
 <body>
 
-<div id="telaAcesso" class="container">
-  <div class="painel" style="margin-top:35px;text-align:center">
-    <div class="coroa">👑</div>
-    <h1>Dragon War: Rise of Power</h1>
-    <h2>Área exclusiva do ADM</h2>
-    <p id="mensagemAcesso">Conectando ao Firebase...</p>
-  </div>
-</div>
-
-<div id="app" class="hidden">
-
 <header class="topo">
   <div class="container">
-    <h1><span class="coroa">👑</span> Dragon War — Painel ADM</h1>
-    <p>Controle administrativo do jogo</p>
+    <h1><span class="coroa">🐉</span> Dragon War — Rise of Power</h1>
+    <p>Área do Jogador</p>
   </div>
 </header>
 
 <main class="container">
 
-<nav class="menu">
-  <button onclick="mostrar('inicio')">🏠 Início</button>
-  <button onclick="mostrar('jogadores')">👥 Jogadores</button>
-  <button onclick="mostrar('ranking')">🏆 Ranking</button>
-  <button onclick="mostrar('loja')">🛒 Loja</button>
-  <button onclick="mostrar('eventos')">🎉 Eventos</button>
-  <button onclick="mostrar('mensagem')">📢 Mensagem Global</button>
-  <button onclick="mostrar('inimigos')">⚔️ Inimigos</button>
-  <button onclick="sair()">🚪 Sair</button>
-</nav>
-
 <div id="status"></div>
 
-<section id="inicio" class="painel">
-  <h2>👑 Painel do ADM</h2>
+<section id="jogo-painel" class="painel">
+  <h2>⚔️ Batalha e Aventura</h2>
   <div class="info">
-    Você está usando a versão administrativa. As alterações são salvas no Firebase.
+    Escolha sua skin de avatar, enfrente os desafios, vença para avançar de fase e cuidado para sua vida não zerar!
   </div>
-  <div class="grid">
-    <div class="card"><h3>👥 Jogadores</h3><div id="totalJogadores">0</div></div>
-    <div class="card"><h3>🏆 Ranking</h3><div id="totalRanking">0</div></div>
-    <div class="card"><h3>🛒 Itens</h3><div id="totalItens">0</div></div>
-  </div>
-  <p class="mini">UID do ADM: <span id="uidAdm"></span></p>
-</section>
-
-<section id="jogadores" class="painel hidden">
-  <h2>👥 Gerenciar jogadores</h2>
-
-  <div class="grid">
-    <div>
-      <label>Pesquisar nome ou UID</label>
-      <input id="busca" placeholder="Digite para pesquisar..." oninput="renderJogadores()">
-    </div>
-    <div>
-      <label>Ordenar</label>
-      <select id="ordenacao" onchange="renderJogadores()">
-        <option value="pontos">Mais pontos</option>
-        <option value="nome">Nome</option>
-        <option value="moedas">Mais moedas</option>
-        <option value="nivel">Maior nível</option>
-      </select>
-    </div>
-  </div>
-
-  <button class="btn azul" onclick="carregarJogadores()">🔄 Atualizar</button>
-  <div id="listaJogadores" class="lista" style="margin-top:12px">Carregando...</div>
-</section>
-
-<section id="ranking" class="painel hidden">
-  <h2>🏆 Ranking Global</h2>
-  <button class="btn azul" onclick="carregarRanking()">🔄 Atualizar ranking</button>
-  <div id="listaRanking" style="margin-top:12px">Carregando...</div>
-</section>
-
-<section id="loja" class="painel hidden">
-  <h2>🛒 Gerenciar loja</h2>
-
+  
   <div class="card">
-    <h3>➕ Adicionar item</h3>
-    <div class="grid">
-      <div><label>Tipo</label>
-        <select id="itemTipo">
-          <option value="personagem">Personagem</option>
-          <option value="arma">Arma</option>
-          <option value="poder">Poder</option>
-        </select>
-      </div>
-      <div><label>Nome</label><input id="itemNome" placeholder="Ex.: Guerreiro Dragão"></div>
-      <div><label>Emoji</label><input id="itemEmoji" value="🔥"></div>
-      <div><label>Preço</label><input id="itemPreco" type="number" min="0" value="500"></div>
-      <div><label>Dano</label><input id="itemDano" type="number" min="0" value="10"></div>
-      <div><label>Descrição</label><input id="itemDescricao" placeholder="Descrição do item"></div>
+    <h3>👤 Escolher Avatar / Skin</h3>
+    <div id="seletorSkins" class="grid" style="margin-top:10px;">
+      <!-- As skins serão injetadas aqui via JavaScript -->
     </div>
-    <button class="btn verde" onclick="adicionarItem()">➕ Adicionar item</button>
   </div>
 
-  <div id="listaLoja" class="lista">Carregando...</div>
-</section>
-
-
-<section id="eventos" class="painel hidden">
-  <h2>🎉 Gerenciar eventos</h2>
-  <div class="card">
-    <h3>➕ Criar evento para os jogadores</h3>
-    <div class="grid">
-      <div><label>Nome do evento</label><input id="eventoNome" placeholder="Ex.: Festival do Dragão"></div>
-      <div><label>Descrição</label><input id="eventoDescricao" placeholder="Descrição do evento"></div>
-      <div><label>Início</label><input id="eventoInicio" type="datetime-local"></div>
-      <div><label>Fim</label><input id="eventoFim" type="datetime-local"></div>
-      <div><label>🪙 Ouro</label><input id="eventoOuro" type="number" min="0" value="100"></div>
-      <div><label>💎 Gemas</label><input id="eventoGemas" type="number" min="0" value="10"></div>
-      <div><label>⭐ Pontos</label><input id="eventoPontos" type="number" min="0" value="25"></div>
-    </div>
-    <button class="btn verde" onclick="adicionarEvento()">🎉 Publicar evento</button>
-  </div>
-  <div id="listaEventos" class="lista">Carregando...</div>
-</section>
-
-<section id="mensagem" class="painel hidden">
-  <h2>📢 Mensagem Global</h2>
-  <div class="info">A mensagem aparecerá no topo da tela do jogo para os jogadores.</div>
-  <div class="card">
-    <label>Mensagem</label>
-    <input id="textoMensagem" maxlength="180" placeholder="Ex.: ⚔️ Novo evento disponível agora!"><br>
-    <button class="btn verde" onclick="publicarMensagem()">📢 Publicar</button>
-    <button class="btn vermelho" onclick="desativarMensagem()">🔕 Desativar</button>
-  </div>
-  <div id="mensagemAtual"></div>
-</section>
-
-<section id="inimigos" class="painel hidden">
-  <h2>⚔️ Inimigos</h2>
-  <div class="info">
-    Estes são os inimigos padrão exibidos no jogo.
-  </div>
-  <div class="grid">
-    <div class="card">
-      <h3>👹 Goblin</h3>
-      <p>❤️ 100 HP</p><p>⚔️ 8 dano</p><p>⭐ 50 pontos</p><p>💰 80 moedas</p>
-    </div>
-    <div class="card">
-      <h3>😈 Demônio</h3>
-      <p>❤️ 250 HP</p><p>⚔️ 18 dano</p><p>⭐ 120 pontos</p><p>💰 200 moedas</p>
-    </div>
-    <div class="card">
-      <h3>🐉 Dragão Sombrio</h3>
-      <p>❤️ 500 HP</p><p>⚔️ 30 dano</p><p>⭐ 300 pontos</p><p>💰 500 moedas</p>
-    </div>
+  <div class="card" id="batalha-container">
+    <h3>🐉 Status da Batalha</h3>
+    <p>HP do Jogador: <span id="hpJogador">100</span> / 100</p>
+    <p>Fase Atual: <span id="faseAtual">1</span></p>
+    <button class="btn verde" onclick="simularVitoria()">🏆 Simular Vitória da Fase</button>
+    <button class="btn vermelho" onclick="simularDanoFatal()">💥 Simular Dano Fatal (Zerar HP)</button>
   </div>
 </section>
 
 </main>
-</div>
 
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import {getAuth,onAuthStateChanged,signInAnonymously,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import {getDatabase,ref,get,update,remove,set} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+import {getAuth,signInAnonymously} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {getDatabase} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
 
 const firebaseConfig={
   apiKey:"AIzaSyDA_kn3eNRD9P2D6WDCNbUxBKld0i9Sys",
@@ -307,17 +135,19 @@ const firebaseConfig={
   measurementId:"G-PY4TRBXZ8N"
 };
 
-const ADMIN_UID="w2aAcmul8vYJOR05lGLQThAsiTg2";
 const appFirebase=initializeApp(firebaseConfig);
 const auth=getAuth(appFirebase);
 const db=getDatabase(appFirebase);
 
-let usuario=null;
-let jogadores=[];
-let catalogo=[];
+const $=id=>document.getElementById(id);
+
+function mensagem(texto,tipo=""){
+  $("status").innerHTML=texto?`<div class="${tipo}">${texto}</div>`:"";
+  if(texto)setTimeout(()=>$("status").innerHTML="",4000);
+}
 
 // ==========================================
-// ADICIONADO: 8 Skins/Avatares (Algumas liberadas, algumas bloqueadas)
+// 8 Skins/Avatares (Algumas liberadas, algumas bloqueadas)
 // ==========================================
 const listaSkinsAvatares = [
   { id: "skin_1", nome: "Guerreiro Novato", img: "avatar1.png", bloqueado: false, preco: 0 },
@@ -330,34 +160,58 @@ const listaSkinsAvatares = [
   { id: "skin_8", nome: "Senhor dos Dragões", img: "avatar8.png", bloqueado: true, preco: 2500 }
 ];
 
+function renderizarSkins() {
+  const container = $("seletorSkins");
+  container.innerHTML = listaSkinsAvatares.map(skin => `
+    <div class="card" style="text-align:center; margin:0;">
+      <h4>${skin.nome}</h4>
+      <p class="mini">${skin.bloqueado ? '🔒 Bloqueado' : '✅ Desbloqueado'}</p>
+      <p class="mini">💰 ${skin.preco} moedas</p>
+      <button class="btn ${skin.bloqueado ? 'cinza' : 'azul'}" onclick="selecionarSkin('${skin.id}')">
+        ${skin.bloqueado ? 'Desbloquear' : 'Usar Skin'}
+      </button>
+    </div>
+  `).join("");
+}
+
+window.selecionarSkin = function(id) {
+  const skin = listaSkinsAvatares.find(s => s.id === id);
+  if (!skin) return;
+  if (skin.bloqueado) {
+    alert(`A skin "${skin.nome}" está bloqueada! Você precisa de ${skin.preco} moedas para desbloquear.`);
+  } else {
+    alert(`Skin "${skin.nome}" selecionada com sucesso!`);
+  }
+};
+
 // ==========================================
-// ADICIONADO: Função de Vitória (Exibe botão para próxima fase)
+// Função de Vitória (Exibe botão para próxima fase)
 // ==========================================
 window.acionouVitoriaBatalha = function() {
-  const container = document.body; // ou o elemento de sua preferência no jogo
+  const container = $("batalha-container");
   if (document.getElementById('btnProximaFase')) return;
 
   const btnFase = document.createElement('button');
   btnFase.id = 'btnProximaFase';
   btnFase.className = 'btn verde';
-  btnFase.style.margin = '20px auto';
+  btnFase.style.margin = '15px 0 0 0';
   btnFase.style.display = 'block';
   btnFase.innerHTML = '▶️ Ir para a Próxima Fase';
   btnFase.onclick = function() {
-    if (typeof avancarFase === 'function') {
-      avancarFase();
-    } else {
-      alert("Avançando para a próxima fase!");
-    }
+    let faseEl = $("faseAtual");
+    let faseAtual = parseInt(faseEl.innerText) || 1;
+    faseEl.innerText = faseAtual + 1;
+    mensagem("Parabéns! Você avançou para a próxima fase.", "info");
     this.remove();
   };
   container.appendChild(btnFase);
 };
 
 // ==========================================
-// ADICIONADO: Função de Derrota / Reinício (Vida zerada volta do começo)
+// Função de Derrota / Reinício (Vida zerada volta do começo)
 // ==========================================
 window.verificarDerrotaJogador = function(vidaAtual) {
+  $("hpJogador").innerText = vidaAtual;
   if (vidaAtual <= 0) {
     alert("Sua vida chegou a zero! Você foi derrotado e vai reiniciar do começo.");
     localStorage.clear();
@@ -365,422 +219,22 @@ window.verificarDerrotaJogador = function(vidaAtual) {
   }
 };
 
-const $=id=>document.getElementById(id);
-
-function escapar(v){
-  return String(v??"").replace(/[&<>"']/g,c=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-  }[c]));
-}
-
-function mensagem(texto,tipo=""){
-  $("status").innerHTML=texto?`<div class="${tipo}">${texto}</div>`:"";
-  if(texto)setTimeout(()=>$("status").innerHTML="",4000);
-}
-
-function ehAdmin(){
-  return usuario && usuario.uid===ADMIN_UID;
-}
-
-window.mostrar=function(id){
-  document.querySelectorAll("main section").forEach(s=>s.classList.add("hidden"));
-  $(id).classList.remove("hidden");
-  if(id==="jogadores")carregarJogadores();
-  if(id==="ranking")carregarRanking();
-  if(id==="loja")carregarCatalogo();
-  if(id==="eventos")carregarEventos();
-  if(id==="mensagem")carregarMensagemGlobal();
+// Funções de teste rápido na interface
+window.simularVitoria = function() {
+  mensagem("Você venceu o inimigo desta fase!", "info");
+  acionouVitoriaBatalha();
 };
 
-window.sair=async function(){
-  await signOut(auth);
-  location.reload();
+window.simularDanoFatal = function() {
+  verificarDerrotaJogador(0);
 };
 
-async function carregarJogadores(){
-  $("listaJogadores").innerHTML="🔄 Carregando jogadores...";
-  try{
-    const snap=await get(ref(db,"jogadores"));
-    jogadores=[];
-    if(snap.exists()){
-      snap.forEach(c=>{
-        jogadores.push({uid:c.key,...(c.val()||{})});
-      });
-    }
-    $("totalJogadores").textContent=jogadores.length;
-    renderJogadores();
-  }catch(e){
-    console.error(e);
-    $("listaJogadores").innerHTML='<div class="erro">❌ Não foi possível carregar os jogadores.</div>';
-  }
-}
-
-window.renderJogadores=function(){
-  const busca=($("busca").value||"").toLowerCase().trim();
-  const ordem=$("ordenacao").value;
-  let lista=jogadores.filter(p=>
-    String(p.nome||"").toLowerCase().includes(busca) ||
-    String(p.uid||"").toLowerCase().includes(busca)
-  );
-
-  lista.sort((a,b)=>{
-    if(ordem==="nome")return String(a.nome||"").localeCompare(String(b.nome||""));
-    if(ordem==="moedas")return Number(b.moedas||0)-Number(a.moedas||0);
-    if(ordem==="nivel")return Number(b.nivel||1)-Number(a.nivel||1);
-    return Number(b.pontos||0)-Number(a.pontos||0);
-  });
-
-  if(!lista.length){
-    $("listaJogadores").innerHTML="<p>Nenhum jogador encontrado.</p>";
-    return;
-  }
-
-  $("listaJogadores").innerHTML=lista.map(p=>{
-    const ban=!!p.banido;
-    const nome=p.uid===ADMIN_UID
-      ? `<span class="nome-dono">${escapar(p.nome||"Gabriel Cabral")}</span>`
-      : escapar(p.nome||"Jogador");
-
-    return `
-    <div class="jogador">
-      <div>
-        <h3 style="margin:0 0 6px">${nome} ${p.uid===ADMIN_UID?'<span class="badge">👑 ADM</span>':""}</h3>
-        <div class="mini">UID: ${escapar(p.uid)}</div>
-        <div>🏆 ${Number(p.pontos||0)} pontos • 💰 ${Number(p.moedas||0)} moedas • ⭐ Nível ${Number(p.nivel||1)}</div>
-        <div class="mini">Patente: ${escapar(p.patente||"Iniciante")} • Personagem: ${escapar(p.personagem||"Guerreiro")}</div>
-        ${ban?'<span class="badge ban">🚫 BANIDO</span>':""}
-      </div>
-      <div class="acoes">
-        <button class="btn" onclick="editarJogador('${p.uid}')">✏️ Editar</button>
-        <button class="btn verde" onclick="alterarMoedas('${p.uid}',100)">💰 +100</button>
-        <button class="btn amarelo" onclick="alterarMoedas('${p.uid}',-100)">💰 -100</button>
-        ${p.uid!==ADMIN_UID?`<button class="btn ${ban?"verde":"vermelho"}" onclick="alternarBan('${p.uid}',${ban})">${ban?"✅ Desbanir":"🚫 Banir"}</button>
-        <button class="btn vermelho" onclick="removerJogador('${p.uid}')">🗑️ Remover</button>`:""}
-      </div>
-    </div>`;
-  }).join("");
-};
-
-window.editarJogador=async function(uid){
-  const p=jogadores.find(x=>x.uid===uid);
-  if(!p)return;
-
-  if(uid===ADMIN_UID){
-    alert("A conta do ADM principal não pode ser editada por este painel.");
-    return;
-  }
-
-  const nome=prompt("Novo nome:",p.nome||"Jogador");
-  if(nome===null)return;
-
-  const moedas=prompt("Quantidade de moedas:",Number(p.moedas||0));
-  if(moedas===null)return;
-
-  const pontos=prompt("Quantidade de pontos:",Number(p.pontos||0));
-  if(pontos===null)return;
-
-  const nivel=prompt("Nível:",Number(p.nivel||1));
-  if(nivel===null)return;
-
-  const patente=prompt("Patente:",p.patente||"Iniciante");
-  if(patente===null)return;
-
-  const personagem=prompt("Personagem:",p.personagem||"Guerreiro");
-  if(personagem===null)return;
-
-  try{
-    const dados={
-      nome:nome.trim()||"Jogador",
-      moedas:Number(moedas)||0,
-      pontos:Number(pontos)||0,
-      nivel:Math.max(1,Number(nivel)||1),
-      patente:patente.trim()||"Iniciante",
-      personagem:personagem.trim()||"Guerreiro"
-    };
-
-    const updates={};
-    updates[`jogadores/${uid}`]={
-      ...p,
-      ...dados
-    };
-    updates[`ranking/${uid}`]={
-      uid,
-      nome:dados.nome,
-      pontos:dados.pontos,
-      nivel:dados.nivel,
-      personagem:dados.personagem,
-      atualizadoEm:Date.now(),
-      nomeColorido:false
-    };
-
-    await update(ref(db),updates);
-    mensagem("✅ Jogador atualizado.","sucesso");
-    await carregarJogadores();
-  }catch(e){
-    console.error(e);
-    mensagem("❌ Erro ao salvar jogador.","erro");
-  }
-};
-
-window.alterarMoedas=async function(uid,quantidade){
-  if(uid===ADMIN_UID){
-    alert("A conta do ADM principal não pode ser alterada.");
-    return;
-  }
-  const p=jogadores.find(x=>x.uid===uid);
-  if(!p)return;
-  const atual=Number(p.moedas||0);
-  const novo=Math.max(0,atual+quantidade);
-
-  try{
-    await update(ref(db,`jogadores/${uid}`),{moedas:novo});
-    mensagem(`✅ Moedas atualizadas: ${novo}.`,"sucesso");
-    await carregarJogadores();
-  }catch(e){
-    console.error(e);
-    mensagem("❌ Erro ao alterar moedas.","erro");
-  }
-};
-
-window.alternarBan=async function(uid,estaBanido){
-  if(uid===ADMIN_UID)return;
-  try{
-    await update(ref(db,`jogadores/${uid}`),{banido:!estaBanido});
-    if(!estaBanido){
-      await set(ref(db,`bloqueados/${uid}`),true);
-    }else{
-      await remove(ref(db,`bloqueados/${uid}`));
-    }
-    mensagem(estaBanido?"✅ Jogador desbanido.":"🚫 Jogador banido.","sucesso");
-    await carregarJogadores();
-  }catch(e){
-    console.error(e);
-    mensagem("❌ Erro ao alterar banimento.","erro");
-  }
-};
-
-window.removerJogador=async function(uid){
-  if(uid===ADMIN_UID)return;
-  const p=jogadores.find(x=>x.uid===uid);
-  if(!confirm(`Remover o jogador "${p?.nome||uid}"? Essa ação não pode ser desfeita.`))return;
-
-  try{
-    await remove(ref(db,`jogadores/${uid}`));
-    await remove(ref(db,`ranking/${uid}`));
-    await remove(ref(db,`bloqueados/${uid}`));
-    mensagem("🗑️ Jogador removido.","sucesso");
-    await carregarJogadores();
-  }catch(e){
-    console.error(e);
-    mensagem("❌ Erro ao remover jogador.","erro");
-  }
-};
-
-window.carregarRanking=async function(){
-  $("listaRanking").innerHTML="🔄 Carregando ranking...";
-  try{
-    const snap=await get(ref(db,"ranking"));
-    const lista=[];
-    if(snap.exists()){
-      snap.forEach(c=>lista.push({uid:c.key,...(c.val()||{})}));
-    }
-    lista.sort((a,b)=>Number(b.pontos||0)-Number(a.pontos||0));
-    $("totalRanking").textContent=lista.length;
-
-    if(!lista.length){
-      $("listaRanking").innerHTML="<p>Nenhum jogador no ranking.</p>";
-      return;
-    }
-
-    $("listaRanking").innerHTML=lista.map((p,i)=>{
-      let pos="#"+(i+1);
-      if(i===0)pos="🥇";
-      if(i===1)pos="🥈";
-      if(i===2)pos="🥉";
-      const nome=p.uid===ADMIN_UID
-        ? `<span class="nome-dono">${escapar(p.nome||"Gabriel Cabral")}</span>`
-        : escapar(p.nome||"Jogador");
-
-      return `<div class="ranking-item">
-        <div class="posicao">${pos}</div>
-        <div>
-          <strong>${nome}</strong>
-          <div class="mini">Nível ${Number(p.nivel||1)} • ${escapar(p.personagem||"Guerreiro")}</div>
-        </div>
-        <div>⭐ ${Number(p.pontos||0)}</div>
-      </div>`;
-    }).join("");
-  }catch(e){
-    console.error(e);
-    $("listaRanking").innerHTML='<div class="erro">❌ Erro ao carregar ranking.</div>';
-  }
-};
-
-async function carregarCatalogo(){
-  $("listaLoja").innerHTML="🔄 Carregando loja...";
-  try{
-    const snap=await get(ref(db,"catalogo"));
-    catalogo=[];
-    if(snap.exists()){
-      snap.forEach(c=>catalogo.push({id:c.key,...(c.val()||{})}));
-    }
-    $("totalItens").textContent=catalogo.length;
-
-    if(!catalogo.length){
-      $("listaLoja").innerHTML="<p>Nenhum item personalizado cadastrado.</p>";
-      return;
-    }
-
-    $("listaLoja").innerHTML=catalogo.map(i=>`
-      <div class="card">
-        <h3>${escapar(i.emoji||"🛒")} ${escapar(i.nome||"Item")}</h3>
-        <p>${escapar(i.descricao||"Sem descrição")}</p>
-        <p>Tipo: <span class="badge">${escapar(i.tipo||"item")}</span>
-        • 💰 ${Number(i.preco||0)}
-        • ⚔️ ${Number(i.dano||0)} dano</p>
-        <button class="btn vermelho" onclick="removerItem('${i.id}')">🗑️ Remover</button>
-      </div>
-    `).join("");
-  }catch(e){
-    console.error(e);
-    $("listaLoja").innerHTML='<div class="erro">❌ Erro ao carregar loja.</div>';
-  }
-}
-
-window.adicionarItem=async function(){
-  const nome=$("itemNome").value.trim();
-  if(!nome){
-    mensagem("Digite o nome do item.","erro");
-    return;
-  }
-
-  const id="item_"+Date.now();
-  const dados={
-    tipo:$("itemTipo").value,
-    nome,
-    emoji:$("itemEmoji").value.trim()||"🛒",
-    preco:Math.max(0,Number($("itemPreco").value)||0),
-    dano:Math.max(0,Number($("itemDano").value)||0),
-    descricao:$("itemDescricao").value.trim()||"Item da loja",
-    criadoEm:Date.now()
-  };
-
-  try{
-    await set(ref(db,`catalogo/${id}`),dados);
-    $("itemNome").value="";
-    $("itemDescricao").value="";
-    mensagem("✅ Item adicionado à loja.","sucesso");
-    await carregarCatalogo();
-  }catch(e){
-    console.error(e);
-    mensagem("❌ Erro ao adicionar item.","erro");
-  }
-};
-
-window.removerItem=async function(id){
-  if(!confirm("Remover este item da loja?"))return;
-  try{
-    await remove(ref(db,`catalogo/${id}`));
-    mensagem("🗑️ Item removido.","sucesso");
-    await carregarCatalogo();
-  }catch(e){
-    console.error(e);
-    mensagem("❌ Erro ao remover item.","erro");
-  }
-};
-
-
-async function carregarEventos(){
-  const box=$("listaEventos");
-  box.innerHTML="🔄 Carregando eventos...";
-  try{
-    const snap=await get(ref(db,"eventos"));
-    const lista=[];
-    if(snap.exists())snap.forEach(c=>lista.push({id:c.key,...(c.val()||{})}));
-    if(!lista.length){box.innerHTML="<p>Nenhum evento cadastrado.</p>";return}
-    lista.sort((a,b)=>Number(b.criadoEm||0)-Number(a.criadoEm||0));
-    box.innerHTML=lista.map(e=>{
-      const r=e.recompensa||{};
-      return `<div class="card">
-        <h3>🎉 ${escapar(e.nome||"Evento")}</h3>
-        <p>${escapar(e.descricao||"")}</p>
-        <p>🪙 ${Number(r.ouro||0)} • 💎 ${Number(r.gemas||0)} • ⭐ ${Number(r.pontos||0)}</p>
-        <p><span class="badge">${e.ativo===false?"DESATIVADO":"ATIVO"}</span></p>
-        <button class="btn ${e.ativo===false?"verde":"amarelo"}" onclick="alternarEvento('${e.id}',${e.ativo===false})">${e.ativo===false?"▶️ Ativar":"⏸️ Desativar"}</button>
-        <button class="btn vermelho" onclick="removerEvento('${e.id}')">🗑️ Remover</button>
-      </div>`;
-    }).join("");
-  }catch(e){console.error(e);box.innerHTML='<div class="erro">❌ Erro ao carregar eventos.</div>'}
-}
-
-window.adicionarEvento=async function(){
-  const nome=$("eventoNome").value.trim();
-  if(!nome)return mensagem("Digite o nome do evento.","erro");
-  const inicio=$("eventoInicio").value?new Date($("eventoInicio").value).getTime():0;
-  const fim=$("eventoFim").value?new Date($("eventoFim").value).getTime():0;
-  if(fim && inicio && fim<=inicio)return mensagem("A data final deve ser depois da inicial.","erro");
-  const id="evento_"+Date.now();
-  const dados={nome,descricao:$("eventoDescricao").value.trim(),inicio,fim,ativo:true,recompensa:{ouro:Math.max(0,Number($("eventoOuro").value)||0),gemas:Math.max(0,Number($("eventoGemas").value)\vert{}\vert{}0),pontos:Math.max(0,Number($("eventoPontos").value)||0)},criadoEm:Date.now()};
-  try{await set(ref(db,`eventos/${id}`),dados);mensagem("✅ Evento publicado para os jogadores.","sucesso");await carregarEventos();}
-  catch(e){console.error(e);mensagem("❌ Erro ao criar evento.","erro")}
-};
-
-window.alternarEvento=async function(id,ativar){
-  try{await update(ref(db,`eventos/${id}`),{ativo:!!ativar});mensagem(ativar?"▶️ Evento ativado.":"⏸️ Evento desativado.","sucesso");await carregarEventos();}
-  catch(e){console.error(e);mensagem("❌ Erro ao alterar evento.","erro")}
-};
-
-window.removerEvento=async function(id){
-  if(!confirm("Remover este evento?"))return;
-  try{await remove(ref(db,`eventos/${id}`));mensagem("🗑️ Evento removido.","sucesso");await carregarEventos();}
-  catch(e){console.error(e);mensagem("❌ Erro ao remover evento.","erro")}
-};
-
-async function carregarMensagemGlobal(){
-  try{
-    const snap=await get(ref(db,"mensagemGlobal"));
-    if(!snap.exists()){$("mensagemAtual").innerHTML="<p>Nenhuma mensagem publicada.</p>";return}
-    const m=snap.val()||{};
-    $("mensagemAtual").innerHTML=`<div class="info"><b>Status:</b> ${m.ativo===false?"Desativa":"Ativa"}<br><b>Texto:</b> ${escapar(m.texto||"")}</div>`;
-  }catch(e){console.error(e)}
-}
-
-window.publicarMensagem=async function(){
-  const texto=$("textoMensagem").value.trim();
-  if(!texto)return mensagem("Digite uma mensagem.","erro");
-  try{await set(ref(db,"mensagemGlobal"),{texto,ativo:true,atualizadoEm:Date.now(),autor:"ADM"});mensagem("📢 Mensagem publicada.","sucesso");await carregarMensagemGlobal();}
-  catch(e){console.error(e);mensagem("❌ Erro ao publicar mensagem.","erro")}
-};
-
-window.desativarMensagem=async function(){
-  try{await update(ref(db,"mensagemGlobal"),{ativo:false,atualizadoEm:Date.now()});mensagem("🔕 Mensagem desativada.","sucesso");await carregarMensagemGlobal();}
-  catch(e){console.error(e);mensagem("❌ Erro ao desativar mensagem.","erro")}
-};
-
-onAuthStateChanged(auth,async user=>{
-  if(!user)return;
-  usuario=user;
-  $("uidAdm").textContent=user.uid;
-
-  if(user.uid!==ADMIN_UID){
-    $("mensagemAcesso").innerHTML=
-      "❌ Esta conta não possui acesso ao painel ADM.<br><br>UID conectado: "+escapar(user.uid);
-    return;
-  }
-
-  $("telaAcesso").classList.add("hidden");
-  $("app").classList.remove("hidden");
-
-  await carregarJogadores();
-  await carregarRanking();
-  await carregarCatalogo();
-  await carregarEventos();
-  await carregarMensagemGlobal();
-});
-
-signInAnonymously(auth).catch(e=>{
+// Inicialização anônima padrão para salvar dados do jogador no Firebase
+signInAnonymously(auth).then(() => {
+  renderizarSkins();
+}).catch(e => {
   console.error(e);
-  $("mensagemAcesso").textContent="❌ Erro ao conectar ao Firebase.";
+  mensagem("❌ Erro ao conectar ao Firebase.", "erro");
 });
 </script>
 
