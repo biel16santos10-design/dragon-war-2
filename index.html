@@ -8,7 +8,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { 
     font-family: Arial, sans-serif; 
-    background: #0a0e1a; 
+    background: linear-gradient(135deg, #0a0e1a 0%, #1a1f3a 100%); 
     color: #fff; 
     min-height: 100vh;
 }
@@ -18,14 +18,16 @@ body {
     width: 100%; height: 100%; 
     background: #0a0e1a; 
     display: flex; 
+    flex-direction: column;
     justify-content: center; 
     align-items: center; 
     z-index: 9999;
+    transition: opacity 0.5s;
 }
 .spinner { 
-    width: 50px; height: 50px; 
-    border: 4px solid #333; 
-    border-top: 4px solid #ff6b00; 
+    width: 60px; height: 60px; 
+    border: 5px solid #333; 
+    border-top: 5px solid #ff6b00; 
     border-radius: 50%; 
     animation: spin 1s linear infinite; 
 }
@@ -33,6 +35,7 @@ body {
     0% { transform: rotate(0deg); } 
     100% { transform: rotate(360deg); } 
 }
+.loading-text { margin-top: 20px; color: #ff6b00; font-size: 1.2em; }
 .hidden { display: none !important; }
 .auth-container { 
     display: flex; 
@@ -42,26 +45,59 @@ body {
     padding: 20px; 
 }
 .auth-card { 
-    background: #1e293b; 
+    background: rgba(30, 41, 59, 0.95); 
     border: 2px solid #ff6b00; 
     border-radius: 15px; 
     padding: 30px; 
     max-width: 400px; 
     width: 100%;
+    box-shadow: 0 10px 40px rgba(255, 107, 0, 0.3);
 }
 .auth-card h1 { 
     text-align: center; 
     color: #ff6b00; 
+    margin-bottom: 10px;
+    font-size: 2.5em;
+}
+.auth-card .subtitle {
+    text-align: center;
+    color: #94a3b8;
     margin-bottom: 20px;
+    letter-spacing: 3px;
+}
+.auth-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.auth-tab {
+    flex: 1;
+    padding: 12px;
+    background: #0f172a;
+    border: 2px solid #334155;
+    border-radius: 8px;
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+    text-align: center;
+}
+.auth-tab.active {
+    background: #ff6b00;
+    border-color: #ff6b00;
 }
 input { 
     width: 100%; 
     padding: 12px; 
-    margin: 10px 0; 
+    margin: 8px 0; 
     border-radius: 8px; 
-    border: 1px solid #334155; 
+    border: 2px solid #334155; 
     background: #0f172a; 
     color: #fff;
+    font-size: 15px;
+}
+input:focus {
+    outline: none;
+    border-color: #ff6b00;
 }
 button { 
     width: 100%; 
@@ -73,38 +109,60 @@ button {
     cursor: pointer; 
     background: #ff6b00; 
     color: #fff;
+    font-size: 15px;
+    transition: all 0.3s;
 }
-button:hover { filter: brightness(1.2); }
-.game-view { 
-    padding: 20px; 
-    text-align: center;
+button:hover { 
+    filter: brightness(1.2);
+    transform: translateY(-2px);
 }
+.btn-success { background: #22c55e; }
+.btn-danger { background: #ef4444; }
+.btn-info { background: #3b82f6; }
+
+.game-view { padding: 20px; }
 .player-info { 
     background: #1e293b; 
-    padding: 15px; 
-    border-radius: 10px; 
+    padding: 20px; 
+    border-radius: 12px; 
     margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.player-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+    border: 3px solid #ffd700;
 }
 .resources { 
     display: flex; 
-    gap: 15px; 
-    justify-content: center; 
+    gap: 10px; 
     margin: 20px 0;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 .resource { 
     background: #1e293b; 
-    padding: 10px 20px; 
+    padding: 10px 15px; 
     border-radius: 8px;
+    border: 1px solid #ffd700;
 }
 .menu-buttons { 
     display: grid; 
     gap: 10px; 
-    max-width: 300px; 
+    max-width: 400px; 
     margin: 30px auto;
 }
 .toast { 
     position: fixed; 
-    bottom: 20px; 
+    bottom: 30px; 
     left: 50%; 
     transform: translateX(-50%); 
     background: #1e293b; 
@@ -112,6 +170,17 @@ button:hover { filter: brightness(1.2); }
     padding: 15px 30px; 
     border-radius: 10px; 
     display: none;
+    z-index: 9999;
+    font-weight: bold;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+}
+.error-box {
+    background: #7f1d1d;
+    border: 2px solid #ef4444;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px;
+    text-align: center;
 }
 </style>
 </head>
@@ -119,15 +188,17 @@ button:hover { filter: brightness(1.2); }
 
 <div id="loading">
     <div class="spinner"></div>
+    <div class="loading-text">Carregando Dragon War...</div>
 </div>
 
 <div id="authView" class="hidden">
     <div class="auth-container">
         <div class="auth-card">
-            <h1> DRAGON WAR</h1>
-            <div style="margin: 20px 0;">
-                <button onclick="showLogin()">Entrar</button>
-                <button onclick="showRegister()" style="background: #22c55e;">Criar Conta</button>
+            <h1>🐉 DRAGON WAR</h1>
+            <div class="subtitle">RISE OF POWER</div>
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="showTab('login')">Entrar</div>
+                <div class="auth-tab" onclick="showTab('register')">Criar Conta</div>
             </div>
             <div id="loginForm">
                 <input id="loginEmail" type="email" placeholder="E-mail">
@@ -137,8 +208,8 @@ button:hover { filter: brightness(1.2); }
             <div id="registerForm" class="hidden">
                 <input id="regNick" placeholder="Nome do Personagem">
                 <input id="regEmail" type="email" placeholder="E-mail">
-                <input id="regPass" type="password" placeholder="Senha">
-                <button onclick="doRegister()" style="background: #22c55e;">CADASTRAR</button>
+                <input id="regPass" type="password" placeholder="Senha (mín. 6)">
+                <button onclick="doRegister()" class="btn-success">CADASTRAR</button>
             </div>
         </div>
     </div>
@@ -147,22 +218,26 @@ button:hover { filter: brightness(1.2); }
 <div id="gameView" class="hidden">
     <div class="game-view">
         <div class="player-info">
-            <h2 id="playerName">Carregando...</h2>
-            <p>Nível <span id="playerLevel">1</span></p>
+            <div class="player-avatar" id="playerAvatar">🥷</div>
+            <div>
+                <h2 id="playerName">Carregando...</h2>
+                <p style="color:#94a3b8;">Nível <span id="playerLevel">1</span></p>
+            </div>
         </div>
         
         <div class="resources">
             <div class="resource">💰 <span id="resCoins">0</span></div>
             <div class="resource">💎 <span id="resGems">0</span></div>
             <div class="resource">🔮 <span id="resCrystals">0</span></div>
+            <div class="resource">⭐ <span id="resPoints">0</span></div>
         </div>
 
         <div class="menu-buttons">
-            <button onclick="showToast('⚔️ Em breve!')">JOGAR</button>
-            <button onclick="showToast('🛒 Em breve!')">LOJA</button>
-            <button onclick="showToast('✨ Em breve!')">PODERES</button>
-            <button onclick="showToast('📊 Em breve!')">RESUMO</button>
-            <button onclick="doLogout()" style="background: #ef4444;">SAIR</button>
+            <button onclick="showToast('️ Em breve!')">⚔️ JOGAR</button>
+            <button onclick="showToast('🛒 Em breve!')" class="btn-info">🛒 LOJA</button>
+            <button onclick="showToast('✨ Em breve!')" style="background:#a855f7;">✨ PODERES</button>
+            <button onclick="showToast('📊 Em breve!')" style="background:#f59e0b;color:#000;">📊 RESUMO</button>
+            <button onclick="doLogout()" class="btn-danger">🚪 SAIR</button>
         </div>
     </div>
 </div>
@@ -170,118 +245,156 @@ button:hover { filter: brightness(1.2); }
 <div id="toast" class="toast"></div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, setDoc, onSnapshot, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+try {
+    // IMPORTS DO FIREBASE
+    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+    const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
+    const { getFirestore, doc, setDoc, onSnapshot, updateDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
 
-const firebaseConfig = {
-    apiKey: "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
-    authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
-    projectId: "dragon-war-rise-of-power-2a9f1",
-    storageBucket: "dragon-war-rise-of-power-2a9f1.firebasestorage.app",
-    messagingSenderId: "115455691167",
-    appId: "1:115455691167:web:ff3638f67b66c17c5515aa"
-};
+    const firebaseConfig = {
+        apiKey: "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
+        authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
+        projectId: "dragon-war-rise-of-power-2a9f1",
+        storageBucket: "dragon-war-rise-of-power-2a9f1.firebasestorage.app",
+        messagingSenderId: "115455691167",
+        appId: "1:115455691167:web:ff3638f67b66c17c5515aa"
+    };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(db);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app); // ← CORRIGIDO! Era getFirestore(db)
 
-let currentUserData = null;
-let playerRef = null;
+    let currentUserData = null;
+    let playerRef = null;
 
-const $ = (id) => document.getElementById(id);
+    const $ = (id) => document.getElementById(id);
 
-setTimeout(() => { 
-    $('loading').classList.add('hidden'); 
-}, 1000);
+    // GARANTE QUE O LOADING SOME EM 3 SEGUNDOS (FALLBACK)
+    setTimeout(() => { 
+        $('loading').classList.add('hidden'); 
+    }, 3000);
 
-window.showToast = (msg) => {
-    const t = $('toast');
-    t.textContent = msg;
-    t.style.display = 'block';
-    setTimeout(() => t.style.display = 'none', 3000);
-};
+    window.showToast = (msg) => {
+        const t = $('toast');
+        t.textContent = msg;
+        t.style.display = 'block';
+        setTimeout(() => t.style.display = 'none', 3000);
+    };
 
-window.showLogin = () => {
-    $('loginForm').classList.remove('hidden');
-    $('registerForm').classList.add('hidden');
-};
+    window.showTab = (tab) => {
+        document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+        if (tab === 'login') {
+            document.querySelectorAll('.auth-tab')[0].classList.add('active');
+            $('loginForm').classList.remove('hidden');
+            $('registerForm').classList.add('hidden');
+        } else {
+            document.querySelectorAll('.auth-tab')[1].classList.add('active');
+            $('loginForm').classList.add('hidden');
+            $('registerForm').classList.remove('hidden');
+        }
+    };
 
-window.showRegister = () => {
-    $('loginForm').classList.add('hidden');
-    $('registerForm').classList.remove('hidden');
-};
+    window.doLogin = async () => {
+        const email = $('loginEmail').value.trim();
+        const pass = $('loginPass').value;
+        if (!email || !pass) return showToast('Preencha e-mail e senha');
+        try {
+            await signInWithEmailAndPassword(auth, email, pass);
+            showToast('Bem-vindo de volta!');
+        } catch(e) {
+            showToast('Erro: ' + e.message);
+        }
+    };
 
-window.doLogin = async () => {
-    const email = $('loginEmail').value.trim();
-    const pass = $('loginPass').value;
-    if (!email || !pass) return showToast('Preencha e-mail e senha');
-    try {
-        await signInWithEmailAndPassword(auth, email, pass);
-        showToast('Bem-vindo!');
-    } catch(e) {
-        showToast('Erro: ' + e.message);
-    }
-};
+    window.doRegister = async () => {
+        const nick = $('regNick').value.trim();
+        const email = $('regEmail').value.trim();
+        const pass = $('regPass').value;
+        if (!nick || !email || !pass) return showToast('Preencha todos os campos');
+        if (pass.length < 6) return showToast('Senha mínima: 6 caracteres');
+        try {
+            const cred = await createUserWithEmailAndPassword(auth, email, pass);
+            await setDoc(doc(db, "players", cred.user.uid), {
+                uid: cred.user.uid,
+                nick: nick,
+                email: email,
+                avatar: '🥷',
+                coins: 1000,
+                gems: 100,
+                crystals: 50,
+                points: 0,
+                level: 1,
+                xp: 0,
+                wins: 0,
+                losses: 0,
+                battles: 0,
+                createdAt: serverTimestamp(),
+                lastSeen: serverTimestamp()
+            });
+            showToast('🎉 Conta criada! Bem-vindo, ' + nick + '!');
+        } catch(e) {
+            showToast('Erro: ' + e.message);
+        }
+    };
 
-window.doRegister = async () => {
-    const nick = $('regNick').value.trim();
-    const email = $('regEmail').value.trim();
-    const pass = $('regPass').value;
-    if (!nick || !email || !pass) return showToast('Preencha todos os campos');
-    if (pass.length < 6) return showToast('Senha mínima: 6 caracteres');
-    try {
-        const cred = await createUserWithEmailAndPassword(auth, email, pass);
-        await setDoc(doc(db, "players", cred.user.uid), {
-            uid: cred.user.uid,
-            nick: nick,
-            email: email,
-            coins: 1000,
-            gems: 100,
-            crystals: 50,
-            level: 1,
-            createdAt: serverTimestamp()
+    window.doLogout = () => {
+        signOut(auth).then(() => {
+            showToast('Desconectado!');
+            setTimeout(() => location.reload(), 1000);
         });
-        showToast('Conta criada!');
-    } catch(e) {
-        showToast('Erro: ' + e.message);
-    }
-};
+    };
 
-window.doLogout = () => {
-    signOut(auth).then(() => {
-        showToast('Desconectado!');
-        setTimeout(() => location.reload(), 1000);
+    onAuthStateChanged(auth, async (user) => {
+        try {
+            if (!user) {
+                $('loading').classList.add('hidden');
+                $('authView').classList.remove('hidden');
+                $('gameView').classList.add('hidden');
+                return;
+            }
+
+            $('loading').classList.add('hidden');
+            $('authView').classList.add('hidden');
+            $('gameView').classList.remove('hidden');
+
+            playerRef = doc(db, "players", user.uid);
+            
+            onSnapshot(playerRef, (snap) => {
+                if (!snap.exists()) {
+                    showToast('Perfil não encontrado');
+                    return;
+                }
+                const data = snap.data();
+                currentUserData = data;
+                
+                $('playerName').textContent = data.nick || 'Jogador';
+                $('playerAvatar').textContent = data.avatar || '🥷';
+                $('playerLevel').textContent = data.level || 1;
+                $('resCoins').textContent = Number(data.coins || 0).toLocaleString('pt-BR');
+                $('resGems').textContent = Number(data.gems || 0).toLocaleString('pt-BR');
+                $('resCrystals').textContent = Number(data.crystals || 0).toLocaleString('pt-BR');
+                $('resPoints').textContent = Number(data.points || 0).toLocaleString('pt-BR');
+
+                // Atualiza lastSeen
+                updateDoc(playerRef, { lastSeen: serverTimestamp() }).catch(() => {});
+            });
+        } catch(e) {
+            console.error('Erro:', e);
+            showToast('Erro: ' + e.message);
+        }
     });
-};
 
-onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-        $('loading').classList.add('hidden');
-        $('authView').classList.remove('hidden');
-        $('gameView').classList.add('hidden');
-        return;
-    }
-
-    $('authView').classList.add('hidden');
-    $('loading').classList.add('hidden');
-    $('gameView').classList.remove('hidden');
-
-    playerRef = doc(db, "players", user.uid);
-    
-    onSnapshot(playerRef, (snap) => {
-        if (!snap.exists()) return;
-        const data = snap.data();
-        currentUserData = data;
-        
-        $('playerName').textContent = data.nick || 'Jogador';
-        $('playerLevel').textContent = data.level || 1;
-        $('resCoins').textContent = data.coins || 0;
-        $('resGems').textContent = data.gems || 0;
-        $('resCrystals').textContent = data.crystals || 0;
-    });
-});
+} catch(e) {
+    console.error('ERRO CRÍTICO:', e);
+    document.getElementById('loading').innerHTML = `
+        <div class="error-box">
+            <h2>⚠️ Erro ao carregar</h2>
+            <p style="margin:15px 0;color:#fca5a5;">${e.message}</p>
+            <p style="color:#94a3b8;font-size:0.9em;">Verifique sua conexão e recarregue a página.</p>
+            <button onclick="location.reload()" style="margin-top:15px;">🔄 Recarregar</button>
+        </div>
+    `;
+}
 </script>
 
 </body>
