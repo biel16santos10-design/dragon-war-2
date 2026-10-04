@@ -29,6 +29,7 @@
     input, select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #fff; }
     button { width: 100%; padding: 12px; border: none; border-radius: 6px; background: #0284c7; color: white; font-weight: bold; cursor: pointer; margin-top: 8px; }
     button:hover { opacity: 0.9; }
+    button:disabled { background: #475569; cursor: not-allowed; opacity: 0.6; }
     
     /* NAV & PANELS */
     .nav-bar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-bottom: 15px; }
@@ -92,7 +93,7 @@
         <label>Senha (mínimo 6 caracteres)</label>
         <input type="password" id="reg-password" required placeholder="••••••••">
       </div>
-      <button type="submit" style="background: var(--success);">CRIAR CONTA</button>
+      <button type="submit" id="btn-reg-submit" style="background: var(--success);">CRIAR CONTA</button>
     </form>
 
     <div class="log-box" id="auth-log">
@@ -283,6 +284,7 @@
     const name = document.getElementById('reg-name').value.trim();
     const email = document.getElementById('reg-email').value.trim();
     const pass = document.getElementById('reg-password').value;
+    const btn = document.getElementById('btn-reg-submit');
 
     const restricted = ["ADM", "ADMIN", "MASTER", "GERENTE", "SUPREME"];
     if (restricted.some(r => name.toUpperCase().includes(r))) {
@@ -290,6 +292,8 @@
       return;
     }
 
+    btn.innerText = "Criando...";
+    btn.disabled = true;
     authLog("Criando conta no Firebase...");
 
     try {
@@ -313,19 +317,25 @@
       await db.collection('users').doc(res.user.uid).set(initialData);
       authLog("Conta criada e salva no banco de dados!");
     } catch (err) {
-      alert("Erro ao registrar: " + err.message);
+      if (err.code === 'auth/quota-exceeded') {
+        alert("Limite de requisições temporário do Firebase atingido! Aguarde uns minutos.");
+      } else {
+        alert("Erro ao registrar: " + err.message);
+      }
       authLog("❌ Erro no registro: " + err.message);
+      btn.innerText = "CRIAR CONTA";
+      btn.disabled = false;
     }
   }
 
-  // LOGIN CORRIGIDO
+  // LOGIN COM PROTEÇÃO DE COTA
   async function handleLogin(e) {
     e.preventDefault();
     const email = document.getElementById('login-email').value.trim();
     const pass = document.getElementById('login-password').value;
     const btn = document.getElementById('btn-login-submit');
 
-    btn.innerText = "ENTRANDO...";
+    btn.innerText = "Aguarde...";
     btn.disabled = true;
     authLog("Conectando ao Firebase Auth...");
 
@@ -333,8 +343,12 @@
       await auth.signInWithEmailAndPassword(email, pass);
       authLog("Senha correta! Carregando dados do personagem...");
     } catch (err) {
-      alert("Erro ao entrar: " + err.message);
-      authLog("❌ Erro ao entrar: " + err.message);
+      if (err.code === 'auth/quota-exceeded') {
+        alert("O Firebase bloqueou temporariamente por excesso de tentativas. Aguarde de 15 a 30 minutos antes de clicar novamente!");
+      } else {
+        alert("Erro ao entrar: " + err.message);
+      }
+      authLog("❌ Erro: " + err.message);
       btn.innerText = "ENTRAR NO JOGO";
       btn.disabled = false;
     }
@@ -368,7 +382,7 @@
       return;
     }
     if (player.hp <= 0) {
-      log("☠️️ Você está desmaiado! Restaure sua vida com poções.");
+      log("☠ Você está desmaiado! Restaure sua vida com poções.");
       return;
     }
 
@@ -376,7 +390,7 @@
     const dmg = Math.max(1, player.atk + Math.floor(Math.random() * 5));
     currentBossHp -= dmg;
 
-    log(`⚔️️ Você causou ${dmg} de dano no ${bosses[currentBossIdx].name}!`);
+    log(`⚔ Você causou ${dmg} de dano no ${bosses[currentBossIdx].name}!`);
 
     if (currentBossHp <= 0) {
       const b = bosses[currentBossIdx];
@@ -417,7 +431,7 @@
 
   async function usePotionInCombat() {
     if (!player.inventory || (player.inventory.pocao || 0) <= 0) {
-      log("⚠️ Você não possui Poções de Cura no inventário!");
+      log("⚠️️ Você não possui Poções de Cura no inventário!");
       return;
     }
     player.inventory.pocao -= 1;
@@ -480,7 +494,7 @@
     const uid = document.getElementById('admin-target-uid').value.trim();
     if (!uid) return;
     await db.collection('users').doc(uid).update({ isAdmin: true });
-    log(`⚙️️ ADMIN: Usuário ${uid} promovido a Administrador!`);
+    log(`⚙ ADMIN: Usuário ${uid} promovido a Administrador!`);
   }
 
   // SINCRONIZAÇÃO FIRESTORE
@@ -525,16 +539,16 @@
     }
   }
 
-  // MONITORAR STATUS DA AUTENTICAÇÃO (LOGIN AUTOMÁTICO / PERSISTENTE)
+  // MONITORAR STATUS DA AUTENTICAÇÃO
   auth.onAuthStateChanged(async (user) => {
-    const btn = document.getElementById('btn-login-submit');
-    if (btn) {
-      btn.innerText = "ENTRAR NO JOGO";
-      btn.disabled = false;
-    }
+    const btnLogin = document.getElementById('btn-login-submit');
+    const btnReg = document.getElementById('btn-reg-submit');
+    
+    if (btnLogin) { btnLogin.innerText = "ENTRAR NO JOGO"; btnLogin.disabled = false; }
+    if (btnReg) { btnReg.innerText = "CRIAR CONTA"; btnReg.disabled = false; }
 
     if (user) {
-      authLog("Conectando ao Firestore para carregar personagem...");
+      authLog("Conectando ao Firestore...");
       try {
         const docRef = db.collection('users').doc(user.uid);
         const doc = await docRef.get();
@@ -542,7 +556,6 @@
         if (doc.exists) {
           player = doc.data();
         } else {
-          // Caso não exista registro no Firestore, cria com o perfil padrão
           player = {
             username: user.email.split('@')[0],
             email: user.email,
@@ -565,15 +578,15 @@
         updateUI();
         document.getElementById('auth-card').classList.add('hidden');
         document.getElementById('game-card').classList.remove('hidden');
-        log("✅ Login efetuado com sucesso! Bem-vindo ao Dragon War.");
+        log("✅ Login efetuado com sucesso!");
       } catch (err) {
-        alert("Erro ao acessar o banco de dados: " + err.message);
-        authLog("❌ Erro de permissão no Firestore: " + err.message);
+        alert("Erro no banco de dados: " + err.message);
+        authLog("❌ Erro Firestore: " + err.message);
       }
     } else {
       document.getElementById('auth-card').classList.remove('hidden');
       document.getElementById('game-card').classList.add('hidden');
-      authLog("Aguardando login ou novo registro...");
+      authLog("Aguardando login...");
     }
   });
 </script>
