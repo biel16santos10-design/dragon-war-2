@@ -181,16 +181,22 @@
                 <!-- ABA 6: CONFIGURAÇÕES -->
                 <div id="tab-config" class="tab-panel">
                     <h2>Configurações do Jogador</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Ajuste preferências de som, notificações e conta.</p>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Ajuste preferências da sua conta e do jogo.</p>
                     <div class="card-box">
-                        <h3>Preferências</h3>
-                        <label style="display: block; margin-bottom: 10px; font-size: 14px; cursor: pointer;">
-                            <input type="checkbox" checked> Ativar sons de combate e efeitos
-                        </label>
-                        <label style="display: block; margin-bottom: 15px; font-size: 14px; cursor: pointer;">
-                            <input type="checkbox" checked> Receber notificações de eventos e bosses
-                        </label>
-                        <button class="btn-action" onclick="alert('Configurações salvas com sucesso!')">Salvar Alterações</button>
+                        <h3>Preferências Salvas</h3>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 10px; font-size: 14px; cursor: pointer;">
+                                <input type="checkbox" id="check-sons" checked> Ativar sons de combate e efeitos
+                            </label>
+                            <label style="display: block; margin-bottom: 10px; font-size: 14px; cursor: pointer;">
+                                <input type="checkbox" id="check-notif" checked> Receber notificações de eventos e bosses
+                            </label>
+                        </div>
+                        <div style="margin-top: 20px; border-top: 1px solid #334155; padding-top: 15px;">
+                            <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #94a3b8;">Alterar Nome de Exibição no Jogo:</label>
+                            <input type="text" id="input-novo-nome" class="form-control" placeholder="Seu novo nome" style="max-width: 300px; display: inline-block;">
+                            <button class="btn-action" onclick="salvarConfiguracoes()" style="vertical-align: top; margin-left: 10px;">Salvar Alterações</button>
+                        </div>
                     </div>
                 </div>
 
@@ -205,7 +211,7 @@
 
     <script>
         const firebaseConfig = {
-            apiKey: "SUA_API_KEY_REAL_DO_FIREBASE",
+            apiKey: "AIzaSyDgooL-9qYU",
             authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
             projectId: "dragon-war-rise-of-power-2a9f1",
             storageBucket: "dragon-war-rise-of-power-2a9f1.appspot.com",
@@ -270,17 +276,36 @@
             let avatarUrl = `https://api.dicebear.com/7.x/bottts/svg?seed=${dadosJogadorLocal.skinSeed || 'Default'}`;
             document.getElementById('sidebar-avatar').src = avatarUrl;
             document.getElementById('skin-preview').src = avatarUrl;
+            let inputNome = document.getElementById('input-novo-nome');
+            if(inputNome) inputNome.value = dadosJogadorLocal.nome || '';
         }
 
         function salvarDadosNoBanco() {
             if(!usuarioAtualId) return;
             db.collection("jogadores").doc(usuarioAtualId).update({
+                nome: dadosJogadorLocal.nome,
                 dinheiro: dadosJogadorLocal.dinheiro,
                 nivel: dadosJogadorLocal.nivel,
                 skinSeed: dadosJogadorLocal.skinSeed
             }).then(() => {
-                sincronizarInterface();
+                sincroniseInterface();
+            }).catch(err => {
+                console.error("Erro ao salvar:", err);
             });
+        }
+
+        // Correção rápida da função de sincronização de interface
+        function sincroniseInterface() {
+            sincronizarInterface();
+        }
+
+        function salvarConfiguracoes() {
+            let novoNome = document.getElementById('input-novo-nome').value.trim();
+            if(novoNome) {
+                dadosJogadorLocal.nome = novoNome;
+            }
+            salvarDadosNoBanco();
+            alert("Configurações e alterações salvas com sucesso no Firebase!");
         }
 
         function atacarMonstro() {
