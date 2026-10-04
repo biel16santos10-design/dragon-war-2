@@ -115,7 +115,7 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 
 <div class="content-area">
 
-<div id="dw-game-entry-bar" class="dw-entry-actions" style="margin:12px 0 18px"><button class="dw-btn primary" onclick="dwOpenCentral()">⚡ Central</button><button class="dw-btn" onclick="abrirContatoAdm()">👑 Falar com ADM</button><button class="dw-btn" onclick="alternarChatGlobal()">💬 Chat</button></div>
+<div id="dw-game-entry-bar" class="dw-entry-actions" style="margin:12px 0 18px"><button class="dw-btn primary" onclick="dwOpenCentral()">⚡ Central</button><button class="dw-btn" onclick="abrirContatoAdm()">👑 Falar com Suporte</button><button class="dw-btn" onclick="alternarChatGlobal()">💬 Chat</button></div>
 <div id="section-jogar" class="panel-section">
 <h2>Modo Batalha - Sistema de Fases</h2>
 <p style="color:#94a3b8;margin-top:5px">Progressão salva por jogador no Firestore.</p>
@@ -248,7 +248,7 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 </div></main>
 
 <div class="chat-tools" aria-label="Comunicação">
-  <button id="adm-contact-toggle" class="adm-contact-btn" onclick="abrirContatoAdm()">👑 FALAR COM ADM</button>
+  <button id="adm-contact-toggle" class="adm-contact-btn" onclick="abrirContatoAdm()">👑 FALAR COM SUPORTE</button>
   <button id="chat-toggle" class="chat-toggle" onclick="alternarChatGlobal()">💬 CHAT</button>
 </div>
 <div id="modal-contato-adm" class="modal-overlay hidden">
@@ -436,7 +436,7 @@ async function carregarJogador(){
  const bs=base.battleState;
  if(bs&&bs.categoria&&categorias[bs.categoria]){faseAtualInfo={categoria:bs.categoria,etapa:Number(bs.etapa||1),hpMovel:Number(bs.hpMovel||0),maxHp:Number(bs.maxHp||0),playerHp:Number(bs.playerHp!=null?bs.playerHp:(usuarioAtual.currentHp!=null?usuarioAtual.currentHp:100)),playerMp:Number(bs.playerMp!=null?bs.playerMp:(usuarioAtual.mana!=null?usuarioAtual.mana:100)),defend:!!bs.defend}}
  else{faseAtualInfo={categoria:"",etapa:1,hpMovel:100,maxHp:100,playerHp:Number(usuarioAtual.currentHp??100),playerMp:Number(usuarioAtual.mana??100),defend:false}}
- await setDoc(ref,{...montarEstadoPersistente(),uid:usuarioAtual.uid,email:usuarioAtual.email,lastSeen:serverTimestamp(),status:"Online",updatedAt:serverTimestamp()},{merge:true});
+ setDoc(ref,{...montarEstadoPersistente(),uid:usuarioAtual.uid,email:usuarioAtual.email,lastSeen:serverTimestamp(),status:"Online",updatedAt:serverTimestamp()},{merge:true}).catch(err=>console.warn("Salvamento inicial em segundo plano:",err));
  atualizarPerfilUI();montarMenuLateral();renderLoja();renderizarPoderes();atualizarInventarioUI();renderizarEventos();atualizarDailyUI();iniciarHeartbeat();assinarChatGlobal();verificarAchievements();
  if(usuarioAtual.isAdm){carregarJogadoresReaisDoBanco();document.getElementById("adm-loja-controls").classList.remove("hidden");document.getElementById("adm-poderes-controls").classList.remove("hidden");document.getElementById("adm-evento-controls").classList.remove("hidden");document.getElementById("player-power-admin-note")?.classList.remove("hidden")}
 }
@@ -808,8 +808,16 @@ async function abrirSessaoComSeguranca(user){
   const status=login?.querySelector(".auth-subtitle")||login?.querySelector("p");
   if(status)status.innerText="⏳ Carregando sua conta...";
   const limite=new Promise((_,rej)=>setTimeout(()=>rej(Object.assign(new Error("Tempo limite ao carregar a conta."),{code:"timeout"})),15000));
-  await Promise.race([(async()=>{await carregarJogador();await carregarCatalogoCustom();if(usuarioAtual.isAdm){await carregarLogs();carregarSolicitacoesAdm();}})(),limite]);
+  await Promise.race([carregarJogador(),limite]);
   login?.classList.add("hidden"); game?.classList.remove("hidden");
+  // Recursos secundários carregam depois que o jogo já abriu, evitando travar a entrada.
+  Promise.resolve().then(async()=>{
+    try{await carregarCatalogoCustom();}catch(err){console.warn("Catálogo em segundo plano:",err)}
+    if(usuarioAtual?.isAdm){
+      try{await carregarLogs();}catch(err){console.warn("Logs ADM:",err)}
+      try{carregarSolicitacoesAdm();}catch(err){console.warn("Solicitações ADM:",err)}
+    }
+  });
   document.getElementById('dw-central')?.classList.add('hidden');
   const bm=document.querySelector('#menu-list .menu-item'); if(bm)trocarSecao('jogar',bm);
   notificar(usuarioAtual.isAdm?'👑 Painel ADM carregado.':'🎮 Conta do jogador carregada.','success');
@@ -842,8 +850,7 @@ onAuthStateChanged(auth,async user=>{if(!user){sessaoCarregando=false;return;}aw
 </style>
 <div class="dw-quickbar" id="dw-quickbar">
  <button class="dw-central-btn" id="dw-central-open" onclick="dwOpenCentral()">⚡ Central</button>
- <button class="dw-central-btn dw-adm-contact-btn" onclick="abrirContatoAdm()">📩 Falar com ADM</button>
- <button class="dw-central-btn dw-chat-open-btn" onclick="dwOpenChatQuick()">💬 Chat</button>
+ <button class="dw-central-btn dw-adm-contact-btn" onclick="abrirContatoAdm()">🛟 Falar com Suporte</button>
 </div>
 <div id="dw-admin-alert" class="dw-notify">📨 Novo pedido para o ADM</div>
 <div id="dw-central" class="dw-modal hidden">
