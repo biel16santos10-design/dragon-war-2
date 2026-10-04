@@ -3,138 +3,286 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dragon War — Rise of Power</title>
+<title>Dragon War</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0e1a; color: #fff; overflow-x: hidden; min-height: 100vh; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { 
+    font-family: Arial, sans-serif; 
+    background: #0a0e1a; 
+    color: #fff; 
+    min-height: 100vh;
+}
+#loading { 
+    position: fixed; 
+    top: 0; left: 0; 
+    width: 100%; height: 100%; 
+    background: #0a0e1a; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    z-index: 9999;
+}
+.spinner { 
+    width: 50px; height: 50px; 
+    border: 4px solid #333; 
+    border-top: 4px solid #ff6b00; 
+    border-radius: 50%; 
+    animation: spin 1s linear infinite; 
+}
+@keyframes spin { 
+    0% { transform: rotate(0deg); } 
+    100% { transform: rotate(360deg); } 
+}
+.hidden { display: none !important; }
+.auth-container { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    min-height: 100vh; 
+    padding: 20px; 
+}
+.auth-card { 
+    background: #1e293b; 
+    border: 2px solid #ff6b00; 
+    border-radius: 15px; 
+    padding: 30px; 
+    max-width: 400px; 
+    width: 100%;
+}
+.auth-card h1 { 
+    text-align: center; 
+    color: #ff6b00; 
+    margin-bottom: 20px;
+}
+input { 
+    width: 100%; 
+    padding: 12px; 
+    margin: 10px 0; 
+    border-radius: 8px; 
+    border: 1px solid #334155; 
+    background: #0f172a; 
+    color: #fff;
+}
+button { 
+    width: 100%; 
+    padding: 12px; 
+    margin: 8px 0; 
+    border-radius: 8px; 
+    border: none; 
+    font-weight: bold; 
+    cursor: pointer; 
+    background: #ff6b00; 
+    color: #fff;
+}
+button:hover { filter: brightness(1.2); }
+.game-view { 
+    padding: 20px; 
+    text-align: center;
+}
+.player-info { 
+    background: #1e293b; 
+    padding: 15px; 
+    border-radius: 10px; 
+    margin-bottom: 20px;
+}
+.resources { 
+    display: flex; 
+    gap: 15px; 
+    justify-content: center; 
+    margin: 20px 0;
+}
+.resource { 
+    background: #1e293b; 
+    padding: 10px 20px; 
+    border-radius: 8px;
+}
+.menu-buttons { 
+    display: grid; 
+    gap: 10px; 
+    max-width: 300px; 
+    margin: 30px auto;
+}
+.toast { 
+    position: fixed; 
+    bottom: 20px; 
+    left: 50%; 
+    transform: translateX(-50%); 
+    background: #1e293b; 
+    border: 2px solid #ff6b00; 
+    padding: 15px 30px; 
+    border-radius: 10px; 
+    display: none;
+}
+</style>
+</head>
+<body>
 
-#loadingScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0e1a; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
-.spinner { width: 60px; height: 60px; border: 5px solid #1e293b; border-top: 5px solid #ff6b00; border-radius: 50%; animation: spin 1s linear infinite; }
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-.loading-text { margin-top: 20px; color: #ff6b00; font-size: 1.2em; font-weight: bold; }
+<div id="loading">
+    <div class="spinner"></div>
+</div>
 
-.auth-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); }
-.auth-card { background: rgba(30, 41, 59, 0.95); border: 2px solid #ff6b00; border-radius: 20px; padding: 40px; max-width: 500px; width: 100%; box-shadow: 0 20px 60px rgba(255, 107, 0, 0.4); }
-.auth-card h1 { text-align: center; font-size: 3em; margin-bottom: 10px; background: linear-gradient(135deg, #ff6b00, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.auth-card .subtitle { text-align: center; color: #94a3b8; letter-spacing: 4px; margin-bottom: 30px; }
-.auth-tabs { display: flex; gap: 10px; margin-bottom: 25px; }
-.auth-tab { flex: 1; padding: 14px; background: #0f172a; border: 2px solid #334155; border-radius: 10px; color: #fff; cursor: pointer; font-weight: bold; text-align: center; transition: all 0.3s; }
-.auth-tab.active { background: #ff6b00; border-color: #ff6b00; }
-.auth-form { display: none; }
-.auth-form.active { display: block; }
+<div id="authView" class="hidden">
+    <div class="auth-container">
+        <div class="auth-card">
+            <h1> DRAGON WAR</h1>
+            <div style="margin: 20px 0;">
+                <button onclick="showLogin()">Entrar</button>
+                <button onclick="showRegister()" style="background: #22c55e;">Criar Conta</button>
+            </div>
+            <div id="loginForm">
+                <input id="loginEmail" type="email" placeholder="E-mail">
+                <input id="loginPass" type="password" placeholder="Senha">
+                <button onclick="doLogin()">ENTRAR</button>
+            </div>
+            <div id="registerForm" class="hidden">
+                <input id="regNick" placeholder="Nome do Personagem">
+                <input id="regEmail" type="email" placeholder="E-mail">
+                <input id="regPass" type="password" placeholder="Senha">
+                <button onclick="doRegister()" style="background: #22c55e;">CADASTRAR</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-input { width: 100%; padding: 14px; margin: 10px 0; border-radius: 10px; border: 2px solid #334155; background: #0f172a; color: #fff; font-size: 15px; }
-input:focus { outline: none; border-color: #ff6b00; }
-button { width: 100%; padding: 14px; margin: 10px 0; border-radius: 10px; border: none; font-weight: bold; font-size: 15px; cursor: pointer; text-transform: uppercase; transition: all 0.3s; }
-button:hover { transform: translateY(-2px); filter: brightness(1.2); }
+<div id="gameView" class="hidden">
+    <div class="game-view">
+        <div class="player-info">
+            <h2 id="playerName">Carregando...</h2>
+            <p>Nível <span id="playerLevel">1</span></p>
+        </div>
+        
+        <div class="resources">
+            <div class="resource">💰 <span id="resCoins">0</span></div>
+            <div class="resource">💎 <span id="resGems">0</span></div>
+            <div class="resource">🔮 <span id="resCrystals">0</span></div>
+        </div>
 
-.btn-primary { background: linear-gradient(135deg, #ff6b00, #ff4500); color: #fff; }
-.btn-success { background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; }
-.btn-danger { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; }
+        <div class="menu-buttons">
+            <button onclick="showToast('⚔️ Em breve!')">JOGAR</button>
+            <button onclick="showToast('🛒 Em breve!')">LOJA</button>
+            <button onclick="showToast('✨ Em breve!')">PODERES</button>
+            <button onclick="showToast('📊 Em breve!')">RESUMO</button>
+            <button onclick="doLogout()" style="background: #ef4444;">SAIR</button>
+        </div>
+    </div>
+</div>
 
-.game-layout { display: flex; min-height: 100vh; }
-.sidebar { width: 200px; background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); border-right: 2px solid #334155; padding: 20px 0; position: fixed; height: 100vh; overflow-y: auto; }
-.sidebar-item { padding: 15px 20px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 10px; border-left: 3px solid transparent; }
-.sidebar-item:hover { background: rgba(59, 130, 246, 0.1); border-left-color: #3b82f6; }
-.sidebar-item.active { background: rgba(59, 130, 246, 0.2); border-left-color: #3b82f6; }
-.sidebar-item .icon { font-size: 1.3em; }
-.sidebar-item .label { font-size: 0.9em; font-weight: bold; }
+<div id="toast" class="toast"></div>
 
-.main-content { margin-left: 200px; flex: 1; padding: 20px; }
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, setDoc, onSnapshot, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-.top-bar { display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.9); padding: 15px 20px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
-.player-info { display: flex; align-items: center; gap: 15px; }
-.player-avatar { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; border: 3px solid #ffd700; cursor: pointer; transition: all 0.3s; }
-.player-avatar:hover { transform: scale(1.1); box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
-.player-details h3 { font-size: 1.2em; margin-bottom: 3px; }
-.player-details .level { font-size: 0.85em; color: #94a3b8; }
-.player-rank-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.75em; font-weight: bold; margin-left: 8px; }
-.rank-iniciante { background: #64748b; color: #fff; }
-.rank-bronze { background: #cd7f32; color: #fff; }
-.rank-prata { background: #c0c0c0; color: #000; }
-.rank-ouro { background: #ffd700; color: #000; }
-.rank-platina { background: #00d4ff; color: #000; }
-.rank-diamante { background: #b9f2ff; color: #000; }
-.rank-mestre { background: #9333ea; color: #fff; }
-.rank-lendario { background: linear-gradient(135deg, #ff6b00, #ffd700); color: #000; box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); }
+const firebaseConfig = {
+    apiKey: "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
+    authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
+    projectId: "dragon-war-rise-of-power-2a9f1",
+    storageBucket: "dragon-war-rise-of-power-2a9f1.firebasestorage.app",
+    messagingSenderId: "115455691167",
+    appId: "1:115455691167:web:ff3638f67b66c17c5515aa"
+};
 
-.resources { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
-.resource { display: flex; align-items: center; gap: 8px; background: rgba(0, 0, 0, 0.3); padding: 8px 15px; border-radius: 8px; border: 1px solid #ffd700; }
-.resource-icon { font-size: 1.3em; }
-.resource-value { font-weight: bold; color: #ffd700; }
-.badge-adm { background: #7c3aed; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 0.7em; margin-left: 5px; }
-.badge-vip { background: #ffd700; color: #000; padding: 2px 8px; border-radius: 10px; font-size: 0.7em; margin-left: 5px; }
-.text-admin { color: #c4b5fd; text-shadow: 0 0 10px rgba(196, 181, 253, 0.6); }
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(db);
 
-.screen { display: none; animation: fadeIn 0.4s ease-out; }
-.screen.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+let currentUserData = null;
+let playerRef = null;
 
-.screen-title { font-size: 2em; margin-bottom: 20px; color: #fbbf24; display: flex; align-items: center; gap: 10px; }
+const $ = (id) => document.getElementById(id);
 
-/* HOME SCREEN */
-.home-hero { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, rgba(255, 107, 0, 0.1), rgba(139, 92, 246, 0.1)); border-radius: 20px; border: 2px solid #334155; margin-bottom: 30px; }
-.home-title { font-size: 3.5em; font-weight: 900; background: linear-gradient(135deg, #ff6b00, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
-.home-subtitle { font-size: 1.3em; color: #94a3b8; margin-bottom: 30px; }
-.home-actions { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
-.home-btn { padding: 20px 40px; font-size: 1.3em; border-radius: 15px; border: none; cursor: pointer; font-weight: 900; width: auto; text-transform: uppercase; transition: all 0.3s; }
-.home-btn:hover { transform: translateY(-5px); }
-.btn-play { background: linear-gradient(135deg, #ff6b00, #ff4500); color: #fff; box-shadow: 0 0 30px rgba(255, 107, 0, 0.5); animation: pulse 2s infinite; }
-@keyframes pulse { 0%, 100% { box-shadow: 0 0 30px rgba(255, 107, 0, 0.5); } 50% { box-shadow: 0 0 50px rgba(255, 107, 0, 0.8); } }
-.btn-start { background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; box-shadow: 0 0 30px rgba(34, 197, 94, 0.5); }
-.btn-daily-home { background: linear-gradient(135deg, #fbbf24, #d97706); color: #000; box-shadow: 0 0 30px rgba(251, 191, 36, 0.5); }
+setTimeout(() => { 
+    $('loading').classList.add('hidden'); 
+}, 1000);
 
-.home-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 30px; }
-.home-stat { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; border: 1px solid #334155; }
-.home-stat-value { font-size: 1.8em; font-weight: bold; color: #fbbf24; }
-.home-stat-label { font-size: 0.85em; color: #94a3b8; margin-top: 5px; }
+window.showToast = (msg) => {
+    const t = $('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 3000);
+};
 
-/* BOSSES */
-.bosses-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-.boss-card { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 16px; padding: 20px; border: 2px solid #334155; position: relative; transition: all 0.3s; }
-.boss-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-.boss-rank { position: absolute; top: 15px; right: 15px; font-size: 2em; font-weight: 900; color: #fbbf24; }
-.boss-image { font-size: 100px; text-align: center; margin: 20px 0; animation: float 3s ease-in-out infinite; }
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-.boss-name { font-size: 1.8em; font-weight: 900; text-align: center; margin-bottom: 5px; }
-.boss-title { text-align: center; color: #94a3b8; font-size: 0.9em; margin-bottom: 15px; }
-.boss-stats { display: flex; justify-content: space-around; margin-bottom: 15px; }
-.boss-stat { text-align: center; }
-.boss-stat-label { font-size: 0.8em; color: #94a3b8; }
-.boss-stat-value { font-size: 1.2em; font-weight: bold; color: #fbbf24; }
-.rewards { background: rgba(0, 0, 0, 0.3); padding: 10px; border-radius: 8px; margin-bottom: 15px; }
-.rewards-title { font-size: 0.85em; color: #94a3b8; margin-bottom: 8px; }
-.rewards-grid { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
-.reward-item { display: flex; flex-direction: column; align-items: center; font-size: 0.8em; }
-.reward-icon { font-size: 1.5em; }
-.btn-battle { width: 100%; padding: 18px; background: linear-gradient(135deg, #ff8c00, #ff4500); color: #fff; border: none; border-radius: 12px; font-size: 1.2em; font-weight: 900; cursor: pointer; }
+window.showLogin = () => {
+    $('loginForm').classList.remove('hidden');
+    $('registerForm').classList.add('hidden');
+};
 
-/* SHOP TABS */
-.shop-tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-.shop-tab { padding: 12px 24px; background: #1e293b; border: 2px solid #334155; border-radius: 10px; color: #fff; cursor: pointer; font-weight: bold; transition: all 0.3s; }
-.shop-tab.active { background: linear-gradient(135deg, #3b82f6, #1e40af); border-color: #60a5fa; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
-.shop-section { display: none; }
-.shop-section.active { display: block; animation: fadeIn 0.3s; }
+window.showRegister = () => {
+    $('loginForm').classList.add('hidden');
+    $('registerForm').classList.remove('hidden');
+};
 
-/* CHARACTERS */
-.characters-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-.character-card { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 16px; padding: 20px; border: 2px solid #334155; transition: all 0.3s; position: relative; }
-.character-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-.character-card.owned { border-color: #22c55e; }
-.character-card.equipped { border-color: #ffd700; box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
-.character-emoji { font-size: 80px; text-align: center; margin-bottom: 10px; }
-.character-name { font-size: 1.3em; font-weight: bold; text-align: center; margin-bottom: 5px; }
-.character-class { text-align: center; color: #94a3b8; font-size: 0.9em; margin-bottom: 10px; }
-.character-stats { display: flex; justify-content: space-around; margin-bottom: 15px; font-size: 0.85em; }
-.character-stat { text-align: center; }
-.character-stat-label { color: #94a3b8; font-size: 0.8em; }
-.character-stat-value { font-weight: bold; color: #fbbf24; }
-.btn-character { width: 100%; padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; }
-.btn-buy-char { background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; }
-.btn-equip { background: linear-gradient(135deg, #3b82f6, #1e40af); color: #fff; }
-.btn-equipped { background: #ffd700; color: #000; cursor: default; }
-.btn-owned { background: #64748b; color: #fff; cursor: default; }
+window.doLogin = async () => {
+    const email = $('loginEmail').value.trim();
+    const pass = $('loginPass').value;
+    if (!email || !pass) return showToast('Preencha e-mail e senha');
+    try {
+        await signInWithEmailAndPassword(auth, email, pass);
+        showToast('Bem-vindo!');
+    } catch(e) {
+        showToast('Erro: ' + e.message);
+    }
+};
 
-/* SHOP ITEMS */
-.shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; }
-.shop-item { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 12px
+window.doRegister = async () => {
+    const nick = $('regNick').value.trim();
+    const email = $('regEmail').value.trim();
+    const pass = $('regPass').value;
+    if (!nick || !email || !pass) return showToast('Preencha todos os campos');
+    if (pass.length < 6) return showToast('Senha mínima: 6 caracteres');
+    try {
+        const cred = await createUserWithEmailAndPassword(auth, email, pass);
+        await setDoc(doc(db, "players", cred.user.uid), {
+            uid: cred.user.uid,
+            nick: nick,
+            email: email,
+            coins: 1000,
+            gems: 100,
+            crystals: 50,
+            level: 1,
+            createdAt: serverTimestamp()
+        });
+        showToast('Conta criada!');
+    } catch(e) {
+        showToast('Erro: ' + e.message);
+    }
+};
+
+window.doLogout = () => {
+    signOut(auth).then(() => {
+        showToast('Desconectado!');
+        setTimeout(() => location.reload(), 1000);
+    });
+};
+
+onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+        $('loading').classList.add('hidden');
+        $('authView').classList.remove('hidden');
+        $('gameView').classList.add('hidden');
+        return;
+    }
+
+    $('authView').classList.add('hidden');
+    $('loading').classList.add('hidden');
+    $('gameView').classList.remove('hidden');
+
+    playerRef = doc(db, "players", user.uid);
+    
+    onSnapshot(playerRef, (snap) => {
+        if (!snap.exists()) return;
+        const data = snap.data();
+        currentUserData = data;
+        
+        $('playerName').textContent = data.nick || 'Jogador';
+        $('playerLevel').textContent = data.level || 1;
+        $('resCoins').textContent = data.coins || 0;
+        $('resGems').textContent = data.gems || 0;
+        $('resCrystals').textContent = data.crystals || 0;
+    });
+});
+</script>
+
+</body>
+</html>
