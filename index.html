@@ -118,7 +118,7 @@
                         <hr style="border-color: #334155; margin: 15px 0;">
                         <p><strong>Histórico de Atividades e Batalhas:</strong></p>
                         <ul id="sum-historico" style="margin-top: 10px; padding-left: 20px; color: #94a3b8; font-size: 14px;">
-                            <li>Conta criada com sucesso na nuvem.</li>
+                            <li>Conta sincronizada com sucesso na nuvem.</li>
                         </ul>
                     </div>
                 </div>
@@ -193,7 +193,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
     <script>
-        // Configuração Firebase (Preencha com seus dados reais do console)
+        // 🔑 CONFIGURAÇÃO REAL DO SEU FIREBASE (Cole suas chaves reais aqui caso precise atualizar)
         const firebaseConfig = {
             apiKey: "SUA_API_KEY",
             authDomain: "seu-projeto.firebaseapp.com",
@@ -254,7 +254,7 @@
                         diamantes: 100,
                         rank: "Bronze",
                         avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=" + nome,
-                        historico: ["Conta criada com sucesso."],
+                        historico: ["Conta criada com sucesso na nuvem."],
                         petEquipado: "Nenhum"
                     };
 
@@ -262,7 +262,7 @@
                         entrarNoHub();
                     });
                 })
-                .catch((error) => { alert("Erro: " + error.message); });
+                .catch((error) => { alert("Erro ao registrar: " + error.message); });
         }
 
         function fazerLogin() {
@@ -278,30 +278,52 @@
                             jogadorAtual = doc.data();
                             entrarNoHub();
                         } else {
-                            alert("Dados não encontrados.");
+                            // Se o usuário existe no Auth mas não no Firestore, cria um perfil padrão para não travar
+                            let uidGerado = user.uid.substring(0, 8).toUpperCase();
+                            jogadorAtual = {
+                                nome: email.split('@')[0],
+                                uid: uidGerado,
+                                nivel: 1,
+                                moedas: 15000,
+                                diamantes: 100,
+                                rank: "Bronze",
+                                avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=" + email,
+                                historico: ["Perfil recuperado na nuvem."],
+                                petEquipado: "Nenhum"
+                            };
+                            db.collection("jogadores").doc(user.uid).set(jogadorAtual).then(() => {
+                                entrarNoHub();
+                            });
                         }
                     });
                 })
-                .catch((error) => { alert("Erro de login. Verifique suas credenciais."); });
+                .catch((error) => { alert("Erro de login. Verifique se o e-mail e senha estão corretos."); });
         }
 
         function entrarNoHub() {
             document.getElementById('auth-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
             
-            // Atualizar interface visual
             document.getElementById('sidebar-nome').innerText = jogadorAtual.nome;
             document.getElementById('sidebar-nivel').innerText = "Lv. " + jogadorAtual.nivel;
             document.getElementById('sidebar-avatar').src = jogadorAtual.avatar;
             document.getElementById('res-moedas').innerText = jogadorAtual.moedas;
             document.getElementById('res-diamantes').innerText = jogadorAtual.diamantes;
             
-            // Atualizar resumo
             document.getElementById('sum-nome').innerText = jogadorAtual.nome;
             document.getElementById('sum-uid').innerText = jogadorAtual.uid;
             document.getElementById('sum-rank').innerText = jogadorAtual.rank;
 
-            // Verificar se é Admin (Exemplo com o e-mail principal ou UID do Gabriel)
+            // Renderizar histórico no resumo
+            let historicoHtml = "";
+            if(jogadorAtual.historico) {
+                jogadorAtual.historico.forEach(h => {
+                    historicoHtml += `<li>${h}</li>`;
+                });
+                document.getElementById('sum-historico').innerHTML = historicoHtml;
+            }
+
+            // Liberar painel de Admin apenas para o e-mail autorizado (markivus25@gmail.com)
             if (auth.currentUser && auth.currentUser.email === "markivus25@gmail.com") {
                 document.getElementById('admin-panel-section').style.display = 'block';
             }
@@ -317,12 +339,13 @@
         function enfrentarBoss(nomeBoss, ouroPremio, diamantesPremio) {
             jogadorAtual.moedas += ouroPremio;
             jogadorAtual.diamantes += diamantesPremio;
-            jogadorAtual.historico.push(`Vitória na batalha contra o Boss: ${nomeBoss}`);
+            if(!jogadorAtual.historico) jogadorAtual.historico = [];
+            jogadorAtual.historico.push(`Vitória contra o Boss: ${nomeBoss}`);
             
             document.getElementById('res-moedas').innerText = jogadorAtual.moedas;
             document.getElementById('res-diamantes').innerText = jogadorAtual.diamantes;
             
-            alert(`Parabéns! Você derrotou o boss ${nomeBoss} e ganhou recompensas.`);
+            alert(`Parabéns! Você derrotou o boss ${nomeBoss} e resgatou as recompensas.`);
             salvarProgressoNuvem();
         }
 
@@ -332,6 +355,7 @@
                 jogadorAtual.moedas -= custo;
                 document.getElementById('res-moedas').innerText = jogadorAtual.moedas;
             }
+            if(!jogadorAtual.historico) jogadorAtual.historico = [];
             jogadorAtual.historico.push(`Comprou o item: ${itemNome}`);
             alert(`Você adquiriu ${itemNome} com sucesso!`);
             salvarProgressoNuvem();
@@ -339,8 +363,9 @@
 
         function equiparPet(nomePet) {
             jogadorAtual.petEquipado = nomePet;
+            if(!jogadorAtual.historico) jogadorAtual.historico = [];
             jogadorAtual.historico.push(`Equipou o pet: ${nomePet}`);
-            alert(`O pet ${nomePet} agora está acompanhando você na jornada!`);
+            alert(`O pet ${nomePet} agora está ativo na jornada!`);
             salvarProgressoNuvem();
         }
 
@@ -350,7 +375,7 @@
         }
 
         function acaoAdmin(acao) {
-            alert(`[ADMIN] Ação executada com sucesso: ${acao}`);
+            alert(`[ADMIN] Comando executado com sucesso: ${acao}`);
         }
     </script>
 </body>
