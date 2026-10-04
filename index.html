@@ -11,6 +11,10 @@
         .screen { display: none; width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
         .active { display: flex; }
 
+        /* AVISO DE BANIMENTO */
+        #ban-screen { justify-content: center; align-items: center; background: #000; z-index: 999; flex-direction: column; text-align: center; padding: 20px; }
+        #ban-screen h1 { color: #dc2626; font-size: 36px; margin-bottom: 15px; }
+
         /* TELA DE AUTENTICAÇÃO */
         #login-screen { justify-content: center; align-items: center; background: radial-gradient(circle, #1e293b 0%, #0f172a 100%); z-index: 100; }
         .login-card { background: rgba(30, 41, 59, 0.9); border: 1px solid #3b82f6; padding: 40px; border-radius: 12px; width: 100%; max-width: 450px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); text-align: center; backdrop-filter: blur(10px); }
@@ -35,8 +39,12 @@
         .nav-menu li:hover, .nav-menu li.active-tab { background: linear-gradient(90deg, rgba(249,115,22,0.2), transparent); border-color: #f97316; color: #f97316; }
 
         .main-content { flex-grow: 1; display: flex; flex-direction: column; height: 100vh; overflow-y: auto; }
+        
+        /* MENSAGEM GLOBAL NO TOPO */
+        #global-msg-banner { background: linear-gradient(90deg, #ea580c, #f97316); color: #fff; text-align: center; padding: 10px; font-weight: bold; font-size: 14px; display: none; box-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 50; }
+
         .top-bar { height: 75px; background: #162032; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; padding: 0 35px; flex-shrink: 0; }
-        .top-bar-title { color: #f97316; font-weight: bold; font-size: 20px; letter-spacing: 1px; }
+        .top-bar-title { color: #f97316; font-weight: bold; font-size: 20px; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
         .resources-container { display: flex; gap: 15px; }
         .resource-badge { background: #0b0f19; padding: 6px 16px; border-radius: 20px; border: 1px solid #334155; font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 8px; }
 
@@ -76,21 +84,26 @@
         .combat-actions { display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
         .combat-log { background: #0b0f19; border: 1px solid #334155; border-radius: 8px; padding: 15px; height: 120px; overflow-y: auto; text-align: left; font-size: 13px; color: #94a3b8; margin-top: 15px; }
 
-        /* SELEÇÃO DE AVATARS NO PERFIL (25 PERSONAGENS) */
+        /* SELEÇÃO DE AVATARS NO PERFIL */
         .avatar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 15px; max-height: 300px; overflow-y: auto; margin: 15px 0; padding: 5px; }
         .avatar-option { width: 75px; height: 75px; border-radius: 50%; border: 3px solid #334155; cursor: pointer; object-fit: cover; transition: 0.2s; }
         .avatar-option.selected { border-color: #f97316; box-shadow: 0 0 15px rgba(249,115,22,0.5); }
         .avatar-option.locked { opacity: 0.4; filter: grayscale(1); cursor: not-allowed; }
 
-        /* CHAT E TABELA */
-        .chat-box { height: 260px; background: #0f172a; border: 1px solid #475569; border-radius: 8px; padding: 15px; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
-        .chat-input-area { display: flex; gap: 12px; }
+        /* TABELA DE RANKING E ADM */
         .ranking-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         .ranking-table th, .ranking-table td { padding: 14px; text-align: left; border-bottom: 1px solid #334155; font-size: 14px; }
         .ranking-table th { color: #f97316; background: #0f172a; }
     </style>
 </head>
 <body>
+
+    <!-- TELA DE BANIMENTO -->
+    <div id="ban-screen" class="screen">
+        <h1>🚫 ACESSO BLOQUEADO</h1>
+        <p style="color: #94a3b8; font-size: 16px; margin-bottom: 20px;">Sua conta foi banida por violação das regras do servidor.</p>
+        <button class="btn-main" style="max-width: 200px;" onclick="location.reload()">Sair</button>
+    </div>
 
     <!-- TELA DE LOGIN / CADASTRO -->
     <div id="login-screen" class="screen active">
@@ -120,11 +133,11 @@
             <div class="user-mini-profile">
                 <img id="sidebar-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Player" alt="Avatar">
                 <div>
-                    <h4 id="sidebar-nome">Carregando...</h4>
+                    <h4 id="sidebar-nome" style="display:flex; align-items:center; gap:5px;">Carregando...</h4>
                     <small id="sidebar-nivel" style="color: #3b82f6;">Nível 1 • Iniciante</small>
                 </div>
             </div>
-            <ul class="nav-menu">
+            <ul class="nav-menu" id="menu-lateral-dinamico">
                 <li onclick="trocarTab('inicio', this)" class="active-tab">🏠 Início</li>
                 <li onclick="trocarTab('jogar', this)">🎮 Jogar</li>
                 <li onclick="trocarTab('loja', this)">🛒 Loja</li>
@@ -132,15 +145,18 @@
                 <li onclick="trocarTab('combate', this)">⚔ Combate</li>
                 <li onclick="trocarTab('inventario', this)">🎒 Inventário</li>
                 <li onclick="trocarTab('ranking', this)">🏆 Ranking</li>
-                <li onclick="trocarTab('eventos', this)">🎁 Eventos</li>
+                <li onclick="trocarTab('eventos', this)">🎉 Eventos</li>
                 <li onclick="trocarTab('guilda', this)">🛡 Guildas & Chat</li>
                 <li onclick="trocarTab('config', this)">⚙ Configurações</li>
             </ul>
         </div>
 
         <div class="main-content">
+            <!-- MENSAGEM GLOBAL DO ADM -->
+            <div id="global-msg-banner">📢 <span id="global-msg-texto">Bem-vindo ao Dragon War!</span></div>
+
             <div class="top-bar">
-                <div class="top-bar-title">DRAGON WAR: RISE OF POWER</div>
+                <div class="top-bar-title" id="top-bar-titulo-container">DRAGON WAR: RISE OF POWER</div>
                 <div class="resources-container">
                     <div class="resource-badge">🪙 Ouro: <span id="badge-ouro" style="color: #facc15;">0</span></div>
                     <div class="resource-badge">💎 Gemas: <span id="badge-gemas" style="color: #38bdf8;">0</span></div>
@@ -190,7 +206,7 @@
                     
                     <div class="sub-tabs">
                         <button class="sub-tab-btn active-sub" onclick="trocarSubLoja('armas', this)">⚔️ Armas</button>
-                        <button class="sub-tab-btn" onclick="trocarSubLoja('skins', this)">🎭 Skins</button>
+                        <button class="sub-tab-btn" onclick="trocarSubLoja('skins', this)">🎭 Skins / Personagens</button>
                         <button class="sub-tab-btn" onclick="trocarSubLoja('suprimentos', this)">🧪 Suprimentos</button>
                     </div>
 
@@ -209,7 +225,7 @@
 
                 <!-- ABA: PODERES -->
                 <div id="tab-poderes" class="tab-panel">
-                    <h2>Árvore de Habilidades Elementais (+50 Poderes)</h2>
+                    <h2>Árvore de Habilidades Elementais</h2>
                     <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Melhore suas habilidades para causar mais dano (gasta 1 Ponto de Poder por melhoria).</p>
                     
                     <div class="card-box">
@@ -321,19 +337,10 @@
 
                 <!-- ABA: EVENTOS -->
                 <div id="tab-eventos" class="tab-panel">
-                    <h2>Eventos e Recompensas</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Participe dos eventos diários para ganhar bônus exclusivos.</p>
-                    <div class="grid-cards">
-                        <div class="item-card">
-                            <h3>Caixa Diária</h3>
-                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Abra uma vez por dia para receber moedas ou gemas reais.</p>
-                            <button class="btn-action" onclick="reclamarCaixaDiaria()">ABRIR CAIXA</button>
-                        </div>
-                        <div class="item-card">
-                            <h3>Tesouro Raro</h3>
-                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Gemas acumuladas podem ser usadas para itens especiais na loja.</p>
-                            <button class="btn-action" onclick="trocarTab('loja', document.querySelectorAll('.nav-menu li')[2])">IR PARA LOJA</button>
-                        </div>
+                    <h2>Eventos e Recompensas Ativas</h2>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Resgate recompensas de eventos criados pela administração.</p>
+                    <div class="grid-cards" id="container-eventos-ativos">
+                        <p style="color: #94a3b8;">Nenhum evento ativo no momento.</p>
                     </div>
                 </div>
 
@@ -349,25 +356,12 @@
                     </div>
 
                     <div class="card-box">
-                        <div class="chat-box" id="chat-mensagens">
+                        <div class="chat-box" id="chat-mensagens" style="height: 260px; background: #0f172a; border: 1px solid #475569; border-radius: 8px; padding: 15px; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px; font-size: 14px;">
                             <div><strong>[Sistema]:</strong> Bem-vindo ao chat oficial do Dragon War!</div>
                         </div>
-                        <div class="chat-input-area">
+                        <div class="chat-input-area" style="display: flex; gap: 12px;">
                             <input type="text" id="input-chat-msg" class="form-control" placeholder="Digite sua mensagem..." style="margin-bottom:0;" onkeypress="if(event.key==='Enter') enviarMensagemChat()">
                             <button class="btn-action" style="width: 120px; margin-top: 0;" onclick="enviarMensagemChat()">Enviar</button>
-                        </div>
-                    </div>
-
-                    <div class="grid-cards" style="margin-top: 20px;">
-                        <div class="card-box" style="margin-bottom: 0;">
-                            <h3>Criar Guilda (🪙 5.000)</h3>
-                            <input type="text" id="guilda-nome-input" class="form-control" placeholder="Nome da Guilda" style="margin-top: 10px;">
-                            <button class="btn-action" onclick="criarGuilda()">Fundar Guilda</button>
-                        </div>
-                        <div class="card-box" style="margin-bottom: 0;">
-                            <h3>Entrar em Guilda</h3>
-                            <p style="color: #94a3b8; font-size: 13px; margin-bottom: 15px;">Junte-se a uma guilda pública existente.</p>
-                            <button class="btn-action" onclick="entrarGuildaAleatoria()">Entrar em Guilda Aleatória</button>
                         </div>
                     </div>
                 </div>
@@ -384,9 +378,7 @@
                             <button class="btn-action" style="max-width: 220px; background: #3b82f6;" onclick="toggleEfeitosSonoros()">🔊 Efeitos de Toque: <span id="status-efeitos">Ativados</span></button>
                         </div>
 
-                        <h3>Escolha seu Avatar (25 Personagens)</h3>
-                        <p style="color: #94a3b8; font-size: 13px; margin-bottom: 10px;">5 avatares iniciais liberados. Os demais exigem nível superior.</p>
-                        
+                        <h3>Escolha seu Avatar</h3>
                         <div class="avatar-grid" id="lista-avatares-perfil"></div>
 
                         <label style="display:block; font-size:13px; color:#94a3b8; margin: 15px 0 5px 0;">Nome do jogador:</label>
@@ -396,11 +388,116 @@
                     </div>
                 </div>
 
+                <!-- ABA: PAINEL ADM (EXCLUSIVO PARA DM) -->
+                <div id="tab-adm" class="tab-panel">
+                    <h2>👑 Painel de Administração (DM)</h2>
+                    <p style="color: #f97316; margin-top: 5px; margin-bottom: 20px;">Painel de controle exclusivo para gerenciamento geral do servidor.</p>
+                    
+                    <div class="sub-tabs">
+                        <button class="sub-tab-btn active-sub" onclick="trocarSubAdm('catalogo', this)">📦 Criar Itens/Poderes</button>
+                        <button class="sub-tab-btn" onclick="trocarSubAdm('gerenciar', this)">⚙️ Gerenciar Catálogo</button>
+                        <button class="sub-tab-btn" onclick="trocarSubAdm('eventos', this)">🎉 Eventos</button>
+                        <button class="sub-tab-btn" onclick="trocarSubAdm('global', this)">📢 Mensagem Global</button>
+                        <button class="sub-tab-btn" onclick="trocarSubAdm('recompensas', this)">🎁 Recompensas</button>
+                        <button class="sub-tab-btn" onclick="trocarSubAdm('jogadores', this)">👥 Jogadores & Ban</button>
+                    </div>
+
+                    <!-- SUB-ADM: CRIAR ITENS -->
+                    <div id="subadm-catalogo" class="sub-panel active-sub-panel">
+                        <div class="card-box">
+                            <h3>Adicionar Novo Conteúdo ao Jogo</h3>
+                            <label style="color:#94a3b8; font-size:13px;">Tipo de Elemento:</label>
+                            <select id="adm-tipo-criacao" class="form-control" style="margin-top: 5px;">
+                                <option value="arma">Arma para Loja</option>
+                                <option value="personagem">Personagem / Skin para Loja</option>
+                                <option value="poder">Poder para Árvore</option>
+                            </select>
+                            
+                            <label style="color:#94a3b8; font-size:13px;">Nome:</label>
+                            <input type="text" id="adm-nome-criacao" class="form-control" placeholder="Ex: Lâmina Solar" style="margin-top: 5px;">
+                            
+                            <label style="color:#94a3b8; font-size:13px;">Preço (Ouro) ou Dano do Poder:</label>
+                            <input type="number" id="adm-valor-criacao" class="form-control" placeholder="Ex: 1500" style="margin-top: 5px;">
+
+                            <button class="btn-action" onclick="admCriarItem()">Criar e Publicar Imediatamente</button>
+                        </div>
+                    </div>
+
+                    <!-- SUB-ADM: GERENCIAR ITENS EXISTENTES -->
+                    <div id="subadm-gerenciar" class="sub-panel">
+                        <div class="card-box">
+                            <h3>Itens e Poderes Cadastrados</h3>
+                            <div id="adm-lista-gerenciar" style="display:flex; flex-direction:column; gap:10px; max-height: 350px; overflow-y:auto;"></div>
+                        </div>
+                    </div>
+
+                    <!-- SUB-ADM: EVENTOS -->
+                    <div id="subadm-eventos" class="sub-panel">
+                        <div class="card-box">
+                            <h3>Criar Evento Especial</h3>
+                            <input type="text" id="adm-evento-titulo" class="form-control" placeholder="Título do Evento (Ex: Fim de Semana Dobrado)">
+                            <input type="text" id="adm-evento-desc" class="form-control" placeholder="Descrição e Recompensa (Ex: Ganhe 1000 Ouros)">
+                            <button class="btn-action" onclick="admCriarEvento()">Publicar Evento</button>
+                            
+                            <h3 style="margin-top:25px;">Eventos Atuais</h3>
+                            <div id="adm-lista-eventos-ativos"></div>
+                        </div>
+                    </div>
+
+                    <!-- SUB-ADM: MENSAGEM GLOBAL -->
+                    <div id="subadm-global" class="sub-panel">
+                        <div class="card-box">
+                            <h3>Controlar Mensagem Global</h3>
+                            <input type="text" id="adm-msg-global-input" class="form-control" placeholder="Texto da mensagem que aparecerá no topo de todos os jogadores">
+                            <div style="display:flex; gap:10px;">
+                                <button class="btn-action" style="background:#16a34a;" onclick="admPublicarMsgGlobal()">Publicar Mensagem</button>
+                                <button class="btn-action" style="background:#dc2626;" onclick="admDesativarMsgGlobal()">Desativar Mensagem</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUB-ADM: RECOMPENSAS -->
+                    <div id="subadm-recompensas" class="sub-panel">
+                        <div class="card-box">
+                            <h3>Dar Recompensa Direta a um Jogador</h3>
+                            <select id="adm-select-jogador" class="form-control"></select>
+                            
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                                <div><label style="font-size:12px; color:#94a3b8;">Moedas (Ouro)</label><input type="number" id="adm-recompensa-ouro" class="form-control" value="0"></div>
+                                <div><label style="font-size:12px; color:#94a3b8;">Gemas</label><input type="number" id="adm-recompensa-gemas" class="form-control" value="0"></div>
+                                <div><label style="font-size:12px; color:#94a3b8;">Pontos de Poder</label><input type="number" id="adm-recompensa-pontos" class="form-control" value="0"></div>
+                                <div><label style="font-size:12px; color:#94a3b8;">Vida Extra</label><input type="number" id="adm-recompensa-vida" class="form-control" value="0"></div>
+                                <div><label style="font-size:12px; color:#94a3b8;">Níveis</label><input type="number" id="adm-recompensa-nivel" class="form-control" value="0"></div>
+                            </div>
+                            <button class="btn-action" onclick="admEnviarRecompensa()">Enviar Recompensa à Conta</button>
+                        </div>
+                    </div>
+
+                    <!-- SUB-ADM: JOGADORES & BAN -->
+                    <div id="subadm-jogadores" class="sub-panel">
+                        <div class="card-box">
+                            <h3>Gerenciamento de Jogadores</h3>
+                            <table class="ranking-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>E-mail</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adm-tabela-jogadores"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDKs (Modo Compatível / Compat) para unificar com o script global -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -425,11 +522,16 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
+        // SEU E-MAIL DE DM CONFIGURADO AQUI
+        const EMAIL_ADMIN_DM = "groupsacabraldigital@gmail.com"; 
+
         let usuarioAtualId = null;
+        let eAdminUser = false;
         let modoAutenticacaoAtual = 'entrar';
 
         let dadosJogador = { 
             nome: "Jogador", 
+            email: "",
             ouro: 500, 
             gemas: 10, 
             pontosPoder: 0,
@@ -438,23 +540,27 @@
             pontos: 1250,
             avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=Warrior1",
             inventario: [], 
-            guildaNome: "" 
+            guildaNome: "",
+            banido: false,
+            eventosResgatados: []
         };
 
         let chatCanalAtual = 'global';
         let combateAtual = { ativo: false, dificuldade: '', mobNome: '', mobHp: 0, mobMaxHp: 0, mobDano: 0, defendendo: false };
         let poderSelecionadoNome = null;
 
-        // SISTEMA DE ÁUDIO WEB AUDIO API
+        let catalogoArmas = [];
+        let catalogoSkins = [];
+        let catalogoPoderes = [];
+        let eventosGlobais = [];
+
         let audioCtx = null;
         let musicaAtiva = false;
         let efeitosAtivos = true;
         let timerMusica = null;
 
         function iniciarContextoAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
 
         function tocarNota(freq, duracao, tipo = 'sine') {
@@ -489,7 +595,7 @@
             iniciarContextoAudio();
             musicaAtiva = !musicaAtiva;
             if (musicaAtiva) {
-                alert("Música ambiente de guerra ativada!");
+                alert("Música ambiente ativada!");
                 let notasGuerra = [120, 140, 160, 180];
                 timerMusica = setInterval(() => {
                     if(!musicaAtiva) return;
@@ -507,69 +613,12 @@
             document.getElementById('status-efeitos').innerText = efeitosAtivos ? "Ativados" : "Desativados";
         }
 
-        // 18 ARMAS DA LOJA
-        const listaArmasLoja = [
-            { id: 1, nome: "Adaga de Cobre", preco: 250 },
-            { id: 2, nome: "Espada Curta do Novato", preco: 450 },
-            { id: 3, nome: "Lâmina de Ferro Sombrio", preco: 800 },
-            { id: 4, nome: "Machado de Batalha Orc", preco: 1200 },
-            { id: 5, nome: "Espada Longa Real", preco: 1800 },
-            { id: 6, nome: "Foice da Névoa", preco: 2400 },
-            { id: 7, nome: "Martelo de Guerra Titã", preco: 3200 },
-            { id: 8, nome: "Lança do Relâmpago", preco: 4100 },
-            { id: 9, nome: "Katana da Lua Sangrenta", preco: 5500 },
-            { id: 10, nome: "Cajado do Mago Supremo", preco: 7000 },
-            { id: 11, nome: "Espada de Plasma Estelar", preco: 9500 },
-            { id: 12, nome: "Lâmina do Fênix Ardente", preco: 12000 },
-            { id: 13, nome: "Machado Glacial Ancestral", preco: 15500 },
-            { id: 14, nome: "Foice do Submundo", preco: 20000 },
-            { id: 15, nome: "Espada Divina do Sol", preco: 28000 },
-            { id: 16, nome: "Lâmina do Dragão Celestial", preco: 40000 },
-            { id: 17, nome: "Espada de Mithril Pura", preco: 48000 },
-            { id: 18, nome: "Lâmina do Vazio Infinito", preco: 60000 }
-        ];
-
-        // SKINS DA LOJA
-        const listaSkinsLoja = [
-            { id: 101, nome: "Skin Guerreiro Iniciante", preco: 500 },
-            { id: 102, nome: "Skin Cavaleiro de Prata", preco: 1500 },
-            { id: 103, nome: "Skin Mago Sombrio", preco: 3000 },
-            { id: 104, nome: "Skin Guardião de Magma", preco: 6000 },
-            { id: 105, nome: "Skin Paladino Dourado", preco: 10000 },
-            { id: 106, nome: "Skin Senhor do Dragão", preco: 25000 },
-            { id: 107, nome: "Skin Assassino das Sombras", preco: 35000 },
-            { id: 108, nome: "Skin Guardião Estelar", preco: 50000 }
-        ];
-
-        // SUPRIMENTOS
-        const listaSuprimentosLoja = [
-            { id: 201, nome: "Poção de Cura Pequena (+30 HP)", preco: 100 },
-            { id: 202, nome: "Poção de Cura Média (+60 HP)", preco: 250 },
-            { id: 203, nome: "Poção de Cura Superior (Cura Total)", preco: 600 },
-            { id: 204, nome: "Elixir de Força Ancestral", preco: 1500 },
-            { id: 205, nome: "Poção de Defesa de Ferro", preco: 800 },
-            { id: 206, nome: "Poção de Regeneração Contínua", preco: 1200 }
-        ];
-
-        // 25 AVATARES
         const avataresDisponiveis = [];
         for(let i=1; i<=25; i++) {
             let reqNivel = i <= 5 ? 1 : Math.floor(i * 1.5);
             avataresDisponiveis.push({
                 url: `https://api.dicebear.com/7.x/bottts/svg?seed=Character${i}`,
                 nivelMinimo: reqNivel
-            });
-        }
-
-        // ÁRVORE DE MAIS DE 50 HABILIDADES
-        const listaArvorePoderes = [];
-        const tiposMagia = ['Fogo', 'Raio', 'Gelo', 'Vento', 'Sombra', 'Luz', 'Terra', 'Arcano'];
-        for(let i=1; i<=55; i++) {
-            let tipo = tiposMagia[i % tiposMagia.length];
-            listaArvorePoderes.push({
-                id: i,
-                nome: `Poder ${tipo} Nível ${i}`,
-                dano: 25 + (i * 5)
             });
         }
 
@@ -603,44 +652,57 @@
             if(modoAutenticacaoAtual === 'entrar') {
                 auth.signInWithEmailAndPassword(email, senha).then(cred => {
                     usuarioAtualId = cred.user.uid;
-                    carregarDadosDoBanco(usuarioAtualId, "Guerreiro");
+                    verificarEfetivarLogin(cred.user);
                 }).catch(err => alert("Erro ao entrar: " + err.message));
             } else {
                 let nome = document.getElementById('auth-nome').value.trim();
                 auth.createUserWithEmailAndPassword(email, senha).then(cred => {
                     usuarioAtualId = cred.user.uid;
                     dadosJogador.nome = nome || "Guerreiro";
+                    dadosJogador.email = email;
                     salvarDadosNoBanco();
-                    carregarDadosDoBanco(usuarioAtualId, dadosJogador.nome);
+                    verificarEfetivarLogin(cred.user);
                 }).catch(err => alert("Erro ao criar conta: " + err.message));
             }
         }
 
-        function carregarDadosDoBanco(uid, nomePadrao) {
-            db.collection("jogadores").doc(uid).get().then(doc => {
+        function verificarEfetivarLogin(user) {
+            db.collection("jogadores").doc(user.uid).get().then(doc => {
                 if(doc.exists) {
-                    let dadosSalvos = doc.data();
-                    dadosJogador = {
-                        nome: dadosSalvos.nome || nomePadrao,
-                        ouro: Number(dadosSalvos.ouro) || 500,
-                        gemas: Number(dadosSalvos.gemas) || 10,
-                        pontosPoder: Number(dadosSalvos.pontosPoder) || 0,
-                        vida: Number(dadosSalvos.vida) || 100,
-                        nivel: Number(dadosSalvos.nivel) || 1,
-                        pontos: Number(dadosSalvos.pontos) || 1250,
-                        avatar: dadosSalvos.avatar || "https://api.dicebear.com/7.x/bottts/svg?seed=Warrior1",
-                        inventario: dadosSalvos.inventario || [],
-                        guildaNome: dadosSalvos.guildaNome || ""
-                    };
+                    let d = doc.data();
+                    if(d.banido) {
+                        document.getElementById('login-screen').classList.remove('active');
+                        document.getElementById('ban-screen').classList.add('active');
+                        return;
+                    }
+                    dadosJogador = { ...dadosJogador, ...d };
+                    dadosJogador.email = user.email;
                 } else {
-                    dadosJogador.nome = nomePadrao;
+                    dadosJogador.email = user.email;
                     salvarDadosNoBanco();
                 }
-                sincronizarInterface();
-                carregarRankingGlobal();
+
+                eAdminUser = (user.email.toLowerCase() === EMAIL_ADMIN_DM.toLowerCase());
+                configurarMenuLateral();
+                escutarBancoTempoReal();
+
                 document.getElementById('login-screen').classList.remove('active');
                 document.getElementById('game-screen').classList.add('active');
+                sincronizarInterface();
             });
+        }
+
+        function configurarMenuLateral() {
+            let menu = document.getElementById('menu-lateral-dinamico');
+            if(eAdminUser && !document.getElementById('menu-adm-li')) {
+                let liAdm = document.createElement('li');
+                liAdm.id = 'menu-adm-li';
+                liAdm.innerHTML = "👑 Painel ADM";
+                liAdm.onclick = function() { trocarTab('adm', this); };
+                menu.appendChild(liAdm);
+
+                document.getElementById('top-bar-titulo-container').innerHTML = `👑 DRAGON WAR: RISE OF POWER <span style="font-size:12px; background:#f59e0b; color:#000; padding:2px 8px; border-radius:10px;">DM ADMIN</span>`;
+            }
         }
 
         function salvarDadosNoBanco() {
@@ -649,8 +711,87 @@
             db.collection("jogadores").doc(usuarioAtualId).set(dadosJogador, { merge: true });
         }
 
+        function escutarBancoTempoReal() {
+            db.collection("catalogo").onSnapshot(snapshot => {
+                catalogoArmas = [];
+                catalogoSkins = [];
+                catalogoPoderes = [];
+                snapshot.forEach(doc => {
+                    let item = { id: doc.id, ...doc.data() };
+                    if(item.ativo !== false) {
+                        if(item.tipo === 'arma') catalogoArmas.push(item);
+                        if(item.tipo === 'skin') catalogoSkins.push(item);
+                        if(item.tipo === 'poder') catalogoPoderes.push(item);
+                    }
+                });
+                renderizarLoja();
+                renderizarArvorePoderes();
+                carregarGerenciamentoCatalogoAdm();
+            });
+
+            db.collection("eventos").onSnapshot(snapshot => {
+                eventosGlobais = [];
+                snapshot.forEach(doc => {
+                    let ev = { id: doc.id, ...doc.data() };
+                    if(ev.ativo) eventosGlobais.push(ev);
+                });
+                renderizarEventos();
+                carregarGerenciamentoEventosAdm();
+            });
+
+            db.collection("configuracoes").doc("globalMsg").onSnapshot(doc => {
+                if(doc.exists) {
+                    let data = doc.data();
+                    let banner = document.getElementById('global-msg-banner');
+                    if(data.ativa && data.texto) {
+                        document.getElementById('global-msg-texto').innerText = data.texto;
+                        banner.style.display = 'block';
+                    } else {
+                        banner.style.display = 'none';
+                    }
+                }
+            });
+
+            db.collection("jogadores").doc(usuarioAtualId).onSnapshot(doc => {
+                if(doc.exists) {
+                    let atualizado = doc.data();
+                    if(atualizado.banido) {
+                        document.getElementById('game-screen').classList.remove('active');
+                        document.getElementById('ban-screen').classList.add('active');
+                        return;
+                    }
+                    dadosJogador = { ...dadosJogador, ...atualizado };
+                    sincronizarInterface();
+                }
+            });
+
+            db.collection("jogadores").onSnapshot(snapshot => {
+                let select = document.getElementById('adm-select-jogador');
+                if(select) select.innerHTML = "";
+                let tbody = document.getElementById('adm-tabela-jogadores');
+                if(tbody) tbody.innerHTML = "";
+
+                snapshot.forEach(doc => {
+                    let j = doc.data();
+                    let jId = doc.id;
+                    if(select) {
+                        select.innerHTML += `<option value="${jId}">${j.nome || 'Guerreiro'} (${j.email || ''})</option>`;
+                    }
+                    if(tbody) {
+                        let statusBan = j.banido ? "<span style='color:#dc2626;'>Banido</span>" : "<span style='color:#16a34a;'>Ativo</span>";
+                        let btnAcaoBan = j.banido ? 
+                            `<button class='btn-action' style='background:#16a34a; padding:4px 8px; font-size:11px;' onclick='admDesbanirJogador("${jId}")'>Desbanir</button>` : 
+                            `<button class='btn-action' style='background:#dc2626; padding:4px 8px; font-size:11px;' onclick='admBanirJogador("${jId}")'>Banir</button>`;
+                        tbody.innerHTML += `<tr><td>${j.nome || 'Guerreiro'}</td><td>${j.email || ''}</td><td>${statusBan}</td><td>${btnAcaoBan}</td></tr>`;
+                    }
+                });
+            });
+
+            carregarRankingGlobal();
+        }
+
         function sincronizarInterface() {
-            document.getElementById('sidebar-nome').innerText = dadosJogador.nome;
+            document.getElementById('sidebar-nome').innerText = dadosJogador.nome + (eAdminUser ? " 👑" : "");
             document.getElementById('sidebar-nivel').innerText = `Nível ${dadosJogador.nivel} • Guerreiro`;
             document.getElementById('sidebar-avatar').src = dadosJogador.avatar;
             document.getElementById('badge-ouro').innerText = dadosJogador.ouro;
@@ -668,14 +809,12 @@
             document.getElementById('badge-vida').innerText = `${dadosJogador.vida}/100`;
             document.getElementById('input-novo-nome').value = dadosJogador.nome;
 
-            renderizarLoja();
             renderizarAvataresPerfil();
-            renderizarArvorePoderes();
 
             let invContainer = document.getElementById('lista-inventario');
             invContainer.innerHTML = "";
             if(!dadosJogador.inventario || dadosJogador.inventario.length === 0) {
-                invContainer.innerHTML = `<p style="color: #94a3b8;">Seu inventário está vazio. Visite a loja para comprar itens.</p>`;
+                invContainer.innerHTML = `<p style="color: #94a3b8;">Seu inventário está vazio.</p>`;
             } else {
                 dadosJogador.inventario.forEach(item => {
                     invContainer.innerHTML += `<div class="item-card"><h4 style="font-size:14px; color:#f97316;">${item.nome}</h4><small style="color:#94a3b8;">${item.tipo.toUpperCase()}</small></div>`;
@@ -686,36 +825,83 @@
         function renderizarLoja() {
             let cArmas = document.getElementById('container-armas');
             cArmas.innerHTML = "";
-            listaArmasLoja.forEach(item => {
+            if(catalogoArmas.length === 0) cArmas.innerHTML = `<p style="color:#94a3b8;">Nenhuma arma disponível na loja.</p>`;
+            catalogoArmas.forEach(item => {
                 cArmas.innerHTML += `
                     <div class="item-card">
                         <h4 style="font-size: 14px; color: #f97316; margin-bottom: 5px;">${item.nome}</h4>
-                        <p style="color: #facc15; font-size: 13px; margin: 8px 0;">🪙 ${item.preco}</p>
-                        <button class="btn-action" onclick="comprarItemLoja('${item.nome}', ${item.preco}, 'arma')">COMPRAR</button>
+                        <p style="color: #facc15; font-size: 13px; margin: 8px 0;">🪙 ${item.valor}</p>
+                        <button class="btn-action" onclick="comprarItemLoja('${item.nome}', ${item.valor}, 'arma')">COMPRAR</button>
                     </div>`;
             });
 
             let cSkins = document.getElementById('container-skins');
             cSkins.innerHTML = "";
-            listaSkinsLoja.forEach(item => {
+            if(catalogoSkins.length === 0) cSkins.innerHTML = `<p style="color:#94a3b8;">Nenhum personagem/skin disponível na loja.</p>`;
+            catalogoSkins.forEach(item => {
                 cSkins.innerHTML += `
                     <div class="item-card">
                         <h4 style="font-size: 14px; color: #38bdf8; margin-bottom: 5px;">${item.nome}</h4>
-                        <p style="color: #facc15; font-size: 13px; margin: 8px 0;">🪙 ${item.preco}</p>
-                        <button class="btn-action" onclick="comprarItemLoja('${item.nome}', ${item.preco}, 'skin')">COMPRAR</button>
+                        <p style="color: #facc15; font-size: 13px; margin: 8px 0;">🪙 ${item.valor}</p>
+                        <button class="btn-action" onclick="comprarItemLoja('${item.nome}', ${item.valor}, 'skin')">COMPRAR</button>
                     </div>`;
             });
 
             let cSupr = document.getElementById('container-suprimentos');
-            cSupr.innerHTML = "";
-            listaSuprimentosLoja.forEach(item => {
-                cSupr.innerHTML += `
-                    <div class="item-card">
-                        <h4 style="font-size: 14px; color: #ef4444; margin-bottom: 5px;">${item.nome}</h4>
-                        <p style="color: #facc15; font-size: 13px; margin: 8px 0;">🪙 ${item.preco}</p>
-                        <button class="btn-action" onclick="comprarItemLoja('${item.nome}', ${item.preco}, 'suprimento')">COMPRAR</button>
-                    </div>`;
+            cSupr.innerHTML = `
+                <div class="item-card"><h4 style="font-size: 14px; color: #ef4444;">Poção de Cura (+40 HP)</h4><p style="color: #facc15; font-size: 13px; margin: 8px 0;">🪙 100</p><button class="btn-action" onclick="comprarItemLoja('Poção de Cura', 100, 'suprimento')">COMPRAR</button></div>
+            `;
+        }
+
+        function renderizarArvorePoderes() {
+            let container = document.getElementById('container-arvore-poderes');
+            container.innerHTML = "";
+            if(catalogoPoderes.length === 0) {
+                container.innerHTML = `<p style="color:#94a3b8;">Nenhum poder cadastrado na árvore.</p>`;
+                return;
+            }
+            catalogoPoderes.forEach(pod => {
+                container.innerHTML += `
+                    <div class="power-item-box" onclick="selecionarPoder('${pod.nome}', ${pod.valor})">
+                        <h4 style="color: #f97316; font-size: 13px;">${pod.nome}</h4>
+                        <small style="color: #94a3b8;">Dano Base: ${pod.valor}</small>
+                    </div>
+                `;
             });
+        }
+
+        function renderizarEventos() {
+            let container = document.getElementById('container-eventos-ativos');
+            container.innerHTML = "";
+            if(eventosGlobais.length === 0) {
+                container.innerHTML = `<p style="color: #94a3b8;">Nenhum evento ativo no momento.</p>`;
+                return;
+            }
+            eventosGlobais.forEach(ev => {
+                let jaResgatou = dadosJogador.eventosResgatados && dadosJogador.eventosResgatados.includes(ev.id);
+                container.innerHTML += `
+                    <div class="item-card" style="border-color: #f97316;">
+                        <span style="font-size: 35px;">🎉</span>
+                        <h3 style="color: #f97316; margin-top: 10px;">${ev.titulo}</h3>
+                        <p style="font-size: 13px; color: #94a3b8; margin: 10px 0;">${ev.descricao}</p>
+                        ${jaResgatou ? '<span style="color: #16a34a; font-weight:bold; font-size:13px;">Resgatado ✔️</span>' : `<button class="btn-action" onclick="resgatarEvento('${ev.id}')">RESGATAR RECOMPENSA</button>`}
+                    </div>
+                `;
+            });
+        }
+
+        function resgatarEvento(evId) {
+            if(!dadosJogador.eventosResgatados) dadosJogador.eventosResgatados = [];
+            if(dadosJogador.eventosResgatados.includes(evId)) {
+                alert("Você já resgatou este evento!");
+                return;
+            }
+            dadosJogador.eventosResgatados.push(evId);
+            dadosJogador.ouro += 1000;
+            dadosJogador.gemas += 10;
+            salvarDadosNoBanco();
+            sincronizarInterface();
+            alert("Recompensa do evento resgatada com sucesso! +🪙 1000 Ouro e +💎 10 Gemas.");
         }
 
         function renderizarAvataresPerfil() {
@@ -724,24 +910,7 @@
             avataresDisponiveis.forEach(av => {
                 let bloqueado = dadosJogador.nivel < av.nivelMinimo;
                 let selecionado = dadosJogador.avatar === av.url ? "selected" : "";
-                let classeCss = `avatar-option ${selecionado} ${bloqueado ? 'locked' : ''}`;
-                
-                container.innerHTML += `
-                    <img src="${av.url}" class="${classeCss}" title="${bloqueado ? 'Requer Nível ' + av.nivelMinimo : 'Selecionar Avatar'}" onclick="${bloqueado ? 'alert(\'Avatar bloqueado! Requer Nível ' + av.nivelMinimo + '\')' : 'escolherAvatar(\'' + av.url + '\')'}">
-                `;
-            });
-        }
-
-        function renderizarArvorePoderes() {
-            let container = document.getElementById('container-arvore-poderes');
-            container.innerHTML = "";
-            listaArvorePoderes.forEach(pod => {
-                container.innerHTML += `
-                    <div class="power-item-box" onclick="selecionarPoder('${pod.nome}', ${pod.dano})">
-                        <h4 style="color: #f97316; font-size: 13px;">${pod.nome}</h4>
-                        <small style="color: #94a3b8;">Dano Base: ${pod.dano}</small>
-                    </div>
-                `;
+                container.innerHTML += `<img src="${av.url}" class="avatar-option ${selecionado} ${bloqueado ? 'locked' : ''}" onclick="${bloqueado ? '' : 'escolherAvatar(\'' + av.url + '\')'}">`;
             });
         }
 
@@ -766,6 +935,13 @@
             element.classList.add('active-sub');
         }
 
+        function trocarSubAdm(subId, element) {
+            document.querySelectorAll('#tab-adm .sub-panel').forEach(p => p.classList.remove('active-sub-panel'));
+            document.querySelectorAll('#tab-adm .sub-tab-btn').forEach(b => b.classList.remove('active-sub'));
+            document.getElementById('subadm-' + subId).classList.add('active-sub-panel');
+            element.classList.add('active-sub');
+        }
+
         function trocarSubChat(canal, element) {
             chatCanalAtual = canal;
             document.querySelectorAll('#tab-guilda .sub-tab-btn').forEach(b => b.classList.remove('active-sub'));
@@ -775,7 +951,7 @@
 
         function comprarItemLoja(nome, custo, tipo) {
             if(dadosJogador.ouro < custo) {
-                alert("Ouro insuficiente! Participe de combates ou abra caixas diárias para conseguir mais.");
+                alert("Ouro insuficiente!");
                 return;
             }
             dadosJogador.ouro -= custo;
@@ -797,7 +973,7 @@
         function melhorarPoderSelecionado() {
             if(!poderSelecionadoNome) return;
             if(dadosJogador.pontosPoder <= 0) {
-                alert("Você não possui Pontos de Poder! Venca batalhas na Arena para ganhar Pontos de Poder.");
+                alert("Você não possui Pontos de Poder!");
                 return;
             }
             dadosJogador.pontosPoder -= 1;
@@ -812,17 +988,13 @@
             combateAtual.ativo = true;
             
             if(dificuldade === 'facil') {
-                combateAtual.mobNome = "Goblin Selvagem";
-                combateAtual.mobHp = 80; combateAtual.mobMaxHp = 80; combateAtual.mobDano = 12;
+                combateAtual.mobNome = "Goblin Selvagem"; combateAtual.mobHp = 80; combateAtual.mobMaxHp = 80; combateAtual.mobDano = 12;
             } else if(dificuldade === 'medio') {
-                combateAtual.mobNome = "Orc Guerreiro";
-                combateAtual.mobHp = 150; combateAtual.mobMaxHp = 150; combateAtual.mobDano = 22;
+                combateAtual.mobNome = "Orc Guerreiro"; combateAtual.mobHp = 150; combateAtual.mobMaxHp = 150; combateAtual.mobDano = 22;
             } else if(dificuldade === 'dificil') {
-                combateAtual.mobNome = "Golem de Pedra";
-                combateAtual.mobHp = 250; combateAtual.mobMaxHp = 250; combateAtual.mobDano = 35;
+                combateAtual.mobNome = "Golem de Pedra"; combateAtual.mobHp = 250; combateAtual.mobMaxHp = 250; combateAtual.mobDano = 35;
             } else {
-                combateAtual.mobNome = "Khaldron, O Dragão";
-                combateAtual.mobHp = 400; combateAtual.mobMaxHp = 400; combateAtual.mobDano = 55;
+                combateAtual.mobNome = "Khaldron, O Dragão"; combateAtual.mobHp = 400; combateAtual.mobMaxHp = 400; combateAtual.mobDano = 55;
             }
 
             document.getElementById('seletor-mobs-container').style.display = 'none';
@@ -935,42 +1107,13 @@
                     tbody.innerHTML += `
                         <tr ${eMeu}>
                             <td>#${posicao}</td>
-                            <td>${data.nome || 'Guerreiro'}</td>
+                            <td>${data.nome || 'Guerreiro'} ${data.email && data.email.toLowerCase() === EMAIL_ADMIN_DM.toLowerCase() ? '👑' : ''}</td>
                             <td>Nível ${data.nivel || 1}</td>
                             <td>${data.pontos || 0} pts</td>
                         </tr>`;
                     posicao++;
                 });
-            }).catch(err => {
-                console.error("Erro ao carregar ranking real:", err);
             });
-        }
-
-        function reclamarCaixaDiaria() {
-            dadosJogador.ouro += 500;
-            dadosJogador.gemas += 5;
-            salvarDadosNoBanco();
-            sincronizarInterface();
-            tocarNota(800, 0.2);
-            alert("Você abriu a Caixa Diária e ganhou 🪙 500 Ouro e 💎 5 Gemas reais!");
-        }
-
-        function criarGuilda() {
-            let nome = document.getElementById('guilda-nome-input').value.trim();
-            if(!nome) { alert("Digite o nome da guilda."); return; }
-            if(dadosJogador.ouro < 5000) { alert("Você precisa de 🪙 5.000 para fundar uma guilda."); return; }
-            dadosJogador.ouro -= 5000;
-            dadosJogador.guildaNome = nome;
-            salvarDadosNoBanco();
-            sincronizarInterface();
-            alert(`Guilda "${nome}" fundada com sucesso!`);
-        }
-
-        function entrarGuildaAleatoria() {
-            dadosJogador.guildaNome = "Guerreiros Livres";
-            salvarDadosNoBanco();
-            sincronizarInterface();
-            alert("Você entrou para a guilda pública: Guerreiros Livres!");
         }
 
         function enviarMensagemChat() {
@@ -991,6 +1134,152 @@
                 carregarRankingGlobal();
                 sincronizarInterface();
                 alert("Perfil alterado e salvo com sucesso!");
+            }
+        }
+
+        function admCriarItem() {
+            let tipo = document.getElementById('adm-tipo-criacao').value;
+            let nome = document.getElementById('adm-nome-criacao').value.trim();
+            let valor = Number(document.getElementById('adm-valor-criacao').value);
+            if(!nome) { alert("Preencha o nome."); return; }
+
+            db.collection("catalogo").add({
+                tipo,
+                nome,
+                valor,
+                ativo: true
+            }).then(() => {
+                alert("Item/Poder criado e publicado com sucesso!");
+                document.getElementById('adm-nome-criacao').value = "";
+                document.getElementById('adm-valor-criacao').value = "";
+            }).catch(err => alert("Erro: " + err.message));
+        }
+
+        function carregarGerenciamentoCatalogoAdm() {
+            let container = document.getElementById('adm-lista-gerenciar');
+            if(!container) return;
+            db.collection("catalogo").get().then(snapshot => {
+                container.innerHTML = "";
+                snapshot.forEach(doc => {
+                    let d = doc.data();
+                    let id = doc.id;
+                    let estadoBtn = d.ativo !== false ? 
+                        `<button class="btn-action" style="background:#eab308; color:#000; padding:5px;" onclick="admAlternarItem('${id}', false)">Desativar</button>` : 
+                        `<button class="btn-action" style="background:#16a34a; padding:5px;" onclick="admAlternarItem('${id}', true)">Ativar</button>`;
+                    
+                    container.innerHTML += `
+                        <div style="background:#0f172a; padding:10px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+                            <div><strong>${d.nome}</strong> <small style="color:#94a3b8;">(${d.tipo}) — Valor/Dano: ${d.valor}</small></div>
+                            <div style="display:flex; gap:10px;">
+                                ${estadoBtn}
+                                <button class="btn-action" style="background:#dc2626; padding:5px;" onclick="admRemoverItem('${id}')">Remover</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        function admAlternarItem(id, ativo) {
+            db.collection("catalogo").doc(id).update({ ativo }).then(() => carregarGerenciamentoCatalogoAdm());
+        }
+
+        function admRemoverItem(id) {
+            if(confirm("Deseja realmente remover este item do catálogo?")) {
+                db.collection("catalogo").doc(id).delete().then(() => carregarGerenciamentoCatalogoAdm());
+            }
+        }
+
+        function admCriarEvento() {
+            let titulo = document.getElementById('adm-evento-titulo').value.trim();
+            let descricao = document.getElementById('adm-evento-desc').value.trim();
+            if(!titulo) { alert("Preencha o título do evento."); return; }
+
+            db.collection("eventos").add({
+                titulo,
+                descricao,
+                ativo: true
+            }).then(() => {
+                alert("Evento criado com sucesso!");
+                document.getElementById('adm-evento-titulo').value = "";
+                document.getElementById('adm-evento-desc').value = "";
+            });
+        }
+
+        function carregarGerenciamentoEventosAdm() {
+            let container = document.getElementById('adm-lista-eventos-ativos');
+            if(!container) return;
+            db.collection("eventos").get().then(snapshot => {
+                container.innerHTML = "";
+                snapshot.forEach(doc => {
+                    let ev = doc.data();
+                    let id = doc.id;
+                    container.innerHTML += `
+                        <div style="background:#0f172a; padding:10px; margin-top:5px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+                            <span><strong>${ev.titulo}</strong> (${ev.ativo ? 'Ativo' : 'Inativo'})</span>
+                            <button class="btn-action" style="background:#dc2626; padding:4px 8px;" onclick="admRemoverEvento('${id}')">Excluir</button>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        function admRemoverEvento(id) {
+            db.collection("eventos").doc(id).delete();
+        }
+
+        function admPublicarMsgGlobal() {
+            let texto = document.getElementById('adm-msg-global-input').value.trim();
+            if(!texto) { alert("Digite a mensagem."); return; }
+            db.collection("configuracoes").doc("globalMsg").set({
+                texto,
+                ativa: true
+            }).then(() => alert("Mensagem global publicada com sucesso!"));
+        }
+
+        function admDesativarMsgGlobal() {
+            db.collection("configuracoes").doc("globalMsg").set({
+                ativa: false
+            }, { merge: true }).then(() => alert("Mensagem global desativada!"));
+        }
+
+        function admEnviarRecompensa() {
+            let jogadorId = document.getElementById('adm-select-jogador').value;
+            let ouros = Number(document.getElementById('adm-recompensa-ouro').value);
+            let gemas = Number(document.getElementById('adm-recompensa-gemas').value);
+            let pontos = Number(document.getElementById('adm-recompensa-pontos').value);
+            let vida = Number(document.getElementById('adm-recompensa-vida').value);
+            let nivel = Number(document.getElementById('adm-recompensa-nivel').value);
+
+            db.collection("jogadores").doc(jogadorId).get().then(doc => {
+                if(doc.exists) {
+                    let d = doc.data();
+                    let novoOuro = (Number(d.ouro) || 0) + ouros;
+                    let novasGemas = (Number(d.gemas) || 0) + gemas;
+                    let novosPontosPoder = (Number(d.pontosPoder) || 0) + pontos;
+                    let novaVida = Math.min(100, (Number(d.vida) || 100) + vida);
+                    let novoNivel = (Number(d.nivel) || 1) + nivel;
+
+                    db.collection("jogadores").doc(jogadorId).update({
+                        ouro: novoOuro,
+                        gemas: novasGemas,
+                        pontosPoder: novosPontosPoder,
+                        vida: novaVida,
+                        nivel: novoNivel
+                    }).then(() => alert("Recompensa enviada diretamente para a conta do jogador!"));
+                }
+            });
+        }
+
+        function admBanirJogador(id) {
+            if(confirm("Deseja banir este jogador?")) {
+                db.collection("jogadores").doc(id).update({ banido: true });
+            }
+        }
+
+        function admDesbanirJogador(id) {
+            if(confirm("Deseja desbanir este jogador?")) {
+                db.collection("jogadores").doc(id).update({ banido: false });
             }
         }
     </script>
