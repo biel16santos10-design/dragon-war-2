@@ -60,7 +60,38 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 .progress{height:7px;background:#1e293b;border-radius:5px;overflow:hidden;margin-top:5px}.progress>div{height:100%;background:var(--accent-color)}
 #notificacoes-box{position:fixed;top:15px;right:15px;width:min(360px,calc(100vw - 30px));z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}.dw-notificacao{background:rgba(15,23,42,.97);border:1px solid var(--panel-border);border-left:4px solid var(--accent-color);color:#fff;padding:10px 12px;border-radius:8px;box-shadow:0 10px 25px rgba(0,0,0,.45);font-size:12px}.dw-notificacao.success{border-left-color:#10b981}.dw-notificacao.danger{border-left-color:#ef4444}.dw-notificacao.info{border-left-color:#38bdf8}
 @media(max-width:900px){sidebar{width:210px}.grid-boxes,.shop-grid{grid-template-columns:repeat(2,1fr)}.stat-grid{grid-template-columns:repeat(2,1fr)}header{gap:8px;flex-wrap:wrap}.content-area{padding:15px}}
-@media(max-width:650px){sidebar{width:175px;padding:10px}.server-banner{height:55px}.menu-item{font-size:11px;padding:8px}.grid-boxes,.shop-grid{grid-template-columns:1fr}.modal-card{width:92%}}
+@media(max-width:650px){
+  #game-container{display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden}
+  sidebar{width:100%;min-height:auto;height:auto;max-height:245px;padding:10px;overflow:hidden;border-right:0;border-bottom:1px solid var(--panel-border)}
+  .server-banner{height:45px;margin-bottom:8px}
+  .user-profile{margin-bottom:8px}
+  .menu-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;overflow-y:auto;overflow-x:hidden;max-height:105px;flex-grow:0}
+  .menu-item{font-size:11px;padding:9px 7px;text-align:center;white-space:normal;min-width:0}
+  sidebar>div:last-child{margin-top:8px!important;padding-top:8px!important}
+  main{width:100%;min-width:0;overflow:hidden}
+  header{padding:10px;min-height:auto;align-items:flex-start}
+  header h3{font-size:13px!important}
+  .content-area{padding:10px;overflow-x:hidden}
+  .panel-section h2{font-size:18px}
+  .panel-section>div[style*="grid-template-columns:repeat(2,1fr)"]{grid-template-columns:1fr!important}
+  #arena-fases-container{padding:12px!important}
+  #arena-fases-container>div[style*="display:flex"]{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px!important}
+  #arena-fases-container .btn{width:100%!important;padding:11px 5px!important;font-size:11px!important;margin:0!important}
+  #log-batalha{height:105px!important}
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .shop-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .shop-tabs .btn{width:100%;margin:0}
+  .shop-grid{grid-template-columns:1fr!important}
+  .modal-card{width:94%!important;max-width:none!important;padding:14px!important}
+  .support-chat{height:45vh;min-height:220px}
+  #modal-atendimento .modal-card>div[style*="display:flex"]{display:grid!important;grid-template-columns:1fr!important}
+  #modal-atendimento .modal-card .btn{width:100%!important}
+  .global-chat-bar{height:auto;min-height:55px;padding:7px;gap:6px}
+  .global-chat-bar span{display:none}
+  .global-chat-bar input{min-width:0;width:100%}
+  .global-chat-bar button{padding:8px 10px}
+  #notificacoes-box{top:8px;right:8px;width:calc(100vw - 16px)}
+}
 </style>
 </head>
 <body>
@@ -116,7 +147,7 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <div style="background:#070a12;padding:12px;border-radius:6px"><div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px"><span>Poder/Mana:</span><span id="player-mp-txt" style="color:var(--accent-color);font-weight:bold">100/100</span></div><div style="width:100%;background:#1e293b;height:8px;border-radius:4px;overflow:hidden"><div id="player-mp-bar" style="width:100%;background:var(--accent-color);height:100%"></div></div></div>
 </div>
 <div style="background:#070a12;padding:15px;border-radius:6px;margin-bottom:15px"><div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px"><span id="inimigo-alvo-nome">Inimigo</span><span id="movel-hp" style="color:var(--adm-color);font-weight:bold">100%</span></div><div style="width:100%;background:#1e293b;height:10px;border-radius:5px;overflow:hidden"><div id="movel-hp-bar" style="width:100%;background:var(--adm-color);height:100%"></div></div></div>
-<div id="log-batalha" style="background:#020617;padding:10px;border-radius:6px;font-size:12px;color:#94a3b8;height:70px;overflow-y:auto;margin-bottom:15px">Início da batalha!</div>
+<div id="log-batalha" style="background:#020617;padding:10px;border-radius:6px;font-size:12px;color:#94a3b8;height:70px;overflow-y:auto;margin-bottom:15px">Início da batalha! O ataque inicial será automático.</div>
 <div style="display:flex;gap:10px;flex-wrap:wrap">
 <button class="btn" style="width:auto;padding:10px 15px" onclick="batalhaAcao('atacar')">⚔️ Atacar</button>
 <button class="btn btn-blue" style="width:auto;padding:10px 15px" onclick="batalhaAcao('defender')">🛡️ Defender</button>
@@ -221,12 +252,12 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import{getFirestore,doc,setDoc,getDoc,getDocs,updateDoc,addDoc,collection,query,orderBy,onSnapshot,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import{getFirestore,doc,setDoc,getDoc,getDocs,updateDoc,addDoc,collection,query,orderBy,onSnapshot,serverTimestamp,where}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig={apiKey:"AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",authDomain:"dragon-war-rise-of-power-2a9f1.firebaseapp.com",projectId:"dragon-war-rise-of-power-2a9f1",storageBucket:"dragon-war-rise-of-power-2a9f1.firebasestorage.app",messagingSenderId:"115455691167",appId:"1:115455691167:web:ff3638f67b66c17c5515aa",measurementId:"G-S7XE2EN9CL"};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 const EMAIL_ADMIN="groupsacabraldigital@gmail.com";
-let modoCadastro=false, unsubscribeGlobal=null, unsubscribeSupport=null, heartbeatTimer=null;
+let modoCadastro=false, unsubscribeGlobal=null, unsubscribeSupport=null, unsubscribePlayerSupport=null, heartbeatTimer=null;
 let categoriaLoja="all", jogadorSelecionadoModal={id:"",nome:"",data:{}}, salaAtualId="";
 let usuarioAtual={uid:"",email:"",displayName:"",avatar:"",isAdm:false,isSubAdm:false,coins:150,diamonds:10,level:5,xp:0,inventory:[],phaseProgress:{normal:1,dificil:1,avancada:1,hardcore:1},achievements:[],dailyRewardLastClaim:0,banned:false};
 let faseAtualInfo={categoria:"",etapa:1,hpMovel:100,maxHp:100,playerHp:100,playerMp:100,defend:false};
@@ -274,7 +305,7 @@ async function carregarJogador(){
  usuarioAtual={...usuarioAtual,...base,uid:auth.currentUser.uid,email:auth.currentUser.email,displayName:base.displayName||auth.currentUser.email.split("@")[0],isAdm:auth.currentUser.email.toLowerCase()===EMAIL_ADMIN||base.isAdm===true,inventory:Array.isArray(base.inventory)?base.inventory:[],phaseProgress:base.phaseProgress||{normal:1,dificil:1,avancada:1,hardcore:1},achievements:base.achievements||[]};
  if(usuarioAtual.isAdm){usuarioAtual.coins=Math.max(Number(usuarioAtual.coins||0),999999);usuarioAtual.diamonds=Math.max(Number(usuarioAtual.diamonds||0),99999);usuarioAtual.level=Math.max(Number(usuarioAtual.level||1),100)}
  await setDoc(ref,{...usuarioAtual,lastSeen:serverTimestamp(),status:"Online",updatedAt:serverTimestamp()},{merge:true});
- atualizarPerfilUI();montarMenuLateral();renderLoja();renderizarPoderes();atualizarInventarioUI();renderizarEventos();atualizarDailyUI();iniciarHeartbeat();assinarChatGlobal();verificarAchievements();
+ atualizarPerfilUI();montarMenuLateral();renderLoja();renderizarPoderes();atualizarInventarioUI();renderizarEventos();atualizarDailyUI();iniciarHeartbeat();assinarChatGlobal();verificarAchievements(); assinarSalaAtendimentoJogador();
  if(usuarioAtual.isAdm){carregarJogadoresReaisDoBanco();document.getElementById("adm-loja-controls").classList.remove("hidden");document.getElementById("adm-poderes-controls").classList.remove("hidden");document.getElementById("adm-evento-controls").classList.remove("hidden")}
 }
 window.alternarModoAuth=()=>{modoCadastro=!modoCadastro;document.getElementById("auth-title").innerText=modoCadastro?"Criar Conta Real":"Entrar no Servidor";document.getElementById("auth-btn-action").innerText=modoCadastro?"Registrar e Gerar ID":"Entrar na Partida";document.getElementById("auth-switch-mode").innerText=modoCadastro?"Já tem conta? Faça login":"Não tem conta? Cadastre-se com ID Real"};
@@ -292,27 +323,128 @@ window.salvarPerfilJogador=async()=>{
 };
 
 window.iniciarFases=async(cat)=>{
- if(cat==="hardcore"&&usuarioAtual.level<25)return alert("Hardcore Elite requer nível 25.");
- faseAtualInfo.categoria=cat;faseAtualInfo.etapa=Math.min(usuarioAtual.phaseProgress?.[cat]||1,categorias[cat].max);faseAtualInfo.maxHp=Math.round(categorias[cat].hp*faseAtualInfo.etapa*categorias[cat].mult);faseAtualInfo.hpMovel=faseAtualInfo.maxHp;faseAtualInfo.playerHp=100;faseAtualInfo.playerMp=100;faseAtualInfo.defend=false;
- document.getElementById("fases-titulo-cat").innerText=categorias[cat].nome.toUpperCase();atualizarBatalhaUI();document.querySelector("#section-jogar>div:nth-child(2)").classList.add("hidden");document.getElementById("arena-fases-container").classList.remove("hidden");adicionarLogBatalha("Nível "+faseAtualInfo.etapa+" iniciado.");
+ if(!categorias[cat])return;
+ if(cat==="hardcore"&&Number(usuarioAtual.level||1)<25)return notificar("☠️ Hardcore Elite requer nível 25.","danger");
+ faseAtualInfo.categoria=cat;
+ faseAtualInfo.etapa=Math.max(1,Math.min(Number(usuarioAtual.phaseProgress?.[cat]||1),categorias[cat].max));
+ faseAtualInfo.maxHp=Math.round(categorias[cat].hp*faseAtualInfo.etapa*categorias[cat].mult);
+ faseAtualInfo.hpMovel=faseAtualInfo.maxHp;
+ faseAtualInfo.playerHp=100;
+ faseAtualInfo.playerMp=100;
+ faseAtualInfo.defend=false;
+ faseAtualInfo.busy=false;
+ faseAtualInfo.autoStarted=false;
+ document.getElementById("fases-titulo-cat").innerText=categorias[cat].nome.toUpperCase();
+ document.getElementById("log-batalha").innerHTML="<div>> ⚔️ Batalha iniciada.</div>";
+ atualizarBatalhaUI();
+ document.querySelector("#section-jogar>div:nth-child(2)").classList.add("hidden");
+ document.getElementById("arena-fases-container").classList.remove("hidden");
+ adicionarLogBatalha("🎯 Nível "+faseAtualInfo.etapa+" carregado.");
+ notificar("⚔️ Batalha iniciada! Ataque inicial automático.","info");
+ setTimeout(()=>{if(faseAtualInfo.categoria===cat&&!faseAtualInfo.autoStarted&&faseAtualInfo.playerHp>0){faseAtualInfo.autoStarted=true;batalhaAcao("atacar",true)}},450);
 };
 window.desistirBatalha=()=>{if(confirm("Desistir da batalha?"))voltarSelecaoFases()};
-window.voltarSelecaoFases=()=>{document.getElementById("arena-fases-container").classList.add("hidden");document.querySelector("#section-jogar>div:nth-child(2)").classList.remove("hidden")};
-function atualizarBatalhaUI(){let c=categorias[faseAtualInfo.categoria],nome=alvos[faseAtualInfo.categoria][(faseAtualInfo.etapa-1)%5],p=Math.max(0,faseAtualInfo.hpMovel/faseAtualInfo.maxHp*100);document.getElementById("fases-etapa-info").innerText=`Nível ${faseAtualInfo.etapa}/${c.max} • Alvo: ${nome}`;document.getElementById("inimigo-alvo-nome").innerText=nome;document.getElementById("movel-hp").innerText=Math.round(p)+"%";document.getElementById("movel-hp-bar").style.width=p+"%";document.getElementById("player-hp-txt").innerText=`${faseAtualInfo.playerHp}/100`;document.getElementById("player-hp-bar").style.width=faseAtualInfo.playerHp+"%";document.getElementById("player-mp-txt").innerText=`${faseAtualInfo.playerMp}/100`;document.getElementById("player-mp-bar").style.width=faseAtualInfo.playerMp+"%"}
-function adicionarLogBatalha(t){let x=document.getElementById("log-batalha");x.innerHTML+="<div>> "+t+"</div>";x.scrollTop=x.scrollHeight}
+window.voltarSelecaoFases=()=>{faseAtualInfo.busy=false;document.getElementById("arena-fases-container").classList.add("hidden");document.querySelector("#section-jogar>div:nth-child(2)").classList.remove("hidden")};
+function atualizarBatalhaUI(){
+ const c=categorias[faseAtualInfo.categoria];if(!c)return;
+ const nome=alvos[faseAtualInfo.categoria][(faseAtualInfo.etapa-1)%5];
+ const p=Math.max(0,Math.min(100,(faseAtualInfo.hpMovel/faseAtualInfo.maxHp)*100));
+ const ph=Math.max(0,Math.min(100,faseAtualInfo.playerHp));
+ const pm=Math.max(0,Math.min(100,faseAtualInfo.playerMp));
+ document.getElementById("fases-etapa-info").innerText=`Nível ${faseAtualInfo.etapa}/${c.max} • Alvo: ${nome}`;
+ document.getElementById("inimigo-alvo-nome").innerText=nome;
+ document.getElementById("movel-hp").innerText=Math.round(p)+"%";
+ document.getElementById("movel-hp-bar").style.width=p+"%";
+ document.getElementById("player-hp-txt").innerText=`${Math.round(ph)}/100`;
+ document.getElementById("player-hp-bar").style.width=ph+"%";
+ document.getElementById("player-mp-txt").innerText=`${Math.round(pm)}/100`;
+ document.getElementById("player-mp-bar").style.width=pm+"%";
+}
+function adicionarLogBatalha(t){let x=document.getElementById("log-batalha");if(!x)return;let d=document.createElement("div");d.textContent="> "+t;x.appendChild(d);x.scrollTop=x.scrollHeight}
 function notificar(msg,tipo="info"){const box=document.getElementById("notificacoes-box");if(!box)return;const n=document.createElement("div");n.className="dw-notificacao "+tipo;n.textContent=msg;box.appendChild(n);setTimeout(()=>n.remove(),4500)}
 function calcularDanoBase(){return 30+(Number(usuarioAtual.level)||1)*3}
-async function iniciarProximaFase(){const cat=categorias[faseAtualInfo.categoria];if(faseAtualInfo.etapa>=cat.max){const reward=120+faseAtualInfo.etapa*20+(faseAtualInfo.categoria==="hardcore"?500:0);usuarioAtual.coins+=reward;usuarioAtual.diamonds+=faseAtualInfo.categoria==="hardcore"?25:5;usuarioAtual.xp+=200;usuarioAtual.level=Math.max(usuarioAtual.level,Math.floor(usuarioAtual.xp/100)+5);await salvarProgresso();notificar(`🏆 ${cat.nome} concluído! +${reward} moedas.` ,"success");voltarSelecaoFases();return false}
-faseAtualInfo.etapa=Math.min(faseAtualInfo.etapa+1,cat.max);faseAtualInfo.maxHp=Math.round(cat.hp*faseAtualInfo.etapa*cat.mult);faseAtualInfo.hpMovel=faseAtualInfo.maxHp;faseAtualInfo.playerHp=100;faseAtualInfo.playerMp=100;faseAtualInfo.defend=false;usuarioAtual.phaseProgress[faseAtualInfo.categoria]=faseAtualInfo.etapa;usuarioAtual.xp+=50;usuarioAtual.level=Math.max(usuarioAtual.level,Math.floor(usuarioAtual.xp/100)+5);await salvarProgresso();atualizarBatalhaUI();adicionarLogBatalha(`Nível ${faseAtualInfo.etapa} iniciado.`);notificar(`➡️ Avançou para o nível ${faseAtualInfo.etapa}!`,"success");return true}
-window.batalhaAcao=async acao=>{if(faseAtualInfo.playerHp<=0)return;let dano=0;
-if(acao==="fugir"){notificar("🏃 Você fugiu da batalha.","danger");voltarSelecaoFases();return}
-if(acao==="atacar"){dano=calcularDanoBase();faseAtualInfo.hpMovel=Math.max(0,faseAtualInfo.hpMovel-dano);adicionarLogBatalha(`⚔️ Você causou ${dano} de dano.`);notificar(`⚔️ Ataque: -${dano} HP no inimigo.`)}
-else if(acao==="defender"){faseAtualInfo.defend=true;adicionarLogBatalha("🛡️ Defesa ativada.");notificar("🛡️ Você está defendendo.","info")}
-else if(acao==="poder"){if(faseAtualInfo.playerMp<30)return notificar("🔥 Mana insuficiente para usar o poder.","danger");faseAtualInfo.playerMp-=30;dano=calcularDanoBase()+35;faseAtualInfo.hpMovel=Math.max(0,faseAtualInfo.hpMovel-dano);adicionarLogBatalha(`🔥 Poder usado: ${dano} de dano.`);notificar(`🔥 Poder usado: -${dano} HP.`)}
-else if(acao==="habilidade"){if(faseAtualInfo.playerMp<20)return notificar("✨ Mana insuficiente para usar a habilidade.","danger");faseAtualInfo.playerMp-=20;dano=calcularDanoBase()+20;faseAtualInfo.hpMovel=Math.max(0,faseAtualInfo.hpMovel-dano);faseAtualInfo.playerHp=Math.min(100,faseAtualInfo.playerHp+10);adicionarLogBatalha(`✨ Habilidade usada: ${dano} de dano e +10 vida.`);notificar(`✨ Habilidade: -${dano} HP e +10 Vida.`)}
-else if(acao==="curar"){if(faseAtualInfo.playerMp<15)return notificar("🧪 Mana insuficiente para usar a poção.","danger");faseAtualInfo.playerMp-=15;faseAtualInfo.playerHp=Math.min(100,faseAtualInfo.playerHp+40);adicionarLogBatalha("🧪 Você recuperou 40 de vida.");notificar("🧪 +40 de Vida.","success")}
-if(faseAtualInfo.hpMovel<=0){const avancou=await iniciarProximaFase();if(!avancou)return;atualizarMoedasDiamantesUI();return}
-const danoInimigo=faseAtualInfo.defend?8+Math.floor(faseAtualInfo.etapa/3):18+Math.floor(faseAtualInfo.etapa/2);faseAtualInfo.defend=false;faseAtualInfo.playerHp=Math.max(0,faseAtualInfo.playerHp-danoInimigo);adicionarLogBatalha(`👹 O inimigo contra-atacou: ${danoInimigo} de dano.`);notificar(`👹 Inimigo atacou: -${danoInimigo} Vida.` ,"danger");if(faseAtualInfo.playerHp<=0){notificar("💀 Você perdeu a batalha.","danger");voltarSelecaoFases();return}atualizarBatalhaUI();atualizarMoedasDiamantesUI()};
+function salvarBatalhaLocal(){try{localStorage.setItem("dragonwar_battle_"+usuarioAtual.uid,JSON.stringify({categoria:faseAtualInfo.categoria,etapa:faseAtualInfo.etapa,hpMovel:faseAtualInfo.hpMovel,maxHp:faseAtualInfo.maxHp,playerHp:faseAtualInfo.playerHp,playerMp:faseAtualInfo.playerMp,defend:faseAtualInfo.defend}))}catch(e){}}
+async function iniciarProximaFase(){
+ const cat=categorias[faseAtualInfo.categoria];
+ if(faseAtualInfo.etapa>=cat.max){
+  const reward=120+faseAtualInfo.etapa*20+(faseAtualInfo.categoria==="hardcore"?500:0);
+  usuarioAtual.coins=Number(usuarioAtual.coins||0)+reward;
+  usuarioAtual.diamonds=Number(usuarioAtual.diamonds||0)+(faseAtualInfo.categoria==="hardcore"?25:5);
+  usuarioAtual.xp=Number(usuarioAtual.xp||0)+200;
+  usuarioAtual.level=Math.max(Number(usuarioAtual.level||1),Math.floor(usuarioAtual.xp/100)+5);
+  usuarioAtual.phaseProgress[faseAtualInfo.categoria]=cat.max;
+  await salvarProgresso();
+  notificar(`🏆 ${cat.nome} concluído! +${reward} moedas.`,"success");
+  adicionarLogBatalha(`🏆 ${cat.nome} concluído!`);
+  voltarSelecaoFases();
+  return false;
+ }
+ faseAtualInfo.etapa++;
+ faseAtualInfo.maxHp=Math.round(cat.hp*faseAtualInfo.etapa*cat.mult);
+ faseAtualInfo.hpMovel=faseAtualInfo.maxHp;
+ faseAtualInfo.playerHp=100;
+ faseAtualInfo.playerMp=100;
+ faseAtualInfo.defend=false;
+ usuarioAtual.phaseProgress[faseAtualInfo.categoria]=faseAtualInfo.etapa;
+ usuarioAtual.xp=Number(usuarioAtual.xp||0)+50;
+ usuarioAtual.level=Math.max(Number(usuarioAtual.level||1),Math.floor(usuarioAtual.xp/100)+5);
+ await salvarProgresso();
+ atualizarBatalhaUI();
+ salvarBatalhaLocal();
+ adicionarLogBatalha(`🏆 Vitória! Avançou para o nível ${faseAtualInfo.etapa}.`);
+ notificar(`🏆 Vitória! Você avançou para o nível ${faseAtualInfo.etapa}.`,"success");
+ return true;
+}
+window.batalhaAcao=async(acao,automatico=false)=>{
+ if(!faseAtualInfo.categoria||faseAtualInfo.playerHp<=0||faseAtualInfo.busy)return;
+ faseAtualInfo.busy=true;
+ try{
+  let dano=0;
+  if(acao==="fugir"){
+   adicionarLogBatalha("🏃 Você fugiu da batalha.");
+   notificar("🏃 Você saiu da batalha.","danger");
+   salvarBatalhaLocal();
+   voltarSelecaoFases();
+   return;
+  }
+  if(acao==="atacar"){
+   dano=calcularDanoBase();
+   faseAtualInfo.hpMovel=Math.max(0,faseAtualInfo.hpMovel-dano);
+   adicionarLogBatalha(`⚔️ Você causou ${dano} de dano.`);
+   notificar((automatico?"👊 Ataque inicial automático":"⚔️ Ataque")+`: -${dano} HP no inimigo.`,"success");
+  }else if(acao==="defender"){
+   faseAtualInfo.defend=true;
+   adicionarLogBatalha("🛡️ Defesa ativada!");
+   notificar("🛡️ Defesa ativada! O próximo contra-ataque será reduzido.","info");
+  }else if(acao==="poder"){
+   if(faseAtualInfo.playerMp<30){notificar("🔥 Mana insuficiente para usar o poder.","danger");return}
+   faseAtualInfo.playerMp-=30;dano=calcularDanoBase()+35;faseAtualInfo.hpMovel=Math.max(0,faseAtualInfo.hpMovel-dano);
+   adicionarLogBatalha(`🔥 Poder utilizado! -30 Mana e ${dano} de dano.`);notificar(`🔥 Poder utilizado! -30 Mana • -${dano} HP.`,"success");
+  }else if(acao==="habilidade"){
+   if(faseAtualInfo.playerMp<20){notificar("✨ Mana insuficiente para usar a habilidade.","danger");return}
+   faseAtualInfo.playerMp-=20;dano=calcularDanoBase()+20;faseAtualInfo.hpMovel=Math.max(0,faseAtualInfo.hpMovel-dano);faseAtualInfo.playerHp=Math.min(100,faseAtualInfo.playerHp+10);
+   adicionarLogBatalha(`✨ Habilidade ativada! -20 Mana • ${dano} dano • +10 Vida.`);notificar(`✨ Habilidade ativada! -20 Mana • +10 Vida.`,"success");
+  }else if(acao==="curar"){
+   const idx=usuarioAtual.inventory.findIndex(i=>i&&i.category==="potion");
+   if(idx<0){notificar("🧪 Você não possui poção no inventário.","danger");return}
+   usuarioAtual.inventory.splice(idx,1);
+   const cura=40;
+   faseAtualInfo.playerHp=Math.min(100,faseAtualInfo.playerHp+40);
+   adicionarLogBatalha("🧪 Poção usada! +40 Vida.");notificar("🧪 Poção usada! +40 Vida.","success");
+  }
+  atualizarBatalhaUI();salvarBatalhaLocal();await salvarProgresso();
+  if(faseAtualInfo.hpMovel<=0){await iniciarProximaFase();atualizarMoedasDiamantesUI();return}
+  const danoInimigo=faseAtualInfo.defend?Math.max(5,8+Math.floor(faseAtualInfo.etapa/3)):18+Math.floor(faseAtualInfo.etapa/2);
+  faseAtualInfo.defend=false;
+  faseAtualInfo.playerHp=Math.max(0,faseAtualInfo.playerHp-danoInimigo);
+  adicionarLogBatalha(`👹 O inimigo contra-atacou causando ${danoInimigo} de dano.`);
+  notificar(`👹 O inimigo contra-atacou: -${danoInimigo} Vida.`,"danger");
+  atualizarBatalhaUI();salvarBatalhaLocal();await salvarProgresso();
+  if(faseAtualInfo.playerHp<=0){notificar("💀 Você perdeu a batalha.","danger");adicionarLogBatalha("💀 Você foi derrotado.");voltarSelecaoFases()}
+ }catch(e){console.error(e);notificar("❌ Erro ao salvar/realizar a ação.","danger")}
+ finally{faseAtualInfo.busy=false}
+};
+
 async function salvarProgresso(){await updateDoc(doc(db,"jogadores_reais",usuarioAtual.uid),{coins:usuarioAtual.coins,diamonds:usuarioAtual.diamonds,level:usuarioAtual.level,xp:usuarioAtual.xp,phaseProgress:usuarioAtual.phaseProgress,inventory:usuarioAtual.inventory,achievements:usuarioAtual.achievements,updatedAt:serverTimestamp()});atualizarMoedasDiamantesUI();verificarAchievements()}
 
 function renderLoja(){let g=document.getElementById("loja-grid");let arr=categoriaLoja==="all"?catalogo:catalogo.filter(x=>x.category===categoriaLoja);g.innerHTML=arr.map(i=>`<div class="item-card"><h4>${icone(i.category)} ${i.nome}</h4><p>${i.desc}</p><div class="price">${i.price} 🪙</div><button class="btn" style="padding:6px;margin-top:7px;font-size:11px" onclick="comprarItem('${i.id}')">Comprar</button></div>`).join("")}
@@ -348,8 +480,44 @@ window.acaoAdm=async tipo=>{let target=document.getElementById("target-player").
 
 window.abrirAtendimentoSelecionado=async()=>{if(!jogadorSelecionadoModal.id)return;await abrirSalaAtendimento(jogadorSelecionadoModal.id,jogadorSelecionadoModal.nome)};
 window.abrirAtendimentoPorBusca=async()=>{let target=document.getElementById("target-player").value.trim();if(!target)return alert("Informe UID ou e-mail.");let s=await getDocs(collection(db,"jogadores_reais")),found=null;s.forEach(d=>{let x=d.data();if(x.uid===target||x.email===target)found={id:d.id,data:x}});if(!found)return alert("Jogador não encontrado.");await abrirSalaAtendimento(found.id,found.data.displayName||found.data.email)};
-async function abrirSalaAtendimento(playerId,playerName){let q=query(collection(db,"salas_atendimento"),orderBy("createdAt","desc"));let snap=await getDocs(q),room=null;snap.forEach(d=>{let x=d.data();if(!room&&x.playerUid===playerId&&x.status==="aberta")room={id:d.id,data:x}});if(!room){let r=await addDoc(collection(db,"salas_atendimento"),{playerUid:playerId,playerName,admUid:usuarioAtual.uid,admName:"ADM GABRIEL",status:"aberta",createdAt:serverTimestamp()});room={id:r.id,data:{playerUid:playerId,playerName,status:"aberta"}}}salaAtualId=room.id;document.getElementById("support-header").innerText=`👑 ADM GABRIEL ↔ 👤 ${playerName}`;document.getElementById("modal-atendimento").classList.remove("hidden");assinarMensagensSala()};
-function assinarMensagensSala(){if(unsubscribeSupport)unsubscribeSupport();if(!salaAtualId)return;let q=query(collection(db,"salas_atendimento",salaAtualId,"mensagens"),orderBy("createdAt","asc"));unsubscribeSupport=onSnapshot(q,s=>{let c=document.getElementById("support-messages");c.innerHTML="";s.forEach(d=>{let x=d.data(),me=x.senderUid===usuarioAtual.uid,div=document.createElement("div");div.className="support-msg "+(me?"me":"adm");div.innerHTML=`<b>${x.senderName||"Usuário"}</b><br>${escapeHtml(x.text||"")}`;c.appendChild(div)});c.scrollTop=c.scrollHeight})}
+async function abrirSalaAtendimento(playerId,playerName){
+ let q=query(collection(db,"salas_atendimento"),where("playerUid","==",playerId),where("status","==","aberta"));
+ let snap=await getDocs(q),room=null;
+ snap.forEach(d=>{if(!room)room={id:d.id,data:d.data()}});
+ if(!room){
+  let r=await addDoc(collection(db,"salas_atendimento"),{playerUid:playerId,playerName,admUid:usuarioAtual.uid,admName:"ADM GABRIEL",status:"aberta",createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+  room={id:r.id,data:{playerUid:playerId,playerName,status:"aberta",admUid:usuarioAtual.uid,admName:"ADM GABRIEL"}};
+ }
+ salaAtualId=room.id;
+ document.getElementById("support-header").innerText=`👑 ADM GABRIEL ↔ 👤 ${playerName}`;
+ document.getElementById("modal-atendimento").classList.remove("hidden");
+ assinarMensagensSala();
+}
+function assinarMensagensSala(){
+ if(unsubscribeSupport)unsubscribeSupport();
+ if(!salaAtualId)return;
+ let q=query(collection(db,"salas_atendimento",salaAtualId,"mensagens"),orderBy("createdAt","asc"));
+ unsubscribeSupport=onSnapshot(q,s=>{
+  let c=document.getElementById("support-messages");c.innerHTML="";
+  s.forEach(d=>{let x=d.data(),me=x.senderUid===usuarioAtual.uid,div=document.createElement("div");div.className="support-msg "+(me?"me":"adm");div.innerHTML=`<b>${escapeHtml(x.senderName||"Usuário")}</b><br>${escapeHtml(x.text||"")}`;c.appendChild(div)});
+  c.scrollTop=c.scrollHeight;
+ });
+}
+function assinarSalaAtendimentoJogador(){
+ if(unsubscribePlayerSupport)unsubscribePlayerSupport();
+ if(!usuarioAtual?.uid||usuarioAtual.isAdm)return;
+ const q=query(collection(db,"salas_atendimento"),where("playerUid","==",usuarioAtual.uid),where("status","==","aberta"));
+ unsubscribePlayerSupport=onSnapshot(q,snap=>{
+  let roomDoc=snap.docs[0];
+  if(!roomDoc)return;
+  const room=roomDoc.data();
+  salaAtualId=roomDoc.id;
+  document.getElementById("support-header").innerText=`👑 ${room.admName||"ADM GABRIEL"} ↔ 👤 ${nomeAtual()}`;
+  document.getElementById("modal-atendimento").classList.remove("hidden");
+  assinarMensagensSala();
+  notificar("📢 O ADM chamou você para uma sala de atendimento.","info");
+ });
+}
 window.enviarMensagemAtendimento=async()=>{let input=document.getElementById("support-input"),text=input.value.trim();if(!text||!salaAtualId)return;await addDoc(collection(db,"salas_atendimento",salaAtualId,"mensagens"),{senderUid:usuarioAtual.uid,senderName:nomeAtual(),text,createdAt:serverTimestamp()});input.value="";};
 window.fecharAtendimento=()=>{document.getElementById("modal-atendimento").classList.add("hidden");if(unsubscribeSupport){unsubscribeSupport();unsubscribeSupport=null}};
 async function registrarLog(acao,target){if(!usuarioAtual.isAdm)return;await addDoc(collection(db,"logs_adm"),{acao,target,adminUid:usuarioAtual.uid,adminName:"ADM GABRIEL",createdAt:serverTimestamp()});carregarLogs()};
@@ -363,7 +531,7 @@ function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":
 window.atualizarVolume=()=>{document.getElementById("bg-music").volume=Number(document.getElementById("vol-musica").value)/100};
 window.alternarSom=async()=>{let a=document.getElementById("bg-music");if(a.paused){a.volume=Number(document.getElementById("vol-musica").value)/100;try{await a.play()}catch(e){alert("O navegador bloqueou o áudio. Clique novamente após interagir com a página.")}}else a.pause()};
 
-window.sairDaConta=async()=>{try{if(heartbeatTimer)clearInterval(heartbeatTimer);heartbeatTimer=null;if(unsubscribeGlobal){unsubscribeGlobal();unsubscribeGlobal=null}if(unsubscribeSupport){unsubscribeSupport();unsubscribeSupport=null}const u=auth.currentUser;if(u){try{await updateDoc(doc(db,"jogadores_reais",u.uid),{status:"Offline",lastSeen:serverTimestamp()})}catch(e){console.warn("Não foi possível atualizar o status offline",e)}await signOut(auth)}}catch(e){console.error(e)}finally{usuarioAtual=null;document.getElementById("game-container").classList.add("hidden");document.getElementById("login-screen").classList.remove("hidden");document.getElementById("auth-email").value="";document.getElementById("auth-pass").value="";document.getElementById("auth-email").focus();notificar("🚪 Conta desconectada. Faça login novamente para entrar em outra conta.","info")}};
+window.sairDaConta=async()=>{try{if(heartbeatTimer)clearInterval(heartbeatTimer);heartbeatTimer=null;if(unsubscribeGlobal){unsubscribeGlobal();unsubscribeGlobal=null}if(unsubscribeSupport){unsubscribeSupport();unsubscribeSupport=null}if(unsubscribePlayerSupport){unsubscribePlayerSupport();unsubscribePlayerSupport=null}const u=auth.currentUser;if(u){try{await updateDoc(doc(db,"jogadores_reais",u.uid),{status:"Offline",lastSeen:serverTimestamp()})}catch(e){console.warn("Não foi possível atualizar o status offline",e)}await signOut(auth)}}catch(e){console.error(e)}finally{usuarioAtual=null;document.getElementById("game-container").classList.add("hidden");document.getElementById("login-screen").classList.remove("hidden");document.getElementById("auth-email").value="";document.getElementById("auth-pass").value="";document.getElementById("auth-email").focus();notificar("🚪 Conta desconectada. Faça login novamente para entrar em outra conta.","info")}};
 
 onAuthStateChanged(auth,async user=>{if(!user)return;try{await carregarJogador();await carregarCatalogoCustom();await carregarLogs();document.getElementById("login-screen").classList.add("hidden");document.getElementById("game-container").classList.remove("hidden");try{document.getElementById("bg-music").volume=.6}catch(e){}}catch(e){console.error(e)}});
 </script>
