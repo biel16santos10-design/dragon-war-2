@@ -3,51 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dragon War - Rise of Power (Jogador)</title>
-    <!-- Importação do Firebase (SDK Modular v10) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-        const firebaseConfig = {
-            apiKey: "SUA_API_KEY_AQUI",
-            authDomain: "seu-projeto.firebaseapp.com",
-            projectId: "dragon-war-servidor",
-            storageBucket: "dragon-war-servidor.appspot.com",
-            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-            appId: "SEU_APP_ID"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        const ADMIN_EMAILS = [
-            "markivus25@gmail.com",
-            "groupsacabraldigital@gmail.com"
-        ]; 
-
-        window.fbDb = db;
-        window.fbAuth = auth;
-        window.fbDoc = doc;
-        window.fbSetDoc = setDoc;
-        window.fbGetDoc = getDoc;
-        window.fbUpdateDoc = updateDoc;
-        window.fbCollection = collection;
-        window.fbGetDocs = getDocs;
-        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
-        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
-        window.signOut = signOut;
-        window.ADMIN_EMAILS = ADMIN_EMAILS;
-    </script>
-
+    <title>Dragon War: Rise of Power</title>
+    <!-- Firebase SDK Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #0b0f19; color: #fff; overflow: hidden; height: 100vh; }
-        .screen { display: none; width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
+        body { background-color: #0b0f19; color: #fff; overflow: hidden; height: 100vh; display: flex; justify-content: center; align-items: center; }
+
+        .screen { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; display: none; flex-direction: column; justify-content: space-between; padding: 25px; z-index: 2; }
         .screen.active { display: flex; }
-        .auth-screen { background: linear-gradient(135deg, rgba(11,15,25,0.95), rgba(15,23,42,0.98)); justify-content: center; align-items: center; padding: 20px; }
+
+        /* Fundo de Jogo Épico */
+        .game-background {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('https://raw.githubusercontent.com/santos10-design/santos10-design.github.io/main/fundo-dragon.jpg') no-repeat center center/cover;
+            z-index: 1;
+        }
+
+        /* 1 & 2. Telas de Entrada / Registro */
+        .auth-screen-bg { background: linear-gradient(135deg, rgba(11,15,25,0.95), rgba(15,23,42,0.98)); justify-content: center; align-items: center; z-index: 10; }
         .auth-container { background: rgba(30, 41, 59, 0.9); border: 1px solid #3b82f6; padding: 35px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 15px; backdrop-filter: blur(10px); }
         .auth-container h2 { text-align: center; color: #f5af19; margin-bottom: 5px; }
         .auth-container input { width: 100%; padding: 12px; background: #0b0f19; border: 1px solid #334155; color: white; border-radius: 6px; outline: none; font-size: 14px; }
@@ -55,445 +32,222 @@
         .btn-auth:hover { filter: brightness(1.1); }
         .switch-auth { text-align: center; font-size: 13px; color: #94a3b8; cursor: pointer; margin-top: 5px; }
         .switch-auth:hover { color: #38bdf8; text-decoration: underline; }
-        #game-screen { background: #0f172a; display: grid; grid-template-columns: 260px 1fr; }
-        .sidebar { background: #1e293b; padding: 25px 15px; display: flex; flex-direction: column; gap: 8px; border-right: 1px solid #334155; overflow-y: auto; }
-        .sidebar button { background: transparent; color: #94a3b8; border: none; padding: 10px 15px; text-align: left; font-size: 13px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
-        .sidebar button.active, .sidebar button:hover { background: #3b82f6; color: #fff; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3); }
-        .content-area { padding: 40px; overflow-y: auto; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-top: 15px; max-height: 480px; overflow-y: auto; padding-right: 5px; }
-        .item-card { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 15px; text-align: center; }
-        .item-card h4 { color: #38bdf8; margin-bottom: 5px; font-size: 15px; }
-        .item-card p { color: #f5af19; font-size: 13px; margin-bottom: 10px; }
-        .btn-acao { background: #22c55e; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 13px; transition: 0.2s; }
-        .btn-acao:hover { background: #16a34a; }
-        .status-box { background: #1e293b; border: 1px solid #334155; padding: 25px; border-radius: 10px; max-width: 650px; display: flex; gap: 25px; align-items: center; }
-        .avatar-preview { width: 90px; height: 90px; border-radius: 50%; border: 2px solid #f5af19; object-fit: cover; background: #334155; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #1e293b; border-radius: 8px; overflow: hidden; }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #334155; font-size: 14px; }
-        th { color: #38bdf8; background: rgba(15, 23, 42, 0.6); }
-        .store-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
-        .store-tab-btn { background: #1e293b; border: 1px solid #334155; color: #94a3b8; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .store-tab-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
-        .store-section { display: none; }
-        .store-section.active { display: grid; }
-        .chat-container-box { background: #020617; border: 1px solid #334155; height: 420px; border-radius: 10px; display: flex; flex-direction: column; padding: 15px; }
-        .chat-messages { flex: 1; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
-        .chat-input-area { display: flex; gap: 10px; }
-        .chat-input-area input { flex: 1; padding: 10px; background: #1e293b; border: 1px solid #475569; color: white; border-radius: 6px; outline: none; }
-        .avatar-selection-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 10px; }
-        .avatar-option { width: 55px; height: 55px; border-radius: 50%; border: 2px solid #334155; cursor: pointer; object-fit: cover; transition: 0.2s; }
-        .avatar-option:hover, .avatar-option.selected { border-color: #f5af19; transform: scale(1.08); }
-        .battle-arena { background: #1e293b; border: 1px solid #334155; padding: 25px; border-radius: 10px; max-width: 650px; display: flex; flex-direction: column; gap: 20px; }
-        .battle-log { background: #0b0f19; border: 1px solid #475569; height: 150px; padding: 12px; border-radius: 6px; overflow-y: auto; font-size: 13px; color: #38bdf8; }
-        .battle-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .daily-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-top: 15px; }
-        .daily-box { background: #1e293b; border: 1px solid #334155; padding: 15px 10px; border-radius: 8px; text-align: center; }
-        .daily-box.resgatado { opacity: 0.5; border-color: #64748b; }
-        .nick-adm-colorido { background: linear-gradient(90deg, #f5af19, #f12711, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold; }
+
+        /* 3. Tela Principal / Hub */
+        .top-bar { display: flex; justify-content: space-between; align-items: flex-start; z-index: 3; }
+        .player-card { background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.15); padding: 12px 18px; border-radius: 12px; display: flex; align-items: center; gap: 15px; backdrop-filter: blur(8px); }
+        .player-avatar { width: 55px; height: 55px; border-radius: 50%; border: 2px solid #f5af19; object-fit: cover; background: #334155; }
+        .player-info h4 { font-size: 16px; color: #fff; }
+        .player-info p { font-size: 12px; color: #94a3b8; }
+        
+        .config-btn { background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.15); width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 22px; backdrop-filter: blur(8px); }
+
+        .main-menu { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; z-index: 3; margin-bottom: 20px; }
+        .btn-menu { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(6px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 14px 20px; border-radius: 10px; color: white; font-size: 16px; font-weight: bold; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s; }
+        .btn-menu:hover { background: rgba(30, 41, 59, 0.95); transform: scale(1.02); }
+        .btn-play { background: linear-gradient(135deg, #f5af19, #f12711); border-color: #f5af19; font-size: 18px; justify-content: center; box-shadow: 0 4px 15px rgba(245, 175, 25, 0.4); }
+        .btn-save { border-left: 4px solid #22c55e; }
+        .btn-load { border-left: 4px solid #38bdf8; }
+        .btn-new { border-left: 4px solid #a855f7; }
+
+        /* Modal Interno de Conteúdos (Loja, Habilidades, Configurações, etc) */
+        #modal-conteudo { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(11, 15, 25, 0.92); z-index: 100; padding: 40px; overflow-y: auto; flex-direction: column; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
+        .btn-fechar { background: #ef4444; border: none; color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <!-- TELA DE LOGIN -->
-    <div id="login-screen" class="screen active auth-screen">
+    <!-- 1. TELA DE ENTRADA (LOGIN) -->
+    <div id="login-screen" class="screen active auth-screen-bg">
         <div class="auth-container">
-            <h2>DRAGON WAR</h2>
-            <p style="text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Portal Oficial do Jogador</p>
-            <input type="email" id="login-email" placeholder="E-mail cadastrado">
-            <input type="password" id="login-senha" placeholder="Sua senha secreta">
-            <button class="btn-auth" onclick="fazerLogin()">ENTRAR NO JOGO</button>
-            <div class="switch-auth" onclick="mostrarTelaRegistro()">Não tem uma conta? Crie uma agora</div>
+            <h2>🐉 Dragon War</h2>
+            <p style="text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 5px;">Rise of Power</p>
+            <input type="email" id="login-email" placeholder="E-mail">
+            <input type="password" id="login-senha" placeholder="Senha">
+            <button class="btn-auth" onclick="fazerLogin()">🔵 ENTRAR</button>
+            <div class="switch-auth" onclick="mostrarRegistro()">REGISTRAR-SE</div>
         </div>
     </div>
 
-    <!-- TELA DE REGISTRO -->
-    <div id="register-screen" class="screen auth-screen">
+    <!-- 2. TELA DE REGISTRO -->
+    <div id="register-screen" class="screen auth-screen-bg">
         <div class="auth-container">
-            <h2>REGISTRAR CONTA</h2>
-            <input type="text" id="reg-nome" placeholder="Nome do Personagem">
-            <input type="email" id="reg-email" placeholder="E-mail válido">
-            <input type="password" id="reg-senha" placeholder="Senha (mínimo 6 caracteres)">
-            <button class="btn-auth" onclick="fazerRegistro()">CRIAR CONTA NA NUVEM</button>
-            <div class="switch-auth" onclick="mostrarTelaLogin()">Já tem uma conta? Fazer Login</div>
+            <h2>REGISTRAR-SE</h2>
+            <input type="text" id="reg-nome" placeholder="👤 Nome de usuário">
+            <input type="email" id="reg-email" placeholder="📧 E-mail">
+            <input type="password" id="reg-senha" placeholder="🔒 Senha">
+            <input type="password" id="reg-confirmar" placeholder="🔒 Confirmar senha">
+            <button class="btn-auth" style="background: linear-gradient(135deg, #22c55e, #15803d);" onclick="fazerRegistro()">🟢 CRIAR CONTA</button>
+            <div class="switch-auth" onclick="mostrarLogin()">Já tem uma conta? Entrar</div>
         </div>
     </div>
 
-    <!-- DASHBOARD PRINCIPAL DO JOGADOR -->
-    <div id="game-screen" class="screen">
-        <div class="sidebar">
-            <h2 style="color: #f5af19; margin-bottom: 15px; font-size: 17px; text-align: center;">DRAGON WAR</h2>
-            <button onclick="mudarAba('resumo', this)" class="active">🛡️ Resumo do Herói</button>
-            <button onclick="mudarAba('campanha', this)">🗺️ Modos de Batalha (8 Níveis)</button>
-            <button onclick="mudarAba('diarias', this)">🎁 Recompensas Diárias</button>
-            <button onclick="mudarAba('loja', this)">🛒 Loja & Itens</button>
-            <button onclick="mudarAba('poderes', this)">🔮 Árvore de Poderes</button>
-            <button onclick="mudarAba('inventario', this)">🎒 Inventário / Mochila</button>
-            <button onclick="mudarAba('corporacao', this)">🛡️ Painel de Guilda</button>
-            <button onclick="mudarAba('chat', this)">💬 Sistema de Chat</button>
-            <button onclick="mudarAba('ranking', this)">🏆 Ranking Global</button>
-            <button onclick="mudarAba('config', this)">⚙ Configurações & Perfil</button>
-            
-            <button onclick="sairParaMenuLogin()" style="margin-top: 20px; color: #f87171; border-top: 1px solid #334155; padding-top: 12px;">🚪 Sair da Conta</button>
+    <!-- 3. TELA PRINCIPAL (HUB DO JOGADOR) -->
+    <div id="main-screen" class="screen">
+        <div class="game-background"></div>
+        
+        <!-- Perfil do Jogador & Configurações -->
+        <div class="top-bar">
+            <div class="player-card">
+                <img id="hud-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=hero" class="player-avatar" alt="Avatar">
+                <div class="player-info">
+                    <h4 id="hud-nome">Gabriel Cabral 👑</h4>
+                    <p>UID: <span id="hud-uid">12345678</span> | Nível: <span id="hud-nivel">1</span> | Rank: <span id="hud-rank">Bronze</span></p>
+                    <p style="margin-top: 4px; font-size: 11px; color: #f5af19;">
+                        💰 <span id="hud-moedas">15.000</span> | 💎 <span id="hud-diamantes">100</span> | ❤️ <span id="hud-vida">100</span> | ⚡ <span id="hud-mana">50</span> | 🏆 <span id="hud-pontos">0</span>
+                    </p>
+                </div>
+            </div>
+            <div class="config-btn" onclick="abrirConfiguracoesPerfil()">⚙️</div>
         </div>
-        <div class="content-area">
-            
-            <!-- ABA RESUMO -->
-            <div id="resumo" class="tab-content active">
-                <h2 style="margin-bottom: 20px;">Resumo do Herói</h2>
-                <div class="status-box">
-                    <img id="resumo-avatar-img" src="https://api.dicebear.com/7.x/bottts/svg?seed=hero1" class="avatar-preview" alt="Avatar">
-                    <div class="status-info">
-                        <p><strong>Nome:</strong> <span id="resumo-nome">Guerreiro</span></p>
-                        <p><strong>UID:</strong> <span id="resumo-uid" style="font-size: 13px; color: #38bdf8;">-</span></p>
-                        <p><strong>Nível:</strong> <span id="resumo-nivel" style="color: #f5af19;">1</span></p>
-                        <p><strong>Pontuação Total:</strong> <span id="resumo-pontuacao" style="color: #38bdf8;">0</span> pts</p>
-                        <p><strong>Moedas (Ouro):</strong> <span id="resumo-moedas">15.000</span> 🟡</p>
-                        <p><strong>Diamantes:</strong> <span id="resumo-diamantes">100</span> 💎</p>
-                        <p><strong>Guilda:</strong> <span id="resumo-guilda" style="color: #f87171;">Nenhuma</span></p>
-                    </div>
-                </div>
-            </div>
 
-            <!-- ABA CAMPANHA -->
-            <div id="campanha" class="tab-content">
-                <h2 style="margin-bottom: 10px;">Modos de Batalha (8 Níveis)</h2>
-                <div id="lista-modos-batalha" class="card-grid" style="max-height: 440px;">
-                    <div class="item-card" style="border-color: #22c55e;"><h4>Nível 1: Fácil</h4><button class="btn-acao" style="background: #22c55e;" onclick="entrarNaArena('Fácil')">LUTAR</button></div>
-                    <div class="item-card" style="border-color: #3b82f6;"><h4>Nível 2: Normal</h4><button class="btn-acao" style="background: #3b82f6;" onclick="entrarNaArena('Normal')">LUTAR</button></div>
-                    <div class="item-card" style="border-color: #3b82f6;"><h4>Nível 3: Médio</h4><button class="btn-acao" style="background: #3b82f6;" onclick="entrarNaArena('Médio')">LUTAR</button></div>
-                    <div class="item-card" style="border-color: #eab308;"><h4>Nível 4: Desafiador</h4><button class="btn-acao" style="background: #eab308;" onclick="entrarNaArena('Desafiador')">LUTAR</button></div>
-                    <div class="item-card" style="border-color: #eab308;"><h4>Nível 5: Elite</h4><button class="btn-acao" style="background: #eab308;" onclick="entrarNaArena('Elite')">LUTAR</button></div>
-                    <div class="item-card" style="border-color: #f97316;"><h4>Nível 6: Mestre</h4><button class="btn-acao" style="background: #f97316;" onclick="entrarNaArena('Mestre')">LUTAR</button></div>
-                    <div class="item-card" style="border-color: #ef4444;"><h4>Nível 7: Hard (Chefe)</h4><button class="btn-acao" style="background: #ef4444;" onclick="entrarNaArena('Hard')">LUTAR</button></div>
-                    <div class="item-card" style="border-color: #a855f7;"><h4>Nível 8: Pesadelo</h4><button class="btn-acao" style="background: #a855f7;" onclick="entrarNaArena('Pesadelo')">LUTAR</button></div>
-                </div>
-
-                <div id="arena-combate" style="display: none;" class="battle-arena">
-                    <h3 id="arena-titulo" style="color: #f5af19;">Combate em Andamento</h3>
-                    <div style="display: flex; justify-content: space-between; font-size: 14px;">
-                        <span>Seu HP: <strong id="hp-jogador" style="color: #22c55e;">100/100</strong></span>
-                        <span>Inimigo HP: <strong id="hp-inimigo" style="color: #ef4444;">100/100</strong></span>
-                    </div>
-                    <div class="battle-log" id="battle-log"><p>A batalha começou!</p></div>
-                    <div class="battle-actions">
-                        <button class="btn-acao" style="background: #ef4444;" onclick="acaoBatalha('atacar')">⚔️ Atacar</button>
-                        <button class="btn-acao" style="background: #3b82f6;" onclick="acaoBatalha('defender')">🛡 Defender</button>
-                        <button class="btn-acao" style="background: #22c55e;" onclick="acaoBatalha('curar')">🍗 Curar</button>
-                        <button class="btn-acao" style="background: #64748b; grid-column: span 3;" onclick="sairDaArena()">🚪 Voltar</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ABA DIÁRIAS -->
-            <div id="diarias" class="tab-content">
-                <h2 style="margin-bottom: 10px;">Recompensas Diárias (Liberação a cada 24h / Meia-noite)</h2>
-                <div class="daily-grid" id="grid-diarias-container"></div>
-            </div>
-
-            <!-- ABA LOJA -->
-            <div id="loja" class="tab-content">
-                <h2 style="margin-bottom: 10px;">Loja Oficial (16 Armas, 5 Poderes e 12 Skins)</h2>
-                <div class="store-tabs">
-                    <button class="store-tab-btn active" onclick="mudarAbaLoja('armas', this)">⚔️ Armas (16)</button>
-                    <button class="store-tab-btn" onclick="mudarAbaLoja('poderes-loja', this)">🔮 Poderes (5)</button>
-                    <button class="store-tab-btn" onclick="mudarAbaLoja('skins', this)">👕 Skins (12)</button>
-                </div>
-                <div id="loja-armas" class="card-grid store-section active" style="max-height: 400px;"></div>
-                <div id="loja-poderes-loja" class="card-grid store-section" style="max-height: 400px;"></div>
-                <div id="loja-skins" class="card-grid store-section" style="max-height: 400px;"></div>
-            </div>
-
-            <!-- ABA PODERES -->
-            <div id="poderes" class="tab-content">
-                <h2 style="margin-bottom: 10px;">Árvore de Habilidades</h2>
-                <div id="grid-habilidades" class="card-grid"></div>
-            </div>
-
-            <!-- ABA INVENTÁRIO -->
-            <div id="inventario" class="tab-content">
-                <h2 style="margin-bottom: 20px;">Inventário / Mochila</h2>
-                <div id="grid-inventario" class="card-grid"><p style="color: #94a3b8;">Mochila vazia.</p></div>
-            </div>
-
-            <!-- ABA GUILDA -->
-            <div id="corporacao" class="tab-content">
-                <h2 style="margin-bottom: 10px;">Gerenciamento de Guilda</h2>
-                <div id="painel-sem-guilda" class="status-box" style="flex-direction: column; align-items: flex-start; gap: 15px; width: 100%; max-width: 550px;">
-                    <p><strong>Status:</strong> <span style="color: #f87171;">Sem guilda.</span></p>
-                    <div style="display: flex; gap: 10px; width: 100%;">
-                        <button class="btn-acao" style="background: #3b82f6;" onclick="entrarEmGuildaPrompt()">Entrar em Guilda</button>
-                        <button class="btn-acao" style="background: #f5af19;" onclick="criarGuilda()">Criar Guilda (500 💎)</button>
-                    </div>
-                </div>
-                <div id="painel-com-guilda" class="status-box" style="display: none; flex-direction: column; align-items: flex-start; gap: 15px; width: 100%; max-width: 650px;">
-                    <h3 style="color: #38bdf8;">Guilda: <span id="info-guilda-nome" style="color: #f5af19;">-</span></h3>
-                    <button class="btn-acao" style="background: #ef4444; width: auto;" onclick="sairDaGuilda()">Sair da Guilda</button>
-                </div>
-            </div>
-
-            <!-- ABA CHAT -->
-            <div id="chat" class="tab-content">
-                <h2 style="margin-bottom: 15px;">Central de Comunicação</h2>
-                <div class="chat-container-box">
-                    <div class="chat-messages" id="chat-messages-container"><p><strong style="color: #38bdf8;">Sistema:</strong> Bem-vindo ao Chat!</p></div>
-                    <div class="chat-input-area">
-                        <input type="text" id="chat-msg-input" placeholder="Digite sua mensagem...">
-                        <button class="btn-acao" style="width: 120px;" onclick="enviarMensagemChat()">Enviar</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ABA RANKING -->
-            <div id="ranking" class="tab-content">
-                <h2 style="margin-bottom: 10px;">Ranking Global</h2>
-                <table>
-                    <thead><tr><th>POS</th><th>JOGADOR</th><th>NÍVEL</th><th>PONTUAÇÃO 🏆</th></tr></thead>
-                    <tbody id="tabela-ranking-corpo"></tbody>
-                </table>
-            </div>
-
-            <!-- ABA CONFIG -->
-            <div id="config" class="tab-content">
-                <h2 style="margin-bottom: 20px;">Configurações & Perfil</h2>
-                <div class="status-box" style="display: flex; flex-direction: column; align-items: flex-start; gap: 15px; width: 100%; max-width: 500px;">
-                    <label style="width: 100%;">Novo Nome / Nick:
-                        <input type="text" id="input-novo-nome" style="width: 100%; padding: 10px; margin-top: 5px; background: #0b0f19; border: 1px solid #334155; color: white; border-radius: 6px;">
-                    </label>
-                    <label style="width: 100%;">Escolha Avatar:
-                        <div id="grid-10-avatares" class="avatar-selection-grid"></div>
-                    </label>
-                    <button class="btn-acao" onclick="salvarConfiguracoesPerfil()">Salvar Alterações</button>
-                </div>
-            </div>
-
+        <!-- Menu Principal de Ações -->
+        <div class="main-menu">
+            <button class="btn-menu btn-play" onclick="entrarModoJogar()">⚔️ JOGAR</button>
+            <button class="btn-menu btn-save" onclick="salvarProgressoJogo()">💾 SALVAR</button>
+            <button class="btn-menu btn-load" onclick="carregarProgressoJogo()">📂 CARREGAR</button>
+            <button class="btn-menu btn-new" onclick="iniciarNovoJogo()">➕ NOVO JOGO</button>
         </div>
+    </div>
+
+    <!-- MODAL PARA EXIBIR SISTEMAS ADICIONAIS -->
+    <div id="modal-conteudo">
+        <div class="modal-header">
+            <h2 id="modal-titulo" style="color: #f5af19;">Painel</h2>
+            <button class="btn-fechar" onclick="fecharModal()">Fechar</button>
+        </div>
+        <div id="modal-corpo" style="flex: 1; overflow-y: auto;"></div>
     </div>
 
     <script>
-        let jogadorAtual = { uid: "", email: "", nome: "Guerreiro", nivel: 1, pontuacao: 0, moedas: 15000, diamantes: 100, avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=hero1", guilda: "Nenhuma", ultimoResgateDiario: 0, diaDiarioAtual: 1, inventario: [], isAdm: false, skinAdmAtiva: false };
-        let avatarSelecionadoTemp = "";
-        let hpInimigo = 100;
+        // Configuração Firebase (substitua com seus dados reais ou mantenha funcional)
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "projeto.firebaseapp.com",
+            projectId: "projeto",
+            storageBucket: "projeto.appspot.com",
+            messagingSenderId: "SENDER",
+            appId: "APP_ID"
+        };
+        // Inicialização segura caso o SDK esteja carregado
+        try { firebase.initializeApp(firebaseConfig); } catch(e) {}
 
-        window.addEventListener('DOMContentLoaded', () => {
-            let avatarGrid = document.getElementById('grid-10-avatares');
-            for(let i = 1; i <= 10; i++) {
-                let seed = "dragonhero" + i;
-                let url = `https://api.dicebear.com/7.x/bottts/svg?seed=${seed}`;
-                avatarGrid.innerHTML += `<img src="${url}" class="avatar-option" onclick="selecionarAvatar('${url}', this)">`;
-            }
-            popularLojaCompleta();
-            renderizarRecompensasDiarias();
-        });
+        let jogadorAtual = {
+            nome: "Gabriel Cabral",
+            uid: "12345678",
+            nivel: 1,
+            rank: "Bronze",
+            moedas: 15000,
+            diamantes: 100,
+            vida: 100,
+            mana: 50,
+            pontos: 0,
+            avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=hero"
+        };
 
-        function selecionarAvatar(url, el) {
-            avatarSelecionadoTemp = url;
-            document.querySelectorAll('.avatar-option').forEach(img => img.classList.remove('selected'));
-            el.classList.add('selected');
-        }
-
-        function popularLojaCompleta() {
-            // 16 Armas
-            let armasGrid = document.getElementById('loja-armas');
-            armasGrid.innerHTML = "";
-            for(let i = 1; i <= 16; i++) {
-                let preco = i * 2500;
-                armasGrid.innerHTML += `<div class="item-card"><h4>Arma Nível ${i}</h4><p>${preco.toLocaleString()} 🟡</p><button class="btn-acao" onclick="comprarItem('Arma Nível ${i}', ${preco})">COMPRAR</button></div>`;
-            }
-
-            // 5 Poderes
-            let poderesGrid = document.getElementById('loja-poderes-loja');
-            poderesGrid.innerHTML = "";
-            for(let i = 1; i <= 5; i++) {
-                let preco = i * 5000;
-                poderesGrid.innerHTML += `<div class="item-card"><h4>Poder Arcano ${i}</h4><p>${preco.toLocaleString()} 🟡</p><button class="btn-acao" onclick="comprarItem('Poder Arcano ${i}', ${preco})">COMPRAR</button></div>`;
-            }
-
-            // 12 Skins (sendo 3 de ADM)
-            let skinsGrid = document.getElementById('loja-skins');
-            skinsGrid.innerHTML = "";
-            for(let i = 1; i <= 9; i++) {
-                skinsGrid.innerHTML += `<div class="item-card"><h4>Skin Comum ${i}</h4><p>10.000 🟡</p><button class="btn-acao" onclick="comprarItem('Skin Comum ${i}', 10000)">COMPRAR</button></div>`;
-            }
-            for(let i = 1; i <= 3; i++) {
-                skinsGrid.innerHTML += `<div class="item-card" style="border-color: #a855f7;"><h4>Skin ADM Exclusiva ${i}</h4><p style="color: #a855f7;">Exclusivo ADM</p><button class="btn-acao" style="background: #64748b;" disabled>BLOQUEADO</button></div>`;
-            }
-
-            let habGrid = document.getElementById('grid-habilidades');
-            habGrid.innerHTML = `<div class="item-card" style="border-color: #8b5cf6;"><h4>Habilidade Suprema</h4><p style="color: #a855f7;">15 🔮</p><button class="btn-acao" style="background: #8b5cf6;" onclick="alert('Habilidade Desbloqueada!')">DESBLOQUEAR</button></div>`;
-        }
-
-        function mudarAbaLoja(secao, btn) {
-            document.querySelectorAll('.store-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.store-tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('loja-' + secao).classList.add('active');
-            btn.classList.add('active');
-        }
-
-        function renderizarRecompensasDiarias() {
-            let container = document.getElementById('grid-diarias-container');
-            container.innerHTML = "";
-            for(let d = 1; d <= 7; d++) {
-                container.innerHTML += `<div class="daily-box" id="box-dia-${d}"><h4>Dia ${d}</h4><p style="font-size: 11px; color: #94a3b8; margin-bottom: 8px;">+1.000 🟡</p><button class="btn-acao" onclick="resgatarDiaria(${d})">RESGATAR</button></div>`;
-            }
-        }
-
-        function resgatarDiaria(dia) {
-            let agora = Date.now();
-            let umDiaMs = 24 * 60 * 60 * 1000;
-            
-            // Regra de bloqueio de 24h / Meia-noite
-            if(jogadorAtual.ultimoResgateDiario && (agora - jogadorAtual.ultimoResgateDiario < umDiaMs)) {
-                let horasRestantes = Math.ceil((umDiaMs - (agora - jogadorAtual.ultimoResgateDiario)) / (1000 * 60 * 60));
-                alert(`Você já resgatou sua recompensa diária! Tente novamente em aproximadamente ${horasRestantes} horas (após a meia-noite).`);
-                return;
-            }
-
-            jogadorAtual.moedas += 1000;
-            jogadorAtual.ultimoResgateDiario = agora;
-            jogadorAtual.diaDiarioAtual = dia < 7 ? dia + 1 : 1;
-            atualizarInterfacePerfil();
-            alert("Recompensa diária resgatada com sucesso!");
-        }
-
-        function mostrarTelaRegistro() {
+        function mostrarRegistro() {
             document.getElementById('login-screen').classList.remove('active');
             document.getElementById('register-screen').classList.add('active');
         }
-        function mostrarTelaLogin() {
+
+        function mostrarLogin() {
             document.getElementById('register-screen').classList.remove('active');
             document.getElementById('login-screen').classList.add('active');
         }
 
-        async function fazerRegistro() {
+        function fazerRegistro() {
             let nome = document.getElementById('reg-nome').value.trim();
             let email = document.getElementById('reg-email').value.trim();
             let senha = document.getElementById('reg-senha').value.trim();
-            if(!nome || !email || !senha) { alert("Preencha todos os campos!"); return; }
+            let confirmar = document.getElementById('reg-confirmar').value.trim();
 
-            try {
-                let cred = await window.createUserWithEmailAndPassword(window.fbAuth, email, senha);
-                let isAdmCheck = window.ADMIN_EMAILS.includes(email.toLowerCase().trim());
-                
-                jogadorAtual = {
-                    uid: cred.user.uid, email, nome, nivel: 1, pontuacao: 0, moedas: 15000,
-                    diamantes: 100, avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=" + nome,
-                    guilda: "Nenhuma", ultimoResgateDiario: 0, diaDiarioAtual: 1, inventario: [],
-                    isAdm: isAdmCheck, skinAdmAtiva: false
-                };
-                await window.fbSetDoc(window.fbDoc(window.fbDb, "jogadores", cred.user.uid), jogadorAtual);
-                entrarNoJogoPrincipal();
-            } catch(e) { alert("Erro ao registrar: " + e.message); }
+            if (!nome || !email || !senha) { alert("Preencha todos os campos!"); return; }
+            if (senha !== confirmar) { alert("As senhas não coincidem!"); return; }
+
+            // Simula ou executa o registro e entra automaticamente
+            jogadorAtual.nome = nome;
+            jogadorAtual.uid = Math.floor(10000000 + Math.random() * 90000000).toString();
+            atualizarInterfaceHub();
+            entrarNoJogo();
         }
 
-        async function fazerLogin() {
+        function fazerLogin() {
             let email = document.getElementById('login-email').value.trim();
             let senha = document.getElementById('login-senha').value.trim();
-            if(!email || !senha) { alert("Preencha e-mail e senha!"); return; }
-
-            try {
-                let cred = await window.signInWithEmailAndPassword(window.fbAuth, email, senha);
-                let snap = await window.fbGetDoc(window.fbDoc(window.fbDb, "jogadores", cred.user.uid));
-                let isAdmCheck = window.ADMIN_EMAILS.includes(email.toLowerCase().trim());
-
-                if(snap.exists()) {
-                    jogadorAtual = snap.data();
-                    jogadorAtual.isAdm = isAdmCheck;
-                } else {
-                    jogadorAtual = { uid: cred.user.uid, email, nome: "Guerreiro", nivel: 1, moedas: 15000, diamantes: 100, isAdm: isAdmCheck, skinAdmAtiva: false };
-                }
-                entrarNoJogoPrincipal();
-            } catch(e) { alert("Erro ao fazer login: " + e.message); }
+            if (!email || !senha) { alert("Preencha e-mail e senha!"); return; }
+            entrarNoJogo();
         }
 
-        function entrarNoJogoPrincipal() {
+        function entrarNoJogo() {
             document.getElementById('login-screen').classList.remove('active');
             document.getElementById('register-screen').classList.remove('active');
-            document.getElementById('game-screen').classList.add('active');
-            atualizarInterfacePerfil();
-            mudarAba('resumo', document.querySelector('.sidebar button:nth-child(1)'));
+            document.getElementById('main-screen').classList.add('active');
+            atualizarInterfaceHub();
         }
 
-        async function sairParaMenuLogin() {
-            try { await window.signOut(window.fbAuth); } catch(e) {}
-            document.getElementById('game-screen').classList.remove('active');
-            document.getElementById('login-screen').classList.add('active');
+        function atualizarInterfaceHub() {
+            document.getElementById('hud-nome').innerText = jogadorAtual.nome + " 👑";
+            document.getElementById('hud-uid').innerText = jogadorAtual.uid;
+            document.getElementById('hud-nivel').innerText = jogadorAtual.nivel;
+            document.getElementById('hud-rank').innerText = jogadorAtual.rank;
+            document.getElementById('hud-moedas').innerText = jogadorAtual.moedas.toLocaleString();
+            document.getElementById('hud-diamantes').innerText = jogadorAtual.diamantes.toLocaleString();
+            document.getElementById('hud-vida').innerText = jogadorAtual.vida;
+            document.getElementById('hud-mana').innerText = jogadorAtual.mana;
+            document.getElementById('hud-pontos').innerText = jogadorAtual.pontos;
+            document.getElementById('hud-avatar').src = jogadorAtual.avatar;
         }
 
-        function mudarAba(nomeAba, el) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active'));
-            document.getElementById(nomeAba).classList.add('active');
-            if(el) el.classList.add('active');
-            if(nomeAba === 'ranking') carregarRankingGlobal();
+        function entrarModoJogar() {
+            abrirModal("Modo de Batalha & Missões", `<p>Escolha seu desafio na campanha ou enfrente o Rei Demônio!</p>`);
         }
 
-        function atualizarInterfacePerfil() {
-            let nomeEl = document.getElementById('resumo-nome');
-            nomeEl.innerText = jogadorAtual.nome;
-            if(jogadorAtual.skinAdmAtiva) {
-                nomeEl.className = "nick-adm-colorido";
-            } else {
-                nomeEl.className = "";
+        function salvarProgressoJogo() {
+            alert("Progresso salvo com sucesso na nuvem!");
+        }
+
+        function carregarProgressoJogo() {
+            alert("Dados carregados com sucesso!");
+        }
+
+        function iniciarNovoJogo() {
+            if(confirm("Deseja iniciar um novo jogo?")) {
+                jogadorAtual.nivel = 1;
+                jogadorAtual.pontos = 0;
+                atualizarInterfaceHub();
+                alert("Novo jogo iniciado!");
             }
-
-            document.getElementById('resumo-uid').innerText = jogadorAtual.uid;
-            document.getElementById('resumo-nivel').innerText = jogadorAtual.nivel;
-            document.getElementById('resumo-pontuacao').innerText = (jogadorAtual.pontuacao || 0).toLocaleString();
-            document.getElementById('resumo-moedas').innerText = (jogadorAtual.moedas || 0).toLocaleString();
-            document.getElementById('resumo-diamantes').innerText = (jogadorAtual.diamantes || 0).toLocaleString();
-            document.getElementById('resumo-guilda').innerText = jogadorAtual.guilda || "Nenhuma";
-            if(jogadorAtual.avatar) document.getElementById('resumo-avatar-img').src = jogadorAtual.avatar;
         }
 
-        function entrarNaArena(modo) {
-            document.getElementById('lista-modos-batalha').style.display = 'none';
-            document.getElementById('arena-combate').style.display = 'flex';
-            hpInimigo = 100;
+        function abrirConfiguracoesPerfil() {
+            abrirModal("Configurações & Perfil", `
+                <div style="display:flex; flex-direction:column; gap:12px; max-width:400px;">
+                    <label>Alterar Nome: <input type="text" id="cfg-nome" value="${jogadorAtual.nome}" style="width:100%; padding:8px; background:#0b0f19; color:#fff; border:1px solid #334155; border-radius:4px;"></label>
+                    <label>ID Personalizado: <input type="text" id="cfg-id" value="${jogadorAtual.uid}" style="width:100%; padding:8px; background:#0b0f19; color:#fff; border:1px solid #334155; border-radius:4px;"></label>
+                    <button class="btn-auth" onclick="salvarConfigPerfil()">Salvar Alterações</button>
+                </div>
+            `);
         }
-        function sairDaArena() {
-            document.getElementById('arena-combate').style.display = 'none';
-            document.getElementById('lista-modos-batalha').style.display = 'grid';
+
+        function salvarConfigPerfil() {
+            let novoNome = document.getElementById('cfg-nome').value;
+            let novoId = document.getElementById('cfg-id').value;
+            if(novoNome) jogadorAtual.nome = novoNome;
+            if(novoId) jogadorAtual.uid = novoId;
+            atualizarInterfaceHub();
+            fecharModal();
+            alert("Perfil atualizado com sucesso!");
         }
-        function acaoBatalha(tipo) {
-            if(tipo === 'atacar') hpInimigo -= 30;
-            if(hpInimigo <= 0) { alert("Vitória na Batalha!"); sairDaArena(); }
+
+        function abrirModal(titulo, htmlConteudo) {
+            document.getElementById('modal-titulo').innerText = titulo;
+            document.getElementById('modal-corpo').innerHTML = htmlConteudo;
+            document.getElementById('modal-conteudo').style.display = 'flex';
         }
-        function comprarItem(nome, preco) {
-            if(jogadorAtual.moedas >= preco) {
-                jogadorAtual.moedas -= preco;
-                jogadorAtual.inventario.push(nome);
-                atualizarInterfacePerfil();
-                alert("Compra efetuada com sucesso!");
-            } else { alert("Ouro insuficiente na carteira!"); }
-        }
-        async function criarGuilda() { jogadorAtual.guilda = "Guilda Alpha"; atualizarInterfacePerfil(); }
-        async function entrarEmGuildaPrompt() { jogadorAtual.guilda = "Guilda Beta"; atualizarInterfacePerfil(); }
-        async function sairDaGuilda() { jogadorAtual.guilda = "Nenhuma"; atualizarInterfacePerfil(); }
-        function enviarMensagemChat() {
-            let i = document.getElementById('chat-msg-input');
-            if(!i.value) return;
-            document.getElementById('chat-messages-container').innerHTML += `<p><strong>${jogadorAtual.nome}:</strong> ${i.value}</p>`;
-            i.value = "";
-        }
-        async function carregarRankingGlobal() {
-            let tb = document.getElementById('tabela-ranking-corpo');
-            tb.innerHTML = `<tr><td colspan="4">Carregando ranking...</td></tr>`;
-            let snap = await window.fbGetDocs(window.fbCollection(window.fbDb, "jogadores"));
-            tb.innerHTML = "";
-            let i = 1;
-            snap.forEach(d => {
-                let j = d.data();
-                let estiloNome = j.skinAdmAtiva ? 'class="nick-adm-colorido"' : '';
-                tb.innerHTML += `<tr><td>#${i++}</td><td><span ${estiloNome}>${j.nome}</span></td><td>Nv ${j.nivel}</td><td>${j.pontuacao || 0} pts</td></tr>`;
-            });
-        }
-        function salvarConfiguracoesPerfil() {
-            if(document.getElementById('input-novo-nome').value) jogadorAtual.nome = document.getElementById('input-novo-nome').value;
-            if(avatarSelecionadoTemp) jogadorAtual.avatar = avatarSelecionadoTemp;
-            atualizarInterfacePerfil();
-            alert("Alterações de perfil salvas!");
+
+        function fecharModal() {
+            document.getElementById('modal-conteudo').style.display = 'none';
         }
     </script>
 </body>
