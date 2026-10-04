@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon War: Galeria de Imagens e RG</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0b0f19; color: #fff; padding: 30px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        
+        .container { width: 100%; max-width: 900px; }
+        h1 { color: #f97316; margin-bottom: 10px; text-align: center; font-size: 28px; }
+        p.subtitle { color: #94a3b8; text-align: center; margin-bottom: 30px; font-size: 14px; }
+
+        .card-box { background: #162032; border: 1px solid #334155; border-radius: 12px; padding: 25px; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .card-box h3 { color: #f97316; margin-bottom: 15px; font-size: 20px; border-bottom: 1px solid #334155; padding-bottom: 8px; }
+
+        /* ESTILO DO RG / SPRITE COMPLETO */
+        .rg-display-area { display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center; }
+        .rg-full-img { max-width: 100%; height: auto; border: 2px solid #f97316; border-radius: 8px; box-shadow: 0 0 15px rgba(249,115,22,0.4); object-fit: contain; }
+
+        /* GRID DE SPRITES INDIVIDUAIS */
+        .grid-sprites { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 15px; margin-top: 15px; }
+        .sprite-card { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; text-align: center; }
+        
+        .avatar-sprite { width: 70px; height: 70px; margin: 0 auto 8px auto; border-radius: 50%; border: 2px solid #3b82f6; background-image: url('89078_2.png'); background-size: 500% 200%; background-repeat: no-repeat; }
+        
+        .pos-guerreiro { background-position: 0% 0%; }
+        .pos-mago      { background-position: 25% 0%; }
+        .pos-arqueiro  { background-position: 50% 0%; }
+        .pos-assassino { background-position: 75% 0%; }
+        .pos-cavaleiro { background-position: 100% 0%; }
+        .pos-elfa      { background-position: 0% 100%; }
+        .pos-barbaro   { background-position: 25% 100%; }
+        .pos-necromante{ background-position: 50% 100%; }
+        .pos-dragao    { background-position: 75% 100%; }
+        .pos-demonio   { background-position: 100% 100%; }
+
+        .btn-voltar { display: inline-block; padding: 12px 25px; background: linear-gradient(135deg, #f97316, #ea580c); color: #fff; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 10px; text-align: center; transition: 0.2s; }
+        .btn-voltar:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Galeria e Ativos Visuais</h1>
+        <p class="subtitle">Repositório de texturas, RG completo e avatares do Dragon War</p>
+
+        <!-- Seção: RG Completo -->
+        <div class="card-box">
+            <h3>RG / Sprite Sheet Principal</h3>
+            <div class="rg-display-area">
+                <p style="color: #94a3b8; font-size: 13px;">Arquivo base de referência gráfica utilizado para fatiar os avatares e classes do jogo.</p>
+                <!-- Exibe a imagem inteira do RG -->
+                <img src="89078_2.png" alt="RG Completo do Jogo" class="rg-full-img" onerror="this.src='https://via.placeholder.com/400x200?text=Imagem+Nao+Encontrada'">
+            </div>
+        </div>
+
+        <!-- Seção: Classes Extraídas do RG -->
+        <div class="card-box">
+            <h3>Classes e Avatares Fatiados</h3>
+            <p style="color: #94a3b8; font-size: 13px; margin-bottom: 15px;">Visualização individual de cada personagem mapeado a partir do RG.</p>
+            
+            <div class="grid-sprites">
+                <div class="sprite-card"><div class="avatar-sprite pos-guerreiro"></div><small style="color:#fff; font-weight:bold;">Guerreiro</small></div>
+                <div class="sprite-card"><div class="avatar-sprite pos-mago"></div><small style="color:#fff; font-weight:bold;">Mago</small></div>
+                <div class="sprite-card"><div class="avatar-sprite pos-arqueiro"></div><small style="color:#fff; font-weight:bold;">Arqueiro</small></div>
+                <div class="sprite-card"><div class="avatar-sprite pos-assassino"></div><small style="color:#fff; font-weight:bold;">Assassino</small></div>
+                <div class="sprite-card"><div class="avatar-sprite pos-cavaleiro"></div><small style="color:#fff; font-weight:bold;">Cavaleiro</small></div>
+                <div class="sprite-card"><div class="avatar-sprite pos-elfa"></div><small style="color:#fff; font-weight:bold;">Elfa</small></div>
+                <div class="sprite-card"><div class="avatar-sprite pos-barbaro"></div><small style="color:#fff; font-weight:bold;">Bárbaro</small></div>
+                <div class="sprite-card"><div class="avatar-sprite pos-necromante"></div><small style="color:#fff; font-weight:bold;">Necromante</small></div>
+                <div class="sprite-card"><div class="avatar-sprite pos-dragao"></div><small style="color:#fff; font-weight:bold;">Dragão</small></div>
+                <div class="sprite-card"><div class="avatar-sprite pos-demonio"></div><small style="color:#fff; font-weight:bold;">Demônio</small></div>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="index.html" class="btn-voltar">Voltar para o Jogo (Início)</a>
+        </div>
+    </div>
+
+</body>
+</html>
