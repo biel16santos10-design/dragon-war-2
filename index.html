@@ -7,7 +7,7 @@
     <!-- Importação do Firebase (SDK Modular v10) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, getDocs, deleteDoc, addDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -34,6 +34,10 @@
         window.fbCollection = collection;
         window.fbGetDocs = getDocs;
         window.fbDeleteDoc = deleteDoc;
+        window.fbAddDoc = addDoc;
+        window.fbQuery = query;
+        window.fbOrderBy = orderBy;
+        window.fbLimit = limit;
         window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
         window.signInWithEmailAndPassword = signInWithEmailAndPassword;
         window.signOut = signOut;
@@ -428,7 +432,7 @@
             <button onclick="mudarAba('corporacao', this)">🛡️ Painel de Guilda</button>
             <button onclick="mudarAba('chat', this)">💬 Sistema de Chat</button>
             <button onclick="mudarAba('ranking', this)">🏆 Ranking Global</button>
-            <button onclick="mudarAba('config', this)">⚙️ Configurações & Áudio</button>
+            <button onclick="mudarAba('config', this)">⚙ Configurações & Áudio</button>
             
             <!-- ABA EXCLUSIVA DO ADM (Invisível para comuns) -->
             <button id="btn-aba-adm" onclick="mudarAba('painel-adm', this)" style="display: none; background: rgba(168, 85, 247, 0.2); border: 1px solid #a855f7; color: #d8b4fe; margin-top: 10px;">👑 Painel ADM Mestre</button>
@@ -592,10 +596,10 @@
                 </div>
             </div>
 
-            <!-- 👑 PAINEL EXCLUSIVO DO ADM (Comandos de Gestão) -->
+            <!-- 👑 PAINEL EXCLUSIVO DO ADM (Comandos de Gestão & Auditoria) -->
             <div id="painel-adm" class="tab-content">
                 <h2 style="color: #a855f7; margin-bottom: 10px;">👑 Painel de Controle do Administrador</h2>
-                <p style="color: #94a3b8; margin-bottom: 20px;">Ferramentas exclusivas para gerenciar jogadores, banir contas e liberar Skins Únicas.</p>
+                <p style="color: #94a3b8; margin-bottom: 20px;">Ferramentas exclusivas para gerenciar jogadores, banir contas, liberar Skins Únicas e monitorar logs.</p>
                 
                 <div class="card-grid" style="grid-template-columns: repeat(2, 1fr); margin-bottom: 25px;">
                     <div class="item-card" style="border-color: #a855f7; text-align: left;">
@@ -614,11 +618,20 @@
                 </div>
 
                 <h3 style="color: #38bdf8; margin-bottom: 10px;">Lista Geral de Jogadores Cadastrados</h3>
-                <table>
+                <table style="margin-bottom: 30px;">
                     <thead>
                         <tr><th>UID</th><th>NOME</th><th>E-MAIL</th><th>NÍVEL</th><th>MOEDAS</th><th>AÇÕES ADM</th></tr>
                     </thead>
                     <tbody id="tabela-adm-jogadores"></tbody>
+                </table>
+
+                <h3 style="color: #a855f7; margin-bottom: 10px;">📋 Logs de Auditoria do Administrador</h3>
+                <p style="font-size: 12px; color: #94a3b8; margin-bottom: 10px;">Registro automático de todas as ações administrativas executadas no servidor.</p>
+                <table>
+                    <thead>
+                        <tr><th>DATA / HORA</th><th>ADM RESPONSÁVEL</th><th>AÇÃO EXECUTADA</th><th>ALVO / DETALHES</th></tr>
+                    </thead>
+                    <tbody id="tabela-adm-logs"></tbody>
                 </table>
             </div>
 
@@ -768,7 +781,7 @@
         async function fazerLogin() {
             let email = document.getElementById('login-email').value.trim();
             let senha = document.getElementById('login-senha').value.trim();
-            if(!email || !senha) return;
+            if(!email || !senha) { alert("Preencha e-mail e senha!"); return; }
 
             try {
                 let cred = await window.signInWithEmailAndPassword(window.fbAuth, email, senha);
@@ -777,7 +790,7 @@
 
                 if(snap.exists()) {
                     jogadorAtual = snap.data();
-                    jogadorAtual.isAdmin = isAdmin;
+                    jogadorAtual.isAdmin = isAdmin || jogadorAtual.isAdmin;
                 } else {
                     jogadorAtual = {
                         uid: cred.user.uid, email, nome: isAdmin ? "👑 Gabriel (ADM)" : "Guerreiro",
@@ -789,7 +802,7 @@
                     };
                 }
                 entrarNoJogoPrincipal();
-            } catch(e) { alert("Erro ao fazer login."); }
+            } catch(e) { alert("Erro ao fazer login: " + e.message); }
         }
 
         function entrarNoJogoPrincipal() {
@@ -797,10 +810,11 @@
             document.getElementById('register-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
 
-            // Verifica se é ADM para exibir aba exclusiva
             if(jogadorAtual.email === window.ADMIN_EMAIL || jogadorAtual.isAdmin) {
                 document.getElementById('btn-aba-adm').style.display = 'block';
                 jogadorAtual.isAdmin = true;
+            } else {
+                document.getElementById('btn-aba-adm').style.display = 'none';
             }
 
             atualizarInterfacePerfil();
@@ -808,9 +822,16 @@
         }
 
         async function sairParaMenuLogin() {
-            try { await window.signOut(window.fbAuth); } catch(e) {}
+            try { 
+                await window.signOut(window.fbAuth); 
+            } catch(e) {}
+            
             document.getElementById('game-screen').classList.remove('active');
+            document.getElementById('register-screen').classList.remove('active');
             document.getElementById('login-screen').classList.add('active');
+            
+            document.getElementById('login-email').value = "";
+            document.getElementById('login-senha').value = "";
         }
 
         function mudarAba(nomeAba, el) {
@@ -821,19 +842,66 @@
 
             if(nomeAba === 'ranking') carregarRankingGlobal();
             if(nomeAba === 'corporacao') atualizarPainelGuilda();
-            if(nomeAba === 'painel-adm' && jogadorAtual.isAdmin) carregarPainelAdmJogadores();
+            if(nomeAba === 'painel-adm' && jogadorAtual.isAdmin) {
+                carregarPainelAdmJogadores();
+                carregarLogsAuditoria();
+            }
         }
 
         function atualizarInterfacePerfil() {
             document.getElementById('resumo-nome').innerText = jogadorAtual.nome;
             document.getElementById('resumo-uid').innerText = jogadorAtual.uid;
             document.getElementById('resumo-nivel').innerText = jogadorAtual.nivel;
-            document.getElementById('resumo-pontuacao').innerText = jogadorAtual.pontuacao.toLocaleString();
-            document.getElementById('resumo-moedas').innerText = jogadorAtual.moedas.toLocaleString();
-            document.getElementById('resumo-diamantes').innerText = jogadorAtual.diamantes.toLocaleString();
-            document.getElementById('resumo-poderes-moeda').innerText = jogadorAtual.moedaPoder;
-            document.getElementById('resumo-guilda').innerText = jogadorAtual.guilda;
+            document.getElementById('resumo-pontuacao').innerText = (jogadorAtual.pontuacao || 0).toLocaleString();
+            document.getElementById('resumo-moedas').innerText = (jogadorAtual.moedas || 0).toLocaleString();
+            document.getElementById('resumo-diamantes').innerText = (jogadorAtual.diamantes || 0).toLocaleString();
+            document.getElementById('resumo-poderes-moeda').innerText = jogadorAtual.moedaPoder || 0;
+            document.getElementById('resumo-guilda').innerText = jogadorAtual.guilda || "Nenhuma";
             if(jogadorAtual.avatar) document.getElementById('resumo-avatar-img').src = jogadorAtual.avatar;
+        }
+
+        // Sistema de Registro de Logs de Auditoria
+        async function registrarLogAdm(acao, detalhes) {
+            try {
+                let logData = {
+                    dataHora: new Date().toLocaleString('pt-BR'),
+                    admNome: jogadorAtual.nome,
+                    admEmail: jogadorAtual.email,
+                    acao: acao,
+                    detalhes: detalhes,
+                    timestamp: Date.now()
+                };
+                await window.fbAddDoc(window.fbCollection(window.fbDb, "adm_logs"), logData);
+            } catch(e) {
+                console.error("Erro ao registrar log:", e);
+            }
+        }
+
+        async function carregarLogsAuditoria() {
+            let tbody = document.getElementById('tabela-adm-logs');
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">Carregando logs...</td></tr>`;
+            try {
+                let q = window.fbQuery(window.fbCollection(window.fbDb, "adm_logs"), window.fbOrderBy("timestamp", "desc"), window.fbLimit(15));
+                let snap = await window.fbGetDocs(q);
+                tbody.innerHTML = "";
+                if(snap.empty) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8;">Nenhum log registrado ainda.</td></tr>`;
+                    return;
+                }
+                snap.forEach(docSnap => {
+                    let log = docSnap.data();
+                    tbody.innerHTML += `
+                        <tr>
+                            <td style="font-size: 11px; color: #38bdf8;">${log.dataHora}</td>
+                            <td>${log.admNome}</td>
+                            <td style="color: #f5af19; font-weight: bold;">${log.acao}</td>
+                            <td style="font-size: 12px; color: #cbd5e1;">${log.detalhes}</td>
+                        </tr>
+                    `;
+                });
+            } catch(e) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #f87171;">Erro ao carregar logs de auditoria.</td></tr>`;
+            }
         }
 
         // Funções do Painel Exclusivo ADM
@@ -853,7 +921,7 @@
                             <td>Nv ${j.nivel}</td>
                             <td>${(j.moedas || 0).toLocaleString()} 🟡</td>
                             <td>
-                                <button class="btn-acao" style="background: #a855f7; padding: 4px 8px; font-size: 11px;" onclick="admDarMoedas('${j.uid}')">+Ouro</button>
+                                <button class="btn-acao" style="background: #a855f7; padding: 4px 8px; font-size: 11px;" onclick="admDarMoedas('${j.uid}', '${j.nome}')">+Ouro</button>
                             </td>
                         </tr>
                     `;
@@ -876,7 +944,9 @@
                         if(!d.inventario) d.inventario = [];
                         d.inventario.push("Skin Única: Divindade ADM Suprema");
                         await window.fbSetDoc(window.fbDoc(window.fbDb, "jogadores", d.uid), d, {merge: true});
+                        await registrarLogAdm("CONCEDER SKIN", `Skin Única entregue para o jogador ${d.nome} (UID: ${d.uid})`);
                         alert(`Skin Única concedida com sucesso para ${d.nome}!`);
+                        carregarLogsAuditoria();
                     }
                 });
                 if(!achou) alert("Jogador não encontrado.");
@@ -889,13 +959,15 @@
             if(confirm(`Tem certeza que deseja deletar/banir o UID ${uidBan}?`)) {
                 try {
                     await window.fbDeleteDoc(window.fbDoc(window.fbDb, "jogadores", uidBan));
+                    await registrarLogAdm("BANIR JOGADOR", `Conta UID ${uidBan} banida e removida permanentemente.`);
                     alert("Jogador banido e removido da nuvem.");
                     carregarPainelAdmJogadores();
+                    carregarLogsAuditoria();
                 } catch(e) { alert("Erro ao banir jogador."); }
             }
         }
 
-        async function admDarMoedas(uid) {
+        async function admDarMoedas(uid, nome) {
             try {
                 let ref = window.fbDoc(window.fbDb, "jogadores", uid);
                 let snap = await window.fbGetDoc(ref);
@@ -903,8 +975,10 @@
                     let d = snap.data();
                     d.moedas = (d.moedas || 0) + 50000;
                     await window.fbSetDoc(ref, d, {merge: true});
+                    await registrarLogAdm("INJEÇÃO DE OURO", `Adicionado +50.000 Ouro para ${nome} (UID: ${uid})`);
                     alert(`Adicionado +50.000 Ouro para ${d.nome}!`);
                     carregarPainelAdmJogadores();
+                    carregarLogsAuditoria();
                 }
             } catch(e) { alert("Erro ao creditar ouro."); }
         }
