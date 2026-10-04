@@ -6,14 +6,16 @@
 <title>Dragon War — Rise of Power</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Segoe UI', Arial, sans-serif; background: #0a0e1a; color: #fff; min-height: 100vh; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #0a0e1a; color: #fff; min-height: 100vh; overflow-x: hidden; }
 
+/* LOADING */
 #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0e1a; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
 .spinner { width: 60px; height: 60px; border: 5px solid #333; border-top: 5px solid #ff6b00; border-radius: 50%; animation: spin 1s linear infinite; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 .loading-text { margin-top: 20px; color: #ff6b00; font-size: 1.2em; font-weight: bold; }
 .hidden { display: none !important; }
 
+/* AUTH */
 .auth-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); }
 .auth-card { background: rgba(30, 41, 59, 0.95); border: 2px solid #ff6b00; border-radius: 20px; padding: 40px; max-width: 450px; width: 100%; box-shadow: 0 20px 60px rgba(255, 107, 0, 0.4); }
 .auth-card h1 { text-align: center; font-size: 2.8em; margin-bottom: 10px; background: linear-gradient(135deg, #ff6b00, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -33,10 +35,10 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .btn-success { background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; }
 .btn-danger { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; }
 .btn-info { background: linear-gradient(135deg, #3b82f6, #1e40af); color: #fff; }
-.btn-warning { background: linear-gradient(135deg, #fbbf24, #d97706); color: #000; }
 
+/* LAYOUT */
 .game-layout { display: flex; min-height: 100vh; }
-.sidebar { width: 200px; background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); border-right: 2px solid #334155; padding: 20px 0; position: fixed; height: 100vh; overflow-y: auto; }
+.sidebar { width: 200px; background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); border-right: 2px solid #334155; padding: 20px 0; position: fixed; height: 100vh; overflow-y: auto; z-index: 10; }
 .sidebar-item { padding: 15px 20px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 10px; border-left: 3px solid transparent; color: #94a3b8; }
 .sidebar-item:hover { background: rgba(59, 130, 246, 0.1); border-left-color: #3b82f6; color: #fff; }
 .sidebar-item.active { background: rgba(59, 130, 246, 0.2); border-left-color: #3b82f6; color: #fff; }
@@ -45,6 +47,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 
 .main-content { margin-left: 200px; flex: 1; padding: 20px; }
 
+/* TOP BAR */
 .top-bar { display: flex; justify-content: space-between; align-items: center; background: rgba(30, 41, 59, 0.9); padding: 15px 20px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
 .player-info { display: flex; align-items: center; gap: 15px; }
 .player-avatar { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 2em; border: 3px solid #ffd700; cursor: pointer; transition: all 0.3s; }
@@ -68,9 +71,9 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .badge-vip { background: #ffd700; color: #000; padding: 2px 8px; border-radius: 10px; font-size: 0.7em; }
 .text-admin { color: #c4b5fd; text-shadow: 0 0 10px rgba(196, 181, 253, 0.6); }
 
+/* SCREENS */
 .screen { display: none; animation: fadeIn 0.4s; }
 .screen.active { display: block; }
-
 .screen-title { font-size: 2em; margin-bottom: 20px; color: #fbbf24; display: flex; align-items: center; gap: 10px; }
 
 /* HOME */
@@ -78,12 +81,11 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .home-title { font-size: 3em; font-weight: 900; background: linear-gradient(135deg, #ff6b00, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
 .home-subtitle { font-size: 1.2em; color: #94a3b8; margin-bottom: 30px; }
 .home-actions { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
-.home-btn { padding: 18px 35px; font-size: 1.1em; border-radius: 12px; border: none; cursor: pointer; font-weight: 900; width: auto; }
-.btn-play { background: linear-gradient(135deg, #ff6b00, #ff4500); color: #fff; box-shadow: 0 0 30px rgba(255, 107, 0, 0.5); animation: pulse 2s infinite; }
+.home-btn { padding: 18px 35px; font-size: 1.1em; border-radius: 12px; border: none; cursor: pointer; font-weight: 900; width: auto; color: #fff; }
+.btn-play { background: linear-gradient(135deg, #ff6b00, #ff4500); box-shadow: 0 0 30px rgba(255, 107, 0, 0.5); animation: pulse 2s infinite; }
 @keyframes pulse { 0%, 100% { box-shadow: 0 0 30px rgba(255, 107, 0, 0.5); } 50% { box-shadow: 0 0 50px rgba(255, 107, 0, 0.8); } }
-.btn-start { background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; }
+.btn-start { background: linear-gradient(135deg, #22c55e, #15803d); }
 .btn-daily-home { background: linear-gradient(135deg, #fbbf24, #d97706); color: #000; }
-
 .home-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-top: 30px; }
 .home-stat { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; border: 1px solid #334155; }
 .home-stat-value { font-size: 1.8em; font-weight: bold; color: #fbbf24; }
@@ -101,11 +103,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .boss-stat { text-align: center; }
 .boss-stat-label { font-size: 0.8em; color: #94a3b8; }
 .boss-stat-value { font-size: 1.2em; font-weight: bold; color: #fbbf24; }
-.rewards { background: rgba(0, 0, 0, 0.3); padding: 10px; border-radius: 8px; margin-bottom: 15px; }
-.rewards-title { font-size: 0.85em; color: #94a3b8; margin-bottom: 8px; }
-.rewards-grid { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
-.reward-item { display: flex; flex-direction: column; align-items: center; font-size: 0.8em; }
-.reward-icon { font-size: 1.5em; }
 .btn-battle { width: 100%; padding: 15px; background: linear-gradient(135deg, #ff8c00, #ff4500); color: #fff; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 900; cursor: pointer; }
 
 /* SHOP */
@@ -114,7 +111,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .shop-tab.active { background: linear-gradient(135deg, #3b82f6, #1e40af); border-color: #60a5fa; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
 .shop-section { display: none; }
 .shop-section.active { display: block; animation: fadeIn 0.3s; }
-
 .characters-grid, .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; }
 .character-card, .shop-item { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 12px; padding: 15px; border: 2px solid #334155; transition: all 0.3s; }
 .character-card:hover, .shop-item:hover { transform: translateY(-5px); }
@@ -128,13 +124,11 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .character-stat-label { color: #94a3b8; font-size: 0.75em; }
 .character-stat-value { font-weight: bold; color: #fbbf24; }
 .item-price { color: #fbbf24; font-weight: bold; text-align: center; margin-bottom: 10px; font-size: 0.9em; }
-
 .btn-character, .btn-buy { width: 100%; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; font-size: 0.9em; }
 .btn-buy-char { background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; }
 .btn-equip { background: linear-gradient(135deg, #3b82f6, #1e40af); color: #fff; }
 .btn-equipped { background: #ffd700; color: #000; cursor: default; }
 .btn-buy { background: #22c55e; color: #fff; }
-
 .rarity-legendary { border-color: #fbbf24; box-shadow: 0 0 15px rgba(251, 191, 36, 0.3); }
 .rarity-epic { border-color: #a855f7; box-shadow: 0 0 15px rgba(168, 85, 247, 0.3); }
 .rarity-rare { border-color: #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
@@ -146,7 +140,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .power-card:hover { transform: translateY(-5px); }
 .power-card.unlocked { border-color: #22c55e; }
 .power-card.locked { opacity: 0.6; }
-.power-card.locked::after { content: '🔒 BLOQUEADO'; position: absolute; top: 10px; right: 10px; background: #ef4444; color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 0.7em; font-weight: bold; }
+.power-card.locked::after { content: ' BLOQUEADO'; position: absolute; top: 10px; right: 10px; background: #ef4444; color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 0.7em; font-weight: bold; }
 .power-emoji { font-size: 60px; text-align: center; margin-bottom: 10px; }
 .power-name { font-size: 1.3em; font-weight: bold; text-align: center; margin-bottom: 5px; color: #fbbf24; }
 .power-desc { text-align: center; color: #94a3b8; font-size: 0.85em; margin-bottom: 15px; }
@@ -161,7 +155,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .rank-name { font-size: 2em; font-weight: 900; margin-bottom: 5px; }
 .rank-progress { background: #0f172a; border-radius: 10px; height: 20px; margin-top: 15px; overflow: hidden; }
 .rank-progress-bar { height: 100%; background: linear-gradient(90deg, #3b82f6, #8b5cf6); transition: width 0.5s; }
-
 .resumo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
 .resumo-card { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 12px; padding: 20px; border: 1px solid #334155; text-align: center; transition: all 0.3s; }
 .resumo-card:hover { transform: translateY(-3px); border-color: #3b82f6; }
@@ -290,10 +283,10 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
                 <div class="resources">
                     <div class="resource">💰 <span class="resource-value" id="resCoins">0</span></div>
                     <div class="resource">💎 <span class="resource-value" id="resGems">0</span></div>
-                    <div class="resource">🔮 <span class="resource-value" id="resCrystals">0</span></div>
+                    <div class="resource"> <span class="resource-value" id="resCrystals">0</span></div>
                     <div class="resource">⭐ <span class="resource-value" id="resPoints">0</span></div>
                     <button onclick="openSettings()" style="width:auto;padding:8px 12px;background:#3b82f6;border-radius:8px;margin:0;">⚙️</button>
-                    <button onclick="openDailyReward()" style="width:auto;padding:8px 12px;background:#fbbf24;color:#000;border-radius:8px;margin:0;"></button>
+                    <button onclick="openDailyReward()" style="width:auto;padding:8px 12px;background:#fbbf24;color:#000;border-radius:8px;margin:0;">🎁</button>
                     <button onclick="doLogout()" style="width:auto;padding:8px 12px;background:#ef4444;border-radius:8px;margin:0;">Sair</button>
                 </div>
             </div>
@@ -305,14 +298,14 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
                     <div class="home-subtitle">Rise of Power</div>
                     <div class="home-actions">
                         <button class="home-btn btn-play" onclick="showScreen('combat', document.querySelectorAll('.sidebar-item')[1])">⚔️ JOGAR</button>
-                        <button class="home-btn btn-start" onclick="quickBattle()">🚀 BATALHA RÁPIDA</button>
+                        <button class="home-btn btn-start" onclick="quickBattle()"> BATALHA RÁPIDA</button>
                         <button class="home-btn btn-daily-home" onclick="openDailyReward()">🎁 BÔNUS DIÁRIO</button>
                     </div>
                     <div class="home-stats">
                         <div class="home-stat"><div class="home-stat-value" id="homeWins">0</div><div class="home-stat-label">Vitórias</div></div>
                         <div class="home-stat"><div class="home-stat-value" id="homeLosses">0</div><div class="home-stat-label">Derrotas</div></div>
                         <div class="home-stat"><div class="home-stat-value" id="homeLevel">1</div><div class="home-stat-label">Nível</div></div>
-                        <div class="home-stat"><div class="home-stat-value" id="homeRank">🌱 Iniciante</div><div class="home-stat-label">Rank</div></div>
+                        <div class="home-stat"><div class="home-stat-value" id="homeRank"> Iniciante</div><div class="home-stat-label">Rank</div></div>
                     </div>
                 </div>
             </div>
@@ -321,10 +314,10 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
             <div id="combatScreen" class="screen">
                 <h2 class="screen-title">⚔️ SELEÇÃO DE BOSS</h2>
                 <div class="bosses-grid">
-                    <div class="boss-card"><div class="boss-rank">SSS</div><div class="boss-image">🐉</div><div class="boss-name">KHALDRON</div><div class="boss-title">The Nightmare Dragon</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">80</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">2.5M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>500</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>5.000</span></div></div></div><button class="btn-battle" onclick="battle('Khaldrón', 5000, 500)">⚔️ BATALHAR</button></div>
-                    <div class="boss-card"><div class="boss-rank">SS</div><div class="boss-image">👹</div><div class="boss-name">IGNEOUS</div><div class="boss-title">The Fire Demon</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">70</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">1.8M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>300</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>3.000</span></div></div></div><button class="btn-battle" onclick="battle('Igneous', 3000, 300)">⚔️ BATALHAR</button></div>
-                    <div class="boss-card"><div class="boss-rank">S</div><div class="boss-image">⚔️</div><div class="boss-name">MALAKAI</div><div class="boss-title">The Shadow Warrior</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">60</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">1.2M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>200</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>2.000</span></div></div></div><button class="btn-battle" onclick="battle('Malakai', 2000, 200)">⚔️ BATALHAR</button></div>
-                    <div class="boss-card"><div class="boss-rank">SSS</div><div class="boss-image">👑</div><div class="boss-name">DRAGON KING</div><div class="boss-title">The Ancient Ruler</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">100</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">5M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>1.000</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>10.000</span></div></div></div><button class="btn-battle" onclick="battle('Dragon King', 10000, 1000)">⚔️ BATALHAR</button></div>
+                    <div class="boss-card"><div class="boss-rank">SSS</div><div class="boss-image"></div><div class="boss-name">KHALDRON</div><div class="boss-title">The Nightmare Dragon</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">80</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">2.5M</div></div></div><button class="btn-battle" onclick="battle('Khaldrón', 5000, 500)">️ BATALHAR</button></div>
+                    <div class="boss-card"><div class="boss-rank">SS</div><div class="boss-image">👹</div><div class="boss-name">IGNEOUS</div><div class="boss-title">The Fire Demon</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">70</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">1.8M</div></div></div><button class="btn-battle" onclick="battle('Igneous', 3000, 300)">️ BATALHAR</button></div>
+                    <div class="boss-card"><div class="boss-rank">S</div><div class="boss-image">⚔️</div><div class="boss-name">MALAKAI</div><div class="boss-title">The Shadow Warrior</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">60</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">1.2M</div></div></div><button class="btn-battle" onclick="battle('Malakai', 2000, 200)">️ BATALHAR</button></div>
+                    <div class="boss-card"><div class="boss-rank">SSS</div><div class="boss-image">👑</div><div class="boss-name">DRAGON KING</div><div class="boss-title">The Ancient Ruler</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">100</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">5M</div></div></div><button class="btn-battle" onclick="battle('Dragon King', 10000, 1000)">⚔️ BATALHAR</button></div>
                 </div>
             </div>
 
@@ -417,7 +410,7 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
         </div>
         <div class="modal-section">
             <h3>✏️ Editar Nome</h3>
-            <p>Custo: 💰 1.000 moedas</p>
+            <p>Custo:  1.000 moedas</p>
             <input id="newNickInput" placeholder="Novo nome" maxlength="20">
             <button class="btn-primary" onclick="changeNick()">ALTERAR NOME</button>
         </div>
@@ -448,7 +441,7 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
 
 <button class="chat-toggle" onclick="toggleChat()">💬<span class="notification hidden" id="chatNotif">0</span></button>
 <div class="chat-panel" id="chatPanel">
-    <div class="chat-header"><h3> Chat</h3><button onclick="toggleChat()" style="width:auto;padding:5px 10px;background:#64748b;margin:0;">✕</button></div>
+    <div class="chat-header"><h3>💬 Chat</h3><button onclick="toggleChat()" style="width:auto;padding:5px 10px;background:#64748b;margin:0;">✕</button></div>
     <div class="chat-tabs">
         <div class="chat-tab active" onclick="switchChat('global', this)">🌎 Global</div>
         <div class="chat-tab" onclick="switchChat('private', this)">🔒 Privado</div>
@@ -484,29 +477,29 @@ try {
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
+    const db = getFirestore(app); // CORRETO!
 
     const CHARACTERS = [
-        { id: 'warrior', name: 'Guerreiro', emoji: '⚔️', class: 'Guerreiro', atk: 100, def: 80, spd: 60, price: 2000, currency: 'coins' },
+        { id: 'warrior', name: 'Guerreiro', emoji: '️', class: 'Guerreiro', atk: 100, def: 80, spd: 60, price: 2000, currency: 'coins' },
         { id: 'mage', name: 'Mago', emoji: '🧙', class: 'Mago', atk: 120, def: 50, spd: 70, price: 2500, currency: 'coins' },
         { id: 'archer', name: 'Arqueiro', emoji: '🏹', class: 'Arqueiro', atk: 90, def: 60, spd: 100, price: 3000, currency: 'coins' },
         { id: 'assassin', name: 'Assassino', emoji: '🥷', class: 'Assassino', atk: 130, def: 40, spd: 120, price: 500, currency: 'gems' },
         { id: 'paladin', name: 'Paladino', emoji: '🛡️', class: 'Paladino', atk: 80, def: 120, spd: 50, price: 800, currency: 'gems' },
         { id: 'necromancer', name: 'Necromante', emoji: '💀', class: 'Necromante', atk: 140, def: 55, spd: 75, price: 150, currency: 'crystals' },
-        { id: 'dragonknight', name: 'Cavaleiro Dragão', emoji: '', class: 'Cavaleiro Dragão', atk: 150, def: 100, spd: 80, price: 300, currency: 'crystals' },
-        { id: 'angel', name: 'Anjo', emoji: '👼', class: 'Anjo', atk: 110, def: 110, spd: 90, price: 500, currency: 'crystals' }
+        { id: 'dragonknight', name: 'Cavaleiro Dragão', emoji: '🐉', class: 'Cavaleiro Dragão', atk: 150, def: 100, spd: 80, price: 300, currency: 'crystals' },
+        { id: 'angel', name: 'Anjo', emoji: '', class: 'Anjo', atk: 110, def: 110, spd: 90, price: 500, currency: 'crystals' }
     ];
 
     const POWERS = [
         { id: 'fire', name: 'Fôlego de Fogo', emoji: '🔥', damage: '680%', mp: 120, cd: '18s', desc: 'Onda de fogo em área.', unlockAt: 1 },
-        { id: 'lightning', name: 'Raio Espiritual', emoji: '', damage: '520%', mp: 90, cd: '12s', desc: 'Raio em linha reta.', unlockAt: 1 },
-        { id: 'slash', name: 'Mestre da Espada', emoji: '️', damage: '300%', mp: 50, cd: '8s', desc: 'Ataque rápido físico.', unlockAt: 1 },
+        { id: 'lightning', name: 'Raio Espiritual', emoji: '⚡', damage: '520%', mp: 90, cd: '12s', desc: 'Raio em linha reta.', unlockAt: 1 },
+        { id: 'slash', name: 'Mestre da Espada', emoji: '⚔️', damage: '300%', mp: 50, cd: '8s', desc: 'Ataque rápido físico.', unlockAt: 1 },
         { id: 'ice', name: 'Nova Glacial', emoji: '❄️', damage: '450%', mp: 75, cd: '15s', desc: 'Congela inimigos.', unlockAt: 10 },
         { id: 'serpent', name: 'Golpe da Serpente', emoji: '🐍', damage: '400%', mp: 65, cd: '10s', desc: 'Dano venenoso.', unlockAt: 20 },
         { id: 'void', name: 'Torrente do Vazio', emoji: '🌌', damage: '800%', mp: 150, cd: '25s', desc: 'Dano enorme do vazio.', unlockAt: 50 }
     ];
 
-    const AVATARS = ['🥷','🧙','🧝','🧛','🧟','🦸','🦹','','🧜','🧚','‍🚀','👨‍✈️','👨‍','👨‍🔬','‍💻','👨‍🏫','👨‍🍳','👨‍🌾','‍🏭','👨‍💼','🦊','🐯','','🐨','🐼','','🦄','🐲','','🐍','👺','','👽','🤖','','⚔️','🛡️','🏹','🌟','💀','🔥','🦅'];
+    const AVATARS = ['🥷','🧙','🧝','🧛','🧟','','🦹','🧞','','🧚','👨‍','👨‍✈️','👨‍🎨','‍🔬','👨‍💻','👨‍🏫','👨‍🍳','👨‍🌾','👨‍','👨‍💼','','🐯','🐻','','🐼','🐸','','🐲','🐍','👺','👹','','🤖','⚔️','🛡️','🏹','🌟','💀','🔥','🦅'];
 
     const DAILY_REWARDS = [
         { day: 1, reward: '💰', amount: 500, label: '500 Moedas' },
@@ -515,14 +508,14 @@ try {
         { day: 4, reward: '💰', amount: 1000, label: '1000 Moedas' },
         { day: 5, reward: '🔮', amount: 30, label: '30 Cristais' },
         { day: 6, reward: '💎', amount: 100, label: '100 Gemas' },
-        { day: 7, reward: '', amount: 1, label: 'Baú Lendário' }
+        { day: 7, reward: '👑', amount: 1, label: 'Baú Lendário' }
     ];
 
     const RANKS = [
         { name: 'Iniciante', icon: '🌱', min: 0, max: 9, cls: 'rank-iniciante' },
         { name: 'Bronze', icon: '🥉', min: 10, max: 24, cls: 'rank-bronze' },
-        { name: 'Prata', icon: '', min: 25, max: 49, cls: 'rank-prata' },
-        { name: 'Ouro', icon: '', min: 50, max: 99, cls: 'rank-ouro' },
+        { name: 'Prata', icon: '🥈', min: 25, max: 49, cls: 'rank-prata' },
+        { name: 'Ouro', icon: '🥇', min: 50, max: 99, cls: 'rank-ouro' },
         { name: 'Platina', icon: '💠', min: 100, max: 199, cls: 'rank-platina' },
         { name: 'Diamante', icon: '💎', min: 200, max: 499, cls: 'rank-diamante' },
         { name: 'Mestre', icon: '👑', min: 500, max: 999, cls: 'rank-mestre' },
@@ -541,8 +534,6 @@ try {
     let selectedAvatar = null, musicEnabled = false, audioCtx = null;
 
     const $ = (id) => document.getElementById(id);
-
-    // Fallback: loading some em 3 segundos
     setTimeout(() => { $('loading').classList.add('hidden'); }, 3000);
 
     window.showToast = (msg) => {
@@ -552,7 +543,6 @@ try {
         setTimeout(() => t.style.display = 'none', 3000);
     };
 
-    // MÚSICA
     function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
     function playMusic() {
         if (!musicEnabled || !audioCtx) return;
@@ -578,7 +568,6 @@ try {
         else showToast('🔇 Música desativada!');
     };
 
-    // NAVEGAÇÃO
     window.showTab = (tab) => {
         document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
@@ -612,7 +601,6 @@ try {
         if (tab === 'characters') renderCharacters();
     };
 
-    // AUTH
     window.doLogin = async () => {
         const email = $('loginEmail').value.trim(), pass = $('loginPass').value;
         if (!email || !pass) return showToast('Preencha e-mail e senha');
@@ -629,7 +617,7 @@ try {
         try {
             const cred = await createUserWithEmailAndPassword(auth, email, pass);
             await setDoc(doc(db, "players", cred.user.uid), {
-                uid: cred.user.uid, nick, email, avatar: '',
+                uid: cred.user.uid, nick, email, avatar: '🥷',
                 equippedCharacter: 'warrior', ownedCharacters: ['warrior'],
                 unlockedPowers: ['fire', 'lightning', 'slash'],
                 coins: 1000, gems: 100, crystals: 50, points: 0,
@@ -647,7 +635,6 @@ try {
         signOut(auth).then(() => { showToast('Desconectado!'); setTimeout(() => location.reload(), 1000); });
     };
 
-    // CONFIGURAÇÕES
     window.openSettings = () => {
         if (!currentUserData) return showToast('Carregando...');
         $('settingsUid').textContent = currentUserId.substring(0, 12) + '...';
@@ -674,7 +661,6 @@ try {
         }
     };
 
-    // AVATAR
     window.openAvatarModal = () => {
         if (!currentUserData) return showToast('Carregando...');
         const grid = $('avatarGrid'); grid.innerHTML = '';
@@ -697,7 +683,7 @@ try {
     };
 
     window.changeAvatar = async (avatar) => {
-        if (currentUserData.coins < 500) return showToast('❌ Moedas insuficientes!');
+        if (currentUserData.coins < 500) return showToast(' Moedas insuficientes!');
         try {
             await updateDoc(playerRef, { avatar, coins: currentUserData.coins - 500 });
             showToast('✅ Avatar alterado!');
@@ -705,7 +691,6 @@ try {
         } catch(e) { showToast('Erro: ' + e.message); }
     };
 
-    // PERSONAGENS
     function renderCharacters() {
         if (!currentUserData) return;
         const owned = currentUserData.ownedCharacters || ['warrior'];
@@ -714,11 +699,11 @@ try {
         grid.innerHTML = CHARACTERS.map(ch => {
             const isOwned = owned.includes(ch.id);
             const isEquipped = equipped === ch.id;
-            const priceLabel = ch.currency === 'coins' ? `💰 ${ch.price.toLocaleString()}` : ch.currency === 'gems' ? `💎 ${ch.price}` : `🔮 ${ch.price}`;
+            const priceLabel = ch.currency === 'coins' ? `💰 ${ch.price.toLocaleString()}` : ch.currency === 'gems' ? `💎 ${ch.price}` : ` ${ch.price}`;
             let btn = '';
             if (isEquipped) btn = `<button class="btn-character btn-equipped">✅ EQUIPADO</button>`;
             else if (isOwned) btn = `<button class="btn-character btn-equip" onclick="equipChar('${ch.id}')">⚔️ EQUIPAR</button>`;
-            else btn = `<button class="btn-character btn-buy-char" onclick="buyChar('${ch.id}')"> COMPRAR ${priceLabel}</button>`;
+            else btn = `<button class="btn-character btn-buy-char" onclick="buyChar('${ch.id}')">🛒 COMPRAR ${priceLabel}</button>`;
             return `<div class="character-card ${isOwned ? 'owned' : ''} ${isEquipped ? 'equipped' : ''}">
                 <div class="character-emoji">${ch.emoji}</div>
                 <div class="character-name">${ch.name}</div>
@@ -758,7 +743,6 @@ try {
         } catch(e) { showToast('Erro: ' + e.message); }
     };
 
-    // PODERES
     function renderPowers() {
         if (!currentUserData) return;
         const unlocked = currentUserData.unlockedPowers || ['fire', 'lightning', 'slash'];
@@ -775,12 +759,11 @@ try {
                     <div class="power-stat"><div class="power-stat-label">MP</div><div class="power-stat-value">${p.mp}</div></div>
                     <div class="power-stat"><div class="power-stat-label">Recarga</div><div class="power-stat-value">${p.cd}</div></div>
                 </div>
-                ${!isUnlocked ? `<p style="color:#ef4444;text-align:center;font-size:0.85em;margin-top:10px;">🔒 Nível ${p.unlockAt}</p>` : '<p style="color:#22c55e;text-align:center;font-size:0.85em;margin-top:10px;">✅ Desbloqueado</p>'}
+                ${!isUnlocked ? `<p style="color:#ef4444;text-align:center;font-size:0.85em;margin-top:10px;"> Nível ${p.unlockAt}</p>` : '<p style="color:#22c55e;text-align:center;font-size:0.85em;margin-top:10px;">✅ Desbloqueado</p>'}
             </div>`;
         }).join('');
     }
 
-    // BÔNUS DIÁRIO
     window.openDailyReward = () => {
         if (!currentUserData) return showToast('Carregando...');
         renderDaily();
@@ -826,7 +809,7 @@ try {
         const updates = { dailyStreak: streak + 1, lastDailyClaim: now };
         if (reward.reward === '💰') updates.coins = (currentUserData.coins || 0) + reward.amount;
         else if (reward.reward === '💎') updates.gems = (currentUserData.gems || 0) + reward.amount;
-        else if (reward.reward === '🔮') updates.crystals = (currentUserData.crystals || 0) + reward.amount;
+        else if (reward.reward === '') updates.crystals = (currentUserData.crystals || 0) + reward.amount;
         try {
             await updateDoc(playerRef, updates);
             showToast(`🎁 Dia ${currentDay} resgatado! +${reward.label}`);
@@ -834,13 +817,12 @@ try {
         } catch(e) { showToast('Erro: ' + e.message); }
     };
 
-    // LOJA ITENS
     window.buyItem = async (name, price, currency) => {
         if (!currentUserData) return showToast('Carregando...');
         const current = currentUserData[currency] || 0;
         if (current < price) {
             const name2 = currency === 'coins' ? '💰 Moedas' : currency === 'gems' ? '💎 Gemas' : '🔮 Cristais';
-            return showToast(` ${name2} insuficientes!`);
+            return showToast(`❌ ${name2} insuficientes!`);
         }
         if (confirm(`Comprar ${name}?`)) {
             try {
@@ -850,7 +832,6 @@ try {
         }
     };
 
-    // BATALHA
     window.battle = async (bossName, rewardCoins, rewardGems) => {
         if (!currentUserData) return showToast('Carregando...');
         const win = Math.random() > 0.3;
@@ -933,11 +914,8 @@ try {
         }
     }
 
-    // MODAL
-    window.openModal = (id) => $(id).classList.add('active');
     window.closeModal = (id) => $(id).classList.remove('active');
 
-    // CHAT
     window.toggleChat = () => {
         chatOpen = !chatOpen;
         $('chatPanel').classList.toggle('active', chatOpen);
@@ -995,7 +973,6 @@ try {
 
     function escapeHtml(text) { const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
 
-    // AUTH STATE
     onAuthStateChanged(auth, async (user) => {
         try {
             if (!user) {
@@ -1053,9 +1030,8 @@ try {
     console.error('ERRO CRÍTICO:', e);
     document.getElementById('loading').innerHTML = `
         <div style="background:#7f1d1d;border:2px solid #ef4444;padding:30px;border-radius:15px;max-width:500px;text-align:center;">
-            <h2 style="color:#fca5a5;margin-bottom:15px;">️ Erro ao carregar</h2>
+            <h2 style="color:#fca5a5;margin-bottom:15px;">⚠️ Erro ao carregar</h2>
             <p style="color:#fca5a5;margin:15px 0;">${e.message}</p>
-            <p style="color:#94a3b8;font-size:0.9em;">Verifique sua conexão e recarregue.</p>
             <button onclick="location.reload()" style="margin-top:15px;background:#ef4444;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;">🔄 Recarregar</button>
         </div>
     `;
