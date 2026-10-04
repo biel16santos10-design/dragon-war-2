@@ -12,21 +12,21 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     body {
-      background: linear-gradient(135deg, #0f172a, #1e293b);
+      background: #0f172a;
       color: #f8fafc;
       min-height: 100vh;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
       padding: 20px;
     }
     .card {
-      background: rgba(30, 41, 59, 0.9);
+      background: rgba(30, 41, 59, 0.95);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 12px;
-      padding: 30px;
+      padding: 25px;
       width: 100%;
-      max-width: 400px;
+      max-width: 500px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
     }
     h1 {
@@ -34,6 +34,8 @@
       margin-bottom: 20px;
       color: #38bdf8;
       font-size: 1.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
     .tabs {
       display: flex;
@@ -85,28 +87,71 @@
       font-size: 1rem;
       cursor: pointer;
       transition: background 0.2s;
+      margin-top: 5px;
     }
     button:hover {
       background: #0369a1;
     }
+    .btn-action {
+      background: #10b981;
+      margin-top: 10px;
+    }
+    .btn-action:hover {
+      background: #059669;
+    }
+    .btn-logout {
+      background: #ef4444;
+      margin-top: 15px;
+    }
+    .btn-logout:hover {
+      background: #dc2626;
+    }
     .hidden {
       display: none;
     }
-    #game-screen {
-      text-align: center;
-    }
-    .user-info {
-      margin: 20px 0;
-      padding: 15px;
+
+    /* ESTILOS DA INTERFACE DO JOGO */
+    .game-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
       background: #0f172a;
+      padding: 15px;
       border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .stat-box {
+      font-size: 0.95rem;
+      color: #cbd5e1;
+    }
+    .stat-box strong {
+      color: #38bdf8;
+    }
+    .battle-box {
+      background: #1e293b;
+      border: 1px solid #334155;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .log-box {
+      background: #0f172a;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: #a7f3d0;
+      min-height: 50px;
+      max-height: 100px;
+      overflow-y: auto;
+      text-align: left;
     }
   </style>
 </head>
 <body>
 
   <div class="card">
-    <h1>Dragon War</h1>
+    <h1>🐉 Dragon War</h1>
 
     <!-- TELA DE AUTENTICAÇÃO -->
     <div id="auth-screen">
@@ -122,49 +167,62 @@
           <input type="email" id="login-email" required placeholder="seu@email.com">
         </div>
         <div class="form-group">
-          <label for="login-password">Palavra-passe</label>
+          <label for="login-password">Senha</label>
           <input type="password" id="login-password" required placeholder="••••••••">
         </div>
         <button type="submit">ENTRAR NO JOGO</button>
       </form>
 
-      <!-- FORMULÁRIO DE REGISTO -->
+      <!-- FORMULÁRIO DE REGISTRO -->
       <form id="register-form" class="hidden" onsubmit="handleRegister(event)">
         <div class="form-group">
-          <label for="reg-username">Nome de Jogador</label>
-          <input type="text" id="reg-username" required placeholder="Ex: Guerriro123">
+          <label for="reg-username">Nome do Guerreiro</label>
+          <input type="text" id="reg-username" required placeholder="Ex: GabrielTheKing">
         </div>
         <div class="form-group">
           <label for="reg-email">E-mail</label>
           <input type="email" id="reg-email" required placeholder="seu@email.com">
         </div>
         <div class="form-group">
-          <label for="reg-password">Palavra-passe</label>
+          <label for="reg-password">Senha</label>
           <input type="password" id="reg-password" required placeholder="••••••••">
         </div>
-        <button type="submit">CRIAR CONTA</button>
+        <button type="submit">CRIAR CONTA E JOGAR</button>
       </form>
     </div>
 
-    <!-- TELA DO JOGO (PÓS-LOGIN) -->
+    <!-- TELA DO JOGO (RPG) -->
     <div id="game-screen" class="hidden">
-      <h2>Bem-vindo, <span id="player-name">---</span>!</h2>
-      <div class="user-info">
-        <p><strong>Nível:</strong> <span id="player-level">1</span></p>
-        <p><strong>Moedas:</strong> <span id="player-coins">100</span></p>
+      <h2 style="text-align: center; margin-bottom: 15px;">Mestre: <span id="player-name" style="color: #38bdf8;">---</span></h2>
+      
+      <div class="game-stats">
+        <div class="stat-box"><strong>Nível:</strong> <span id="player-level">1</span></div>
+        <div class="stat-box"><strong>Moedas:</strong> 🟡 <span id="player-coins">100</span></div>
+        <div class="stat-box"><strong>Vida:</strong> ❤️ <span id="player-hp">100</span>/100</div>
+        <div class="stat-box"><strong>Ataque:</strong> ⚔️ <span id="player-atk">15</span></div>
       </div>
-      <button onclick="handleLogout()" style="background: #ef4444;">SAIR DA CONTA</button>
+
+      <div class="battle-box">
+        <h3 style="color: #f43f5e; margin-bottom: 5px;">Inimigo: <span id="enemy-name">Dragão Filhote</span></h3>
+        <p style="margin-bottom: 10px; font-size: 0.9rem;">HP do Inimigo: ❤️ <span id="enemy-hp">50</span>/50</p>
+        <button class="btn-action" onclick="attackEnemy()">⚔️ ATACAR</button>
+      </div>
+
+      <div class="log-box" id="game-log">
+        > Bem-vindo a Dragon War! Clique em Atacar para iniciar a batalha.
+      </div>
+
+      <button onclick="handleLogout()" class="btn-logout">SAIR DA CONTA</button>
     </div>
   </div>
 
-  <!-- FIREBASE SDKs (COMPATIBILIDADE BROWSER) -->
+  <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
   <!-- LÓGICA DO JOGO E CONEXÃO COM O FIREBASE -->
   <script>
-    // Configurações do seu projeto Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
       authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
@@ -175,34 +233,22 @@
       measurementId: "G-S7XE2EN9CL"
     };
 
-    // Inicialização do Firebase
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
     }
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // Alternar entre abas de Login e Registo
-    function showForm(type) {
-      const loginForm = document.getElementById('login-form');
-      const regForm = document.getElementById('register-form');
-      const tabLogin = document.getElementById('tab-login');
-      const tabReg = document.getElementById('tab-register');
+    let playerData = {};
+    let enemyHP = 50;
 
-      if (type === 'login') {
-        loginForm.classList.remove('hidden');
-        regForm.classList.add('hidden');
-        tabLogin.classList.add('active');
-        tabReg.classList.remove('active');
-      } else {
-        loginForm.classList.add('hidden');
-        regForm.classList.remove('hidden');
-        tabLogin.classList.remove('active');
-        tabReg.classList.add('active');
-      }
+    function showForm(type) {
+      document.getElementById('login-form').classList.toggle('hidden', type !== 'login');
+      document.getElementById('register-form').classList.toggle('hidden', type === 'login');
+      document.getElementById('tab-login').classList.toggle('active', type === 'login');
+      document.getElementById('tab-register').classList.toggle('active', type !== 'login');
     }
 
-    // Função de Registo de Jogador
     async function handleRegister(e) {
       e.preventDefault();
       const name = document.getElementById('reg-username').value;
@@ -213,22 +259,21 @@
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
 
-        // Salvar os dados iniciais do jogador no Firestore
-        await db.collection('users').doc(user.uid).set({
+        const initialData = {
           username: name,
           email: email,
           level: 1,
           coins: 100,
-          createdAt: new Date()
-        });
+          hp: 100,
+          atk: 15
+        };
 
-        alert("Conta criada com sucesso!");
+        await db.collection('users').doc(user.uid).set(initialData);
       } catch (error) {
-        alert("Erro no registo: " + error.message);
+        alert("Erro no cadastro: " + error.message);
       }
     }
 
-    // Função de Login
     async function handleLogin(e) {
       e.preventDefault();
       const email = document.getElementById('login-email').value;
@@ -241,31 +286,60 @@
       }
     }
 
-    // Função de Terminar Sessão
     function handleLogout() {
       auth.signOut();
     }
 
-    // Monitorizar Estado do Utilizador em Tempo Real
-    auth.onAuthStateChanged(async (user) => {
-      const authScreen = document.getElementById('auth-screen');
-      const gameScreen = document.getElementById('game-screen');
+    async function attackEnemy() {
+      if (!playerData.username) return;
 
+      const damage = Math.floor(Math.random() * playerData.atk) + 5;
+      enemyHP -= damage;
+
+      let log = document.getElementById('game-log');
+
+      if (enemyHP <= 0) {
+        playerData.coins += 20;
+        playerData.level += 1;
+        playerData.atk += 5;
+        enemyHP = 50 + (playerData.level * 10);
+
+        log.innerHTML = `> 💥 Você derrotou o inimigo! Ganhou 20 moedas e subiu para o Nível ${playerData.level}!`;
+
+        await db.collection('users').doc(auth.currentUser.uid).update({
+          coins: playerData.coins,
+          level: playerData.level,
+          atk: playerData.atk
+        });
+
+        updateUI();
+      } else {
+        document.getElementById('enemy-hp').innerText = enemyHP;
+        log.innerHTML = `> ⚔️ Você causou ${damage} de dano! HP do Inimigo: ${enemyHP}`;
+      }
+    }
+
+    function updateUI() {
+      document.getElementById('player-name').innerText = playerData.username || "Guerreiro";
+      document.getElementById('player-level').innerText = playerData.level || 1;
+      document.getElementById('player-coins').innerText = playerData.coins || 100;
+      document.getElementById('player-hp').innerText = playerData.hp || 100;
+      document.getElementById('player-atk').innerText = playerData.atk || 15;
+      document.getElementById('enemy-hp').innerText = enemyHP;
+    }
+
+    auth.onAuthStateChanged(async (user) => {
       if (user) {
-        // Carregar dados do Firestore
         const doc = await db.collection('users').doc(user.uid).get();
         if (doc.exists) {
-          const data = doc.data();
-          document.getElementById('player-name').innerText = data.username || "Jogador";
-          document.getElementById('player-level').innerText = data.level || 1;
-          document.getElementById('player-coins').innerText = data.coins || 100;
+          playerData = doc.data();
+          updateUI();
         }
-
-        authScreen.classList.add('hidden');
-        gameScreen.classList.remove('hidden');
+        document.getElementById('auth-screen').classList.add('hidden');
+        document.getElementById('game-screen').classList.remove('hidden');
       } else {
-        authScreen.classList.remove('hidden');
-        gameScreen.classList.add('hidden');
+        document.getElementById('auth-screen').classList.remove('hidden');
+        document.getElementById('game-screen').classList.add('hidden');
       }
     });
   </script>
