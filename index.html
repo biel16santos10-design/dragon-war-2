@@ -10,10 +10,11 @@
         .screen { display: none; width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
         .active { display: flex; }
 
-        /* TELA DE LOGIN / REGISTRO */
+        /* TELA DE LOGIN / BOAS-VINDAS */
         #login-screen { justify-content: center; align-items: center; background: radial-gradient(circle, #1e293b 0%, #0f172a 100%); }
         .login-card { background: rgba(30, 41, 59, 0.85); border: 1px solid #334155; padding: 40px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; backdrop-filter: blur(10px); }
-        .login-card h2 { color: #f87171; margin-bottom: 25px; font-size: 26px; letter-spacing: 1px; }
+        .login-card h2 { color: #f87171; margin-bottom: 10px; font-size: 28px; letter-spacing: 1px; }
+        .welcome-msg { color: #94a3b8; font-size: 14px; margin-bottom: 25px; line-height: 1.5; }
         .form-control { width: 100%; padding: 12px 15px; margin-bottom: 15px; background: #0f172a; border: 1px solid #475569; color: #fff; border-radius: 6px; font-size: 14px; }
         .btn-main { width: 100%; padding: 12px; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.2s; margin-top: 10px; }
         .btn-main:hover { background: #1d4ed8; box-shadow: 0 0 15px rgba(37,99,235,0.5); }
@@ -58,11 +59,11 @@
 </head>
 <body>
 
-    <!-- TELA 1: LOGIN DO JOGADOR -->
+    <!-- TELA 1: LOGIN / BOAS-VINDAS -->
     <div id="login-screen" class="screen active">
         <div class="login-card">
             <h2>DRAGON WAR</h2>
-            <p style="color: #94a3b8; font-size: 13px; margin-bottom: 20px;">Acesse com sua conta de Jogador (ex: biel16santos10@gmail.com)</p>
+            <p class="welcome-msg">Bem-vindo ao mundo de batalhas e conquistas! Faça login para entrar na sua jornada épica.</p>
             <form id="form-login" onsubmit="fazerLogin(event)">
                 <input type="email" id="login-email" class="form-control" placeholder="Seu E-mail" required>
                 <input type="password" id="login-senha" class="form-control" placeholder="Sua Senha" required>
@@ -86,7 +87,7 @@
                 <li onclick="trocarTab('loja', this)">🛒 Loja de Itens</li>
                 <li onclick="trocarTab('skins', this)">🎨 Skins Personalizadas</li>
                 <li onclick="trocarTab('chat', this)">💬 Chat Global</li>
-                <li onclick="trocarTab('guilda', this)">🛡️️ Guilda</li>
+                <li onclick="trocarTab('guilda', this)">🛡 Guilda</li>
                 <li onclick="trocarTab('config', this)">⚙️ Configurações</li>
                 <li onclick="fazerLogout()" style="margin-top: 25px; background: rgba(220,38,38,0.2); color: #f87171;">🚪 Sair da Conta</li>
             </ul>
@@ -94,7 +95,7 @@
 
         <div class="main-content">
             <div class="top-bar">
-                <div class="top-bar-title" id="titulo-topo">Dragon War — Visão do Jogador</div>
+                <div class="top-bar-title" id="titulo-topo">Dragon War — Portal do Jogador</div>
                 <div class="resources-container">
                     <div class="resource-badge">🪙 Dinheiro: <span id="badge-dinheiro" style="color: #facc15;">0</span></div>
                     <div class="resource-badge">🔔 <span id="badge-notif">0</span> Notificações</div>
@@ -204,7 +205,7 @@
 
     <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyDgooL-9qYU",
+            apiKey: "SUA_API_KEY_REAL_DO_FIREBASE",
             authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
             projectId: "dragon-war-rise-of-power-2a9f1",
             storageBucket: "dragon-war-rise-of-power-2a9f1.appspot.com",
@@ -235,7 +236,7 @@
                     mudarTela('game-screen');
                 })
                 .catch((error) => {
-                    alert("Erro de login: " + error.message);
+                    alert("Erro ao entrar: Verifique seu e-mail e senha.");
                 });
         }
 
@@ -246,7 +247,6 @@
                     dadosJogadorLocal = doc.data();
                     sincronizarInterface();
                 } else {
-                    // Cria o documento inicial caso não exista
                     dadosJogadorLocal = {
                         nome: email.split('@')[0],
                         uid: uid,
