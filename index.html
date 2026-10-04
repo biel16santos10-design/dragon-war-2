@@ -16,7 +16,7 @@
         .screen { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; display: none; flex-direction: column; justify-content: space-between; padding: 25px; z-index: 2; }
         .screen.active { display: flex; }
 
-        /* Fundo de Jogo Épico */
+        /* Fundo Épico do Jogo */
         .game-background {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('https://raw.githubusercontent.com/santos10-design/santos10-design.github.io/main/fundo-dragon.jpg') no-repeat center center/cover;
@@ -40,7 +40,9 @@
         .player-info h4 { font-size: 16px; color: #fff; }
         .player-info p { font-size: 12px; color: #94a3b8; }
         
-        .config-btn { background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.15); width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 22px; backdrop-filter: blur(8px); }
+        .top-actions { display: flex; gap: 10px; }
+        .icon-btn { background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.15); width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; backdrop-filter: blur(8px); position: relative; }
+        .badge-notification { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; font-size: 10px; padding: 2px 6px; border-radius: 50%; font-weight: bold; }
 
         .main-menu { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; z-index: 3; margin-bottom: 20px; }
         .btn-menu { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(6px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 14px 20px; border-radius: 10px; color: white; font-size: 16px; font-weight: bold; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s; }
@@ -50,10 +52,15 @@
         .btn-load { border-left: 4px solid #38bdf8; }
         .btn-new { border-left: 4px solid #a855f7; }
 
-        /* Modal Interno de Conteúdos (Loja, Habilidades, Configurações, etc) */
-        #modal-conteudo { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(11, 15, 25, 0.92); z-index: 100; padding: 40px; overflow-y: auto; flex-direction: column; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
+        /* Modal Geral */
+        #modal-conteudo { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(11, 15, 25, 0.95); z-index: 100; padding: 30px; overflow-y: auto; flex-direction: column; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
         .btn-fechar { background: #ef4444; border: none; color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+
+        /* Estilo de Mensagens do ADM no Chat */
+        .chat-msg-adm { background: rgba(15, 23, 42, 0.9); border-left: 4px solid #7c3aed; padding: 8px 12px; margin-bottom: 8px; border-radius: 4px; }
+        .adm-name { color: #64748b; font-weight: bold; font-size: 13px; } /* Nome meio escuro/apagado */
+        .adm-badge { background: #7c3aed; color: #fff; font-size: 9px; padding: 2px 6px; border-radius: 4px; margin-left: 6px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -87,7 +94,7 @@
     <div id="main-screen" class="screen">
         <div class="game-background"></div>
         
-        <!-- Perfil do Jogador & Configurações -->
+        <!-- Topo: Perfil e Atalhos (Sininho + Configurações) -->
         <div class="top-bar">
             <div class="player-card">
                 <img id="hud-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=hero" class="player-avatar" alt="Avatar">
@@ -95,11 +102,20 @@
                     <h4 id="hud-nome">Gabriel Cabral 👑</h4>
                     <p>UID: <span id="hud-uid">12345678</span> | Nível: <span id="hud-nivel">1</span> | Rank: <span id="hud-rank">Bronze</span></p>
                     <p style="margin-top: 4px; font-size: 11px; color: #f5af19;">
-                        💰 <span id="hud-moedas">15.000</span> | 💎 <span id="hud-diamantes">100</span> | ❤️ <span id="hud-vida">100</span> | ⚡ <span id="hud-mana">50</span> | 🏆 <span id="hud-pontos">0</span>
+                        ⚔️ Espada: <span id="hud-espada">Lâmina Iniciante</span>
+                    </p>
+                    <p style="margin-top: 2px; font-size: 11px; color: #38bdf8;">
+                        💰 <span id="hud-moedas">15.000</span> | 💎 <span id="hud-diamantes">100</span> | 🏆 <span id="hud-pontos">0</span>
                     </p>
                 </div>
             </div>
-            <div class="config-btn" onclick="abrirConfiguracoesPerfil()">⚙️</div>
+            <div class="top-actions">
+                <!-- Sininho de Atualizações -->
+                <div class="icon-btn" onclick="abrirAtualizacoes()" title="Atualizações">
+                    🔔<span class="badge-notification">1</span>
+                </div>
+                <div class="icon-btn" onclick="abrirConfiguracoesPerfil()" title="Configurações">⚙️</div>
+            </div>
         </div>
 
         <!-- Menu Principal de Ações -->
@@ -108,10 +124,12 @@
             <button class="btn-menu btn-save" onclick="salvarProgressoJogo()">💾 SALVAR</button>
             <button class="btn-menu btn-load" onclick="carregarProgressoJogo()">📂 CARREGAR</button>
             <button class="btn-menu btn-new" onclick="iniciarNovoJogo()">➕ NOVO JOGO</button>
+            <button class="btn-menu" style="border-left: 4px solid #eab308;" onclick="abrirChatGlobal()">💬 Chat & Comunidade</button>
+            <button class="btn-menu" style="border-left: 4px solid #ec4899;" onclick="abrirArvoreHabilidades()">🌳 Árvore de Habilidades</button>
         </div>
     </div>
 
-    <!-- MODAL PARA EXIBIR SISTEMAS ADICIONAIS -->
+    <!-- MODAL PARA SISTEMAS -->
     <div id="modal-conteudo">
         <div class="modal-header">
             <h2 id="modal-titulo" style="color: #f5af19;">Painel</h2>
@@ -121,18 +139,6 @@
     </div>
 
     <script>
-        // Configuração Firebase (substitua com seus dados reais ou mantenha funcional)
-        const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "projeto.firebaseapp.com",
-            projectId: "projeto",
-            storageBucket: "projeto.appspot.com",
-            messagingSenderId: "SENDER",
-            appId: "APP_ID"
-        };
-        // Inicialização segura caso o SDK esteja carregado
-        try { firebase.initializeApp(firebaseConfig); } catch(e) {}
-
         let jogadorAtual = {
             nome: "Gabriel Cabral",
             uid: "12345678",
@@ -140,9 +146,8 @@
             rank: "Bronze",
             moedas: 15000,
             diamantes: 100,
-            vida: 100,
-            mana: 50,
             pontos: 0,
+            espada: "Lâmina Iniciante",
             avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=hero"
         };
 
@@ -165,7 +170,6 @@
             if (!nome || !email || !senha) { alert("Preencha todos os campos!"); return; }
             if (senha !== confirmar) { alert("As senhas não coincidem!"); return; }
 
-            // Simula ou executa o registro e entra automaticamente
             jogadorAtual.nome = nome;
             jogadorAtual.uid = Math.floor(10000000 + Math.random() * 90000000).toString();
             atualizarInterfaceHub();
@@ -193,24 +197,17 @@
             document.getElementById('hud-rank').innerText = jogadorAtual.rank;
             document.getElementById('hud-moedas').innerText = jogadorAtual.moedas.toLocaleString();
             document.getElementById('hud-diamantes').innerText = jogadorAtual.diamantes.toLocaleString();
-            document.getElementById('hud-vida').innerText = jogadorAtual.vida;
-            document.getElementById('hud-mana').innerText = jogadorAtual.mana;
             document.getElementById('hud-pontos').innerText = jogadorAtual.pontos;
+            document.getElementById('hud-espada').innerText = jogadorAtual.espada;
             document.getElementById('hud-avatar').src = jogadorAtual.avatar;
         }
 
         function entrarModoJogar() {
-            abrirModal("Modo de Batalha & Missões", `<p>Escolha seu desafio na campanha ou enfrente o Rei Demônio!</p>`);
+            abrirModal("Modo de Batalha", `<p>Selecione sua fase ou entre em combate contra o Rei Demônio!</p>`);
         }
 
-        function salvarProgressoJogo() {
-            alert("Progresso salvo com sucesso na nuvem!");
-        }
-
-        function carregarProgressoJogo() {
-            alert("Dados carregados com sucesso!");
-        }
-
+        function salvarProgressoJogo() { alert("Progresso salvo com sucesso!"); }
+        function carregarProgressoJogo() { alert("Progresso carregado!"); }
         function iniciarNovoJogo() {
             if(confirm("Deseja iniciar um novo jogo?")) {
                 jogadorAtual.nivel = 1;
@@ -220,11 +217,64 @@
             }
         }
 
+        // Sininho de Atualizações
+        function abrirAtualizacoes() {
+            abrirModal("🔔 Histórico de Atualizações", `
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div style="background: rgba(30,41,59,0.7); padding: 12px; border-radius: 8px;">
+                        <h4 style="color: #38bdf8;">Versão 1.2.0 - Atualização do Sistema</h4>
+                        <p style="font-size: 13px; color: #cbd5e1; margin-top: 5px;">• Adicionado: Sistema de Chat Global com destaque de ADM.</p>
+                        <p style="font-size: 13px; color: #cbd5e1;">• Adicionado: Árvore de Habilidades por níveis.</p>
+                        <p style="font-size: 13px; color: #cbd5e1;">• Removido: Bugs de carregamento de perfil na nuvem.</p>
+                    </div>
+                </div>
+            `);
+        }
+
+        // Chat Global com identificação e cor apagada/especial para ADM
+        function abrirChatGlobal() {
+            abrirModal("💬 Chat Global e Comunidade", `
+                <div style="display: flex; flex-direction: column; height: 350px; justify-content: space-between;">
+                    <div style="flex: 1; overflow-y: auto; background: rgba(11,15,25,0.7); padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px;">
+                        <!-- Exemplo de Mensagem do ADM -->
+                        <div class="chat-msg-adm">
+                            <span class="adm-name">Administrador_Master</span><span class="adm-badge">ADM</span>
+                            <p style="font-size: 13px; color: #e2e8f0; margin-top: 2px;">Bem-vindos ao Dragon War! Nova atualização disponível no sino.</p>
+                        </div>
+                        <div>
+                            <span style="color: #38bdf8; font-weight: bold; font-size: 13px;">Player_Hero:</span>
+                            <p style="font-size: 13px; color: #cbd5e1;">Salve galera! Alguém vai pra guilda?</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" placeholder="Digite sua mensagem..." style="flex: 1; padding: 10px; background: #0b0f19; border: 1px solid #334155; color: #fff; border-radius: 6px;">
+                        <button class="btn-auth" style="margin:0; padding: 0 20px;">Enviar</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        // Árvore de Habilidades por Níveis
+        function abrirArvoreHabilidades() {
+            abrirModal("🌳 Árvore de Habilidades", `
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div style="background: rgba(30,41,59,0.8); padding: 12px; border-radius: 8px; border-left: 4px solid #22c55e;">
+                        <h4>Nível 1: Corte Rápido (Desbloqueado)</h4>
+                        <p style="font-size: 12px; color: #94a3b8;">Aumenta o dano do ataque básico em 5%.</p>
+                    </div>
+                    <div style="background: rgba(30,41,59,0.5); padding: 12px; border-radius: 8px; border-left: 4px solid #f59e0b; opacity: 0.7;">
+                        <h4>Nível 5: Fúria do Dragão (Bloqueado)</h4>
+                        <p style="font-size: 12px; color: #94a3b8;">Requer Nível 5 para desbloqueio automático.</p>
+                    </div>
+                </div>
+            `);
+        }
+
         function abrirConfiguracoesPerfil() {
-            abrirModal("Configurações & Perfil", `
+            abrirModal("⚙️ Configurações de Perfil", `
                 <div style="display:flex; flex-direction:column; gap:12px; max-width:400px;">
                     <label>Alterar Nome: <input type="text" id="cfg-nome" value="${jogadorAtual.nome}" style="width:100%; padding:8px; background:#0b0f19; color:#fff; border:1px solid #334155; border-radius:4px;"></label>
-                    <label>ID Personalizado: <input type="text" id="cfg-id" value="${jogadorAtual.uid}" style="width:100%; padding:8px; background:#0b0f19; color:#fff; border:1px solid #334155; border-radius:4px;"></label>
+                    <label>ID Personalizado (UID): <input type="text" id="cfg-id" value="${jogadorAtual.uid}" style="width:100%; padding:8px; background:#0b0f19; color:#fff; border:1px solid #334155; border-radius:4px;"></label>
                     <button class="btn-auth" onclick="salvarConfigPerfil()">Salvar Alterações</button>
                 </div>
             `);
