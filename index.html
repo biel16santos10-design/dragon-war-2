@@ -841,3 +841,1691 @@
     </script>
 </body>
 </html>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon War - Rise of Power | Servidor Oficial</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --panel-bg: #131b2e;
+            --panel-border: #1e293b;
+            --accent-color: #f59e0b;
+            --adm-color: #ef4444;
+            --text-color: #f8fafc;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); height: 100vh; display: flex; overflow: hidden; }
+        
+        .screen { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; position: absolute; top: 0; left: 0; background: radial-gradient(circle, #1e293b 0%, #0b0f19 100%); z-index: 10; }
+        .hidden { display: none !important; }
+        
+        .card { background: var(--panel-bg); padding: 30px; border-radius: 12px; width: 380px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); border: 2px solid var(--accent-color); text-align: center; }
+        .card img.logo-login { width: 100%; max-height: 90px; object-fit: contain; margin-bottom: 20px; border-radius: 6px; }
+        .card h2 { margin-bottom: 20px; color: var(--accent-color); font-size: 20px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 5px; font-size: 14px; color: #94a3b8; }
+        .input-group input { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--panel-border); background: #070a12; color: white; }
+        .btn { width: 100%; padding: 10px; background: linear-gradient(90deg, #f59e0b, #d97706); border: none; color: #000; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-adm { background: linear-gradient(90deg, #ef4444, #b91c1c); color: white; margin-top: 10px; }
+        .auth-switch { margin-top: 15px; font-size: 13px; color: #94a3b8; cursor: pointer; }
+        .auth-switch:hover { color: var(--accent-color); text-decoration: underline; }
+
+        #game-container { display: flex; width: 100%; height: 100%; background: linear-gradient(rgba(11, 15, 25, 0.85), rgba(11, 15, 25, 0.95)), url('89097.png') no-repeat center center; background-size: cover; position: relative; }
+        sidebar { width: 260px; background: rgba(19, 27, 46, 0.95); border-right: 1px solid var(--panel-border); display: flex; flex-direction: column; padding: 20px; backdrop-filter: blur(5px); }
+        
+        .server-banner { width: 100%; height: 75px; background: url('89097.png') no-repeat center center; background-size: cover; border-radius: 6px; margin-bottom: 15px; border: 1px solid var(--accent-color); }
+        
+        .user-profile { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--panel-border); }
+        .user-avatar { width: 45px; height: 45px; background: var(--accent-color); color: #000; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 18px; border: 2px solid white; object-fit: cover; }
+        
+        .menu-list { list-style: none; display: flex; flex-direction: column; gap: 8px; flex-grow: 1; overflow-y: auto; }
+        .menu-item { padding: 10px 15px; border-radius: 6px; cursor: pointer; background: rgba(255,255,255,0.03); transition: 0.2s; font-size: 14px; font-weight: 600; border-left: 3px solid transparent; }
+        .menu-item:hover { background: rgba(255,255,255,0.08); }
+        .menu-item.active { background: rgba(245, 158, 11, 0.15); color: var(--accent-color); border-left: 3px solid var(--accent-color); }
+
+        main { flex-grow: 1; display: flex; flex-direction: column; position: relative; padding-bottom: 60px; }
+        header { padding: 15px 25px; background: rgba(19, 27, 46, 0.9); border-bottom: 1px solid var(--panel-border); display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(5px); }
+        
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .currency-badge { font-size: 13px; background: rgba(0,0,0,0.4); padding: 5px 12px; border-radius: 20px; border: 1px solid var(--panel-border); display: flex; align-items: center; gap: 5px; }
+        
+        .notification-bell-container { position: relative; cursor: pointer; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--panel-border); width: 38px; height: 38px; border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
+        .notification-bell-container:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--accent-color); }
+        .notification-badge { position: absolute; top: -2px; right: -2px; background: var(--adm-color); color: white; font-size: 10px; font-weight: bold; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 2px solid var(--bg-color); }
+        
+        .notification-dropdown { position: absolute; top: 50px; right: 0; width: 320px; background: var(--panel-bg); border: 2px solid var(--accent-color); border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); z-index: 200; display: none; padding: 15px; text-align: left; }
+        .notification-dropdown.active { display: block; }
+        .notification-dropdown h4 { color: var(--accent-color); font-size: 14px; margin-bottom: 10px; border-bottom: 1px solid var(--panel-border); padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        .notification-list { max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; font-size: 12px; }
+        .notif-item { background: rgba(0, 0, 0, 0.3); padding: 8px; border-radius: 4px; border-left: 3px solid var(--accent-color); }
+        .notif-item.update { border-left-color: #3b82f6; }
+        .notif-item.event { border-left-color: var(--adm-color); }
+
+        .content-area { flex-grow: 1; padding: 25px; overflow-y: auto; position: relative; }
+        .panel-section { display: none; }
+        .panel-section.active { display: block; }
+
+        .adm-tag { color: var(--adm-color); font-weight: bold; }
+        
+        .dragon-rainbow-name {
+            background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            font-size: 15px;
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+        }
+        
+        .global-chat-bar { position: absolute; bottom: 0; left: 0; width: 100%; height: 55px; background: rgba(2, 6, 23, 0.95); border-top: 1px solid var(--panel-border); display: flex; align-items: center; padding: 0 15px; gap: 10px; z-index: 50; backdrop-filter: blur(5px); }
+        .global-chat-bar span { font-size: 12px; color: var(--accent-color); font-weight: bold; white-space: nowrap; text-transform: uppercase; }
+        .global-chat-bar input { flex-grow: 1; padding: 8px 12px; border-radius: 4px; border: 1px solid var(--panel-border); background: #070a12; color: white; font-size: 13px; }
+        .global-chat-bar button { padding: 8px 15px; background: var(--adm-color); border: none; color: white; font-weight: bold; border-radius: 4px; cursor: pointer; text-transform: uppercase; font-size: 12px; }
+        
+        .chat-box { height: 130px; background: rgba(2, 6, 23, 0.8); border: 1px solid var(--panel-border); border-radius: 6px; padding: 10px; overflow-y: auto; font-size: 13px; display: flex; flex-direction: column; gap: 5px; margin-top: 10px; }
+        .chat-msg { background: rgba(255,255,255,0.05); padding: 5px 8px; border-radius: 4px; }
+        .chat-msg.global { border-left: 3px solid var(--adm-color); background: rgba(239, 68, 68, 0.15); }
+        
+        .grid-boxes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; }
+        .box-item { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 8px; padding: 15px; text-align: center; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+        th, td { padding: 10px; border-bottom: 1px solid var(--panel-border); text-align: left; }
+        th { color: var(--accent-color); text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
+        
+        .form-control { width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 15px; background: #070a12; border: 1px solid var(--panel-border); color: white; border-radius: 4px; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 100; }
+        .modal-card { background: var(--panel-bg); border: 2px solid var(--accent-color); padding: 25px; border-radius: 10px; width: 480px; box-shadow: 0 10px 30px rgba(0,0,0,0.9); position: relative; max-height: 90vh; overflow-y: auto; }
+        .close-modal { position: absolute; top: 10px; right: 15px; background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
+
+        /* Estilo para chat privado DM ADM x Gabriel */
+        .dm-chat-container { display: flex; flex-direction: column; height: 300px; background: #070a12; border: 1px solid var(--panel-border); border-radius: 6px; padding: 10px; overflow-y: auto; gap: 8px; margin-bottom: 15px; }
+        .dm-msg { padding: 6px 10px; border-radius: 6px; max-width: 80%; font-size: 13px; }
+        .dm-msg.mine { background: #1e3a8a; align-self: flex-end; }
+        .dm-msg.theirs { background: #1e293b; align-self: flex-start; }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen" class="screen">
+        <div class="card">
+            <img src="89097.png" alt="Dragon War Logo" class="logo-login">
+            <h2 id="auth-title">Dragon War - Servidor Real</h2>
+            <div class="input-group">
+                <label>E-mail:</label>
+                <input type="email" id="auth-email" placeholder="seuemail@dominio.com">
+            </div>
+            <div class="input-group">
+                <label>Senha:</label>
+                <input type="password" id="auth-pass" placeholder="******">
+            </div>
+            <button class="btn" id="auth-btn-action" onclick="realizarAutenticacao()">Entrar na Partida</button>
+            <div class="auth-switch" id="auth-switch-mode" onclick="alternarModoAuth()">Não tem conta? Cadastre-se com ID Real</div>
+        </div>
+    </div>
+
+    <div id="game-container" class="hidden">
+        <sidebar>
+            <div class="server-banner" title="Dragon War - Rise of Power"></div>
+
+            <div class="user-profile">
+                <img src="" id="sidebar-avatar-img" class="user-avatar" style="display:none;">
+                <div class="user-avatar" id="sidebar-avatar-txt">U</div>
+                <div>
+                    <div id="sidebar-name" style="font-weight: bold; font-size: 15px;">Usuário</div>
+                    <div style="font-size: 11px; color: #94a3b8;" id="sidebar-role">Jogador Real</div>
+                </div>
+            </div>
+            
+            <ul class="menu-list" id="menu-list"></ul>
+        </sidebar>
+
+        <main>
+            <header>
+                <h3 id="current-page-title" style="text-transform: uppercase; font-size: 16px; letter-spacing: 1px;">Painel</h3>
+                
+                <div class="header-right">
+                    <div class="currency-badge">
+                        Moedas: <span id="user-coins" style="color: #f59e0b; font-weight: bold;">100</span> 🪙
+                    </div>
+                    <div class="currency-badge">
+                        Diamantes: <span id="user-diamonds" style="color: #38bdf8; font-weight: bold;">10</span> 💎
+                    </div>
+
+                    <div class="notification-bell-container" onclick="toggleNotificationDropdown()" title="Notificações, Eventos e Atualizações do Jogo">
+                        🔔
+                        <div class="notification-badge" id="notif-counter">2</div>
+                        
+                        <div class="notification-dropdown" id="notif-dropdown" onclick="event.stopPropagation()">
+                            <h4>
+                                <span>Centro de Avisos & Updates</span>
+                                <span style="font-size: 10px; cursor: pointer; color: var(--accent-color);" onclick="limparNotificacoes()">Marcar lidas</span>
+                            </h4>
+                            
+                            <div id="adm-update-game-panel" class="hidden" style="margin-bottom: 10px; padding: 8px; background: rgba(239, 68, 68, 0.15); border: 1px dashed var(--adm-color); border-radius: 4px;">
+                                <p style="font-size: 11px; color: var(--adm-color); font-weight: bold; margin-bottom: 5px;">👑 Atualizar o Servidor do Jogo:</p>
+                                <input type="text" id="update-changelog-text" class="form-control" placeholder="O que foi adicionado/removido..." style="margin-bottom: 5px; font-size: 11px; padding: 5px;">
+                                <button class="btn btn-adm" style="padding: 5px; font-size: 11px; margin-top: 0;" onclick="publicarAtualizacaoJogo()">🚀 Atualizar Jogo Agora</button>
+                            </div>
+
+                            <div class="notification-list" id="notification-list-content">
+                                <div class="notif-item event">🎉 <strong>Novo Evento:</strong> Ascensão dos Dragões ativada!</div>
+                                <div class="notif-item update">✨ <strong>Atualização v2.8:</strong> Fases configuradas e Lojas por categorias!</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                
+                <!-- 1. MODO JOGO / FASES DE COMBATE (Fácil: 5, Difícil: 5, Avançado: 10, Hardcore: 25) -->
+                <div id="section-jogar" class="panel-section">
+                    <h2>Modo Batalha - Fases e Níveis</h2>
+                    <p style="color: #94a3b8; margin-top: 5px;">Escolha a dificuldade e enfrente os desafios. Use ataque, defesa, cura e poderes especiais!</p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px;">
+                        <div class="box-item" style="cursor:pointer;" onclick="iniciarFases('facil')">
+                            <h3 style="color: #10b981;">Modo Fácil (5 Níveis)</h3>
+                            <p style="font-size: 12px; color: #94a3b8; margin-top: 5px;">Ideal para iniciantes. 5 etapas de combate.</p>
+                        </div>
+                        <div class="box-item" style="cursor:pointer;" onclick="iniciarFases('dificil')">
+                            <h3 style="color: var(--accent-color);">Modo Difícil (5 Níveis)</h3>
+                            <p style="font-size: 12px; color: #94a3b8; margin-top: 5px;">Inimigos mais fortes. 5 etapas intensas.</p>
+                        </div>
+                        <div class="box-item" style="cursor:pointer;" onclick="iniciarFases('avancado')">
+                            <h3 style="color: #3b82f6;">Modo Avançado (10 Níveis)</h3>
+                            <p style="font-size: 12px; color: #94a3b8; margin-top: 5px;">10 etapas para combatentes experientes.</p>
+                        </div>
+                        <div class="box-item" style="cursor:pointer;" onclick="verificarAcessoHardcore()">
+                            <h3 style="color: var(--adm-color);">Modo Hardcore (25 Níveis ⚠️)</h3>
+                            <p style="font-size: 12px; color: #94a3b8; margin-top: 5px;">25 níveis lendários. Exige alto nível e forte potencial.</p>
+                        </div>
+                    </div>
+
+                    <div id="arena-fases-container" class="hidden" style="margin-top: 20px; background: var(--panel-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--panel-border);">
+                        <h3 id="fases-titulo-cat" style="color: var(--accent-color);">Fase Ativa</h3>
+                        <p id="fases-etapa-info" style="font-size: 14px; color: #94a3b8; margin: 10px 0;">Nível 1/5</p>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                            <div style="background: #070a12; padding: 12px; border-radius: 6px;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:13px;">
+                                    <span>Sua Vida (HP):</span>
+                                    <span id="player-battle-hp" style="color: #16a34a; font-weight:bold;">100/100</span>
+                                </div>
+                                <div style="width:100%; background:#1e293b; height:8px; border-radius:4px; overflow:hidden;">
+                                    <div id="player-hp-bar" style="width:100%; background:#16a34a; height:100%; transition:0.2s;"></div>
+                                </div>
+                            </div>
+                            <div style="background: #070a12; padding: 12px; border-radius: 6px;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:13px;">
+                                    <span>Resistência do Inimigo:</span>
+                                    <span id="movel-hp" style="color: var(--adm-color); font-weight:bold;">100%</span>
+                                </div>
+                                <div style="width:100%; background:#1e293b; height:8px; border-radius:4px; overflow:hidden;">
+                                    <div id="movel-hp-bar" style="width:100%; background:var(--adm-color); height:100%; transition:0.2s;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="battle-log" style="background: #020617; border: 1px solid var(--panel-border); padding: 10px; border-radius: 6px; height: 80px; overflow-y: auto; font-size: 12px; color: #94a3b8; margin-bottom: 15px;">
+                            Batalha iniciada! Escolha sua ação estrategicamente.
+                        </div>
+
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                            <button class="btn" style="width: auto; padding: 8px 15px;" onclick="acaoCombate('atacar')">⚔️ Atacar</button>
+                            <button class="btn" style="width: auto; padding: 8px 15px; background: #3b82f6; color:white;" onclick="acaoCombate('defender')">🛡️ Defender</button>
+                            <button class="btn" style="width: auto; padding: 8px 15px; background: #10b981; color:white;" onclick="acaoCombate('curar')">🧪 Recuperar Vida</button>
+                            <button class="btn" style="width: auto; padding: 8px 15px; background: #8b5cf6; color:white;" onclick="acaoCombate('poder')">⚡ Usar Poder</button>
+                            <button class="btn btn-adm" style="width: auto; padding: 8px 15px;" onclick="desistirBatalha()">🏳️ Desistir / Sair</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. LOJA (SEPARADA POR ARMAS, SKINS E POÇÕES + CAIXAS ABAIXO) -->
+                <div id="section-loja" class="panel-section">
+                    <h2>Loja Oficial do Servidor</h2>
+                    <p style="color: #94a3b8; margin-top: 5px;">Tudo o que você comprar vai diretamente para o seu inventário!</p>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 15px; margin-bottom: 15px;">
+                        <button class="btn" style="width: auto; padding: 6px 15px;" onclick="mudarTabLoja('armas')">⚔️ Armas</button>
+                        <button class="btn" style="width: auto; padding: 6px 15px; background:#3b82f6; color:white;" onclick="mudarTabLoja('skins')">🛡️ Skins</button>
+                        <button class="btn" style="width: auto; padding: 6px 15px; background:#10b981; color:white;" onclick="mudarTabLoja('pocoes')">🧪 Poções</button>
+                    </div>
+
+                    <div id="loja-itens-container" class="grid-boxes"></div>
+
+                    <h3 style="margin-top: 30px; border-top: 1px solid var(--panel-border); padding-top: 15px;">📦 Loja de Caixas de Itens & Caixas Misteriosas</h3>
+                    <div class="grid-boxes" id="epic-boxes-grid"></div>
+                </div>
+
+                <!-- 3. PODERES (MANTIDO COM A MESMA INTERFACE) -->
+                <div id="section-poderes" class="panel-section">
+                    <h2>Gerenciador de Poderes e Armas (+50 Poderes Disponíveis)</h2>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 15px;">Explore e equipe os mais de 50 poderes lendários disponíveis para o seu personagem.</p>
+                    
+                    <div style="background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--panel-border);">
+                        <h4>Catálogo de Poderes do Jogador (50+ Habilidades)</h4>
+                        <div id="lista-mais-50-poderes" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; max-height: 300px; overflow-y: auto;"></div>
+                    </div>
+                </div>
+
+                <!-- 4. INVENTÁRIO (RECEBE TUDO O QUE O JOGADOR COMPRA) -->
+                <div id="section-inventario" class="panel-section">
+                    <h2>Seu Inventário</h2>
+                    <p style="color: #94a3b8; margin-top: 5px;">Todos os itens comprados na loja aparecem aqui instantaneamente.</p>
+                    <div id="inventario-itens" style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;"></div>
+                </div>
+
+                <!-- 5. RANKINGS (EXIBE NÍVEL, MOEDA, DIAMANTE E NÍVEL ATUAL) -->
+                <div id="section-rank" class="panel-section">
+                    <h2>Rankings de Jogadores Reais</h2>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 15px;">Acompanhe o nível, moedas, diamantes e pontuação de todos os jogadores.</p>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Posição</th>
+                                <th>Jogador Real</th>
+                                <th>Nível</th>
+                                <th>Moedas 🪙</th>
+                                <th>Diamantes 💎</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-rank-geral">
+                            <tr><td>1º</td><td>ShadowKilled</td><td>Nível 99</td><td>45,000</td><td>1,200</td></tr>
+                            <tr><td>2º</td><td>DragonSlayer</td><td>Nível 85</td><td>28,500</td><td>850</td></tr>
+                            <tr><td>3º</td><td id="rank-user-slot">Gabriel [FUNDADOR]</td><td id="rank-user-nivel">Nível 50</td><td id="rank-user-coins">150</td><td id="rank-user-diamonds">25</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 6. EVENTOS DIÁRIOS (COM COOLDOWN DE 24H) -->
+                <div id="section-evento" class="panel-section">
+                    <h2>Eventos Diários & Recompensa</h2>
+                    <div style="background: var(--panel-bg); padding: 20px; border-radius: 6px; border: 1px solid var(--panel-border); margin-top: 10px;">
+                        <h4>🗓️ Recompensa Diária (Cooldown de 24h)</h4>
+                        <p style="font-size: 14px; color: #94a3b8; margin-top: 5px; margin-bottom: 15px;">Resgate sua recompensa diária de moedas e diamantes. Disponível uma vez a cada 24 horas!</p>
+                        <button class="btn" id="btn-resgatar-diario" onclick="resgatarRecompensaDiaria()">Resgatar Recompensa Diária (+100 Moedas & +5 Diamantes 💎)</button>
+                        <p id="cooldown-timer-msg" style="font-size: 12px; color: var(--adm-color); margin-top: 10px;"></p>
+                    </div>
+                </div>
+
+                <!-- 7. CONFIGURAÇÕES & PERFIL -->
+                <div id="section-config-jogador" class="panel-section">
+                    <h2>⚙️ Configurações e Perfil Real</h2>
+                    <div style="background: var(--panel-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--panel-border); max-width: 500px;">
+                        <h4>Identidade Real</h4>
+                        <label style="margin-top: 10px; display:block;">Seu ID Único:</label>
+                        <input type="text" id="player-real-id" class="form-control" readonly style="color: var(--accent-color); font-weight: bold; font-family: monospace;">
+                        <label>Seu Nick:</label>
+                        <input type="text" id="player-edit-name" class="form-control" placeholder="Seu Nick">
+                        <button class="btn" onclick="salvarPerfilJogador()">Salvar Alterações</button>
+                    </div>
+                </div>
+
+                <!-- 8. PAINEL DE ADMINISTRAÇÃO AVANÇADO -->
+                <div id="section-painel-adm" class="panel-section">
+                    <h2>👑 Painel de Administração</h2>
+                    <p style="color: var(--adm-color); margin-bottom: 15px;">Painel exclusivo de moderação e gerenciamento.</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div style="background: var(--panel-bg); padding: 15px; border-radius: 6px; border: 1px solid var(--panel-border);">
+                            <h4>Moderação de Jogadores</h4>
+                            <label style="margin-top:10px; display:block;">E-mail ou ID do Jogador:</label>
+                            <input type="text" id="target-player" class="form-control" placeholder="E-mail do jogador">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 5px;">
+                                <button class="btn btn-adm" onclick="acaoAdm('banir')">Banir</button>
+                                <button class="btn" style="background:#d97706; color:white;" onclick="acaoAdm('mutar')">Mutar</button>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--panel-bg); padding: 15px; border-radius: 6px; border: 1px solid var(--panel-border);">
+                            <h4>📢 Enviar Mensagem Global</h4>
+                            <input type="text" id="global-msg-input" class="form-control" placeholder="Aviso global...">
+                            <button class="btn btn-adm" onclick="enviarMensagemGlobal()">Transmitir</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; border-top: 1px solid var(--panel-border); padding-top: 15px;">
+                    <h4>Histórico do Chat Global</h4>
+                    <div class="chat-box" id="chat-container">
+                        <div class="chat-msg">Servidor Real: Conectado com sucesso ao Firebase!</div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <div class="global-chat-bar">
+            <span>Chat Global:</span>
+            <input type="text" id="footer-chat-input" placeholder="Digite sua mensagem no chat global...">
+            <button onclick="enviarMensagemRodape()">Enviar</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE DM / CHAT PRIVADO (ENTRE ADM E GABRIEL) -->
+    <div id="modal-dm-chat" class="modal-overlay hidden">
+        <div class="modal-card">
+            <button class="close-modal" onclick="fecharModalDM()">&times;</button>
+            <h3 style="color: var(--accent-color); margin-bottom: 10px;">💬 Chat Privado (Suporte / ADM)</h3>
+            <p style="font-size: 12px; color: #94a3b8; margin-bottom: 10px;">Conversa direta e segura entre Administração e Fundador Gabriel.</p>
+            
+            <div class="dm-chat-container" id="dm-messages-box">
+                <div class="dm-msg theirs">Administração: Olá Gabriel, sistema pronto para testes!</div>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="dm-input-text" class="form-control" placeholder="Escreva sua mensagem privada..." style="margin: 0;">
+                <button class="btn" style="width: 100px;" onclick="enviarMensagemDM()">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
+          authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
+          projectId: "dragon-war-rise-of-power-2a9f1",
+          storageBucket: "dragon-war-rise-of-power-2a9f1.firebasestorage.app",
+          messagingSenderId: "115455691167",
+          appId: "1:115455691167:web:ff3638f67b66c17c5515aa",
+          measurementId: "G-S7XE2EN9CL"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const EMAIL_ADMIN = "groupsacabraldigital@gmail.com";
+        let modoCadastro = false;
+        let usuarioAtual = { uid: "", email: "", isAdm: false, isSubAdm: false, avatar: "", nivel: 15, coins: 250, diamonds: 30 };
+        let inventarioItens = ["Poção de Mana x5", "Caixa Lendária x1"];
+        let naoLidasCount = 2;
+        let ultimoResgateDiario = 0;
+
+        // Variáveis do modo batalha por fases
+        let faseAtualInfo = { categoria: '', nivelMax: 5, etapa: 1, hpMovel: 100, maxHp: 100, playerHp: 100, defending: false };
+
+        window.alternarModoAuth = function() {
+            modoCadastro = !modoCadastro;
+            document.getElementById('auth-title').innerText = modoCadastro ? "Criar Conta Real" : "Entrar no Servidor";
+            document.getElementById('auth-btn-action').innerText = modoCadastro ? "Registrar e Gerar ID" : "Entrar na Partida";
+            document.getElementById('auth-switch-mode').innerText = modoCadastro ? "Já tem conta? Faça login" : "Não tem conta? Cadastre-se com ID Real";
+        }
+
+        window.realizarAutenticacao = async function() {
+            const email = document.getElementById('auth-email').value.trim();
+            const pass = document.getElementById('auth-pass').value.trim();
+
+            if(!email || !pass) {
+                alert("Preencha o e-mail e a senha!");
+                return;
+            }
+
+            try {
+                let userCredential;
+                if(modoCadastro) {
+                    userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                    alert("Conta criada com sucesso! ID Real gerado pelo Firebase.");
+                } else {
+                    userCredential = await signInWithEmailAndPassword(auth, email, pass);
+                }
+
+                const user = userCredential.user;
+                const isGabriel = (user.email.toLowerCase().includes("gabriel") || user.email.toLowerCase() === EMAIL_ADMIN);
+
+                usuarioAtual = { 
+                    uid: user.uid, 
+                    email: user.email, 
+                    isAdm: isGabriel, 
+                    isSubAdm: false, 
+                    avatar: "", 
+                    nivel: isGabriel ? 50 : 15, 
+                    coins: 250, 
+                    diamonds: 30 
+                };
+
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('game-container').classList.remove('hidden');
+
+                atualizarPerfilUI();
+                montarMenuLateral();
+                mudarTabLoja('armas');
+                construirCaixasEpicas();
+                gerarMais50Poderes();
+
+                document.getElementById('player-real-id').value = usuarioAtual.uid;
+                document.getElementById('player-edit-name').value = usuarioAtual.email;
+
+                if(isGabriel) {
+                    document.getElementById('adm-update-game-panel').classList.remove('hidden');
+                }
+
+            } catch (error) {
+                alert("Erro na autenticação: " + error.message);
+            }
+        }
+
+        function atualizarPerfilUI() {
+            const nomeCurto = usuarioAtual.email.split('@')[0];
+            const avatarImg = document.getElementById('sidebar-avatar-img');
+            const avatarTxt = document.getElementById('sidebar-avatar-txt');
+
+            document.getElementById('user-coins').innerText = usuarioAtual.coins;
+            document.getElementById('user-diamonds').innerText = usuarioAtual.diamonds;
+
+            document.getElementById('rank-user-nivel').innerText = `Nível ${usuarioAtual.nivel}`;
+            document.getElementById('rank-user-coins').innerText = usuarioAtual.coins;
+            document.getElementById('rank-user-diamonds').innerText = usuarioAtual.diamonds;
+
+            if (usuarioAtual.isAdm) {
+                document.getElementById('sidebar-name').innerHTML = `<span class="dragon-rainbow-name">Gabriel [FUNDADOR]</span>`;
+                document.getElementById('sidebar-role').innerText = "Fundador Principal";
+                avatarImg.style.display = "none";
+                avatarTxt.innerText = "G";
+                avatarTxt.style.display = "flex";
+            } else {
+                document.getElementById('sidebar-name').innerHTML = nomeCurto;
+                document.getElementById('sidebar-role').innerText = `Aventureiro Real (Nível ${usuarioAtual.nivel})`;
+                avatarTxt.innerText = nomeCurto.charAt(0).toUpperCase();
+                avatarTxt.style.display = "flex";
+                avatarImg.style.display = "none";
+            }
+        }
+
+        window.salvarPerfilJogador = function() {
+            alert('Perfil real atualizado com sucesso!');
+        }
+
+        function montarMenuLateral() {
+            const menuList = document.getElementById('menu-list');
+            menuList.innerHTML = "";
+            let itensMenu = [
+                { id: 'jogar', label: '🎮 Modo Batalha' },
+                { id: 'loja', label: '🛒 Loja & Caixas' },
+                { id: 'poderes', label: '⚡ +50 Poderes' },
+                { id: 'inventario', label: '🎒 Inventário' },
+                { id: 'rank', label: '🏆 Rankings' },
+                { id: 'evento', label: '🎉 Eventos Diários' },
+                { id: 'config-jogador', label: '⚙️ Meu Perfil' }
+            ];
+
+            if(usuarioAtual.isAdm) {
+                itensMenu.push({ id: 'painel-adm', label: '👑 Painel ADM' });
+            }
+
+            itensMenu.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = `menu-item ${index === 0 ? 'active' : ''}`;
+                li.innerText = item.label;
+                li.onclick = () => trocarSecao(item.id, li);
+                menuList.appendChild(li);
+            });
+
+            trocarSecao(itensMenu[0].id, menuList.children[0]);
+        }
+
+        window.trocarSecao = function(idSecao, elementoLi) {
+            document.querySelectorAll('.panel-section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(`section-${idSecao}`).classList.add('active');
+
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            if(elementoLi) elementoLi.classList.add('active');
+
+            document.getElementById('current-page-title').innerText = elementoLi ? elementoLi.innerText : idSecao;
+        }
+
+        // Sistema de Fases por Dificuldade
+        window.iniciarFases = function(categoria) {
+            let nivelMax = 5;
+            if(categoria === 'avancado') nivelMax = 10;
+            if(categoria === 'hardcore') nivelMax = 25;
+
+            faseAtualInfo.categoria = categoria;
+            faseAtualInfo.nivelMax = nivelMax;
+            faseAtualInfo.etapa = 1;
+            faseAtualInfo.maxHp = 100 + (nivelMax * 15);
+            faseAtualInfo.hpMovel = faseAtualInfo.maxHp;
+            faseAtualInfo.playerHp = 100;
+            faseAtualInfo.defending = false;
+
+            document.getElementById('fases-titulo-cat').innerText = `Modo: ${categoria.toUpperCase()}`;
+            atualizarCombateUI();
+            
+            document.querySelector('#section-jogar > div:nth-child(3)').classList.add('hidden');
+            document.getElementById('arena-fases-container').classList.remove('hidden');
+        }
+
+        window.verificarAcessoHardcore = function() {
+            if(usuarioAtual.nivel < 25 && !usuarioAtual.isAdm) {
+                alert(`⚠️ O Modo Hardcore exige Nível 25 ou superior! Seu nível atual é ${usuarioAtual.nivel}.`);
+                return;
+            }
+            iniciarFases('hardcore');
+        }
+
+        window.voltarSelecaoFases = function() {
+            document.getElementById('arena-fases-container').classList.add('hidden');
+            document.querySelector('#section-jogar > div:nth-child(3)').classList.remove('hidden');
+        }
+
+        window.desistirBatalha = function() {
+            if(confirm("Deseja desistir da batalha e retornar ao menu?")) {
+                voltarSelecaoFases();
+            }
+        }
+
+        function atualizarCombateUI() {
+            document.getElementById('fases-etapa-info').innerText = `Nível ${faseAtualInfo.etapa}/${faseAtualInfo.nivelMax}`;
+            
+            const pctMovel = Math.max(0, (faseAtualInfo.hpMovel / faseAtualInfo.maxHp) * 100);
+            document.getElementById('movel-hp').innerText = `${Math.round(pctMovel)}%`;
+            document.getElementById('movel-hp-bar').style.width = `${pctMovel}%`;
+
+            const pctPlayer = Math.max(0, faseAtualInfo.playerHp);
+            document.getElementById('player-battle-hp').innerText = `${pctPlayer}/100`;
+            document.getElementById('player-hp-bar').style.width = `${pctPlayer}%`;
+        }
+
+        function adicionarLogCombate(texto) {
+            const logBox = document.getElementById('battle-log');
+            if(!logBox) return;
+            logBox.innerHTML += `<div>• ${texto}</div>`;
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        window.acaoCombate = function(tipoAcao) {
+            faseAtualInfo.defending = false;
+            let logMsg = "";
+            let danoInimigo = Math.floor(Math.random() * 12) + 8;
+
+            if(tipoAcao === 'atacar') {
+                let danoCausado = 25 + Math.floor(Math.random() * 15);
+                faseAtualInfo.hpMovel -= danoCausado;
+                logMsg = `Você atacou e causou ${danoCausado} de dano!`;
+            } else if(tipoAcao === 'defender') {
+                faseAtualInfo.defending = true;
+                danoInimigo = Math.floor(danoInimigo / 2);
+                logMsg = `Postura defensiva ativa! Dano inimigo reduzido pela metade.`;
+            } else if(tipoAcao === 'curar') {
+                let cura = 30;
+                faseAtualInfo.playerHp = Math.min(100, faseAtualInfo.playerHp + cura);
+                logMsg = `Você recuperou ${cura} de vida!`;
+            } else if(tipoAcao === 'poder') {
+                let danoPoder = 50 + Math.floor(Math.random() * 20);
+                faseAtualInfo.hpMovel -= danoPoder;
+                logMsg = `⚡ Poder especial disparado! Causou ${danoPoder} de dano!`;
+            }
+
+            adicionarLogCombate(logMsg);
+
+            if(faseAtualInfo.hpMovel > 0) {
+                faseAtualInfo.playerHp -= danoInimigo;
+                adicionarLogCombate(`⚠️ Inimigo contra-atacou com ${danoInimigo} de dano!`);
+
+                if(faseAtualInfo.playerHp <= 0) {
+                    faseAtualInfo.playerHp = 0;
+                    atualizarCombateUI();
+                    alert("Você foi derrotado! Treine seus poderes na loja e tente novamente.");
+                    voltarSelecaoFases();
+                    return;
+                }
+            } else {
+                if(faseAtualInfo.etapa < faseAtualInfo.nivelMax) {
+                    adicionarLogCombate(`🎉 Nível ${faseAtualInfo.etapa} concluído! Avançando...`);
+                    faseAtualInfo.etapa++;
+                    faseAtualInfo.maxHp += 30;
+                    faseAtualInfo.hpMovel = faseAtualInfo.maxHp;
+                } else {
+                    let moedasGanhas = 150 * faseAtualInfo.nivelMax;
+                    let diamantesGanhos = 10 * Math.floor(faseAtualInfo.nivelMax / 5) + 5;
+                    usuarioAtual.coins += moedasGanhas;
+                    usuarioAtual.diamonds += diamantesGanhos;
+                    atualizarPerfilUI();
+                    alert(`🏆 VITÓRIA ÉPICA!\nRecompensas:\n+${moedasGanhas} Moedas 🪙\n+${diamantesGanhos} Diamantes 💎`);
+                    voltarSelecaoFases();
+                    return;
+                }
+            }
+            atualizarCombateUI();
+        }
+
+        // Loja por Categorias (Armas, Skins, Poções) + Caixas Abaixo
+        const itensLojaCatalogo = {
+            armas: [
+                { nome: "Espada Flamejante", preco: 150 },
+                { nome: "Adaga Sombria", preco: 220 },
+                { nome: "Lança do Dragão", preco: 400 }
+            ],
+            skins: [
+                { nome: "Skin Cavaleiro Real", preco: 300 },
+                { nome: "Skin Mago Supremo", preco: 450 },
+                { nome: "Skin Guardião de Aço", preco: 600 }
+            ],
+            pocoes: [
+                { nome: "Poção de Vida Pequena x3", preco: 50 },
+                { nome: "Poção de Mana x5", preco: 80 },
+                { nome: "Elixir da Fúria x1", preco: 120 }
+            ]
+        };
+
+        window.mudarTabLoja = function(cat) {
+            const container = document.getElementById('loja-itens-container');
+            if(!container) return;
+            container.innerHTML = "";
+            let lista = itensLojaCatalogo[cat] || [];
+            lista.forEach(item => {
+                container.innerHTML += `
+                    <div class="box-item">
+                        <strong>${item.nome}</strong>
+                        <p style="font-size:12px; color:#94a3b8; margin:5px 0;">Item de alta qualidade.</p>
+                        <span style="color:#f59e0b; display:block; margin-bottom:8px;">${item.preco} Moedas</span>
+                        <button class="btn" style="padding:5px; font-size:12px;" onclick="comprarItemLoja('${item.nome}', ${item.preco})">Comprar</button>
+                    </div>
+                `;
+            });
+        }
+
+        function construirCaixasEpicas() {
+            const grid = document.getElementById('epic-boxes-grid');
+            if(!grid) return;
+            grid.innerHTML = "";
+            const precosCaixas = [
+                { nome: "Caixa Iniciante de Ouro", preco: 100 },
+                { nome: "Caixa Épica de Elementos", preco: 500 },
+                { nome: "Caixa Lendária do Dragão", preco: 1000 }
+            ];
+            precosCaixas.forEach(item => {
+                grid.innerHTML += `
+                    <div class="box-item">
+                        <strong>📦 ${item.nome}</strong>
+                        <p style="font-size:12px; color:#94a3b8; margin:5px 0;">Contém itens surpresa.</p>
+                        <span style="color:#f59e0b; display:block; margin-bottom:8px;">${item.preco} Moedas</span>
+                        <button class="btn" style="padding:5px; font-size:12px;" onclick="comprarItemLoja('${item.nome}', ${item.preco})">Comprar Caixa</button>
+                    </div>
+                `;
+            });
+        }
+
+        window.comprarItemLoja = function(nomeItem, preco) {
+            if(usuarioAtual.coins < preco) {
+                alert("Moedas insuficientes!");
+                return;
+            }
+            usuarioAtual.coins -= preco;
+            inventarioItens.push(nomeItem);
+            atualizarPerfilUI();
+            atualizarInventarioUI();
+            alert(`✅ "${nomeItem}" comprado e enviado direto para o seu inventário!`);
+        }
+
+        function atualizarInventarioUI() {
+            const invContainer = document.getElementById('inventario-itens');
+            if(!invContainer) return;
+            invContainer.innerHTML = "";
+            inventarioItens.forEach(item => {
+                invContainer.innerHTML += `<div style="background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 15px; border-radius: 6px; text-align: center; width: 150px; font-size:13px;">🎒 ${item}</div>`;
+            });
+        }
+
+        function gerarMais50Poderes() {
+            const container = document.getElementById('lista-mais-50-poderes');
+            if(!container) return;
+            container.innerHTML = "";
+            for(let i = 1; i <= 50; i++) {
+                container.innerHTML += `<div style="background: rgba(0,0,0,0.4); padding: 8px; border-radius: 4px; border: 1px solid var(--panel-border); font-size: 12px;"><strong>Poder #${i}</strong><br><span style="color:var(--accent-color);">Dano: +${i * 35}</span></div>`;
+            }
+        }
+
+        // Recompensa Diária (24h cooldown)
+        window.resgatarRecompensaDiaria = function() {
+            const agora = Date.now();
+            const umDiaMs = 24 * 60 * 60 * 1000;
+            if(agora - ultimoResgateDiario < umDiaMs) {
+                const horasRestantes = Math.ceil((umDiaMs - (agora - ultimoResgateDiario)) / (1000 * 60 * 60));
+                alert(`⏳ Você já resgatou sua recompensa hoje! Volte daqui a ${horasRestantes} horas.`);
+                return;
+            }
+
+            ultimoResgateDiario = agora;
+            usuarioAtual.coins += 100;
+            usuarioAtual.diamonds += 5;
+            atualizarPerfilUI();
+            alert("🎁 Recompensa diária resgatada!\n+100 Moedas 🪙\n+5 Diamantes 💎");
+        }
+
+        // Sininho e Notificações Dinâmicas
+        window.toggleNotificationDropdown = function() {
+            document.getElementById('notif-dropdown').classList.toggle('active');
+        }
+
+        window.limparNotificacoes = function() {
+            naoLidasCount = 0;
+            document.getElementById('notif-counter').style.display = 'none';
+        }
+
+        window.publicarAtualizacaoJogo = function() {
+            const changelog = document.getElementById('update-changelog-text').value.trim();
+            if(!changelog) return;
+
+            const list = document.getElementById('notification-list-content');
+            const div = document.createElement('div');
+            div.className = "notif-item update";
+            div.innerHTML = `✨ <strong>Update:</strong> ${changelog}`;
+            list.prepend(div);
+
+            naoLidasCount++;
+            const badge = document.getElementById('notif-counter');
+            badge.innerText = naoLidasCount;
+            badge.style.display = 'flex';
+
+            alert("🚀 Jogo atualizado! Sininho ativado.");
+            document.getElementById('update-changelog-text').value = "";
+        }
+
+        // Chat Global e Chat Privado DM ADM x Gabriel
+        window.enviarMensagemRodape = function() {
+            const input = document.getElementById('footer-chat-input');
+            const msg = input.value.trim();
+            if(!msg) return;
+
+            const chat = document.getElementById('chat-container');
+            const div = document.createElement('div');
+            div.className = "chat-msg global";
+            div.innerHTML = `<strong>${usuarioAtual.email.split('@')[0]}:</strong> ${msg}`;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+            input.value = "";
+        }
+
+        window.enviarMensagemGlobal = function() {
+            const inputGlobal = document.getElementById('global-msg-input');
+            if(!inputGlobal.value.trim()) return;
+            document.getElementById('footer-chat-input').value = inputGlobal.value;
+            enviarMensagemRodape();
+            inputGlobal.value = "";
+            alert("Transmitido!");
+        }
+
+        window.fecharModalDM = function() {
+            document.getElementById('modal-dm-chat').classList.add('hidden');
+        }
+
+        window.enviarMensagemDM = function() {
+            const input = document.getElementById('dm-input-text');
+            const txt = input.value.trim();
+            if(!txt) return;
+
+            const box = document.getElementById('dm-messages-box');
+            box.innerHTML += `<div class="dm-msg mine">${txt}</div>`;
+            input.value = "";
+            box.scrollTop = box.scrollHeight;
+        }
+
+        window.acaoAdm = function(tipo) {
+            const target = document.getElementById('target-player').value;
+            if(!target) { alert('Insira o e-mail do jogador!'); return; }
+            alert(`Ação ${tipo} aplicada em ${target}.`);
+            document.getElementById('target-player').value = "";
+        }
+    </script>
+</body>
+</html>
+
+ html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon War - Rise of Power | Servidor Oficial</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --panel-bg: #131b2e;
+            --panel-border: #1e293b;
+            --accent-color: #f59e0b;
+            --adm-color: #ef4444;
+            --text-color: #f8fafc;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); height: 100vh; display: flex; overflow: hidden; }
+        
+        .screen { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; position: absolute; top: 0; left: 0; background: radial-gradient(circle, #1e293b 0%, #0b0f19 100%); z-index: 10; }
+        .hidden { display: none !important; }
+        
+        .card { background: var(--panel-bg); padding: 30px; border-radius: 12px; width: 380px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); border: 2px solid var(--accent-color); text-align: center; }
+        .card img.logo-login { width: 100%; max-height: 90px; object-fit: contain; margin-bottom: 20px; border-radius: 6px; }
+        .card h2 { margin-bottom: 20px; color: var(--accent-color); font-size: 20px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 5px; font-size: 14px; color: #94a3b8; }
+        .input-group input { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--panel-border); background: #070a12; color: white; }
+        .btn { width: 100%; padding: 10px; background: linear-gradient(90deg, #f59e0b, #d97706); border: none; color: #000; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-adm { background: linear-gradient(90deg, #ef4444, #b91c1c); color: white; margin-top: 10px; }
+        .auth-switch { margin-top: 15px; font-size: 13px; color: #94a3b8; cursor: pointer; }
+        .auth-switch:hover { color: var(--accent-color); text-decoration: underline; }
+
+        #game-container { display: flex; width: 100%; height: 100%; background: linear-gradient(rgba(11, 15, 25, 0.85), rgba(11, 15, 25, 0.95)), url('89097.png') no-repeat center center; background-size: cover; position: relative; }
+        sidebar { width: 260px; background: rgba(19, 27, 46, 0.95); border-right: 1px solid var(--panel-border); display: flex; flex-direction: column; padding: 20px; backdrop-filter: blur(5px); }
+        
+        .server-banner { width: 100%; height: 75px; background: url('89097.png') no-repeat center center; background-size: cover; border-radius: 6px; margin-bottom: 15px; border: 1px solid var(--accent-color); }
+        
+        .user-profile { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--panel-border); }
+        .user-avatar { width: 45px; height: 45px; background: var(--accent-color); color: #000; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 18px; border: 2px solid white; object-fit: cover; }
+        
+        .menu-list { list-style: none; display: flex; flex-direction: column; gap: 8px; flex-grow: 1; overflow-y: auto; }
+        .menu-item { padding: 10px 15px; border-radius: 6px; cursor: pointer; background: rgba(255,255,255,0.03); transition: 0.2s; font-size: 14px; font-weight: 600; border-left: 3px solid transparent; }
+        .menu-item:hover { background: rgba(255,255,255,0.08); }
+        .menu-item.active { background: rgba(245, 158, 11, 0.15); color: var(--accent-color); border-left: 3px solid var(--accent-color); }
+
+        main { flex-grow: 1; display: flex; flex-direction: column; position: relative; padding-bottom: 60px; }
+        header { padding: 15px 25px; background: rgba(19, 27, 46, 0.9); border-bottom: 1px solid var(--panel-border); display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(5px); }
+        
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .currency-badge { font-size: 13px; background: rgba(0,0,0,0.4); padding: 5px 12px; border-radius: 20px; border: 1px solid var(--panel-border); display: flex; align-items: center; gap: 5px; }
+        
+        .notification-bell-container { position: relative; cursor: pointer; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--panel-border); width: 38px; height: 38px; border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
+        .notification-bell-container:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--accent-color); }
+        .notification-badge { position: absolute; top: -2px; right: -2px; background: var(--adm-color); color: white; font-size: 10px; font-weight: bold; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 2px solid var(--bg-color); }
+        
+        .notification-dropdown { position: absolute; top: 50px; right: 0; width: 320px; background: var(--panel-bg); border: 2px solid var(--accent-color); border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); z-index: 200; display: none; padding: 15px; text-align: left; }
+        .notification-dropdown.active { display: block; }
+        .notification-dropdown h4 { color: var(--accent-color); font-size: 14px; margin-bottom: 10px; border-bottom: 1px solid var(--panel-border); padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        .notification-list { max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; font-size: 12px; }
+        .notif-item { background: rgba(0, 0, 0, 0.3); padding: 8px; border-radius: 4px; border-left: 3px solid var(--accent-color); }
+        .notif-item.update { border-left-color: #3b82f6; }
+        .notif-item.event { border-left-color: var(--adm-color); }
+
+        .content-area { flex-grow: 1; padding: 25px; overflow-y: auto; position: relative; }
+        .panel-section { display: none; }
+        .panel-section.active { display: block; }
+
+        .adm-tag { color: var(--adm-color); font-weight: bold; }
+        
+        .dragon-rainbow-name {
+            background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            font-size: 15px;
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+        }
+        
+        .global-chat-bar { position: absolute; bottom: 0; left: 0; width: 100%; height: 55px; background: rgba(2, 6, 23, 0.95); border-top: 1px solid var(--panel-border); display: flex; align-items: center; padding: 0 15px; gap: 10px; z-index: 50; backdrop-filter: blur(5px); }
+        .global-chat-bar span { font-size: 12px; color: var(--accent-color); font-weight: bold; white-space: nowrap; text-transform: uppercase; }
+        .global-chat-bar input { flex-grow: 1; padding: 8px 12px; border-radius: 4px; border: 1px solid var(--panel-border); background: #070a12; color: white; font-size: 13px; }
+        .global-chat-bar button { padding: 8px 15px; background: var(--adm-color); border: none; color: white; font-weight: bold; border-radius: 4px; cursor: pointer; text-transform: uppercase; font-size: 12px; }
+        
+        .chat-box { height: 130px; background: rgba(2, 6, 23, 0.8); border: 1px solid var(--panel-border); border-radius: 6px; padding: 10px; overflow-y: auto; font-size: 13px; display: flex; flex-direction: column; gap: 5px; margin-top: 10px; }
+        .chat-msg { background: rgba(255,255,255,0.05); padding: 5px 8px; border-radius: 4px; }
+        .chat-msg.global { border-left: 3px solid var(--adm-color); background: rgba(239, 68, 68, 0.15); }
+        
+        .grid-boxes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; }
+        .box-item { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 8px; padding: 15px; text-align: center; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+        th, td { padding: 10px; border-bottom: 1px solid var(--panel-border); text-align: left; }
+        th { color: var(--accent-color); text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
+        
+        .form-control { width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 15px; background: #070a12; border: 1px solid var(--panel-border); color: white; border-radius: 4px; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 100; }
+        .modal-card { background: var(--panel-bg); border: 2px solid var(--accent-color); padding: 25px; border-radius: 10px; width: 480px; box-shadow: 0 10px 30px rgba(0,0,0,0.9); position: relative; max-height: 90vh; overflow-y: auto; }
+        .close-modal { position: absolute; top: 10px; right: 15px; background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
+
+        /* Estilo para chat privado DM ADM x Gabriel */
+        .dm-chat-container { display: flex; flex-direction: column; height: 300px; background: #070a12; border: 1px solid var(--panel-border); border-radius: 6px; padding: 10px; overflow-y: auto; gap: 8px; margin-bottom: 15px; }
+        .dm-msg { padding: 6px 10px; border-radius: 6px; max-width: 80%; font-size: 13px; }
+        .dm-msg.mine { background: #1e3a8a; align-self: flex-end; }
+        .dm-msg.theirs { background: #1e293b; align-self: flex-start; }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen" class="screen">
+        <div class="card">
+            <img src="89097.png" alt="Dragon War Logo" class="logo-login">
+            <h2 id="auth-title">Dragon War - Servidor Real</h2>
+            <div class="input-group">
+                <label>E-mail:</label>
+                <input type="email" id="auth-email" placeholder="seuemail@dominio.com">
+            </div>
+            <div class="input-group">
+                <label>Senha:</label>
+                <input type="password" id="auth-pass" placeholder="******">
+            </div>
+            <button class="btn" id="auth-btn-action" onclick="realizarAutenticacao()">Entrar na Partida</button>
+            <div class="auth-switch" id="auth-switch-mode" onclick="alternarModoAuth()">Não tem conta? Cadastre-se com ID Real</div>
+        </div>
+    </div>
+
+    <div id="game-container" class="hidden">
+        <sidebar>
+            <div class="server-banner" title="Dragon War - Rise of Power"></div>
+
+            <div class="user-profile">
+                <img src="" id="sidebar-avatar-img" class="user-avatar" style="display:none;">
+                <div class="user-avatar" id="sidebar-avatar-txt">U</div>
+                <div>
+                    <div id="sidebar-name" style="font-weight: bold; font-size: 15px;">Usuário</div>
+                    <div style="font-size: 11px; color: #94a3b8;" id="sidebar-role">Jogador Real</div>
+                </div>
+            </div>
+            
+            <ul class="menu-list" id="menu-list"></ul>
+        </sidebar>
+
+        <main>
+            <header>
+                <h3 id="current-page-title" style="text-transform: uppercase; font-size: 16px; letter-spacing: 1px;">Painel</h3>
+                
+                <div class="header-right">
+                    <div class="currency-badge">
+                        Moedas: <span id="user-coins" style="color: #f59e0b; font-weight: bold;">100</span> 🪙
+                    </div>
+                    <div class="currency-badge">
+                        Diamantes: <span id="user-diamonds" style="color: #38bdf8; font-weight: bold;">10</span> 💎
+                    </div>
+
+                    <div class="notification-bell-container" onclick="toggleNotificationDropdown()" title="Notificações, Eventos e Atualizações do Jogo">
+                        🔔
+                        <div class="notification-badge" id="notif-counter">2</div>
+                        
+                        <div class="notification-dropdown" id="notif-dropdown" onclick="event.stopPropagation()">
+                            <h4>
+                                <span>Centro de Avisos & Updates</span>
+                                <span style="font-size: 10px; cursor: pointer; color: var(--accent-color);" onclick="limparNotificacoes()">Marcar lidas</span>
+                            </h4>
+                            
+                            <div id="adm-update-game-panel" class="hidden" style="margin-bottom: 10px; padding: 8px; background: rgba(239, 68, 68, 0.15); border: 1px dashed var(--adm-color); border-radius: 4px;">
+                                <p style="font-size: 11px; color: var(--adm-color); font-weight: bold; margin-bottom: 5px;">👑 Atualizar o Servidor do Jogo:</p>
+                                <input type="text" id="update-changelog-text" class="form-control" placeholder="O que foi adicionado/removido..." style="margin-bottom: 5px; font-size: 11px; padding: 5px;">
+                                <button class="btn btn-adm" style="padding: 5px; font-size: 11px; margin-top: 0;" onclick="publicarAtualizacaoJogo()">🚀 Atualizar Jogo Agora</button>
+                            </div>
+
+                            <div class="notification-list" id="notification-list-content">
+                                <div class="notif-item event">🎉 <strong>Novo Evento:</strong> Ascensão dos Dragões ativada!</div>
+                                <div class="notif-item update">✨ <strong>Atualização v2.8:</strong> Fases configuradas e Lojas por categorias!</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                
+                <!-- 1. MODO JOGO / FASES DE COMBATE (Fácil: 5, Difícil: 5, Avançado: 10, Hardcore: 25) -->
+                <div id="section-jogar" class="panel-section">
+                    <h2>Modo Batalha - Fases e Níveis</h2>
+                    <p style="color: #94a3b8; margin-top: 5px;">Escolha a dificuldade e enfrente os desafios. Use ataque, defesa, cura e poderes especiais!</p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px;">
+                        <div class="box-item" style="cursor:pointer;" onclick="iniciarFases('facil')">
+                            <h3 style="color: #10b981;">Modo Fácil (5 Níveis)</h3>
+                            <p style="font-size: 12px; color: #94a3b8; margin-top: 5px;">Ideal para iniciantes. 5 etapas de combate.</p>
+                        </div>
+                        <div class="box-item" style="cursor:pointer;" onclick="iniciarFases('dificil')">
+                            <h3 style="color: var(--accent-color);">Modo Difícil (5 Níveis)</h3>
+                            <p style="font-size: 12px; color: #94a3b8; margin-top: 5px;">Inimigos mais fortes. 5 etapas intensas.</p>
+                        </div>
+                        <div class="box-item" style="cursor:pointer;" onclick="iniciarFases('avancado')">
+                            <h3 style="color: #3b82f6;">Modo Avançado (10 Níveis)</h3>
+                            <p style="font-size: 12px; color: #94a3b8; margin-top: 5px;">10 etapas para combatentes experientes.</p>
+                        </div>
+                        <div class="box-item" style="cursor:pointer;" onclick="verificarAcessoHardcore()">
+                            <h3 style="color: var(--adm-color);">Modo Hardcore (25 Níveis ⚠️)</h3>
+                            <p style="font-size: 12px; color: #94a3b8; margin-top: 5px;">25 níveis lendários. Exige alto nível e forte potencial.</p>
+                        </div>
+                    </div>
+
+                    <div id="arena-fases-container" class="hidden" style="margin-top: 20px; background: var(--panel-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--panel-border);">
+                        <h3 id="fases-titulo-cat" style="color: var(--accent-color);">Fase Ativa</h3>
+                        <p id="fases-etapa-info" style="font-size: 14px; color: #94a3b8; margin: 10px 0;">Nível 1/5</p>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                            <div style="background: #070a12; padding: 12px; border-radius: 6px;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:13px;">
+                                    <span>Sua Vida (HP):</span>
+                                    <span id="player-battle-hp" style="color: #16a34a; font-weight:bold;">100/100</span>
+                                </div>
+                                <div style="width:100%; background:#1e293b; height:8px; border-radius:4px; overflow:hidden;">
+                                    <div id="player-hp-bar" style="width:100%; background:#16a34a; height:100%; transition:0.2s;"></div>
+                                </div>
+                            </div>
+                            <div style="background: #070a12; padding: 12px; border-radius: 6px;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:13px;">
+                                    <span>Resistência do Inimigo:</span>
+                                    <span id="movel-hp" style="color: var(--adm-color); font-weight:bold;">100%</span>
+                                </div>
+                                <div style="width:100%; background:#1e293b; height:8px; border-radius:4px; overflow:hidden;">
+                                    <div id="movel-hp-bar" style="width:100%; background:var(--adm-color); height:100%; transition:0.2s;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="battle-log" style="background: #020617; border: 1px solid var(--panel-border); padding: 10px; border-radius: 6px; height: 80px; overflow-y: auto; font-size: 12px; color: #94a3b8; margin-bottom: 15px;">
+                            Batalha iniciada! Escolha sua ação estrategicamente.
+                        </div>
+
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                            <button class="btn" style="width: auto; padding: 8px 15px;" onclick="acaoCombate('atacar')">⚔️ Atacar</button>
+                            <button class="btn" style="width: auto; padding: 8px 15px; background: #3b82f6; color:white;" onclick="acaoCombate('defender')">🛡️ Defender</button>
+                            <button class="btn" style="width: auto; padding: 8px 15px; background: #10b981; color:white;" onclick="acaoCombate('curar')">🧪 Recuperar Vida</button>
+                            <button class="btn" style="width: auto; padding: 8px 15px; background: #8b5cf6; color:white;" onclick="acaoCombate('poder')">⚡ Usar Poder</button>
+                            <button class="btn btn-adm" style="width: auto; padding: 8px 15px;" onclick="desistirBatalha()">🏳️ Desistir / Sair</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. LOJA (SEPARADA POR ARMAS, SKINS E POÇÕES + CAIXAS ABAIXO) -->
+                <div id="section-loja" class="panel-section">
+                    <h2>Loja Oficial do Servidor</h2>
+                    <p style="color: #94a3b8; margin-top: 5px;">Tudo o que você comprar vai diretamente para o seu inventário!</p>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 15px; margin-bottom: 15px;">
+                        <button class="btn" style="width: auto; padding: 6px 15px;" onclick="mudarTabLoja('armas')">⚔️ Armas</button>
+                        <button class="btn" style="width: auto; padding: 6px 15px; background:#3b82f6; color:white;" onclick="mudarTabLoja('skins')">🛡️ Skins</button>
+                        <button class="btn" style="width: auto; padding: 6px 15px; background:#10b981; color:white;" onclick="mudarTabLoja('pocoes')">🧪 Poções</button>
+                    </div>
+
+                    <div id="loja-itens-container" class="grid-boxes"></div>
+
+                    <h3 style="margin-top: 30px; border-top: 1px solid var(--panel-border); padding-top: 15px;">📦 Loja de Caixas de Itens & Caixas Misteriosas</h3>
+                    <div class="grid-boxes" id="epic-boxes-grid"></div>
+                </div>
+
+                <!-- 3. PODERES (MANTIDO COM A MESMA INTERFACE) -->
+                <div id="section-poderes" class="panel-section">
+                    <h2>Gerenciador de Poderes e Armas (+50 Poderes Disponíveis)</h2>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 15px;">Explore e equipe os mais de 50 poderes lendários disponíveis para o seu personagem.</p>
+                    
+                    <div style="background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--panel-border);">
+                        <h4>Catálogo de Poderes do Jogador (50+ Habilidades)</h4>
+                        <div id="lista-mais-50-poderes" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; max-height: 300px; overflow-y: auto;"></div>
+                    </div>
+                </div>
+
+                <!-- 4. INVENTÁRIO (RECEBE TUDO O QUE O JOGADOR COMPRA) -->
+                <div id="section-inventario" class="panel-section">
+                    <h2>Seu Inventário</h2>
+                    <p style="color: #94a3b8; margin-top: 5px;">Todos os itens comprados na loja aparecem aqui instantaneamente.</p>
+                    <div id="inventario-itens" style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;"></div>
+                </div>
+
+                <!-- 5. RANKINGS (EXIBE NÍVEL, MOEDA, DIAMANTE E NÍVEL ATUAL) -->
+                <div id="section-rank" class="panel-section">
+                    <h2>Rankings de Jogadores Reais</h2>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 15px;">Acompanhe o nível, moedas, diamantes e pontuação de todos os jogadores.</p>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Posição</th>
+                                <th>Jogador Real</th>
+                                <th>Nível</th>
+                                <th>Moedas 🪙</th>
+                                <th>Diamantes 💎</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-rank-geral">
+                            <tr><td>1º</td><td>ShadowKilled</td><td>Nível 99</td><td>45,000</td><td>1,200</td></tr>
+                            <tr><td>2º</td><td>DragonSlayer</td><td>Nível 85</td><td>28,500</td><td>850</td></tr>
+                            <tr><td>3º</td><td id="rank-user-slot">Gabriel [FUNDADOR]</td><td id="rank-user-nivel">Nível 50</td><td id="rank-user-coins">150</td><td id="rank-user-diamonds">25</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 6. EVENTOS DIÁRIOS (COM COOLDOWN DE 24H) -->
+                <div id="section-evento" class="panel-section">
+                    <h2>Eventos Diários & Recompensa</h2>
+                    <div style="background: var(--panel-bg); padding: 20px; border-radius: 6px; border: 1px solid var(--panel-border); margin-top: 10px;">
+                        <h4>🗓️ Recompensa Diária (Cooldown de 24h)</h4>
+                        <p style="font-size: 14px; color: #94a3b8; margin-top: 5px; margin-bottom: 15px;">Resgate sua recompensa diária de moedas e diamantes. Disponível uma vez a cada 24 horas!</p>
+                        <button class="btn" id="btn-resgatar-diario" onclick="resgatarRecompensaDiaria()">Resgatar Recompensa Diária (+100 Moedas & +5 Diamantes 💎)</button>
+                        <p id="cooldown-timer-msg" style="font-size: 12px; color: var(--adm-color); margin-top: 10px;"></p>
+                    </div>
+                </div>
+
+                <!-- 7. CONFIGURAÇÕES & PERFIL -->
+                <div id="section-config-jogador" class="panel-section">
+                    <h2>⚙️ Configurações e Perfil Real</h2>
+                    <div style="background: var(--panel-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--panel-border); max-width: 500px;">
+                        <h4>Identidade Real</h4>
+                        <label style="margin-top: 10px; display:block;">Seu ID Único:</label>
+                        <input type="text" id="player-real-id" class="form-control" readonly style="color: var(--accent-color); font-weight: bold; font-family: monospace;">
+                        <label>Seu Nick:</label>
+                        <input type="text" id="player-edit-name" class="form-control" placeholder="Seu Nick">
+                        <button class="btn" onclick="salvarPerfilJogador()">Salvar Alterações</button>
+                    </div>
+                </div>
+
+                <!-- 8. PAINEL DE ADMINISTRAÇÃO AVANÇADO -->
+                <div id="section-painel-adm" class="panel-section">
+                    <h2>👑 Painel de Administração</h2>
+                    <p style="color: var(--adm-color); margin-bottom: 15px;">Painel exclusivo de moderação e gerenciamento.</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div style="background: var(--panel-bg); padding: 15px; border-radius: 6px; border: 1px solid var(--panel-border);">
+                            <h4>Moderação de Jogadores</h4>
+                            <label style="margin-top:10px; display:block;">E-mail ou ID do Jogador:</label>
+                            <input type="text" id="target-player" class="form-control" placeholder="E-mail do jogador">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 5px;">
+                                <button class="btn btn-adm" onclick="acaoAdm('banir')">Banir</button>
+                                <button class="btn" style="background:#d97706; color:white;" onclick="acaoAdm('mutar')">Mutar</button>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--panel-bg); padding: 15px; border-radius: 6px; border: 1px solid var(--panel-border);">
+                            <h4>📢 Enviar Mensagem Global</h4>
+                            <input type="text" id="global-msg-input" class="form-control" placeholder="Aviso global...">
+                            <button class="btn btn-adm" onclick="enviarMensagemGlobal()">Transmitir</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; border-top: 1px solid var(--panel-border); padding-top: 15px;">
+                    <h4>Histórico do Chat Global</h4>
+                    <div class="chat-box" id="chat-container">
+                        <div class="chat-msg">Servidor Real: Conectado com sucesso ao Firebase!</div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <div class="global-chat-bar">
+            <span>Chat Global:</span>
+            <input type="text" id="footer-chat-input" placeholder="Digite sua mensagem no chat global...">
+            <button onclick="enviarMensagemRodape()">Enviar</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE DM / CHAT PRIVADO (ENTRE ADM E GABRIEL) -->
+    <div id="modal-dm-chat" class="modal-overlay hidden">
+        <div class="modal-card">
+            <button class="close-modal" onclick="fecharModalDM()">&times;</button>
+            <h3 style="color: var(--accent-color); margin-bottom: 10px;">💬 Chat Privado (Suporte / ADM)</h3>
+            <p style="font-size: 12px; color: #94a3b8; margin-bottom: 10px;">Conversa direta e segura entre Administração e Fundador Gabriel.</p>
+            
+            <div class="dm-chat-container" id="dm-messages-box">
+                <div class="dm-msg theirs">Administração: Olá Gabriel, sistema pronto para testes!</div>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="dm-input-text" class="form-control" placeholder="Escreva sua mensagem privada..." style="margin: 0;">
+                <button class="btn" style="width: 100px;" onclick="enviarMensagemDM()">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
+          authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
+          projectId: "dragon-war-rise-of-power-2a9f1",
+          storageBucket: "dragon-war-rise-of-power-2a9f1.firebasestorage.app",
+          messagingSenderId: "115455691167",
+          appId: "1:115455691167:web:ff3638f67b66c17c5515aa",
+          measurementId: "G-S7XE2EN9CL"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const EMAIL_ADMIN = "groupsacabraldigital@gmail.com";
+        let modoCadastro = false;
+        let usuarioAtual = { uid: "", email: "", isAdm: false, isSubAdm: false, avatar: "", nivel: 15, coins: 250, diamonds: 30 };
+        let inventarioItens = ["Poção de Mana x5", "Caixa Lendária x1"];
+        let naoLidasCount = 2;
+        let ultimoResgateDiario = 0;
+
+        // Variáveis do modo batalha por fases
+        let faseAtualInfo = { categoria: '', nivelMax: 5, etapa: 1, hpMovel: 100, maxHp: 100, playerHp: 100, defending: false };
+
+        window.alternarModoAuth = function() {
+            modoCadastro = !modoCadastro;
+            document.getElementById('auth-title').innerText = modoCadastro ? "Criar Conta Real" : "Entrar no Servidor";
+            document.getElementById('auth-btn-action').innerText = modoCadastro ? "Registrar e Gerar ID" : "Entrar na Partida";
+            document.getElementById('auth-switch-mode').innerText = modoCadastro ? "Já tem conta? Faça login" : "Não tem conta? Cadastre-se com ID Real";
+        }
+
+        window.realizarAutenticacao = async function() {
+            const email = document.getElementById('auth-email').value.trim();
+            const pass = document.getElementById('auth-pass').value.trim();
+
+            if(!email || !pass) {
+                alert("Preencha o e-mail e a senha!");
+                return;
+            }
+
+            try {
+                let userCredential;
+                if(modoCadastro) {
+                    userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                    alert("Conta criada com sucesso! ID Real gerado pelo Firebase.");
+                } else {
+                    userCredential = await signInWithEmailAndPassword(auth, email, pass);
+                }
+
+                const user = userCredential.user;
+                const isGabriel = (user.email.toLowerCase().includes("gabriel") || user.email.toLowerCase() === EMAIL_ADMIN);
+
+                usuarioAtual = { 
+                    uid: user.uid, 
+                    email: user.email, 
+                    isAdm: isGabriel, 
+                    isSubAdm: false, 
+                    avatar: "", 
+                    nivel: isGabriel ? 50 : 15, 
+                    coins: 250, 
+                    diamonds: 30 
+                };
+
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('game-container').classList.remove('hidden');
+
+                atualizarPerfilUI();
+                montarMenuLateral();
+                mudarTabLoja('armas');
+                construirCaixasEpicas();
+                gerarMais50Poderes();
+
+                document.getElementById('player-real-id').value = usuarioAtual.uid;
+                document.getElementById('player-edit-name').value = usuarioAtual.email;
+
+                if(isGabriel) {
+                    document.getElementById('adm-update-game-panel').classList.remove('hidden');
+                }
+
+            } catch (error) {
+                alert("Erro na autenticação: " + error.message);
+            }
+        }
+
+        function atualizarPerfilUI() {
+            const nomeCurto = usuarioAtual.email.split('@')[0];
+            const avatarImg = document.getElementById('sidebar-avatar-img');
+            const avatarTxt = document.getElementById('sidebar-avatar-txt');
+
+            document.getElementById('user-coins').innerText = usuarioAtual.coins;
+            document.getElementById('user-diamonds').innerText = usuarioAtual.diamonds;
+
+            document.getElementById('rank-user-nivel').innerText = `Nível ${usuarioAtual.nivel}`;
+            document.getElementById('rank-user-coins').innerText = usuarioAtual.coins;
+            document.getElementById('rank-user-diamonds').innerText = usuarioAtual.diamonds;
+
+            if (usuarioAtual.isAdm) {
+                document.getElementById('sidebar-name').innerHTML = `<span class="dragon-rainbow-name">Gabriel [FUNDADOR]</span>`;
+                document.getElementById('sidebar-role').innerText = "Fundador Principal";
+                avatarImg.style.display = "none";
+                avatarTxt.innerText = "G";
+                avatarTxt.style.display = "flex";
+            } else {
+                document.getElementById('sidebar-name').innerHTML = nomeCurto;
+                document.getElementById('sidebar-role').innerText = `Aventureiro Real (Nível ${usuarioAtual.nivel})`;
+                avatarTxt.innerText = nomeCurto.charAt(0).toUpperCase();
+                avatarTxt.style.display = "flex";
+                avatarImg.style.display = "none";
+            }
+        }
+
+        window.salvarPerfilJogador = function() {
+            alert('Perfil real atualizado com sucesso!');
+        }
+
+        function montarMenuLateral() {
+            const menuList = document.getElementById('menu-list');
+            menuList.innerHTML = "";
+            let itensMenu = [
+                { id: 'jogar', label: '🎮 Modo Batalha' },
+                { id: 'loja', label: '🛒 Loja & Caixas' },
+                { id: 'poderes', label: '⚡ +50 Poderes' },
+                { id: 'inventario', label: '🎒 Inventário' },
+                { id: 'rank', label: '🏆 Rankings' },
+                { id: 'evento', label: '🎉 Eventos Diários' },
+                { id: 'config-jogador', label: '⚙️ Meu Perfil' }
+            ];
+
+            if(usuarioAtual.isAdm) {
+                itensMenu.push({ id: 'painel-adm', label: '👑 Painel ADM' });
+            }
+
+            itensMenu.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = `menu-item ${index === 0 ? 'active' : ''}`;
+                li.innerText = item.label;
+                li.onclick = () => trocarSecao(item.id, li);
+                menuList.appendChild(li);
+            });
+
+            trocarSecao(itensMenu[0].id, menuList.children[0]);
+        }
+
+        window.trocarSecao = function(idSecao, elementoLi) {
+            document.querySelectorAll('.panel-section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(`section-${idSecao}`).classList.add('active');
+
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            if(elementoLi) elementoLi.classList.add('active');
+
+            document.getElementById('current-page-title').innerText = elementoLi ? elementoLi.innerText : idSecao;
+        }
+
+        // Sistema de Fases por Dificuldade
+        window.iniciarFases = function(categoria) {
+            let nivelMax = 5;
+            if(categoria === 'avancado') nivelMax = 10;
+            if(categoria === 'hardcore') nivelMax = 25;
+
+            faseAtualInfo.categoria = categoria;
+            faseAtualInfo.nivelMax = nivelMax;
+            faseAtualInfo.etapa = 1;
+            faseAtualInfo.maxHp = 100 + (nivelMax * 15);
+            faseAtualInfo.hpMovel = faseAtualInfo.maxHp;
+            faseAtualInfo.playerHp = 100;
+            faseAtualInfo.defending = false;
+
+            document.getElementById('fases-titulo-cat').innerText = `Modo: ${categoria.toUpperCase()}`;
+            atualizarCombateUI();
+            
+            document.querySelector('#section-jogar > div:nth-child(3)').classList.add('hidden');
+            document.getElementById('arena-fases-container').classList.remove('hidden');
+        }
+
+        window.verificarAcessoHardcore = function() {
+            if(usuarioAtual.nivel < 25 && !usuarioAtual.isAdm) {
+                alert(`⚠️ O Modo Hardcore exige Nível 25 ou superior! Seu nível atual é ${usuarioAtual.nivel}.`);
+                return;
+            }
+            iniciarFases('hardcore');
+        }
+
+        window.voltarSelecaoFases = function() {
+            document.getElementById('arena-fases-container').classList.add('hidden');
+            document.querySelector('#section-jogar > div:nth-child(3)').classList.remove('hidden');
+        }
+
+        window.desistirBatalha = function() {
+            if(confirm("Deseja desistir da batalha e retornar ao menu?")) {
+                voltarSelecaoFases();
+            }
+        }
+
+        function atualizarCombateUI() {
+            document.getElementById('fases-etapa-info').innerText = `Nível ${faseAtualInfo.etapa}/${faseAtualInfo.nivelMax}`;
+            
+            const pctMovel = Math.max(0, (faseAtualInfo.hpMovel / faseAtualInfo.maxHp) * 100);
+            document.getElementById('movel-hp').innerText = `${Math.round(pctMovel)}%`;
+            document.getElementById('movel-hp-bar').style.width = `${pctMovel}%`;
+
+            const pctPlayer = Math.max(0, faseAtualInfo.playerHp);
+            document.getElementById('player-battle-hp').innerText = `${pctPlayer}/100`;
+            document.getElementById('player-hp-bar').style.width = `${pctPlayer}%`;
+        }
+
+        function adicionarLogCombate(texto) {
+            const logBox = document.getElementById('battle-log');
+            if(!logBox) return;
+            logBox.innerHTML += `<div>• ${texto}</div>`;
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        window.acaoCombate = function(tipoAcao) {
+            faseAtualInfo.defending = false;
+            let logMsg = "";
+            let danoInimigo = Math.floor(Math.random() * 12) + 8;
+
+            if(tipoAcao === 'atacar') {
+                let danoCausado = 25 + Math.floor(Math.random() * 15);
+                faseAtualInfo.hpMovel -= danoCausado;
+                logMsg = `Você atacou e causou ${danoCausado} de dano!`;
+            } else if(tipoAcao === 'defender') {
+                faseAtualInfo.defending = true;
+                danoInimigo = Math.floor(danoInimigo / 2);
+                logMsg = `Postura defensiva ativa! Dano inimigo reduzido pela metade.`;
+            } else if(tipoAcao === 'curar') {
+                let cura = 30;
+                faseAtualInfo.playerHp = Math.min(100, faseAtualInfo.playerHp + cura);
+                logMsg = `Você recuperou ${cura} de vida!`;
+            } else if(tipoAcao === 'poder') {
+                let danoPoder = 50 + Math.floor(Math.random() * 20);
+                faseAtualInfo.hpMovel -= danoPoder;
+                logMsg = `⚡ Poder especial disparado! Causou ${danoPoder} de dano!`;
+            }
+
+            adicionarLogCombate(logMsg);
+
+            if(faseAtualInfo.hpMovel > 0) {
+                faseAtualInfo.playerHp -= danoInimigo;
+                adicionarLogCombate(`⚠️ Inimigo contra-atacou com ${danoInimigo} de dano!`);
+
+                if(faseAtualInfo.playerHp <= 0) {
+                    faseAtualInfo.playerHp = 0;
+                    atualizarCombateUI();
+                    alert("Você foi derrotado! Treine seus poderes na loja e tente novamente.");
+                    voltarSelecaoFases();
+                    return;
+                }
+            } else {
+                if(faseAtualInfo.etapa < faseAtualInfo.nivelMax) {
+                    adicionarLogCombate(`🎉 Nível ${faseAtualInfo.etapa} concluído! Avançando...`);
+                    faseAtualInfo.etapa++;
+                    faseAtualInfo.maxHp += 30;
+                    faseAtualInfo.hpMovel = faseAtualInfo.maxHp;
+                } else {
+                    let moedasGanhas = 150 * faseAtualInfo.nivelMax;
+                    let diamantesGanhos = 10 * Math.floor(faseAtualInfo.nivelMax / 5) + 5;
+                    usuarioAtual.coins += moedasGanhas;
+                    usuarioAtual.diamonds += diamantesGanhos;
+                    atualizarPerfilUI();
+                    alert(`🏆 VITÓRIA ÉPICA!\nRecompensas:\n+${moedasGanhas} Moedas 🪙\n+${diamantesGanhos} Diamantes 💎`);
+                    voltarSelecaoFases();
+                    return;
+                }
+            }
+            atualizarCombateUI();
+        }
+
+        // Loja por Categorias (Armas, Skins, Poções) + Caixas Abaixo
+        const itensLojaCatalogo = {
+            armas: [
+                { nome: "Espada Flamejante", preco: 150 },
+                { nome: "Adaga Sombria", preco: 220 },
+                { nome: "Lança do Dragão", preco: 400 }
+            ],
+            skins: [
+                { nome: "Skin Cavaleiro Real", preco: 300 },
+                { nome: "Skin Mago Supremo", preco: 450 },
+                { nome: "Skin Guardião de Aço", preco: 600 }
+            ],
+            pocoes: [
+                { nome: "Poção de Vida Pequena x3", preco: 50 },
+                { nome: "Poção de Mana x5", preco: 80 },
+                { nome: "Elixir da Fúria x1", preco: 120 }
+            ]
+        };
+
+        window.mudarTabLoja = function(cat) {
+            const container = document.getElementById('loja-itens-container');
+            if(!container) return;
+            container.innerHTML = "";
+            let lista = itensLojaCatalogo[cat] || [];
+            lista.forEach(item => {
+                container.innerHTML += `
+                    <div class="box-item">
+                        <strong>${item.nome}</strong>
+                        <p style="font-size:12px; color:#94a3b8; margin:5px 0;">Item de alta qualidade.</p>
+                        <span style="color:#f59e0b; display:block; margin-bottom:8px;">${item.preco} Moedas</span>
+                        <button class="btn" style="padding:5px; font-size:12px;" onclick="comprarItemLoja('${item.nome}', ${item.preco})">Comprar</button>
+                    </div>
+                `;
+            });
+        }
+
+        function construirCaixasEpicas() {
+            const grid = document.getElementById('epic-boxes-grid');
+            if(!grid) return;
+            grid.innerHTML = "";
+            const precosCaixas = [
+                { nome: "Caixa Iniciante de Ouro", preco: 100 },
+                { nome: "Caixa Épica de Elementos", preco: 500 },
+                { nome: "Caixa Lendária do Dragão", preco: 1000 }
+            ];
+            precosCaixas.forEach(item => {
+                grid.innerHTML += `
+                    <div class="box-item">
+                        <strong>📦 ${item.nome}</strong>
+                        <p style="font-size:12px; color:#94a3b8; margin:5px 0;">Contém itens surpresa.</p>
+                        <span style="color:#f59e0b; display:block; margin-bottom:8px;">${item.preco} Moedas</span>
+                        <button class="btn" style="padding:5px; font-size:12px;" onclick="comprarItemLoja('${item.nome}', ${item.preco})">Comprar Caixa</button>
+                    </div>
+                `;
+            });
+        }
+
+        window.comprarItemLoja = function(nomeItem, preco) {
+            if(usuarioAtual.coins < preco) {
+                alert("Moedas insuficientes!");
+                return;
+            }
+            usuarioAtual.coins -= preco;
+            inventarioItens.push(nomeItem);
+            atualizarPerfilUI();
+            atualizarInventarioUI();
+            alert(`✅ "${nomeItem}" comprado e enviado direto para o seu inventário!`);
+        }
+
+        function atualizarInventarioUI() {
+            const invContainer = document.getElementById('inventario-itens');
+            if(!invContainer) return;
+            invContainer.innerHTML = "";
+            inventarioItens.forEach(item => {
+                invContainer.innerHTML += `<div style="background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 15px; border-radius: 6px; text-align: center; width: 150px; font-size:13px;">🎒 ${item}</div>`;
+            });
+        }
+
+        function gerarMais50Poderes() {
+            const container = document.getElementById('lista-mais-50-poderes');
+            if(!container) return;
+            container.innerHTML = "";
+            for(let i = 1; i <= 50; i++) {
+                container.innerHTML += `<div style="background: rgba(0,0,0,0.4); padding: 8px; border-radius: 4px; border: 1px solid var(--panel-border); font-size: 12px;"><strong>Poder #${i}</strong><br><span style="color:var(--accent-color);">Dano: +${i * 35}</span></div>`;
+            }
+        }
+
+        // Recompensa Diária (24h cooldown)
+        window.resgatarRecompensaDiaria = function() {
+            const agora = Date.now();
+            const umDiaMs = 24 * 60 * 60 * 1000;
+            if(agora - ultimoResgateDiario < umDiaMs) {
+                const horasRestantes = Math.ceil((umDiaMs - (agora - ultimoResgateDiario)) / (1000 * 60 * 60));
+                alert(`⏳ Você já resgatou sua recompensa hoje! Volte daqui a ${horasRestantes} horas.`);
+                return;
+            }
+
+            ultimoResgateDiario = agora;
+            usuarioAtual.coins += 100;
+            usuarioAtual.diamonds += 5;
+            atualizarPerfilUI();
+            alert("🎁 Recompensa diária resgatada!\n+100 Moedas 🪙\n+5 Diamantes 💎");
+        }
+
+        // Sininho e Notificações Dinâmicas
+        window.toggleNotificationDropdown = function() {
+            document.getElementById('notif-dropdown').classList.toggle('active');
+        }
+
+        window.limparNotificacoes = function() {
+            naoLidasCount = 0;
+            document.getElementById('notif-counter').style.display = 'none';
+        }
+
+        window.publicarAtualizacaoJogo = function() {
+            const changelog = document.getElementById('update-changelog-text').value.trim();
+            if(!changelog) return;
+
+            const list = document.getElementById('notification-list-content');
+            const div = document.createElement('div');
+            div.className = "notif-item update";
+            div.innerHTML = `✨ <strong>Update:</strong> ${changelog}`;
+            list.prepend(div);
+
+            naoLidasCount++;
+            const badge = document.getElementById('notif-counter');
+            badge.innerText = naoLidasCount;
+            badge.style.display = 'flex';
+
+            alert("🚀 Jogo atualizado! Sininho ativado.");
+            document.getElementById('update-changelog-text').value = "";
+        }
+
+        // Chat Global e Chat Privado DM ADM x Gabriel
+        window.enviarMensagemRodape = function() {
+            const input = document.getElementById('footer-chat-input');
+            const msg = input.value.trim();
+            if(!msg) return;
+
+            const chat = document.getElementById('chat-container');
+            const div = document.createElement('div');
+            div.className = "chat-msg global";
+            div.innerHTML = `<strong>${usuarioAtual.email.split('@')[0]}:</strong> ${msg}`;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+            input.value = "";
+        }
+
+        window.enviarMensagemGlobal = function() {
+            const inputGlobal = document.getElementById('global-msg-input');
+            if(!inputGlobal.value.trim()) return;
+            document.getElementById('footer-chat-input').value = inputGlobal.value;
+            enviarMensagemRodape();
+            inputGlobal.value = "";
+            alert("Transmitido!");
+        }
+
+        window.fecharModalDM = function() {
+            document.getElementById('modal-dm-chat').classList.add('hidden');
+        }
+
+        window.enviarMensagemDM = function() {
+            const input = document.getElementById('dm-input-text');
+            const txt = input.value.trim();
+            if(!txt) return;
+
+            const box = document.getElementById('dm-messages-box');
+            box.innerHTML += `<div class="dm-msg mine">${txt}</div>`;
+            input.value = "";
+            box.scrollTop = box.scrollHeight;
+        }
+
+        window.acaoAdm = function(tipo) {
+            const target = document.getElementById('target-player').value;
+            if(!target) { alert('Insira o e-mail do jogador!'); return; }
+            alert(`Ação ${tipo} aplicada em ${target}.`);
+            document.getElementById('target-player').value = "";
+        }
+    </script>
+</body>
+</html>
