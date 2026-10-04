@@ -53,8 +53,6 @@
     
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .item-card { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 10px; text-align: center; font-size: 0.82rem; margin-bottom: 8px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
-    .item-card img { width: 64px; height: 64px; object-fit: contain; margin-bottom: 6px; border-radius: 6px; }
-    .item-card button { padding: 6px; font-size: 0.78rem; margin-top: 5px; width: 100%; }
 
     /* BOSS ARENA */
     .boss-avatar { width: 100px; height: 100px; object-fit: contain; margin: 0 auto 10px; display: block; filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.4)); }
@@ -216,7 +214,7 @@
     <div class="log-box" id="game-log">> Log do sistema...</div>
   </div>
 
-  <!-- PAINEL LATERAL DE SUB-ADM (PROMOVIDO) -->
+  <!-- PAINEL LATERAL DE SUB-ADM (PROMOVIDO OU MASTER) -->
   <div id="subadm-drawer" class="subadm-drawer hidden">
     <div class="subadm-toggle" onclick="toggleSubAdmDrawer()">⚡ PAINEL ADM</div>
     <h4 style="color:var(--primary); margin-bottom:10px; text-align:center;">Ferramentas de ADM</h4>
@@ -250,6 +248,7 @@
   const db = firebase.firestore();
 
   const MASTER_UID = "DJ0865XZ51V7G5neeqVP2mr1h8T2";
+  const MASTER_EMAIL = "groupsacabraldigital@gmail.com"; // Seu e-mail Master
   const defaultAvatar = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 24 24' fill='%2338bdf8'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>";
 
   const bosses = [
@@ -265,7 +264,7 @@
   let player = {};
 
   function renderUserBadgeHTML(userObj) {
-    if (userObj.uid === MASTER_UID) {
+    if (userObj.isMaster || userObj.uid === MASTER_UID || (userObj.email && userObj.email.toLowerCase() === MASTER_EMAIL)) {
       return `
         <div class="badge-wrapper">
           <span class="tag-creator">CREATOR</span>
@@ -307,14 +306,73 @@
     document.getElementById('bar-energy').style.width = `${Math.max(0, ((player.energy || 0) / (player.maxEnergy || 50)) * 100)}%`;
 
     /* EXIBIÇÃO DE PAINÉIS ADM */
-    const isMaster = (player.uid === MASTER_UID);
+    const isMaster = player.isMaster;
     const isSubAdm = player.isAdm;
 
     document.getElementById('nav-jogadores-btn').classList.toggle('hidden', !isMaster);
     document.getElementById('subadm-drawer').classList.toggle('hidden', (!isSubAdm && !isMaster));
   }
 
-  /* SISTEMA DE COMBATE */
+  /* AUTENTICAÇÃO E RECONHECIMENTO MASTER */
+  auth.onAuthStateChanged(async (user) => {
+    if (user) {
+      const docRef = db.collection('users').doc(user.uid);
+      const doc = await docRef.get();
+
+      const isUserMaster = (user.uid === MASTER_UID || user.email.toLowerCase() === MASTER_EMAIL);
+
+      if (doc.exists) {
+        player = doc.data();
+      } else {
+        player = {
+          uid: user.uid,
+          email: user.email,
+          username: isUserMaster ? "👑 ADM GABRIEL" : (user.email.split('@')[0]),
+          avatar: defaultAvatar,
+          level: 1,
+          exp: 0,
+          coins: 100,
+          gems: 5,
+          powerEnergy: 0,
+          hp: 200,
+          maxHp: 200,
+          energy: 50,
+          maxEnergy: 50,
+          atk: 15,
+          def: 5,
+          isAdm: isUserMaster,
+          isMaster: isUserMaster,
+          inventory: { pocao: 2 }
+        };
+      }
+
+      // Garante atribuição Master mesmo em dados carregados previamente
+      if (isUserMaster) {
+        player.username = "👑 ADM GABRIEL";
+        player.isAdm = true;
+        player.isMaster = true;
+      }
+
+      await docRef.set(player, { merge: true });
+
+      if (player.isBanned) {
+        alert("Sua conta está banida!");
+        auth.signOut();
+        return;
+      }
+
+      selectBoss();
+      updateUI();
+      listenChatAndNotifications();
+      document.getElementById('auth-card').classList.add('hidden');
+      document.getElementById('game-card').classList.remove('hidden');
+    } else {
+      document.getElementById('auth-card').classList.remove('hidden');
+      document.getElementById('game-card').classList.add('hidden');
+    }
+  });
+
+  /* COMBATE E FUNÇÕES */
   function selectBoss() {
     currentBossIdx = parseInt(document.getElementById('boss-select').value);
     const b = bosses[currentBossIdx];
@@ -381,7 +439,7 @@
 
   /* LISTA DE JOGADORES (SOMENTE CREATOR/MASTER) */
   async function loadPlayersList() {
-    if (player.uid !== MASTER_UID) return;
+    if (!player.isMaster) return;
     const box = document.getElementById('players-list-container');
     box.innerHTML = '<p style="text-align:center; color:#94a3b8;">Carregando...</p>';
 
@@ -390,7 +448,7 @@
       box.innerHTML = '';
       snap.forEach(doc => {
         const u = doc.data();
-        if (u.uid === MASTER_UID) return; // Não exibe o Master na lista de edição
+        if (u.isMaster || u.email === MASTER_EMAIL) return; 
 
         box.innerHTML += `
           <div class="player-row">
@@ -440,10 +498,8 @@
     loadPlayersList();
   }
 
-  /* FUNÇÕES DE SUB-ADM (PAINEL LATERAL) */
-  function toggleSubAdmDrawer() {
-    document.getElementById('subadm-drawer').classList.toggle('open');
-  }
+  /* SUB-ADM & CHAT */
+  function toggleSubAdmDrawer() { document.getElementById('subadm-drawer').classList.toggle('open'); }
 
   async function subadmMute() {
     const target = document.getElementById('subadm-target-id').value;
@@ -468,20 +524,14 @@
     alert("Evento anunciado!");
   }
 
-  /* CHAT GERAL */
   async function sendChatMessage() {
     const input = document.getElementById('chat-input');
     const txt = input.value.trim();
     if (!txt) return;
-
-    if (player.isMuted) return alert("Você está silenciado e não pode enviar mensagens!");
+    if (player.isMuted) return alert("Você está silenciado!");
 
     await db.collection('chat').add({
-      userObj: {
-        uid: player.uid,
-        username: player.username,
-        isAdm: player.isAdm || false
-      },
+      userObj: player,
       msg: txt,
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     });
@@ -502,7 +552,6 @@
       box.scrollTop = box.scrollHeight;
     });
 
-    /* NOTIFICAÇÃO EM TEMPO REAL QUANDO RECEBE ADM */
     db.collection('notifications').where('targetUid', '==', player.uid).onSnapshot(snap => {
       snap.docChanges().forEach(change => {
         if (change.type === "added") {
@@ -514,7 +563,6 @@
     });
   }
 
-  /* AUTENTICAÇÃO E SINCRONIZAÇÃO */
   async function syncData() {
     if (!auth.currentUser) return;
     await db.collection('users').doc(auth.currentUser.uid).set(player, { merge: true });
@@ -532,57 +580,6 @@
     if (box) box.innerHTML = `> ${msg}<br>` + box.innerHTML;
   }
 
-  auth.onAuthStateChanged(async (user) => {
-    if (user) {
-      const docRef = db.collection('users').doc(user.uid);
-      const doc = await docRef.get();
-
-      if (doc.exists) {
-        player = doc.data();
-      } else {
-        player = {
-          uid: user.uid,
-          username: (user.uid === MASTER_UID) ? "👑 ADM GABRIEL" : user.email.split('@')[0],
-          avatar: defaultAvatar,
-          level: 1,
-          exp: 0,
-          coins: 100,
-          gems: 5,
-          powerEnergy: 0,
-          hp: 200,
-          maxHp: 200,
-          energy: 50,
-          maxEnergy: 50,
-          atk: 15,
-          def: 5,
-          isAdm: (user.uid === MASTER_UID),
-          inventory: { pocao: 2 }
-        };
-        await docRef.set(player);
-      }
-
-      if (player.uid === MASTER_UID) {
-        player.username = "👑 ADM GABRIEL";
-        player.isAdm = true;
-      }
-
-      if (player.isBanned) {
-        alert("Sua conta está banida!");
-        auth.signOut();
-        return;
-      }
-
-      selectBoss();
-      updateUI();
-      listenChatAndNotifications();
-      document.getElementById('auth-card').classList.add('hidden');
-      document.getElementById('game-card').classList.remove('hidden');
-    } else {
-      document.getElementById('auth-card').classList.remove('hidden');
-      document.getElementById('game-card').classList.add('hidden');
-    }
-  });
-
   function switchAuthTab(type) {
     document.getElementById('form-login').classList.toggle('hidden', type !== 'login');
     document.getElementById('form-register').classList.toggle('hidden', type === 'login');
@@ -598,33 +595,16 @@
 
   async function handleRegister(e) {
     e.preventDefault();
-    const res = await auth.createUserWithEmailAndPassword(
+    await auth.createUserWithEmailAndPassword(
       document.getElementById('reg-email').value,
       document.getElementById('reg-password').value
     );
-    player = {
-      uid: res.user.uid,
-      username: document.getElementById('reg-name').value,
-      avatar: defaultAvatar,
-      level: 1,
-      coins: 100,
-      gems: 5,
-      hp: 200,
-      maxHp: 200,
-      energy: 50,
-      maxEnergy: 50,
-      atk: 15,
-      def: 5,
-      isAdm: false,
-      inventory: { pocao: 2 }
-    };
-    await db.collection('users').doc(res.user.uid).set(player);
   }
 
   function handleLogout() { auth.signOut(); }
   async function saveProfile() {
     const n = document.getElementById('edit-username').value;
-    if (n && player.uid !== MASTER_UID) player.username = n;
+    if (n && !player.isMaster) player.username = n;
     await syncData();
     updateUI();
   }
