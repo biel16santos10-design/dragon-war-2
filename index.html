@@ -23,7 +23,11 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        const ADMIN_EMAIL = "markivus25@gmail.com"; 
+        // Lista de E-mails Administradores do Servidor
+        const ADMIN_EMAILS = [
+            "markivus25@gmail.com",
+            "groupsacabraldigital@gmail.com"
+        ]; 
 
         window.fbDb = db;
         window.fbAuth = auth;
@@ -41,7 +45,7 @@
         window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
         window.signInWithEmailAndPassword = signInWithEmailAndPassword;
         window.signOut = signOut;
-        window.ADMIN_EMAIL = ADMIN_EMAIL;
+        window.ADMIN_EMAILS = ADMIN_EMAILS;
     </script>
 
     <style>
@@ -756,6 +760,10 @@
             document.getElementById('login-screen').classList.add('active');
         }
 
+        function verificarSeEAdmin(email) {
+            return window.ADMIN_EMAILS.includes(email.toLowerCase().trim());
+        }
+
         async function fazerRegistro() {
             let nome = document.getElementById('reg-nome').value.trim();
             let email = document.getElementById('reg-email').value.trim();
@@ -764,7 +772,7 @@
 
             try {
                 let cred = await window.createUserWithEmailAndPassword(window.fbAuth, email, senha);
-                let isAdmin = (email === window.ADMIN_EMAIL);
+                let isAdmin = verificarSeEAdmin(email);
                 jogadorAtual = {
                     uid: cred.user.uid, email, nome: isAdmin ? "👑 Gabriel (ADM)" : nome,
                     nivel: isAdmin ? 999 : 1, pontuacao: 0, moedas: isAdmin ? 500000 : 15000,
@@ -786,11 +794,15 @@
             try {
                 let cred = await window.signInWithEmailAndPassword(window.fbAuth, email, senha);
                 let snap = await window.fbGetDoc(window.fbDoc(window.fbDb, "jogadores", cred.user.uid));
-                let isAdmin = (email === window.ADMIN_EMAIL);
+                let isAdmin = verificarSeEAdmin(email);
 
                 if(snap.exists()) {
                     jogadorAtual = snap.data();
                     jogadorAtual.isAdmin = isAdmin || jogadorAtual.isAdmin;
+                    if(isAdmin && !jogadorAtual.isAdmin) {
+                        jogadorAtual.isAdmin = true;
+                        jogadorAtual.nivel = 999;
+                    }
                 } else {
                     jogadorAtual = {
                         uid: cred.user.uid, email, nome: isAdmin ? "👑 Gabriel (ADM)" : "Guerreiro",
@@ -810,7 +822,7 @@
             document.getElementById('register-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
 
-            if(jogadorAtual.email === window.ADMIN_EMAIL || jogadorAtual.isAdmin) {
+            if(verificarSeEAdmin(jogadorAtual.email) || jogadorAtual.isAdmin) {
                 document.getElementById('btn-aba-adm').style.display = 'block';
                 jogadorAtual.isAdmin = true;
             } else {
