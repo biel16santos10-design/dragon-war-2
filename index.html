@@ -14,7 +14,8 @@
         /* TELA DE AUTENTICAÇÃO */
         #login-screen { justify-content: center; align-items: center; background: radial-gradient(circle, #1e293b 0%, #0f172a 100%); z-index: 100; }
         .login-card { background: rgba(30, 41, 59, 0.9); border: 1px solid #3b82f6; padding: 40px; border-radius: 12px; width: 100%; max-width: 450px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); text-align: center; backdrop-filter: blur(10px); }
-        .login-card h2 { color: #f97316; margin-bottom: 10px; font-size: 28px; }
+        .login-card h2 { color: #f97316; margin-bottom: 5px; font-size: 26px; }
+        .login-logo-img { width: 100%; max-height: 110px; object-fit: contain; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(249,115,22,0.5)); }
         
         .auth-tabs { display: flex; gap: 10px; margin-bottom: 20px; background: #0f172a; padding: 5px; border-radius: 8px; border: 1px solid #334155; }
         .auth-tab-btn { flex: 1; padding: 10px; background: transparent; border: none; color: #94a3b8; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; font-size: 14px; }
@@ -77,11 +78,24 @@
         .combat-actions { display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
         .combat-log { background: #0b0f19; border: 1px solid #334155; border-radius: 8px; padding: 15px; height: 120px; overflow-y: auto; text-align: left; font-size: 13px; color: #94a3b8; margin-top: 15px; }
 
-        /* SELEÇÃO DE AVATARS NO PERFIL */
-        .avatar-grid { display: flex; gap: 15px; flex-wrap: wrap; margin: 15px 0; max-height: 220px; overflow-y: auto; padding: 5px; border: 1px solid #334155; border-radius: 8px; background: #0f172a; }
-        .avatar-option { width: 65px; height: 65px; border-radius: 50%; border: 3px solid #334155; cursor: pointer; object-fit: cover; transition: 0.2s; }
-        .avatar-option.selected { border-color: #f97316; box-shadow: 0 0 15px rgba(249,115,22,0.5); }
-        .avatar-option.locked { opacity: 0.4; filter: grayscale(1); cursor: not-allowed; }
+        /* SELEÇÃO DE AVATARS NO PERFIL (SPRITE SHEET CROPPING) */
+        .avatar-grid { display: flex; gap: 15px; flex-wrap: wrap; margin: 15px 0; max-height: 250px; overflow-y: auto; padding: 5px; border: 1px solid #334155; border-radius: 8px; background: #0f172a; }
+        .avatar-option-wrap { text-align: center; display: inline-block; margin: 5px; cursor: pointer; }
+        .avatar-sprite { width: 70px; height: 70px; border-radius: 50%; border: 3px solid #334155; background-image: url('89078_2.png'); background-size: 500% 200%; background-repeat: no-repeat; transition: 0.2s; }
+        .avatar-option-wrap.selected .avatar-sprite { border-color: #f97316; box-shadow: 0 0 15px rgba(249,115,22,0.5); }
+        .avatar-option-wrap.locked { opacity: 0.4; filter: grayscale(1); cursor: not-allowed; }
+
+        /* POSIÇÕES DO SPRITE SHEET DA IMAGEM ENVIADA */
+        .pos-guerreiro { background-position: 0% 0%; }
+        .pos-mago      { background-position: 25% 0%; }
+        .pos-arqueiro  { background-position: 50% 0%; }
+        .pos-assassino { background-position: 75% 0%; }
+        .pos-cavaleiro { background-position: 100% 0%; }
+        .pos-elfa      { background-position: 0% 100%; }
+        .pos-barbaro   { background-position: 25% 100%; }
+        .pos-necromante{ background-position: 50% 100%; }
+        .pos-dragao    { background-position: 75% 100%; }
+        .pos-demonio   { background-position: 100% 100%; }
 
         /* CHAT E TABELA */
         .chat-box { height: 260px; background: #0f172a; border: 1px solid #475569; border-radius: 8px; padding: 15px; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
@@ -96,7 +110,8 @@
     <!-- TELA DE LOGIN / CADASTRO -->
     <div id="login-screen" class="screen active">
         <div class="login-card">
-            <h2>🔥 DRAGON WAR 🔥</h2>
+            <img src="89078_2.png" class="login-logo-img" alt="Dragon War Logo" style="object-position: 50% 92%; object-fit: cover; height: 75px; border-radius: 8px;">
+            <h2>DRAGON WAR</h2>
             <p style="color: #94a3b8; font-size: 14px; margin-bottom: 20px;">Rise of Power</p>
             
             <div class="auth-tabs">
@@ -119,7 +134,7 @@
     <div id="game-screen" class="screen">
         <div class="sidebar">
             <div class="user-mini-profile">
-                <img id="sidebar-avatar" src="avatar1.png" alt="Avatar">
+                <div id="sidebar-avatar-sprite" class="avatar-sprite pos-guerreiro" style="width: 45px; height: 45px; margin-right: 10px; border-width: 2px;"></div>
                 <div>
                     <h4 id="sidebar-nome">Carregando...</h4>
                     <small id="sidebar-nivel" style="color: #3b82f6;">Nível 1 • Iniciante</small>
@@ -253,7 +268,7 @@
                         </div>
 
                         <div class="combat-actions" id="botoes-acoes-combate">
-                            <button class="btn-action" style="width: 22%; background: #3b82f6;" onclick="acaoCombate('atacar')">⚔️ Atacar</button>
+                            <button class="btn-action" style="width: 22%; background: #3b82f6;" onclick="acaoCombate('atacar')">⚔️️ Atacar</button>
                             <button class="btn-action" style="width: 22%; background: #16a34a;" onclick="acaoCombate('defender')">🛡️ Defender</button>
                             <button class="btn-action" style="width: 22%; background: #eab308; color:#000;" onclick="acaoCombate('poder')">⚡ Usar Poder</button>
                             <button class="btn-action" style="width: 22%; background: #dc2626;" onclick="acaoCombate('pocao')">🧪 Usar Poção</button>
@@ -373,11 +388,11 @@
                 <!-- ABA: CONFIGURAÇÕES E PERFIL -->
                 <div id="tab-config" class="tab-panel">
                     <h2>Configurações e Perfil do Jogador</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Altere seu nome e escolha sua skin de avatar de guerreiro.</p>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Altere seu nome e escolha sua skin de avatar épica.</p>
                     
                     <div class="card-box">
-                        <h3>Escolha seu Avatar / Skin</h3>
-                        <p style="color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Escolha entre as 8 opções de avatares disponíveis (com skins desbloqueadas e bloqueadas).</p>
+                        <h3>Escolha sua Classe / Avatar</h3>
+                        <p style="color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Escolha entre as 10 classes disponíveis integradas da imagem oficial[span_1](start_span)[span_1](end_span).</p>
                         
                         <div class="avatar-grid" id="lista-avatares-perfil"></div>
 
@@ -426,11 +441,11 @@
             vida: 100, 
             nivel: 1, 
             pontos: 1250,
-            avatar: "avatar1.png",
+            avatarClass: "pos-guerreiro",
             inventario: [], 
             guildaNome: "",
             poderesDesbloqueados: ["Sopro de Fogo"],
-            skinsDesbloqueadas: ["skin_1", "skin_2"]
+            skinsDesbloqueadas: ["pos-guerreiro", "pos-mago"]
         };
 
         let chatCanalAtual = 'global';
@@ -475,16 +490,18 @@
             { id: 204, nome: "Elixir de Força Ancestral", preco: 1500 }
         ];
 
-        // 8 SKINS/AVATARES EXCLUSIVOS (Algumas liberadas, algumas bloqueadas por preço)
+        // 10 AVATARES EXCLUSIVOS DA IMAGEM OFICIAL
         const listaSkinsAvatares = [
-            { id: "skin_1", nome: "Guerreiro Novato", img: "avatar1.png", bloqueado: false, preco: 0 },
-            { id: "skin_2", nome: "Mago Aprendiz", img: "avatar2.png", bloqueado: false, preco: 0 },
-            { id: "skin_3", nome: "Cavaleiro Real", img: "avatar3.png", bloqueado: true, preco: 300 },
-            { id: "skin_4", nome: "Assassino das Sombras", img: "avatar4.png", bloqueado: true, preco: 500 },
-            { id: "skin_5", nome: "Paladino Sagrado", img: "avatar5.png", bloqueado: true, preco: 800 },
-            { id: "skin_6", nome: "Feiticeiro Caótico", img: "avatar6.png", bloqueado: true, preco: 1000 },
-            { id: "skin_7", nome: "Titã de Magma", img: "avatar7.png", bloqueado: true, preco: 1500 },
-            { id: "skin_8", nome: "Senhor dos Dragões", img: "avatar8.png", bloqueado: true, preco: 2500 }
+            { id: "pos-guerreiro", nome: "Guerreiro", bloqueado: false, preco: 0 },
+            { id: "pos-mago", nome: "Mago", bloqueado: false, preco: 0 },
+            { id: "pos-arqueiro", nome: "Arqueiro", bloqueado: true, preco: 300 },
+            { id: "pos-assassino", nome: "Assassino", bloqueado: true, preco: 500 },
+            { id: "pos-cavaleiro", nome: "Cavaleiro", bloqueado: true, preco: 800 },
+            { id: "pos-elfa", nome: "Elfa", bloqueado: true, preco: 1000 },
+            { id: "pos-barbaro", nome: "Bárbaro", bloqueado: true, preco: 1200 },
+            { id: "pos-necromante", nome: "Necromante", bloqueado: true, preco: 1500 },
+            { id: "pos-dragao", nome: "Dragão", bloqueado: true, preco: 2500 },
+            { id: "pos-demonio", nome: "Demônio", bloqueado: true, preco: 3500 }
         ];
 
         // 9 INIMIGOS NA ARENA
@@ -555,11 +572,11 @@
                         vida: Number(dadosSalvos.vida) || 100,
                         nivel: Number(dadosSalvos.nivel) || 1,
                         pontos: Number(dadosSalvos.pontos) || 1250,
-                        avatar: dadosSalvos.avatar || "avatar1.png",
+                        avatarClass: dadosSalvos.avatarClass || "pos-guerreiro",
                         inventario: dadosSalvos.inventario || [],
                         guildaNome: dadosSalvos.guildaNome || "",
                         poderesDesbloqueados: dadosSalvos.poderesDesbloqueados || ["Sopro de Fogo"],
-                        skinsDesbloqueadas: dadosSalvos.skinsDesbloqueadas || ["skin_1", "skin_2"]
+                        skinsDesbloqueadas: dadosSalvos.skinsDesbloqueadas || ["pos-guerreiro", "pos-mago"]
                     };
                 } else {
                     dadosJogador.nome = nomePadrao;
@@ -582,7 +599,13 @@
         function sincronizarInterface() {
             document.getElementById('sidebar-nome').innerText = dadosJogador.nome;
             document.getElementById('sidebar-nivel').innerText = `Nível ${dadosJogador.nivel} • Guerreiro`;
-            document.getElementById('sidebar-avatar').src = dadosJogador.avatar;
+            
+            let sidebarAvatar = document.getElementById('sidebar-avatar-sprite');
+            sidebarAvatar.className = `avatar-sprite ${dadosJogador.avatarClass}`;
+            sidebarAvatar.style.width = "45px";
+            sidebarAvatar.style.height = "45px";
+            sidebarAvatar.style.borderWidth = "2px";
+
             document.getElementById('badge-ouro').innerText = dadosJogador.ouro;
             document.getElementById('badge-gemas').innerText = dadosJogador.gemas;
             document.getElementById('badge-pontos-poder').innerText = dadosJogador.pontosPoder;
@@ -656,13 +679,13 @@
             container.innerHTML = "";
             listaSkinsAvatares.forEach(skin => {
                 let jaDesbloqueada = dadosJogador.skinsDesbloqueadas.includes(skin.id);
-                let selecionado = dadosJogador.avatar === skin.img ? "selected" : "";
+                let selecionado = dadosJogador.avatarClass === skin.id ? "selected" : "";
                 let classeEstado = jaDesbloqueada ? selecionado : "locked";
 
                 container.innerHTML += `
-                    <div style="text-align: center; display: inline-block; margin: 5px;">
-                        <img src="${skin.img}" class="avatar-option ${classeEstado}" title="${skin.nome}" onclick="clicarSkinAvatar('${skin.id}')">
-                        <small style="display:block; font-size:10px; color:#94a3b8; margin-top:2px;">${jaDesbloqueada ? skin.nome : '🔒 ' + skin.preco + 'G'}</small>
+                    <div class="avatar-option-wrap ${classeEstado}" onclick="clicarSkinAvatar('${skin.id}')">
+                        <div class="avatar-sprite ${skin.id}"></div>
+                        <small style="display:block; font-size:10px; color:#94a3b8; margin-top:4px;">${jaDesbloqueada ? skin.nome : '🔒 ' + skin.preco + 'G'}</small>
                     </div>
                 `;
             });
@@ -674,21 +697,21 @@
             let jaDesbloqueada = dadosJogador.skinsDesbloqueadas.includes(skinId);
 
             if(jaDesbloqueada) {
-                dadosJogador.avatar = skin.img;
+                dadosJogador.avatarClass = skin.id;
                 salvarDadosNoBanco();
                 sincronizarInterface();
             } else {
                 if(dadosJogador.ouro < skin.preco) {
-                    alert(`Você precisa de 🪙 ${skin.preco} de ouro para desbloquear a skin "${skin.nome}".`);
+                    alert(`Você precisa de 🪙 ${skin.preco} de ouro para desbloquear a classe "${skin.nome}".`);
                     return;
                 }
-                if(confirm(`Deseja desbloquear e usar a skin "${skin.nome}" por 🪙 ${skin.preco} de ouro?`)) {
+                if(confirm(`Deseja desbloquear e usar a classe "${skin.nome}" por 🪙 ${skin.preco} de ouro?`)) {
                     dadosJogador.ouro -= skin.preco;
                     dadosJogador.skinsDesbloqueadas.push(skinId);
-                    dadosJogador.avatar = skin.img;
+                    dadosJogador.avatarClass = skin.id;
                     salvarDadosNoBanco();
                     sincronizarInterface();
-                    alert(`Skin "${skin.nome}" desbloqueada com sucesso!`);
+                    alert(`Classe "${skin.nome}" desbloqueada com sucesso!`);
                 }
             }
         }
@@ -714,7 +737,7 @@
                 let bloqueado = dadosJogador.nivel < mob.nivelReq;
                 container.innerHTML += `
                     <div class="item-card" style="border-color: ${mob.cor};">
-                        <span style="font-size: 45px;">${mob.icone || '⚔️'}</span>
+                        <span style="font-size: 45px;">${mob.icone || '⚔️️'}</span>
                         <h4 style="color: ${mob.cor}; margin-top: 10px;">${mob.nome}</h4>
                         <p style="font-size: 13px; color: #94a3b8; margin: 8px 0;">HP: ${mob.hp} ${bloqueado ? '<br><span style="color:#ef4444;">Req. Nível ' + mob.nivelReq + '</span>' : ''}</p>
                         <button class="btn-action" style="background: ${bloqueado ? '#475569' : mob.cor};" ${bloqueado ? 'disabled' : ''} onclick="iniciarCombatePorId('${mob.id}')">${bloqueado ? 'BLOQUEADO' : 'ENTRAR NA BATALHA'}</button>
@@ -893,11 +916,10 @@
             adicionarLogCombate(`🎉 VITÓRIA! +🪙 ${ouroPremio} Ouro, Nível ${dadosJogador.nivel} e +1 ⚡ Ponto de Poder!`);
             combateAtual.ativo = false;
 
-            // Oculta os botões de ação e exibe o botão para ir para a próxima fase
             document.getElementById('botoes-acoes-combate').style.display = 'none';
             let containerBtn = document.getElementById('container-btn-proxima-fase');
             containerBtn.innerHTML = `
-                <button class="btn-action" style="background: #16a34a; font-size: 15px; padding: 12px;" onclick="irParaProximaFase()">▶️️ Ir para a Próxima Fase</button>
+                <button class="btn-action" style="background: #16a34a; font-size: 15px; padding: 12px;" onclick="irParaProximaFase()">▶ Ir para a Próxima Fase</button>
             `;
         }
 
