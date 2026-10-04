@@ -52,9 +52,13 @@
     .panel-section.active { display: block; }
     
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .item-card { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 10px; text-align: center; font-size: 0.82rem; margin-bottom: 8px; }
-    .item-card button { padding: 6px; font-size: 0.78rem; margin-top: 5px; }
+    .item-card { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 10px; text-align: center; font-size: 0.82rem; margin-bottom: 8px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+    .item-card img { width: 64px; height: 64px; object-fit: contain; margin-bottom: 6px; border-radius: 6px; }
+    .item-card button { padding: 6px; font-size: 0.78rem; margin-top: 5px; width: 100%; }
     
+    /* BOSS ARENA */
+    .boss-avatar { width: 100px; height: 100px; object-fit: contain; margin: 0 auto 10px; display: block; filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.4)); }
+
     .hidden { display: none !important; }
     .admin-badge { background: var(--accent); color: #000; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
     .log-box { background: #0f172a; padding: 10px; border-radius: 6px; font-size: 0.8rem; color: #10b981; height: 90px; overflow-y: auto; margin-top: 10px; border: 1px solid #334155; }
@@ -162,15 +166,16 @@
       <div class="input-group">
         <label>Escolher Boss:</label>
         <select id="boss-select" onchange="selectBoss()">
-          <option value="0">Nível 1: Goblin Rei (Fácil - Moedas)</option>
-          <option value="1">Nível 2: Orc General (Fácil - Moedas)</option>
-          <option value="2">Nível 3: Golem de Pedra (Médio - Moedas/Gems)</option>
-          <option value="3">Nível 4: Quimera Sombria (Difícil - Diamantes)</option>
-          <option value="4">Nível 5: Dragão Ancião (Lendário - Diamantes)</option>
+          <option value="0">Nível 1: Goblin Rei (Fácil)</option>
+          <option value="1">Nível 2: Orc General (Fácil)</option>
+          <option value="2">Nível 3: Golem de Pedra (Médio)</option>
+          <option value="3">Nível 4: Quimera Sombria (Difícil)</option>
+          <option value="4">Nível 5: Dragão Ancião (Lendário)</option>
         </select>
       </div>
 
       <div style="background:#0f172a; padding:12px; border-radius:8px; text-align:center; margin-bottom:10px;">
+        <img id="boss-img" src="https://img.icons8.com/isometric-folders/100/goblin.png" class="boss-avatar" alt="Boss">
         <h4 id="boss-name" style="color:var(--danger)">Goblin Rei</h4>
         <p style="font-size:0.85rem;">HP do Chefe: <span id="boss-hp">60</span></p>
       </div>
@@ -195,11 +200,17 @@
       <div id="shop-weapons-list" class="grid-2 hidden"></div>
       <div id="shop-potions-list" class="grid-2 hidden">
         <div class="item-card">
-          <strong>Poção de Vida</strong><br>Recupera +50 HP<br>🟡 40 Moedas
+          <img src="https://img.icons8.com/color/96/health-potion.png" alt="Poção">
+          <div>
+            <strong>Poção de Vida</strong><br>Recupera +50 HP<br>🟡 40 Moedas
+          </div>
           <button onclick="buyPotion('pocao', 40)">Comprar</button>
         </div>
         <div class="item-card">
-          <strong>Mega Elixir</strong><br>Recupera HP e Energia Max<br>💎 2 Diamantes
+          <img src="https://img.icons8.com/color/96/magic-potion.png" alt="Elixir">
+          <div>
+            <strong>Mega Elixir</strong><br>Recupera HP e Energia Max<br>💎 2 Diamantes
+          </div>
           <button onclick="buyPotion('elixir', 2, true)">Comprar</button>
         </div>
       </div>
@@ -208,7 +219,7 @@
     <!-- UPGRADES -->
     <div id="panel-upgrades" class="panel-section">
       <h3>⚒️ Painel de Upgrades</h3>
-      <div class="item-card">
+      <div class="item-card" style="margin-bottom: 12px;">
         <strong>Melhorar Arma Atual</strong><br>+5 Ataque por Nível<br>Custo: ✨ 10 Energia de Poder
         <button onclick="upgradeWeapon()">Melhorar Arma</button>
       </div>
@@ -256,7 +267,7 @@
       <h3>🔔 Notificações do Sistema</h3>
       <div id="notif-list">
         <div class="notif-card"><strong>Evento de Inauguração:</strong> Bosses Lendários concedem o dobro de Diamantes!</div>
-        <div class="notif-card"><strong>Atualização 2.0:</strong> Novo painel de energia de poder liberado.</div>
+        <div class="notif-card"><strong>Atualização 2.1:</strong> Novas sprites e 15 personagens adicionados à loja!</div>
       </div>
     </div>
 
@@ -307,38 +318,51 @@
 
   const defaultAvatar = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 24 24' fill='%2338bdf8'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>";
 
+  /* PERSONAGENS AMPLIADOS (15 ITENS COM IMAGENS) */
   const shopCharacters = [
-    { id: 'c1', name: 'Guerreiro Sombra', atk: 5, hp: 20, price: 100, isGem: false },
-    { id: 'c2', name: 'Mago Elemental', atk: 8, hp: 15, price: 200, isGem: false },
-    { id: 'c3', name: 'Arqueira Real', atk: 12, hp: 25, price: 350, isGem: false },
-    { id: 'c4', name: 'Paladino Sagrado', atk: 15, hp: 50, price: 500, isGem: false },
-    { id: 'c5', name: 'Ninja do Vento', atk: 20, hp: 30, price: 750, isGem: false },
-    { id: 'c6', name: 'Berserker de Fogo', atk: 28, hp: 40, price: 1000, isGem: false },
-    { id: 'c7', name: 'Caçador de Dragões', atk: 35, hp: 60, price: 10, isGem: true },
-    { id: 'c8', name: 'Senhor dos Elementos', atk: 45, hp: 80, price: 20, isGem: true },
-    { id: 'c9', name: 'Cavaleiro Abissal', atk: 60, hp: 100, price: 35, isGem: true },
-    { id: 'c10', name: 'Imperador Dragão', atk: 85, hp: 150, price: 50, isGem: true }
+    { id: 'c1', name: 'Guerreiro Sombra', atk: 5, hp: 20, price: 100, isGem: false, img: 'https://img.icons8.com/color/96/ninja.png' },
+    { id: 'c2', name: 'Mago Elemental', atk: 8, hp: 15, price: 200, isGem: false, img: 'https://img.icons8.com/color/96/wizard.png' },
+    { id: 'c3', name: 'Arqueira Real', atk: 12, hp: 25, price: 350, isGem: false, img: 'https://img.icons8.com/color/96/archer.png' },
+    { id: 'c4', name: 'Paladino Sagrado', atk: 15, hp: 50, price: 500, isGem: false, img: 'https://img.icons8.com/color/96/knight.png' },
+    { id: 'c5', name: 'Ninja do Vento', atk: 20, hp: 30, price: 750, isGem: false, img: 'https://img.icons8.com/color/96/samurai.png' },
+    { id: 'c6', name: 'Berserker de Fogo', atk: 28, hp: 40, price: 1000, isGem: false, img: 'https://img.icons8.com/color/96/barbarian.png' },
+    { id: 'c7', name: 'Invocador Rúnico', atk: 32, hp: 45, price: 1300, isGem: false, img: 'https://img.icons8.com/color/96/witch.png' },
+    { id: 'c8', name: 'Guerreiro Mecânico', atk: 38, hp: 55, price: 1600, isGem: false, img: 'https://img.icons8.com/color/96/cyborg.png' },
+    { id: 'c9', name: 'Assassina Estelar', atk: 42, hp: 50, price: 2000, isGem: false, img: 'https://img.icons8.com/color/96/female-assassin.png' },
+    { id: 'c10', name: 'Caçador de Dragões', atk: 50, hp: 70, price: 10, isGem: true, img: 'https://img.icons8.com/color/96/spartan-helmet.png' },
+    { id: 'c11', name: 'Senhor Elementar', atk: 65, hp: 85, price: 20, isGem: true, img: 'https://img.icons8.com/color/96/genie.png' },
+    { id: 'c12', name: 'Cavaleiro Abissal', atk: 80, hp: 100, price: 30, isGem: true, img: 'https://img.icons8.com/color/96/reaper.png' },
+    { id: 'c13', name: 'Anjo da Vingança', atk: 95, hp: 120, price: 40, isGem: true, img: 'https://img.icons8.com/color/96/angel.png' },
+    { id: 'c14', name: 'Guardião Titânico', atk: 110, hp: 140, price: 50, isGem: true, img: 'https://img.icons8.com/color/96/robot.png' },
+    { id: 'c15', name: 'Imperador Dragão', atk: 140, hp: 180, price: 75, isGem: true, img: 'https://img.icons8.com/color/96/dragon.png' }
   ];
 
+  /* ARMAS AMPLIADAS (15 ITENS COM IMAGENS) */
   const shopWeapons = [
-    { id: 'w1', name: 'Adaga de Madeira', atk: 3, price: 50, isGem: false },
-    { id: 'w2', name: 'Espada de Ferro', atk: 8, price: 120, isGem: false },
-    { id: 'w3', name: 'Machado Mágico', atk: 15, price: 250, isGem: false },
-    { id: 'w4', name: 'Lança Celestial', atk: 22, price: 450, isGem: false },
-    { id: 'w5', name: 'Arco Fênix', atk: 30, price: 700, isGem: false },
-    { id: 'w6', name: 'Cetro do Caos', atk: 40, price: 1000, isGem: false },
-    { id: 'w7', name: 'Katana Sombria', atk: 55, price: 5, isGem: true },
-    { id: 'w8', name: 'Glaive Runica', atk: 70, price: 12, isGem: true },
-    { id: 'w9', name: 'Foice Estelar', atk: 90, price: 25, isGem: true },
-    { id: 'w10', name: 'Lâmina do Fim', atk: 120, price: 40, isGem: true }
+    { id: 'w1', name: 'Adaga de Madeira', atk: 3, price: 50, isGem: false, img: 'https://img.icons8.com/color/96/dagger.png' },
+    { id: 'w2', name: 'Espada de Ferro', atk: 8, price: 120, isGem: false, img: 'https://img.icons8.com/color/96/sword.png' },
+    { id: 'w3', name: 'Machado Mágico', atk: 15, price: 250, isGem: false, img: 'https://img.icons8.com/color/96/battle-axe.png' },
+    { id: 'w4', name: 'Lança Celestial', atk: 22, price: 450, isGem: false, img: 'https://img.icons8.com/color/96/spear.png' },
+    { id: 'w5', name: 'Arco Fênix', atk: 30, price: 700, isGem: false, img: 'https://img.icons8.com/color/96/bow.png' },
+    { id: 'w6', name: 'Cetro do Caos', atk: 40, price: 1000, isGem: false, img: 'https://img.icons8.com/color/96/magic-wand.png' },
+    { id: 'w7', name: 'Martelo do Trovão', atk: 48, price: 1400, isGem: false, img: 'https://img.icons8.com/color/96/warhammer.png' },
+    { id: 'w8', name: 'Katana Sombria', atk: 58, price: 5, isGem: true, img: 'https://img.icons8.com/color/96/katana.png' },
+    { id: 'w9', name: 'Glaive Runica', atk: 70, price: 12, isGem: true, img: 'https://img.icons8.com/color/96/halberd.png' },
+    { id: 'w10', name: 'Foice Estelar', atk: 88, price: 20, isGem: true, img: 'https://img.icons8.com/color/96/scythe.png' },
+    { id: 'w11', name: 'Escudo de Plasma', atk: 100, price: 28, isGem: true, img: 'https://img.icons8.com/color/96/shield.png' },
+    { id: 'w12', name: 'Besta Fantasma', atk: 115, price: 35, isGem: true, img: 'https://img.icons8.com/color/96/crossbow.png' },
+    { id: 'w13', name: 'Lança Solar', atk: 130, price: 45, isGem: true, img: 'https://img.icons8.com/color/96/trident.png' },
+    { id: 'w14', name: 'Lâmina do Fim', atk: 155, price: 60, isGem: true, img: 'https://img.icons8.com/color/96/broadsword.png' },
+    { id: 'w15', name: 'Orbe do Infinito', atk: 185, price: 80, isGem: true, img: 'https://img.icons8.com/color/96/crystal-ball.png' }
   ];
 
+  /* BOSSES COM IMAGENS INDIVIDUAIS */
   const bosses = [
-    { name: "Goblin Rei", hp: 60, maxHp: 60, atk: 8, exp: 50, coins: 50, gems: 0, powerEng: 5 },
-    { name: "Orc General", hp: 150, maxHp: 150, atk: 18, exp: 120, coins: 120, gems: 0, powerEng: 10 },
-    { name: "Golem de Pedra", hp: 350, maxHp: 350, atk: 30, exp: 250, coins: 200, gems: 1, powerEng: 18 },
-    { name: "Quimera Sombria", hp: 700, maxHp: 700, atk: 50, exp: 500, coins: 350, gems: 3, powerEng: 30 },
-    { name: "Dragão Ancião", hp: 1500, maxHp: 1500, atk: 90, exp: 1200, coins: 600, gems: 8, powerEng: 60 }
+    { name: "Goblin Rei", hp: 60, maxHp: 60, atk: 8, exp: 50, coins: 50, gems: 0, powerEng: 5, img: 'https://img.icons8.com/color/96/goblin.png' },
+    { name: "Orc General", hp: 150, maxHp: 150, atk: 18, exp: 120, coins: 120, gems: 0, powerEng: 10, img: 'https://img.icons8.com/color/96/troll.png' },
+    { name: "Golem de Pedra", hp: 350, maxHp: 350, atk: 30, exp: 250, coins: 200, gems: 1, powerEng: 18, img: 'https://img.icons8.com/color/96/golem.png' },
+    { name: "Quimera Sombria", hp: 700, maxHp: 700, atk: 50, exp: 500, coins: 350, gems: 3, powerEng: 30, img: 'https://img.icons8.com/color/96/gargoyle.png' },
+    { name: "Dragão Ancião", hp: 1500, maxHp: 1500, atk: 90, exp: 1200, coins: 600, gems: 8, powerEng: 60, img: 'https://img.icons8.com/color/96/dragon.png' }
   ];
 
   let currentBossIdx = 0;
@@ -445,11 +469,16 @@
 
   function selectBoss() {
     currentBossIdx = parseInt(document.getElementById('boss-select').value);
-    currentBossHp = bosses[currentBossIdx].hp;
+    const b = bosses[currentBossIdx];
+    currentBossHp = b.hp;
+    
     const bossNameEl = document.getElementById('boss-name');
     const bossHpEl = document.getElementById('boss-hp');
-    if (bossNameEl) bossNameEl.innerText = bosses[currentBossIdx].name;
+    const bossImgEl = document.getElementById('boss-img');
+    
+    if (bossNameEl) bossNameEl.innerText = b.name;
     if (bossHpEl) bossHpEl.innerText = currentBossHp;
+    if (bossImgEl) bossImgEl.src = b.img;
   }
 
   async function attack() {
@@ -662,7 +691,12 @@
         const priceTxt = c.isGem ? `💎 ${c.price}` : `🟡 ${c.price}`;
         charBox.innerHTML += `
           <div class="item-card">
-            <strong>${c.name}</strong><br>+${c.atk} Atk | +${c.hp} HP<br>${priceTxt}
+            <img src="${c.img}" alt="${c.name}">
+            <div>
+              <strong>${c.name}</strong><br>
+              <small>+${c.atk} Atk | +${c.hp} HP</small><br>
+              <strong>${priceTxt}</strong>
+            </div>
             <button onclick="buyChar('${c.id}')">Comprar</button>
           </div>
         `;
@@ -676,7 +710,12 @@
         const priceTxt = w.isGem ? `💎 ${w.price}` : `🟡 ${w.price}`;
         weaponBox.innerHTML += `
           <div class="item-card">
-            <strong>${w.name}</strong><br>+${w.atk} Atk<br>${priceTxt}
+            <img src="${w.img}" alt="${w.name}">
+            <div>
+              <strong>${w.name}</strong><br>
+              <small>+${w.atk} Atk</small><br>
+              <strong>${priceTxt}</strong>
+            </div>
             <button onclick="buyWeapon('${w.id}')">Comprar</button>
           </div>
         `;
@@ -761,6 +800,7 @@
         }
 
         renderShopLists();
+        selectBoss();
         updateUI();
         listenChat();
         document.getElementById('auth-card').classList.add('hidden');
