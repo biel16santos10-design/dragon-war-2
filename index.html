@@ -32,7 +32,7 @@
         .auth-switch { margin-top: 15px; font-size: 13px; color: #94a3b8; cursor: pointer; }
         .auth-switch:hover { color: var(--accent-color); text-decoration: underline; }
 
-        #game-container { display: flex; width: 100%; height: 100%; background: linear-gradient(rgba(11, 15, 25, 0.85), rgba(11, 15, 25, 0.95)), url('89097.png') no-repeat center center; background-size: cover; }
+        #game-container { display: flex; width: 100%; height: 100%; background: linear-gradient(rgba(11, 15, 25, 0.85), rgba(11, 15, 25, 0.95)), url('89097.png') no-repeat center center; background-size: cover; position: relative; }
         sidebar { width: 260px; background: rgba(19, 27, 46, 0.95); border-right: 1px solid var(--panel-border); display: flex; flex-direction: column; padding: 20px; backdrop-filter: blur(5px); }
         
         .server-banner { width: 100%; height: 75px; background: url('89097.png') no-repeat center center; background-size: cover; border-radius: 6px; margin-bottom: 15px; border: 1px solid var(--accent-color); }
@@ -45,7 +45,7 @@
         .menu-item:hover { background: rgba(255,255,255,0.08); }
         .menu-item.active { background: rgba(245, 158, 11, 0.15); color: var(--accent-color); border-left: 3px solid var(--accent-color); }
 
-        main { flex-grow: 1; display: flex; flex-direction: column; position: relative; }
+        main { flex-grow: 1; display: flex; flex-direction: column; position: relative; padding-bottom: 60px; }
         header { padding: 15px 25px; background: rgba(19, 27, 46, 0.9); border-bottom: 1px solid var(--panel-border); display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(5px); }
         
         .content-area { flex-grow: 1; padding: 25px; overflow-y: auto; position: relative; }
@@ -53,6 +53,13 @@
         .panel-section.active { display: block; }
 
         .adm-tag { color: var(--adm-color); font-weight: bold; }
+        
+        /* BARRA FIXA DE CHAT GLOBAL NO RODAPÉ */
+        .global-chat-bar { position: absolute; bottom: 0; left: 0; width: 100%; height: 55px; background: rgba(2, 6, 23, 0.95); border-top: 1px solid var(--panel-border); display: flex; align-items: center; padding: 0 15px; gap: 10px; z-index: 50; backdrop-filter: blur(5px); }
+        .global-chat-bar span { font-size: 12px; color: var(--accent-color); font-weight: bold; white-space: nowrap; text-transform: uppercase; }
+        .global-chat-bar input { flex-grow: 1; padding: 8px 12px; border-radius: 4px; border: 1px solid var(--panel-border); background: #070a12; color: white; font-size: 13px; }
+        .global-chat-bar button { padding: 8px 15px; background: var(--adm-color); border: none; color: white; font-weight: bold; border-radius: 4px; cursor: pointer; text-transform: uppercase; font-size: 12px; }
+        
         .chat-box { height: 130px; background: rgba(2, 6, 23, 0.8); border: 1px solid var(--panel-border); border-radius: 6px; padding: 10px; overflow-y: auto; font-size: 13px; display: flex; flex-direction: column; gap: 5px; margin-top: 10px; }
         .chat-msg { background: rgba(255,255,255,0.05); padding: 5px 8px; border-radius: 4px; }
         .chat-msg.global { border-left: 3px solid var(--adm-color); background: rgba(239, 68, 68, 0.15); }
@@ -118,11 +125,46 @@
 
             <div class="content-area">
                 
-                <!-- 1. MODO JOGO -->
+                <!-- 1. MODO JOGO / FASES DE COMBATE COM MÓVEIS -->
                 <div id="section-jogar" class="panel-section">
-                    <h2>Modo Batalha - Servidor Oficial</h2>
-                    <p style="color: #94a3b8; margin-top: 5px;">Ambiente principal sincronizado com o banco de dados Firebase.</p>
-                    <button class="btn" style="margin-top: 20px; width: auto; padding: 12px 25px;" onclick="alert('Buscando partida ranqueada com jogadores reais...')">Iniciar Partida / Matchmaking</button>
+                    <h2>Modo Batalha - Sistema de Fases</h2>
+                    <p style="color: #94a3b8; margin-top: 5px;">Selecione o nível de dificuldade para destruir os móveis e avançar nas etapas.</p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px;">
+                        <div class="box-item" style="cursor:pointer;" onclick="iniciarFases('iniciais')">
+                            <h3 style="color: var(--accent-color);">Fases Iniciais</h3>
+                            <p style="font-size: 12px; color: #94a3b8; margin-top: 5px;">5 Etapas com móveis leves e pouca resistência.</p>
+                        </div>
+                        <div class="box-item" style="cursor:pointer;" onclick="iniciarFases('media')">
+                            <h3 style="color: var(--accent-color);">Fases Médias</h3>
+                            <p style="font-size: 12px; color: #94a3b8; margin-top: 5px;">5 Etapas com móveis reforçados e maior força.</p>
+                        </div>
+                        <div class="box-item" style="cursor:pointer;" onclick="iniciarFases('avancadas')">
+                            <h3 style="color: var(--accent-color);">Fases Avançadas</h3>
+                            <p style="font-size: 12px; color: #94a3b8; margin-top: 5px;">5 Etapas com móveis industriais e alta ocupação.</p>
+                        </div>
+                        <div class="box-item" style="cursor:pointer;" onclick="iniciarFases('dificil')">
+                            <h3 style="color: var(--adm-color);">Fases Difíceis & Hardcore</h3>
+                            <p style="font-size: 12px; color: #94a3b8; margin-top: 5px;">Desafios extremos com móveis blindados e boss.</p>
+                        </div>
+                    </div>
+
+                    <!-- Tela interna de etapas de combate -->
+                    <div id="arena-fases-container" class="hidden" style="margin-top: 20px; background: var(--panel-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--panel-border);">
+                        <h3 id="fases-titulo-cat" style="color: var(--accent-color);">Fase Ativa</h3>
+                        <p id="fases-etapa-info" style="font-size: 14px; color: #94a3b8; margin: 10px 0;">Etapa 1/5 - Alvo: Mesa de Escritório Resistente</p>
+                        <div style="background: #070a12; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:13px;">
+                                <span>Resistência do Móvel:</span>
+                                <span id="movel-hp" style="color: var(--adm-color); font-weight:bold;">100%</span>
+                            </div>
+                            <div style="width:100%; background:#1e293b; height:10px; border-radius:5px; overflow:hidden;">
+                                <div id="movel-hp-bar" style="width:100%; background:var(--adm-color); height:100%; transition:0.2s;"></div>
+                            </div>
+                        </div>
+                        <button class="btn" style="width:auto; padding: 10px 20px;" onclick="atacarMovelFase()">🔨 Bater no Móvel com Arma Equipada</button>
+                        <button class="btn" style="background:#334155; color:white; width:auto; padding: 10px 20px; margin-left: 10px;" onclick="voltarSelecaoFases()">Sair da Fase</button>
+                    </div>
                 </div>
 
                 <!-- 2. COMBATE -->
@@ -159,9 +201,10 @@
                         <button class="btn" onclick="criarPoder()">Criar e Distribuir</button>
                     </div>
                     <div>
-                        <h4>Seus Poderes Ativos</h4>
+                        <h4>Seus Poderes e Armas para Bater nos Móveis</h4>
                         <ul id="lista-poderes-user" style="margin-top: 10px; padding-left: 20px; color: #94a3b8;">
-                            <li>Ataque de Garra Básica (Nível 1)</li>
+                            <li>Martelo de Ferro Básico (Dano: 20)</li>
+                            <li>Espada Longa de Aço (Dano: 45)</li>
                         </ul>
                     </div>
                 </div>
@@ -281,9 +324,9 @@
                     </div>
                 </div>
 
-                <!-- CHAT GLOBAL FIXO -->
+                <!-- HISTÓRICO DE CHAT GLOBAL (DENTRO DA ÁREA DE CONTEÚDO) -->
                 <div style="margin-top: 30px; border-top: 1px solid var(--panel-border); padding-top: 15px;">
-                    <h4>Chat do Servidor / Global</h4>
+                    <h4>Histórico do Chat Global</h4>
                     <div class="chat-box" id="chat-container">
                         <div class="chat-msg">Servidor Real: Conectado com sucesso ao Firebase Auth e Firestore!</div>
                     </div>
@@ -291,6 +334,13 @@
 
             </div>
         </main>
+
+        <!-- BARRA FIXA DE CHAT GLOBAL NO RODAPÉ -->
+        <div class="global-chat-bar">
+            <span>Chat Global:</span>
+            <input type="text" id="footer-chat-input" placeholder="Digite sua mensagem no chat global...">
+            <button onclick="enviarMensagemRodape()">Enviar</button>
+        </div>
     </div>
 
     <!-- MODAL DE GESTÃO DO JOGADOR REAL SELECIONADO -->
@@ -312,11 +362,12 @@
                 <button class="btn" style="background: #3b82f6; color: white;" onclick="acaoModal('dm')">💬 Enviar Mensagem Direta (DM)</button>
                 <button class="btn" style="background: #8b5cf6; color: white;" onclick="acaoModal('funcoes')">⚡ Atribuir Funções Especiais</button>
                 <button class="btn btn-adm" onclick="acaoModal('puxar')">🚀 Puxar Jogador Real para Sala</button>
+                <button class="btn" style="background: #f59e0b; color: #000;" onclick="atribuirSubAdm()">👑 Conceder ADM Parcial (Moderador)</button>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPT DE INTEGRAÇÃO COMPLETA FIREBASE + TODAS AS FUNÇÕES DE ADM -->
+    <!-- SCRIPT DE INTEGRAÇÃO COMPLETA FIREBASE + TODAS AS FUNÇÕES DE ADM E FASES -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -338,7 +389,16 @@
 
         const EMAIL_ADMIN = "groupsacabraldigital@gmail.com";
         let modoCadastro = false;
-        let usuarioAtual = { uid: "", email: "", isAdm: false, avatar: "" };
+        let usuarioAtual = { uid: "", email: "", isAdm: false, isSubAdm: false, avatar: "" };
+
+        // Variáveis do sistema de fases e móveis
+        let faseAtualInfo = { categoria: '', etapa: 1, hpMovel: 100, maxHp: 100 };
+        const moveisPorCategoria = {
+            iniciais: ["Cadeira de Plástico", "Mesa de Escritório Simples", "Estante de Madeira Frágil", "Sofá Velho", "Armário de Alumínio"],
+            media: ["Mesa de Jantar Robusta", "Geladeira Antiga", "Sofá de Couro Pesado", "Guarda-Roupa de Carvalho", "Estante de Aço"],
+            avancadas: ["Cofre Blindado Comercial", "Máquina Industrial Leve", "Mesa de Mármore Maciço", "Armário de Segurança", "Painel de Servidores"],
+            dificil: ["Móvel Titã de Ferro Fundido", "Cofre Mítico Reforçado", "Estrutura Boss Blindada", "Trono do Dragão de Aço", "Monólito de Comando Extremo"]
+        };
 
         window.alternarModoAuth = function() {
             modoCadastro = !modoCadastro;
@@ -376,7 +436,7 @@
                     ultimoAcesso: new Date().toISOString()
                 }, { merge: true });
 
-                usuarioAtual = { uid: user.uid, email: user.email, isAdm: isAdm, avatar: "" };
+                usuarioAtual = { uid: user.uid, email: user.email, isAdm: isAdm, isSubAdm: false, avatar: "" };
 
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('game-container').classList.remove('hidden');
@@ -389,7 +449,7 @@
                 document.getElementById('player-real-id').value = usuarioAtual.uid;
                 document.getElementById('player-edit-name').value = usuarioAtual.email;
 
-                if(isAdm) {
+                if(isAdm || usuarioAtual.isSubAdm) {
                     carregarJogadoresReaisDoBanco();
                 }
 
@@ -400,11 +460,12 @@
 
         function atualizarPerfilUI() {
             const nomeCurto = usuarioAtual.email.split('@')[0];
-            document.getElementById('sidebar-name').innerHTML = usuarioAtual.isAdm 
-                ? `${nomeCurto} <span class="adm-tag">[ADM]</span> 👑` 
-                : nomeCurto;
-            
-            document.getElementById('sidebar-role').innerText = usuarioAtual.isAdm ? "Administrador (Fundador Real)" : "Aventureiro Real";
+            let tagCargo = "";
+            if(usuarioAtual.isAdm) tagCargo = ` <span class="adm-tag">[FUNDADOR]</span> 👑`;
+            else if(usuarioAtual.isSubAdm) tagCargo = ` <span style="color:#f59e0b;">[MODERADOR]</span> 🛡️`;
+
+            document.getElementById('sidebar-name').innerHTML = nomeCurto + tagCargo;
+            document.getElementById('sidebar-role').innerText = usuarioAtual.isAdm ? "Administrador Principal" : (usuarioAtual.isSubAdm ? "Moderador / ADM Parcial" : "Aventureiro Real");
 
             const avatarImg = document.getElementById('sidebar-avatar-img');
             const avatarTxt = document.getElementById('sidebar-avatar-txt');
@@ -429,6 +490,7 @@
 
         async function carregarJogadoresReaisDoBanco() {
             const tbody = document.getElementById('tabela-jogadores-server');
+            if(!tbody) return;
             tbody.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Carregando do Firestore...</td></tr>";
 
             try {
@@ -463,7 +525,8 @@
         function montarMenuLateral() {
             const menuList = document.getElementById('menu-list');
             menuList.innerHTML = "";
-            let itensMenu = usuarioAtual.isAdm ? [
+            let itensMenu = (usuarioAtual.isAdm || usuarioAtual.isSubAdm) ? [
+                { id: 'jogar', label: '🎮 Modo Batalha (Fases)' },
                 { id: 'loja', label: '🛒 Loja & Catálogo' },
                 { id: 'poderes', label: '⚡ Criar Poderes' },
                 { id: 'inventario', label: '🎒 Inventário' },
@@ -472,7 +535,7 @@
                 { id: 'evento', label: '🎉 Eventos & Caixas' },
                 { id: 'painel-adm', label: '👑 Painel ADM' }
             ] : [
-                { id: 'jogar', label: '🎮 Modo de Jogo' },
+                { id: 'jogar', label: '🎮 Modo Batalha (Fases)' },
                 { id: 'combate', label: '⚔ Combate' },
                 { id: 'loja', label: '🛒 Loja' },
                 { id: 'poderes', label: '⚡ Poderes' },
@@ -502,15 +565,71 @@
 
             document.getElementById('current-page-title').innerText = elementoLi ? elementoLi.innerText : idSecao;
 
-            if(usuarioAtual.isAdm) {
-                if(idSecao === 'loja') document.getElementById('adm-loja-controls').classList.remove('hidden');
-                if(idSecao === 'poderes') document.getElementById('adm-poderes-controls').classList.remove('hidden');
+            if(usuarioAtual.isAdm || usuarioAtual.isSubAdm) {
+                if(idSecao === 'loja') {
+                    const admLoja = document.getElementById('adm-loja-controls');
+                    if(admLoja) admLoja.classList.toggle('hidden', !usuarioAtual.isAdm);
+                }
+                if(idSecao === 'poderes') {
+                    const admPoderes = document.getElementById('adm-poderes-controls');
+                    if(admPoderes) admPoderes.classList.toggle('hidden', !usuarioAtual.isAdm);
+                }
                 if(idSecao === 'jogadores') carregarJogadoresReaisDoBanco();
             }
         }
 
+        // Funções do Sistema de Fases e Móveis
+        window.iniciarFases = function(categoria) {
+            faseAtualInfo.categoria = categoria;
+            faseAtualInfo.etapa = 1;
+            faseAtualInfo.maxHp = 100 + (categoria === 'media' ? 50 : (categoria === 'avancadas' ? 120 : (categoria === 'dificil' ? 250 : 0)));
+            faseAtualInfo.hpMovel = faseAtualInfo.maxHp;
+
+            document.getElementById('fases-titulo-cat').innerText = `Categoria: ${categoria.toUpperCase()}`;
+            atualizarInfoEtapaUI();
+            
+            // Trocar visual para exibir a telinha interna de fases
+            document.querySelector('#section-jogar > div:nth-child(3)').classList.add('hidden');
+            document.getElementById('arena-fases-container').classList.remove('hidden');
+        }
+
+        window.voltarSelecaoFases = function() {
+            document.getElementById('arena-fases-container').classList.add('hidden');
+            document.querySelector('#section-jogar > div:nth-child(3)').classList.remove('hidden');
+        }
+
+        function atualizarInfoEtapaUI() {
+            const listaMóveis = moveisPorCategoria[faseAtualInfo.categoria] || moveisPorCategoria.iniciais;
+            const movelNome = listaMóveis[(faseAtualInfo.etapa - 1) % listaMóveis.length];
+            
+            document.getElementById('fases-etapa-info').innerText = `Etapa ${faseAtualInfo.etapa}/5 - Alvo: ${movelNome}`;
+            const pct = Math.max(0, (faseAtualInfo.hpMovel / faseAtualInfo.maxHp) * 100);
+            document.getElementById('movel-hp').innerText = `${Math.round(pct)}%`;
+            document.getElementById('movel-hp-bar.style').width = `${pct}%`;
+        }
+
+        window.atacarMovelFase = function() {
+            let danoArma = 35; // Dano padrão da arma do jogador
+            faseAtualInfo.hpMovel -= danoArma;
+
+            if(faseAtualInfo.hpMovel <= 0) {
+                if(faseAtualInfo.etapa < 5) {
+                    alert(`Móvel destruído! Avançando para a próxima etapa da fase ${faseAtualInfo.categoria}.`);
+                    faseAtualInfo.etapa++;
+                    faseAtualInfo.maxHp += 40;
+                    faseAtualInfo.hpMovel = faseAtualInfo.maxHp;
+                } else {
+                    alert(`Parabéns! Você completou todas as 5 etapas da fase ${faseAtualInfo.categoria} com sucesso! Recompensa: +100 moedas.`);
+                    voltarSelecaoFases();
+                    return;
+                }
+            }
+            atualizarInfoEtapaUI();
+        }
+
         function construirCaixasEpicas() {
             const grid = document.getElementById('epic-boxes-grid');
+            if(!grid) return;
             grid.innerHTML = "";
             const precosCaixas = [100, 250, 500, 1000, 2500, 5000];
             precosCaixas.forEach((preco, idx) => {
@@ -530,6 +649,7 @@
         }
 
         window.adicionarItemCatalogo = function() {
+            if(!usuarioAtual.isAdm) { alert('Acesso negado!'); return; }
             const nome = document.getElementById('new-item-name').value;
             const preco = document.getElementById('new-item-price').value;
             if(!nome || !preco) { alert('Preencha todos os campos!'); return; }
@@ -539,6 +659,7 @@
         }
 
         window.criarPoder = function() {
+            if(!usuarioAtual.isAdm) { alert('Acesso negado!'); return; }
             const nome = document.getElementById('poder-nome').value;
             const dano = document.getElementById('poder-dano').value;
             if(!nome) { alert('Insira o nome do poder!'); return; }
@@ -559,9 +680,19 @@
             document.getElementById('modal-jogador').classList.add('hidden');
         }
 
+        window.atribuirSubAdm = function() {
+            if(!usuarioAtual.isAdm) { alert('Apenas o Fundador principal pode conceder ADM!'); return; }
+            usuarioAtual.isSubAdm = true;
+            alert(`Função de Moderador (ADM Parcial) concedida para ${jogadorSelecionadoModal.nome}! Agora ele tem acesso às funções restritas.`);
+            fecharModalJogador();
+            atualizarPerfilUI();
+            montarMenuLateral();
+        }
+
         window.acaoModal = function(tipo) {
             const { id, nome } = jogadorSelecionadoModal;
             if(tipo === 'presentes') {
+                if(!usuarioAtual.isAdm) { alert('Permissão insuficiente.'); return; }
                 alert(`🎁 Presentes da loja liberados para o jogador real ${nome} (${id})!`);
             } else if(tipo === 'dm') {
                 const msgDM = prompt(`Enviar Mensagem Direta (DM) para ${nome}:`);
@@ -569,44 +700,65 @@
             } else if(tipo === 'funcoes') {
                 alert(`⚡ Funções especiais gerenciadas para ${nome}.`);
             } else if(tipo === 'puxar') {
-                alert(`🚀 O jogador real ${nome} foi puxado para a sua sala!`);
+                alert(`🚀 O jogador real ${nome} foi puxado para a sua sala de suporte!`);
             }
             fecharModalJogador();
         }
 
         window.acaoAdm = function(tipo) {
+            if(!usuarioAtual.isAdm && !usuarioAtual.isSubAdm) { alert('Acesso negado!'); return; }
             const target = document.getElementById('target-player').value;
             if(!target) { alert('Digite o e-mail ou ID do jogador real!'); return; }
             
-            if(tipo === 'banir') alert(`O jogador real ${target} foi banido do servidor.`);
-            if(tipo === 'mutar') alert(`O jogador real ${target} foi mutado.`);
-            if(tipo === 'liberar_loja') alert(`Loja liberada para ${target}!`);
+            if(tipo === 'banir') {
+                if(!usuarioAtual.isAdm) { alert('Apenas o Fundador pode banir jogadores.'); return; }
+                alert(`O jogador real ${target} foi banido do servidor.`);
+            }
+            if(tipo === 'mutar') alert(`O jogador real ${target} foi mutado no chat.`);
+            if(tipo === 'liberar_loja') {
+                if(!usuarioAtual.isAdm) { alert('Apenas o Fundador pode liberar a loja completa.'); return; }
+                alert(`Loja liberada para ${target}!`);
+            }
             
             document.getElementById('target-player').value = "";
         }
 
-        window.enviarMensagemGlobal = function() {
-            const msg = document.getElementById('global-msg-input').value.trim();
+        // Função de envio pelo chat global inferior (Apenas ADM / Sub-ADM podem enviar)
+        window.enviarMensagemRodape = function() {
+            if(!usuarioAtual.isAdm && !usuarioAtual.isSubAdm) {
+                alert("Apenas administradores podem escrever no chat global do servidor!");
+                document.getElementById('footer-chat-input').value = "";
+                return;
+            }
+
+            const input = document.getElementById('footer-chat-input');
+            const msg = input.value.trim();
             if(!msg) return;
 
             const chat = document.getElementById('chat-container');
             const div = document.createElement('div');
             div.className = "chat-msg global";
-            div.innerHTML = `<strong>👑 [AVISO GLOBAL - ADM]:</strong> ${msg}`;
+            const cargoTag = usuarioAtual.isAdm ? "[FUNDADOR]" : "[MODERADOR]";
+            div.innerHTML = `<strong>👑 ${cargoTag} ${usuarioAtual.email.split('@')[0]}:</strong> ${msg}`;
             chat.appendChild(div);
             chat.scrollTop = chat.scrollHeight;
 
-            document.getElementById('global-msg-input').value = "";
+            input.value = "";
+        }
+
+        window.enviarMensagemGlobal = function() {
+            enviarMensagemRodape();
         }
 
         window.mudarTabRank = function(tipo) {
             const container = document.getElementById('rank-content');
+            if(!container) return;
             if(tipo === 'global') {
                 container.innerHTML = `<table><tr><th>Posição</th><th>Jogador Real</th><th>Nível</th></tr><tr><td>1º</td><td>ShadowKilled</td><td>99</td></tr><tr><td>2º</td><td>DragonSlayer</td><td>95</td></tr></table>`;
             } else if(tipo === 'online') {
-                container.innerHTML = `<table><tr><th>Jogador Real</th><th>Status</th></tr><tr><td>Gabriel <span class="adm-tag">[ADM]</span></td><td>Online Real</td></tr></table>`;
+                container.innerHTML = `<table><tr><th>Jogador Real</th><th>Status</th></tr><tr><td>Gabriel <span class="adm-tag">[FUNDADOR]</span></td><td>Online Real</td></tr></table>`;
             } else if(tipo === 'adms') {
-                container.innerHTML = `<table><tr><th>Administrador Real</th><th>Cargo</th><th>Acesso</th></tr><tr><td>Gabriel <span class="adm-tag">[ADM]</span></td><td>Fundador / Desenvolvedor</td><td>Total</td></tr></table>`;
+                container.innerHTML = `<table><tr><th>Administrador Real</th><th>Cargo</th><th>Acesso</th></tr><tr><td>Gabriel <span class="adm-tag">[FUNDADOR]</span></td><td>Fundador / Desenvolvedor</td><td>Total</td></tr></table>`;
             }
         }
     </script>
