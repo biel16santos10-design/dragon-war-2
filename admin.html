@@ -3,295 +3,484 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dragon War: Rise of Power</title>
+    <title>Dragon War: Rise of Power - Painel</title>
+    <!-- Firebase SDKs (Certifique-se de usar a mesma versão do seu projeto) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #070a13; color: #fff; display: flex; height: 100vh; overflow: hidden; }
-
-        .screen { display: none; width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
-        .active { display: flex; }
-
-        /* TELA DE AUTENTICAÇÃO / LOGIN */
-        #auth-screen { justify-content: center; align-items: center; background: radial-gradient(circle, #1e1b4b 0%, #070a13 100%); z-index: 100; }
-        .auth-box { background: rgba(15, 23, 42, 0.95); border: 2px solid #3b82f6; padding: 40px; border-radius: 12px; width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(59,130,246,0.3); }
-        .auth-box h2 { color: #3b82f6; margin-bottom: 20px; font-size: 24px; }
-        .form-control { width: 100%; padding: 12px; margin-bottom: 15px; background: #0b0f19; border: 1px solid #334155; color: #fff; border-radius: 6px; font-size: 14px; }
-        .btn-game { width: 100%; padding: 12px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-top: 5px; }
-        .btn-game:hover { opacity: 0.9; }
-
-        /* TELA PRINCIPAL DO JOGO */
-        #game-screen { background: #0b0f19; flex-direction: column; }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; background: #111827; padding: 15px 30px; border-bottom: 1px solid #1f2937; }
-        .player-info { display: flex; gap: 20px; align-items: center; font-size: 14px; }
+        /* Estilos base do painel e do tema */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0b0f19; color: #f8fafc; height: 100vh; overflow: hidden; }
         
-        .game-content { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; padding: 30px; flex-grow: 1; overflow-y: auto; }
-        .card-box { background: #111827; border: 1px solid #1f2937; border-radius: 10px; padding: 25px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .card-box h3 { color: #3b82f6; margin-bottom: 15px; font-size: 18px; }
+        /* Layout principal */
+        .game-container { display: flex; height: 100vh; }
+        .sidebar { width: 260px; background: #0f172a; border-right: 1px solid #1e293b; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 20px; font-size: 16px; font-weight: bold; color: #38bdf8; border-bottom: 1px solid #1e293b; }
+        .nav-menu { list-style: none; padding: 15px; display: flex; flex-direction: column; gap: 8px; }
+        .nav-menu li { padding: 10px 15px; cursor: pointer; border-radius: 6px; color: #94a3b8; transition: all 0.2s; font-size: 14px; }
+        .nav-menu li:hover, .nav-menu li.active { background: #1e293b; color: #f8fafc; }
 
-        /* CHAT PRIVADO */
-        .chat-container { display: flex; flex-direction: column; height: 100%; }
-        .chat-mensagens { height: 180px; overflow-y: auto; background: #0b0f19; padding: 10px; border-radius: 6px; border: 1px solid #1f2937; margin-bottom: 10px; font-size: 13px; }
+        .content-area { flex: 1; padding: 25px; overflow-y: auto; background: radial-gradient(circle at center, #111827 0%, #030712 100%); }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
 
-        /* MODAL DE ATUALIZAÇÃO GLOBAL */
-        #modal-update-global { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; }
-        .modal-content-box { background: #111827; border: 2px solid #ef4444; padding: 30px; border-radius: 12px; width: 420px; text-align: center; box-shadow: 0 10px 25px rgba(239,68,68,0.4); }
+        /* Cards e Tabelas */
+        .card-box { background: #0f172a; border: 1px solid #1e293b; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .card-box h3 { font-size: 16px; color: #38bdf8; margin-bottom: 15px; }
+        
+        .ranking-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .ranking-table th, .ranking-table td { padding: 12px; text-align: left; border-bottom: 1px solid #1e293b; }
+        .ranking-table th { color: #94a3b8; font-weight: 600; }
+        .ranking-table tr:hover { background: rgba(30, 41, 59, 0.5); }
+
+        /* Botões de Ação */
+        .btn-action { background: #0284c7; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; text-align: left; transition: opacity 0.2s; }
+        .btn-action:hover { opacity: 0.9; }
+
+        /* Rodapé de Status */
+        .status-bar { position: fixed; bottom: 0; left: 260px; right: 0; background: #0f172a; border-top: 1px solid #1e293b; padding: 10px 25px; display: flex; justify-content: space-between; font-size: 13px; color: #94a3b8; }
     </style>
 </head>
 <body>
 
-    <!-- POPUP DE ATUALIZAÇÃO GLOBAL (EM TEMPO REAL) -->
-    <div id="modal-update-global">
-        <div class="modal-content-box">
-            <h2 style="color: #ef4444; margin-bottom: 10px; font-size: 22px;">🚀 NOVIDADE NO JOGO!</h2>
-            <h4 id="update-modal-titulo" style="color: #fff; margin-bottom: 15px; font-size: 16px;">Título da Atualização</h4>
-            <p id="update-modal-desc" style="color: #94a3b8; font-size: 14px; margin-bottom: 25px; line-height: 1.5;">Descrição do update...</p>
-            <button onclick="fecharModalUpdate()" class="btn-game" style="background: linear-gradient(135deg, #ef4444, #b91c1c);">ENTENDIDO, BORA JOGAR!</button>
-        </div>
-    </div>
-
-    <!-- TELA DE LOGIN / REGISTRO -->
-    <div id="auth-screen" class="screen active">
-        <div class="auth-box">
-            <h2>DRAGON WAR</h2>
-            <p style="color: #94a3b8; font-size: 13px; margin-bottom: 20px;">Entre na sua conta para jogar</p>
-            <form onsubmit="fazerLogin(event)">
-                <input type="email" id="auth-email" class="form-control" placeholder="Seu E-mail" required>
-                <input type="password" id="auth-senha" class="form-control" placeholder="Sua Senha" required>
-                <button type="submit" class="btn-game">ENTRAR NO JOGO</button>
-            </form>
-            <button onclick="fazerCadastro()" class="btn-game" style="background: #10b981; margin-top: 10px;">CRIAR CONTA NOVA</button>
-        </div>
-    </div>
-
-    <!-- TELA DO JOGO -->
-    <div id="game-screen" class="screen">
-        <div class="top-bar">
-            <h2>🐉 Dragon War: Rise of Power</h2>
-            <div class="player-info">
-                <span>Guerreiro: <b id="ui-nome" style="color: #3b82f6;">-</b></span>
-                <span>Nível: <b id="ui-nivel">1</b></span>
-                <span>🪙 Ouro: <b id="ui-ouro" style="color: #fbbf24;">0</b></span>
-                <span>💎 Gemas: <b id="ui-gemas" style="color: #ec4899;">0</b></span>
-                <button onclick="auth.signOut().then(() => location.reload())" style="background: #ef4444; border: none; color: #fff; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">SAIR</button>
-            </div>
+    <div class="game-container">
+        <!-- Menu Lateral -->
+        <div class="sidebar">
+            <div class="sidebar-header">DRAGON WAR: OP</div>
+            <ul class="nav-menu">
+                <li onclick="trocarTab('geral', this)" class="active">🛡 Visão Geral (Ativo)</li>
+                <li onclick="trocarTab('admin', this)">⚔️ Jogadores Online</li>
+                <li onclick="trocarTab('banidos', this)">🛑 Jogadores Banidos</li>
+                <li onclick="trocarTab('logs', this)">📜 Logs de Admin</li>
+            </ul>
         </div>
 
-        <div class="game-content">
-            <!-- COLUNA ESQUERDA: JOGO / ARENA -->
-            <div>
-                <div class="card-box">
-                    <h3>⚔️ Arena de Batalha & Missões</h3>
-                    <p style="color: #94a3b8; font-size: 13px; margin-bottom: 15px;">Enfrente monstros para ganhar ouro e evoluir seu personagem.</p>
-                    <button class="btn-game" onclick="atacarMonstro()">BATALHAR CONTRA MONSTRO</button>
-                    <div id="resultado-batalha" style="margin-top: 15px; font-size: 13px; color: #3b82f6;"></div>
-                </div>
-
-                <div class="card-box">
-                    <h3>📢 Avisos do Servidor</h3>
-                    <p id="ui-aviso-global" style="color: #94a3b8; font-size: 13px;">Carregando avisos da staff...</p>
+        <!-- Conteúdo Principal -->
+        <div class="content-area">
+            
+            <!-- ABA: VISÃO GERAL -->
+            <div id="tab-geral" class="tab-panel active">
+                <h1 style="font-size: 24px; margin-bottom: 5px;">DRAGON WAR: RISE OF POWER</h1>
+                <p style="color: #94a3b8; margin-bottom: 25px;">ADMIN PANEL (MENU DE ADM)</p>
+                
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+                    <div>
+                        <div class="card-box">
+                            <h3>ESTATÍSTICAS DO SERVIDOR</h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 14px; color: #94a3b8;">
+                                <div>👥 Total Players: 12,543 (Online: 1,892)</div>
+                                <div>⏱️ Uptime: 4d 11h</div>
+                                <div>📶 Ping: 38ms</div>
+                                <div>⚡ Tps: 19.95</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card-box">
+                            <h3>AÇÕES RÁPIDAS (BETA)</h3>
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <button class="btn-action" onclick="adminSpawnBoss()">🐲 SPAWN DE BOSS</button>
+                                <button class="btn-action" style="background: #dc2626;" onclick="alert('Selecione um jogador na aba Jogadores Online para banir.')">🛑 BANIR JOGADOR</button>
+                                <button class="btn-action" style="background: #16a34a;" onclick="adminDarMoedas()">🪙 DAR MOEDAS</button>
+                                <button class="btn-action" style="background: #3b82f6;" onclick="adminModoDeus()">🛡️ MODO DEUS</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- COLUNA DIREITA: CHAT PRIVADO POR ID -->
-            <div>
-                <div class="card-box chat-container">
-                    <h3>💬 Chat Privado por ID</h3>
-                    <p style="color: #94a3b8; font-size: 12px; margin-bottom: 10px;">Digite o ID do jogador para conversar:</p>
+            <!-- ABA: JOGADORES ONLINE -->
+            <div id="tab-admin" class="tab-panel">
+                <h2 style="font-size: 20px; margin-bottom: 5px;">GESTÃO DE JOGADORES</h2>
+                <p style="color: #94a3b8; margin-bottom: 20px;">Lista em tempo real sincronizada com o Firestore.</p>
+                
+                <div class="card-box">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 style="margin: 0;">LISTA DE JOGADORES ONLINE</h3>
+                        <input type="text" id="filtro-jogador" placeholder="Pesquisar por nome..." onkeyup="filtrarJogadoresAdmin()" style="padding: 6px 12px; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 4px; width: 220px;">
+                    </div>
                     
-                    <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-                        <input type="text" id="chat-busca-id" class="form-control" placeholder="Cole o ID do Jogador..." style="margin-bottom:0; font-size: 12px;">
-                        <button class="btn-game" onclick="iniciarChatPrivado()" style="margin-top:0; width: 90px; font-size: 12px;">Conectar</button>
-                    </div>
+                    <table class="ranking-table" id="tabela-jogadores-admin">
+                        <thead>
+                            <tr>
+                                <th>NOME</th>
+                                <th>NÍVEL</th>
+                                <th>CLASSE</th>
+                                <th>LOCAL</th>
+                                <th>ESTADO</th>
+                                <th>AÇÕES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Preenchido via Firebase -->
+                        </tbody>
+                    </table>
 
-                    <div id="container-mensagens-privadas" class="chat-mensagens">
-                        <span style="color: #64748b;">Nenhum chat conectado.</span>
-                    </div>
-
-                    <div style="display: flex; gap: 8px;">
-                        <input type="text" id="input-msg-privada" class="form-control" placeholder="Mensagem..." style="margin-bottom:0; font-size: 12px;">
-                        <button class="btn-game" onclick="enviarMensagemPrivada()" style="margin-top:0; width: 80px; font-size: 12px;">Enviar</button>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                        <button onclick="paginaAnterior()" id="btn-anterior" style="background: #334155; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px;">Anterior</button>
+                        <span id="indicador-pagina" style="color: #94a3b8; font-size: 14px;">Página 1</span>
+                        <button onclick="proximaPagina()" id="btn-proxima" style="background: #334155; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px;">Próxima</button>
                     </div>
                 </div>
             </div>
+
+            <!-- ABA: JOGADORES BANIDOS -->
+            <div id="tab-banidos" class="tab-panel">
+                <h2 style="font-size: 20px; margin-bottom: 5px;">REGISTRO DE BANIMENTOS</h2>
+                <p style="color: #94a3b8; margin-bottom: 20px;">Lista de usuários penalizados e impedidos de acessar o servidor.</p>
+                
+                <div class="card-box">
+                    <table class="ranking-table" id="tabela-banidos">
+                        <thead>
+                            <tr>
+                                <th>NOME</th>
+                                <th>MOTIVO</th>
+                                <th>DATA DO BANIMENTO</th>
+                                <th>AÇÕES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Preenchido via Firebase -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ABA: LOGS DE ADMIN -->
+            <div id="tab-logs" class="tab-panel">
+                <h2 style="font-size: 20px; margin-bottom: 5px;">REGISTRO DE AUDITORIA (LOGS)</h2>
+                <p style="color: #94a3b8; margin-bottom: 20px;">Histórico de ações realizadas pelos administradores.</p>
+                
+                <div class="card-box">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                        <h3 style="margin: 0;">HISTÓRICO</h3>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <label style="color: #94a3b8; font-size: 13px;">De: <input type="date" id="filtro-data-inicio" onchange="renderizarLogsFiltrados()" style="background: #0f172a; border: 1px solid #334155; color: white; padding: 4px; border-radius: 4px;"></label>
+                            <label style="color: #94a3b8; font-size: 13px;">Até: <input type="date" id="filtro-data-fim" onchange="renderizarLogsFiltrados()" style="background: #0f172a; border: 1px solid #334155; color: white; padding: 4px; border-radius: 4px;"></label>
+                            <button onclick="exportarLogsCSV()" style="background: #16a34a; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold;">📥 Exportar CSV</button>
+                        </div>
+                    </div>
+                    
+                    <table class="ranking-table" id="tabela-logs">
+                        <thead>
+                            <tr>
+                                <th>DATA / HORA</th>
+                                <th>ADMINISTRADOR</th>
+                                <th>AÇÃO EXECUTADA</th>
+                                <th>DETALHES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Preenchido via Firebase -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <!-- Barra de Status Fixa -->
+    <div class="status-bar">
+        <span>Bem-vindo, ADM_KAIROS (RANK: SUPER ADM)</span>
+        <span>Server: [BR-1] ELDERSTONE</span>
+        <span id="data-atual">Date: 28 OUT 2023, 14:32:01</span>
+    </div>
 
+    <!-- Script de Integração e Lógica -->
     <script>
+        // CONFIGURAÇÃO DO FIREBASE (Insira as suas credenciais reais aqui)
         const firebaseConfig = {
-            apiKey: "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
-            authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
-            projectId: "dragon-war-rise-of-power-2a9f1",
-            storageBucket: "dragon-war-rise-of-power-2a9f1.firebasestorage.app",
-            messagingSenderId: "115455691167",
-            appId: "1:115455691167:web:ff3638f67b66c17c5515aa",
-            measurementId: "G-S7XE2EN9CL"
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_AUTH_DOMAIN",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_STORAGE_BUCKET",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
         };
 
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
         const db = firebase.firestore();
 
-        let meuUidAtual = null;
-        let idDestinatarioAtual = null;
+        // Variáveis globais do painel
+        let usuarioAtualId = "ID_DO_JOGADOR_ATUAL"; 
+        let dadosJogador = { ouro: 1000, vida: 100 };
+        let paginaAtual = 1;
+        let itensPorPagina = 5;
+        let listaJogadoresCache = [];
+        let listaLogsCache = [];
 
-        // AUTH: LOGIN & CADASTRO
-        function fazerLogin(event) {
-            event.preventDefault();
-            let email = document.getElementById('auth-email').value.trim();
-            let senha = document.getElementById('auth-senha').value.trim();
+        // Navegação entre abas
+        function trocarTab(tabId, elemento) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-menu li').forEach(l => l.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabId).classList.add('active');
+            if (elemento) elemento.classList.add('active');
 
-            auth.signInWithEmailAndPassword(email, senha).then(cred => {
-                verificarBanimentoEEntrar(cred.user);
-            }).catch(err => alert("Erro ao entrar: " + err.message));
+            if (tabId === 'admin') carregarJogadoresOnlineAdmin();
+            if (tabId === 'banidos') carregarJogadoresBanidos();
+            if (tabId === 'logs') carregarLogsAdmin();
         }
 
-        function fazerCadastro() {
-            let email = document.getElementById('auth-email').value.trim();
-            let senha = document.getElementById('auth-senha').value.trim();
-            if(!email || !senha) {
-                alert("Preencha e-mail e senha para cadastrar!");
+        // Funções de Ações Rápidas
+        function adminSpawnBoss() {
+            db.collection("servidor").doc("estadoGlobal").set({
+                bossAtivo: true,
+                bossNome: "Khaldron, O Dragão",
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true }).then(() => {
+                registrarLogAdmin("SPAWN_BOSS", "Invocou o Boss Khaldron no servidor.");
+                alert("Boss invocado com sucesso!");
+            }).catch(err => alert("Erro: " + err.message));
+        }
+
+        function adminDarMoedas() {
+            let qtd = prompt("Quantas moedas deseja adicionar?", "1000");
+            if (!qtd) return;
+            dadosJogador.ouro += Number(qtd);
+            db.collection("jogadores").doc(usuarioAtualId).update({
+                ouro: dadosJogador.ouro
+            }).then(() => {
+                registrarLogAdmin("DAR_MOEDAS", `Adicionou ${qtd} moedas.`);
+                alert(`Adicionadas 🪙 ${qtd} moedas!`);
+            }).catch(err => alert("Erro: " + err.message));
+        }
+
+        function adminModoDeus() {
+            dadosJogador.vida = 9999;
+            db.collection("jogadores").doc(usuarioAtualId).update({
+                vida: 9999
+            }).then(() => {
+                registrarLogAdmin("MODO_DEUS", "Ativou o Modo Deus (Vida 9999).");
+                alert("🛡️ Modo Deus ativado!");
+            }).catch(err => alert("Erro: " + err.message));
+        }
+
+        // Sistema de Banimento
+        function banirJogador(jogadorId) {
+            let motivo = prompt("Digite o motivo do banimento:", "Violação das regras do servidor");
+            if (motivo === null) return;
+            if (!motivo.trim()) {
+                alert("O motivo não pode estar vazio.");
                 return;
             }
-
-            auth.createUserWithEmailAndPassword(email, senha).then(cred => {
-                // Cria o perfil inicial na coleção jogadores
-                db.collection("jogadores").doc(cred.user.uid).set({
-                    nome: email.split('@')[0],
-                    nivel: 1,
-                    ouro: 150,
-                    gemas: 10,
-                    banido: false
-                }).then(() => {
-                    verificarBanimentoEEntrar(cred.user);
-                });
-            }).catch(err => alert("Erro no cadastro: " + err.message));
+            
+            db.collection("jogadores").doc(jogadorId).update({
+                status: "BANIDO",
+                banido: true,
+                motivoBanimento: motivo,
+                dataBanimento: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                registrarLogAdmin("BANIR_JOGADOR", `ID: ${jogadorId} | Motivo: ${motivo}`);
+                alert("Jogador banido com sucesso!");
+            }).catch(err => alert("Erro: " + err.message));
         }
 
-        function verificarBanimentoEEntrar(user) {
-            db.collection("jogadores").doc(user.uid).get().then(doc => {
-                if(doc.exists && doc.data().banido) {
-                    alert("Sua conta foi banida pelos administradores.");
-                    auth.signOut();
+        function reverterBanimento(jogadorId) {
+            if (!confirm("Deseja retirar o banimento deste jogador?")) return;
+            
+            db.collection("jogadores").doc(jogadorId).update({
+                status: "ATIVO",
+                banido: false,
+                motivoBanimento: firebase.firestore.FieldValue.delete(),
+                dataBanimento: firebase.firestore.FieldValue.delete()
+            }).then(() => {
+                registrarLogAdmin("DESBANIR_JOGADOR", `ID: ${jogadorId}`);
+                alert("Banimento removido!");
+            }).catch(err => alert("Erro: " + err.message));
+        }
+
+        // Carregar Jogadores Online
+        function carregarJogadoresOnlineAdmin() {
+            db.collection("jogadores").onSnapshot(snapshot => {
+                listaJogadoresCache = [];
+                snapshot.forEach(doc => {
+                    listaJogadoresCache.push({ id: doc.id, ...doc.data() });
+                });
+                renderizarTabelaPaginada();
+            });
+        }
+
+        function renderizarTabelaPaginada() {
+            let tbody = document.querySelector('#tabela-jogadores-admin tbody');
+            if (!tbody) return;
+            tbody.innerHTML = "";
+            
+            let inicio = (paginaAtual - 1) * itensPorPagina;
+            let fim = inicio + itensPorPagina;
+            let jogadoresPagina = listaJogadoresCache.slice(inicio, fim);
+            
+            if (jogadoresPagina.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #94a3b8;">Nenhum jogador encontrado.</td></tr>`;
+                return;
+            }
+            
+            jogadoresPagina.forEach(data => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${data.nome || "Guerreiro"}</td>
+                        <td>${data.nivel || 1}</td>
+                        <td>Guerreiro</td>
+                        <td>Dragen's Peak</td>
+                        <td style="color: #16a34a; font-weight: bold;">ONLINE</td>
+                        <td>
+                            <button onclick="banirJogador('${data.id}')" style="background: #dc2626; color: white; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px;">Banir</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('indicador-pagina').innerText = `Página ${paginaAtual}`;
+            document.getElementById('btn-anterior').disabled = paginaAtual === 1;
+            document.getElementById('btn-proxima').disabled = fim >= listaJogadoresCache.length;
+        }
+
+        function proximaPagina() {
+            if ((paginaAtual * itensPorPagina) < listaJogadoresCache.length) {
+                paginaAtual++;
+                renderizarTabelaPaginada();
+            }
+        }
+
+        function paginaAnterior() {
+            if (paginaAtual > 1) {
+                paginaAtual--;
+                renderizarTabelaPaginada();
+            }
+        }
+
+        function filtrarJogadoresAdmin() {
+            let filtro = document.getElementById('filtro-jogador').value.toLowerCase();
+            let linhas = document.getElementById('tabela-jogadores-admin').getElementsByTagName('tr');
+            for (let i = 1; i < linhas.length; i++) {
+                let coluna = linhas[i].getElementsByTagName('td')[0];
+                if (coluna) {
+                    let texto = coluna.textContent || coluna.innerText;
+                    linhas[i].style.display = texto.toLowerCase().indexOf(filtro) > -1 ? "" : "none";
+                }
+            }
+        }
+
+        // Carregar Jogadores Banidos
+        function carregarJogadoresBanidos() {
+            db.collection("jogadores").where("banido", "==", true).onSnapshot(snapshot => {
+                let tbody = document.querySelector('#tabela-banidos tbody');
+                if (!tbody) return;
+                tbody.innerHTML = "";
+                
+                if (snapshot.empty) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8;">Nenhum jogador banido.</td></tr>`;
                     return;
                 }
-                meuUidAtual = user.uid;
-                document.getElementById('auth-screen').classList.remove('active');
-                document.getElementById('game-screen').classList.add('active');
-                carregarDadosJogador(user.uid);
-                escutarAtualizacoesGlobais();
-            });
-        }
-
-        function carregarDadosJogador(uid) {
-            db.collection("jogadores").doc(uid).onSnapshot(doc => {
-                if(doc.exists) {
-                    let d = doc.data();
-                    document.getElementById('ui-nome').innerText = d.nome || 'Guerreiro';
-                    document.getElementById('ui-nivel').innerText = d.nivel || 1;
-                    document.getElementById('ui-ouro').innerText = d.ouro || 0;
-                    document.getElementById('ui-gemas').innerText = d.gemas || 0;
-                }
-            });
-        }
-
-        // SISTEMA DE ATUALIZAÇÃO GLOBAL EM TEMPO REAL
-        let ultimaTimestampVista = localStorage.getItem('ultimo_update_visto') || 0;
-
-        function escutarAtualizacoesGlobais() {
-            // Escuta avisos gerais
-            db.collection("config_jogo").doc("aviso_global").onSnapshot(doc => {
-                if(doc.exists) {
-                    document.getElementById('ui-aviso-global').innerText = doc.data().mensagem;
-                }
-            });
-
-            // Escuta o popup de update em tempo real
-            db.collection("config_jogo").doc("ultima_atualizacao").onSnapshot(doc => {
-                if(doc.exists) {
-                    let data = doc.data();
-                    if(data.timestamp > Number(ultimaTimestampVista)) {
-                        document.getElementById('update-modal-titulo').innerText = data.titulo;
-                        document.getElementById('update-modal-desc').innerText = data.descricao;
-                        document.getElementById('modal-update-global').style.display = 'flex';
-                        localStorage.setItem('ultimo_update_visto', data.timestamp);
-                    }
-                }
-            });
-        }
-
-        function fecharModalUpdate() {
-            document.getElementById('modal-update-global').style.display = 'none';
-        }
-
-        // BATALHA NA ARENA
-        function atacarMonstro() {
-            if(!meuUidAtual) return;
-            db.collection("jogadores").doc(meuUidAtual).get().then(doc => {
-                let d = doc.data();
-                let recompensaOuro = 50;
-                let novoOuro = (Number(d.ouro) || 0) + recompensaOuro;
                 
-                db.collection("jogadores").doc(meuUidAtual).update({ ouro: novoOuro });
-                document.getElementById('resultado-batalha').innerText = `Vitória! Você derrotou o monstro e ganhou +${recompensaOuro} de Ouro!`;
+                snapshot.forEach(doc => {
+                    let data = doc.data();
+                    let dataBan = data.dataBanimento ? data.dataBanimento.toDate().toLocaleDateString('pt-BR') : "Indisponível";
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${data.nome || "Desconhecido"}</td>
+                            <td style="color: #dc2626;">${data.motivoBanimento || "Não especificado"}</td>
+                            <td>${dataBan}</td>
+                            <td>
+                                <button onclick="reverterBanimento('${doc.id}')" style="background: #16a34a; color: white; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px;">Desbanir</button>
+                            </td>
+                        </tr>
+                    `;
+                });
             });
         }
 
-        // CHAT PRIVADO POR ID
-        function iniciarChatPrivado() {
-            let idDigitado = document.getElementById('chat-busca-id').value.trim();
-            if(!idDigitado) {
-                alert("Digite o ID do jogador.");
+        // Logs e Auditoria
+        function registrarLogAdmin(acao, detalhes) {
+            db.collection("logs_admin").add({
+                admin: "ADM_KAIROS",
+                acao: acao,
+                detalhes: detalhes,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }).catch(err => console.error("Erro ao registrar log:", err));
+        }
+
+        function carregarLogsAdmin() {
+            db.collection("logs_admin").orderBy("timestamp", "desc").limit(200).onSnapshot(snapshot => {
+                listaLogsCache = [];
+                if (snapshot.empty) {
+                    renderizarLogsFiltrados();
+                    return;
+                }
+                snapshot.forEach(doc => {
+                    listaLogsCache.push({ id: doc.id, ...doc.data() });
+                });
+                renderizarLogsFiltrados();
+            });
+        }
+
+        function obterLogsFiltrados() {
+            let dataInicioStr = document.getElementById('filtro-data-inicio').value;
+            let dataFimStr = document.getElementById('filtro-data-fim').value;
+            let dataInicio = dataInicioStr ? new Date(dataInicioStr + "T00:00:00") : null;
+            let dataFim = dataFimStr ? new Date(dataFimStr + "T23:59:59") : null;
+
+            return listaLogsCache.filter(log => {
+                if (!log.timestamp) return false;
+                let logDate = log.timestamp.toDate();
+                if (dataInicio && logDate < dataInicio) return false;
+                if (dataFim && logDate > dataFim) return false;
+                return true;
+            });
+        }
+
+        function renderizarLogsFiltrados() {
+            let tbody = document.querySelector('#tabela-logs tbody');
+            if (!tbody) return;
+            tbody.innerHTML = "";
+            let logsFiltrados = obterLogsFiltrados();
+            
+            if (logsFiltrados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8;">Nenhum log encontrado para o período.</td></tr>`;
+                return;
+            }
+            
+            logsFiltrados.forEach(data => {
+                let dataHora = data.timestamp ? data.timestamp.toDate().toLocaleString('pt-BR') : "Agora mesmo";
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="color: #94a3b8; font-size: 13px;">${dataHora}</td>
+                        <td style="font-weight: bold; color: #3b82f6;">${data.admin || "Sistema"}</td>
+                        <td>${data.acao || ""}</td>
+                        <td>${data.detalhes || "-"}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function exportarLogsCSV() {
+            let logsParaExportar = obterLogsFiltrados();
+            if (logsParaExportar.length === 0) {
+                alert("Não há logs para exportar.");
                 return;
             }
 
-            db.collection("jogadores").doc(idDigitado).get().then(doc => {
-                if(doc.exists) {
-                    idDestinatarioAtual = idDigitado;
-                    alert(`Conectado com: ${doc.data().nome}`);
-                    escutarMensagensPrivadas();
-                } else {
-                    alert("Jogador não encontrado com esse ID.");
-                }
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+            csvContent += "Data/Hora,Administrador,Acao,Detalhes\r\n";
+
+            logsParaExportar.forEach(log => {
+                let dataHora = log.timestamp ? log.timestamp.toDate().toLocaleString('pt-BR') : "Indisponível";
+                let admin = `"${(log.admin || "Sistema").replace(/"/g, '""')}"`;
+                let acao = `"${(log.acao || "").replace(/"/g, '""')}"`;
+                let detalhes = `"${(log.detalhes || "").replace(/"/g, '""')}"`;
+                csvContent += `${dataHora},${admin},${acao},${detalhes}\r\n`;
             });
-        }
 
-        function enviarMensagemPrivada() {
-            let texto = document.getElementById('input-msg-privada').value.trim();
-            if(!texto || !idDestinatarioAtual || !meuUidAtual) return;
-
-            db.collection("chat_privado").add({
-                remetente: meuUidAtual,
-                destinatario: idDestinatarioAtual,
-                mensagem: texto,
-                timestamp: Date.now()
-            }).then(() => {
-                document.getElementById('input-msg-privada').value = "";
-            });
-        }
-
-        function escutarMensagensPrivadas() {
-            if(!idDestinatarioAtual) return;
-
-            db.collection("chat_privado")
-              .orderBy("timestamp", "asc")
-              .onSnapshot(snapshot => {
-                  let box = document.getElementById('container-mensagens-privadas');
-                  box.innerHTML = "";
-                  snapshot.forEach(doc => {
-                      let d = doc.data();
-                      if((d.remetente === meuUidAtual && d.destinatario === idDestinatarioAtual) || 
-                         (d.remetente === idDestinatarioAtual && d.destinatario === meuUidAtual)) {
-                          let remet = d.remetente === meuUidAtual ? "Você" : "Outro";
-                          box.innerHTML += `<div style="margin-bottom: 6px;"><b>${remet}:</b> ${d.mensagem}</div>`;
-                      }
-                  });
-                  box.scrollTop = box.scrollHeight;
-              });
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `logs_admin_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
     </script>
 </body>
