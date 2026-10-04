@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dragon War - Rise of Power</title>
+    <title>Dragon War - Rise of Power (Jogador)</title>
     <!-- Importação do Firebase (SDK Modular v10) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, getDocs, deleteDoc, addDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -23,7 +23,6 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // Lista de E-mails Administradores do Servidor
         const ADMIN_EMAILS = [
             "markivus25@gmail.com",
             "groupsacabraldigital@gmail.com"
@@ -37,11 +36,6 @@
         window.fbUpdateDoc = updateDoc;
         window.fbCollection = collection;
         window.fbGetDocs = getDocs;
-        window.fbDeleteDoc = deleteDoc;
-        window.fbAddDoc = addDoc;
-        window.fbQuery = query;
-        window.fbOrderBy = orderBy;
-        window.fbLimit = limit;
         window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
         window.signInWithEmailAndPassword = signInWithEmailAndPassword;
         window.signOut = signOut;
@@ -49,352 +43,54 @@
     </script>
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        body {
-            background-color: #0b0f19;
-            color: #fff;
-            overflow: hidden;
-            height: 100vh;
-        }
-        .screen {
-            display: none;
-            width: 100vw;
-            height: 100vh;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-        .screen.active {
-            display: flex;
-        }
-
-        /* Telas de Autenticação */
-        .auth-screen {
-            background: linear-gradient(135deg, rgba(11,15,25,0.9), rgba(15,23,42,0.95));
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        .auth-container {
-            background: rgba(30, 41, 59, 0.85);
-            border: 1px solid #3b82f6;
-            padding: 35px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-            width: 100%;
-            max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            backdrop-filter: blur(10px);
-        }
-        .auth-container h2 {
-            text-align: center;
-            color: #f5af19;
-            margin-bottom: 5px;
-        }
-        .auth-container input {
-            width: 100%;
-            padding: 12px;
-            background: #0b0f19;
-            border: 1px solid #334155;
-            color: white;
-            border-radius: 6px;
-            outline: none;
-            font-size: 14px;
-        }
-        .btn-auth {
-            background: linear-gradient(135deg, #f5af19, #f12711);
-            color: white;
-            padding: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.2s;
-            margin-top: 5px;
-        }
-        .btn-auth:hover {
-            filter: brightness(1.1);
-        }
-        .switch-auth {
-            text-align: center;
-            font-size: 13px;
-            color: #94a3b8;
-            cursor: pointer;
-            margin-top: 5px;
-        }
-        .switch-auth:hover {
-            color: #38bdf8;
-            text-decoration: underline;
-        }
-
-        /* Tela do Jogo / Dashboard Principal */
-        #game-screen {
-            background: #0f172a;
-            display: grid;
-            grid-template-columns: 260px 1fr;
-        }
-        .sidebar {
-            background: #1e293b;
-            padding: 25px 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            border-right: 1px solid #334155;
-            overflow-y: auto;
-        }
-        .sidebar button {
-            background: transparent;
-            color: #94a3b8;
-            border: none;
-            padding: 10px 15px;
-            text-align: left;
-            font-size: 13px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .sidebar button.active, .sidebar button:hover {
-            background: #3b82f6;
-            color: #fff;
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
-        }
-        .content-area {
-            padding: 40px;
-            overflow-y: auto;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-            max-height: 480px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-        .item-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-        }
-        .item-card h4 {
-            color: #38bdf8;
-            margin-bottom: 5px;
-            font-size: 15px;
-        }
-        .item-card p {
-            color: #f5af19;
-            font-size: 13px;
-            margin-bottom: 10px;
-        }
-        .btn-acao {
-            background: #22c55e;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-            font-size: 13px;
-            transition: 0.2s;
-        }
-        .btn-acao:hover {
-            background: #16a34a;
-        }
-        .status-box {
-            background: #1e293b;
-            border: 1px solid #334155;
-            padding: 25px;
-            border-radius: 10px;
-            max-width: 650px;
-            display: flex;
-            gap: 25px;
-            align-items: center;
-        }
-        .avatar-preview {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            border: 2px solid #f5af19;
-            object-fit: cover;
-            background: #334155;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            background: #1e293b;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #334155;
-            font-size: 14px;
-        }
-        th {
-            color: #38bdf8;
-            background: rgba(15, 23, 42, 0.6);
-        }
-        .store-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .store-tab-btn {
-            background: #1e293b;
-            border: 1px solid #334155;
-            color: #94a3b8;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .store-tab-btn.active {
-            background: #3b82f6;
-            color: white;
-            border-color: #3b82f6;
-        }
-        .store-section {
-            display: none;
-        }
-        .store-section.active {
-            display: grid;
-        }
-        .chat-container-box {
-            background: #020617;
-            border: 1px solid #334155;
-            height: 420px;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            padding: 15px;
-        }
-        .chat-tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #334155;
-            padding-bottom: 10px;
-        }
-        .chat-tab-btn {
-            background: #1e293b;
-            border: none;
-            color: #94a3b8;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        .chat-tab-btn.active {
-            background: #f5af19;
-            color: #0b0f19;
-        }
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            font-size: 13px;
-        }
-        .chat-input-area {
-            display: flex;
-            gap: 10px;
-        }
-        .chat-input-area input {
-            flex: 1;
-            padding: 10px;
-            background: #1e293b;
-            border: 1px solid #475569;
-            color: white;
-            border-radius: 6px;
-            outline: none;
-        }
-        .avatar-selection-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .avatar-option {
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            border: 2px solid #334155;
-            cursor: pointer;
-            object-fit: cover;
-            transition: 0.2s;
-        }
-        .avatar-option:hover, .avatar-option.selected {
-            border-color: #f5af19;
-            transform: scale(1.08);
-        }
-        .battle-arena {
-            background: #1e293b;
-            border: 1px solid #334155;
-            padding: 25px;
-            border-radius: 10px;
-            max-width: 650px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .battle-log {
-            background: #0b0f19;
-            border: 1px solid #475569;
-            height: 150px;
-            padding: 12px;
-            border-radius: 6px;
-            overflow-y: auto;
-            font-size: 13px;
-            color: #38bdf8;
-        }
-        .battle-actions {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-        .daily-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .daily-box {
-            background: #1e293b;
-            border: 1px solid #334155;
-            padding: 15px 10px;
-            border-radius: 8px;
-            text-align: center;
-        }
-        .daily-box.highlight {
-            border-color: #f5af19;
-            background: rgba(245, 175, 25, 0.1);
-        }
-        .daily-box.resgatado {
-            opacity: 0.5;
-            border-color: #64748b;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0b0f19; color: #fff; overflow: hidden; height: 100vh; }
+        .screen { display: none; width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
+        .screen.active { display: flex; }
+        .auth-screen { background: linear-gradient(135deg, rgba(11,15,25,0.9), rgba(15,23,42,0.95)); justify-content: center; align-items: center; padding: 20px; }
+        .auth-container { background: rgba(30, 41, 59, 0.85); border: 1px solid #3b82f6; padding: 35px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 15px; backdrop-filter: blur(10px); }
+        .auth-container h2 { text-align: center; color: #f5af19; margin-bottom: 5px; }
+        .auth-container input { width: 100%; padding: 12px; background: #0b0f19; border: 1px solid #334155; color: white; border-radius: 6px; outline: none; font-size: 14px; }
+        .btn-auth { background: linear-gradient(135deg, #f5af19, #f12711); color: white; padding: 12px; font-size: 16px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s; margin-top: 5px; }
+        .btn-auth:hover { filter: brightness(1.1); }
+        .switch-auth { text-align: center; font-size: 13px; color: #94a3b8; cursor: pointer; margin-top: 5px; }
+        .switch-auth:hover { color: #38bdf8; text-decoration: underline; }
+        #game-screen { background: #0f172a; display: grid; grid-template-columns: 260px 1fr; }
+        .sidebar { background: #1e293b; padding: 25px 15px; display: flex; flex-direction: column; gap: 8px; border-right: 1px solid #334155; overflow-y: auto; }
+        .sidebar button { background: transparent; color: #94a3b8; border: none; padding: 10px 15px; text-align: left; font-size: 13px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .sidebar button.active, .sidebar button:hover { background: #3b82f6; color: #fff; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3); }
+        .content-area { padding: 40px; overflow-y: auto; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-top: 15px; max-height: 480px; overflow-y: auto; padding-right: 5px; }
+        .item-card { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 15px; text-align: center; }
+        .item-card h4 { color: #38bdf8; margin-bottom: 5px; font-size: 15px; }
+        .item-card p { color: #f5af19; font-size: 13px; margin-bottom: 10px; }
+        .btn-acao { background: #22c55e; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 13px; transition: 0.2s; }
+        .btn-acao:hover { background: #16a34a; }
+        .status-box { background: #1e293b; border: 1px solid #334155; padding: 25px; border-radius: 10px; max-width: 650px; display: flex; gap: 25px; align-items: center; }
+        .avatar-preview { width: 90px; height: 90px; border-radius: 50%; border: 2px solid #f5af19; object-fit: cover; background: #334155; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #1e293b; border-radius: 8px; overflow: hidden; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #334155; font-size: 14px; }
+        th { color: #38bdf8; background: rgba(15, 23, 42, 0.6); }
+        .store-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+        .store-tab-btn { background: #1e293b; border: 1px solid #334155; color: #94a3b8; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .store-tab-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+        .store-section { display: none; }
+        .store-section.active { display: grid; }
+        .chat-container-box { background: #020617; border: 1px solid #334155; height: 420px; border-radius: 10px; display: flex; flex-direction: column; padding: 15px; }
+        .chat-messages { flex: 1; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+        .chat-input-area { display: flex; gap: 10px; }
+        .chat-input-area input { flex: 1; padding: 10px; background: #1e293b; border: 1px solid #475569; color: white; border-radius: 6px; outline: none; }
+        .avatar-selection-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 10px; }
+        .avatar-option { width: 55px; height: 55px; border-radius: 50%; border: 2px solid #334155; cursor: pointer; object-fit: cover; transition: 0.2s; }
+        .avatar-option:hover, .avatar-option.selected { border-color: #f5af19; transform: scale(1.08); }
+        .battle-arena { background: #1e293b; border: 1px solid #334155; padding: 25px; border-radius: 10px; max-width: 650px; display: flex; flex-direction: column; gap: 20px; }
+        .battle-log { background: #0b0f19; border: 1px solid #475569; height: 150px; padding: 12px; border-radius: 6px; overflow-y: auto; font-size: 13px; color: #38bdf8; }
+        .battle-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .daily-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-top: 15px; }
+        .daily-box { background: #1e293b; border: 1px solid #334155; padding: 15px 10px; border-radius: 8px; text-align: center; }
+        .daily-box.resgatado { opacity: 0.5; border-color: #64748b; }
     </style>
 </head>
 <body>
@@ -403,10 +99,10 @@
     <div id="login-screen" class="screen active auth-screen">
         <div class="auth-container">
             <h2>DRAGON WAR</h2>
-            <p style="text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Entre com sua conta</p>
+            <p style="text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Portal do Jogador</p>
             <input type="email" id="login-email" placeholder="Seu e-mail real">
             <input type="password" id="login-senha" placeholder="Sua senha">
-            <button class="btn-auth" onclick="fazerLogin()">ENTRAR NO SERVIDOR</button>
+            <button class="btn-auth" onclick="fazerLogin()">ENTRAR NO JOGO</button>
             <div class="switch-auth" onclick="mostrarTelaRegistro()">Não tem uma conta? Registrar-se</div>
         </div>
     </div>
@@ -423,7 +119,7 @@
         </div>
     </div>
 
-    <!-- DASHBOARD PRINCIPAL DO JOGO -->
+    <!-- DASHBOARD PRINCIPAL DO JOGADOR -->
     <div id="game-screen" class="screen">
         <div class="sidebar">
             <h2 style="color: #f5af19; margin-bottom: 15px; font-size: 17px; text-align: center;">DRAGON WAR</h2>
@@ -438,10 +134,7 @@
             <button onclick="mudarAba('ranking', this)">🏆 Ranking Global</button>
             <button onclick="mudarAba('config', this)">⚙ Configurações & Áudio</button>
             
-            <!-- ABA EXCLUSIVA DO ADM (Invisível para comuns) -->
-            <button id="btn-aba-adm" onclick="mudarAba('painel-adm', this)" style="display: none; background: rgba(168, 85, 247, 0.2); border: 1px solid #a855f7; color: #d8b4fe; margin-top: 10px;">👑 Painel ADM Mestre</button>
-
-            <button onclick="sairParaMenuLogin()" style="margin-top: 20px; color: #f87171; border-top: 1px solid #334155; padding-top: 12px;">🚪 Sair / Trocar Conta</button>
+            <button onclick="sairParaMenuLogin()" style="margin-top: 20px; color: #f87171; border-top: 1px solid #334155; padding-top: 12px;">🚪 Sair da Conta</button>
         </div>
         <div class="content-area">
             
@@ -457,13 +150,12 @@
                         <p><strong>Pontuação Total:</strong> <span id="resumo-pontuacao" style="color: #38bdf8;">0</span> pts</p>
                         <p><strong>Moedas (Ouro):</strong> <span id="resumo-moedas">15.000</span> 🟡</p>
                         <p><strong>Diamantes:</strong> <span id="resumo-diamantes">100</span> 💎</p>
-                        <p><strong>Moeda de Poderes:</strong> <span id="resumo-poderes-moeda">0</span> 🔮</p>
                         <p><strong>Guilda:</strong> <span id="resumo-guilda" style="color: #f87171;">Nenhuma</span></p>
                     </div>
                 </div>
             </div>
 
-            <!-- ABA CAMPANHA / MODOS DE BATALHA -->
+            <!-- ABA CAMPANHA -->
             <div id="campanha" class="tab-content">
                 <h2 style="margin-bottom: 10px;">Modos de Batalha (8 Níveis)</h2>
                 <div id="lista-modos-batalha" class="card-grid" style="max-height: 440px;">
@@ -488,13 +180,12 @@
                         <button class="btn-acao" style="background: #ef4444;" onclick="acaoBatalha('atacar')">⚔️ Atacar</button>
                         <button class="btn-acao" style="background: #3b82f6;" onclick="acaoBatalha('defender')">🛡 Defender</button>
                         <button class="btn-acao" style="background: #22c55e;" onclick="acaoBatalha('curar')">🍗 Curar</button>
-                        <button class="btn-acao" style="background: #eab308;" onclick="acaoBatalha('salvar')">💾 Salvar</button>
-                        <button class="btn-acao" style="background: #64748b; grid-column: span 2;" onclick="sairDaArena()">🚪 Voltar</button>
+                        <button class="btn-acao" style="background: #64748b; grid-column: span 3;" onclick="sairDaArena()">🚪 Voltar</button>
                     </div>
                 </div>
             </div>
 
-            <!-- ABA RECOMPENSAS DIÁRIAS -->
+            <!-- ABA DIÁRIAS -->
             <div id="diarias" class="tab-content">
                 <h2 style="margin-bottom: 10px;">Recompensas Diárias</h2>
                 <div class="daily-grid" id="grid-diarias-container"></div>
@@ -506,14 +197,14 @@
                 <div class="store-tabs">
                     <button class="store-tab-btn active" onclick="mudarAbaLoja('armas', this)">⚔️ Armas</button>
                     <button class="store-tab-btn" onclick="mudarAbaLoja('poderes-loja', this)">🔮 Poderes (+5)</button>
-                    <button class="store-tab-btn" onclick="mudarAbaLoja('skins', this)">👕 Skins (Comuns a Únicas)</button>
+                    <button class="store-tab-btn" onclick="mudarAbaLoja('skins', this)">👕 Skins</button>
                 </div>
                 <div id="loja-armas" class="card-grid store-section active" style="max-height: 400px;"></div>
                 <div id="loja-poderes-loja" class="card-grid store-section" style="max-height: 400px;"></div>
                 <div id="loja-skins" class="card-grid store-section" style="max-height: 400px;"></div>
             </div>
 
-            <!-- ABA ÁRVORE DE PODERES -->
+            <!-- ABA PODERES -->
             <div id="poderes" class="tab-content">
                 <h2 style="margin-bottom: 10px;">Árvore de Habilidades</h2>
                 <div id="grid-habilidades" class="card-grid"></div>
@@ -536,16 +227,7 @@
                     </div>
                 </div>
                 <div id="painel-com-guilda" class="status-box" style="display: none; flex-direction: column; align-items: flex-start; gap: 15px; width: 100%; max-width: 650px;">
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <img id="guilda-foto-banner" src="" class="avatar-preview" style="width: 70px; height: 70px;" alt="Guilda">
-                        <div>
-                            <h3 style="color: #38bdf8;">Guilda: <span id="info-guilda-nome" style="color: #f5af19;">-</span></h3>
-                            <p><strong>Fundador:</strong> <span id="info-guilda-dono" style="color: #22c55e;">-</span></p>
-                        </div>
-                    </div>
-                    <p style="width: 100%;"><strong>Administradores:</strong> <span id="info-guilda-admins" style="color: #eab308;">-</span></p>
-                    <p style="width: 100%;"><strong>Membros:</strong></p>
-                    <div id="lista-membros-guilda" style="background: #0b0f19; padding: 10px; border-radius: 6px; width: 100%; max-height: 120px; overflow-y: auto; font-size: 13px;"></div>
+                    <h3 style="color: #38bdf8;">Guilda: <span id="info-guilda-nome" style="color: #f5af19;">-</span></h3>
                     <button class="btn-acao" style="background: #ef4444; width: auto;" onclick="sairDaGuilda()">Sair da Guilda</button>
                 </div>
             </div>
@@ -554,15 +236,7 @@
             <div id="chat" class="tab-content">
                 <h2 style="margin-bottom: 15px;">Central de Comunicação</h2>
                 <div class="chat-container-box">
-                    <div class="chat-tabs">
-                        <button class="chat-tab-btn active" onclick="mudarAbaChat('geral', this)">Chat Geral</button>
-                        <button class="chat-tab-btn" onclick="mudarAbaChat('guilda', this)">Chat Guilda (Restrito)</button>
-                        <button class="chat-tab-btn" onclick="mudarAbaChat('pv', this)">Chat Privado (PV)</button>
-                    </div>
-                    <div class="chat-messages" id="chat-messages-container"><p><strong style="color: #38bdf8;">Sistema:</strong> Bem-vindo!</p></div>
-                    <div class="chat-input-area" id="area-input-pv" style="display: none; margin-bottom: 8px;">
-                        <input type="text" id="chat-destinatario-input" placeholder="Destinatário PV..." style="max-width: 200px;">
-                    </div>
+                    <div class="chat-messages" id="chat-messages-container"><p><strong style="color: #38bdf8;">Sistema:</strong> Bem-vindo ao Chat do Servidor!</p></div>
                     <div class="chat-input-area">
                         <input type="text" id="chat-msg-input" placeholder="Digite sua mensagem...">
                         <button class="btn-acao" style="width: 120px;" onclick="enviarMensagemChat()">Enviar</button>
@@ -574,14 +248,14 @@
             <div id="ranking" class="tab-content">
                 <h2 style="margin-bottom: 10px;">Ranking Global</h2>
                 <table>
-                    <thead><tr><th>POS</th><th>JOGADOR</th><th>NÍVEL</th><th>PONTUAÇÃO 🏆</th><th>STATUS</th></tr></thead>
+                    <thead><tr><th>POS</th><th>JOGADOR</th><th>NÍVEL</th><th>PONTUAÇÃO 🏆</th></tr></thead>
                     <tbody id="tabela-ranking-corpo"></tbody>
                 </table>
             </div>
 
-            <!-- ABA CONFIGURAÇÕES -->
+            <!-- ABA CONFIG -->
             <div id="config" class="tab-content">
-                <h2 style="margin-bottom: 20px;">Configurações & Áudio</h2>
+                <h2 style="margin-bottom: 20px;">Configurações & Perfil</h2>
                 <div class="status-box" style="display: flex; flex-direction: column; align-items: flex-start; gap: 15px; width: 100%; max-width: 500px;">
                     <label style="width: 100%;">Novo Nome / Nick:
                         <input type="text" id="input-novo-nome" style="width: 100%; padding: 10px; margin-top: 5px; background: #0b0f19; border: 1px solid #334155; color: white; border-radius: 6px;">
@@ -589,86 +263,17 @@
                     <label style="width: 100%;">Escolha Avatar:
                         <div id="grid-10-avatares" class="avatar-selection-grid"></div>
                     </label>
-                    <hr style="width: 100%; border-color: #334155; margin: 5px 0;">
-                    <label style="width: 100%; display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                        <input type="checkbox" id="check-musica" checked style="width: 18px; height: 18px;"> Ativar Música de Fundo
-                    </label>
-                    <label style="width: 100%;">Volume (<span id="val-volume">50</span>%):
-                        <input type="range" id="range-volume" min="0" max="100" value="50" style="width: 100%; margin-top: 5px;" oninput="atualizarVolumeAudio(this.value)">
-                    </label>
                     <button class="btn-acao" onclick="salvarConfiguracoesPerfil()">Salvar Alterações</button>
                 </div>
-            </div>
-
-            <!-- 👑 PAINEL EXCLUSIVO DO ADM (Comandos de Gestão & Auditoria) -->
-            <div id="painel-adm" class="tab-content">
-                <h2 style="color: #a855f7; margin-bottom: 10px;">👑 Painel de Controle do Administrador</h2>
-                <p style="color: #94a3b8; margin-bottom: 20px;">Ferramentas exclusivas para gerenciar jogadores, banir contas, liberar Skins Únicas e monitorar logs.</p>
-                
-                <div class="card-grid" style="grid-template-columns: repeat(2, 1fr); margin-bottom: 25px;">
-                    <div class="item-card" style="border-color: #a855f7; text-align: left;">
-                        <h4 style="color: #d8b4fe;">🎁 Conceder Skin Única a Jogador</h4>
-                        <p style="font-size: 12px; color: #94a3b8;">Libera instantaneamente a skin exclusiva de Administrador na conta de um usuário.</p>
-                        <input type="text" id="adm-uid-skin" placeholder="UID ou Nome do Jogador" style="width: 100%; padding: 8px; background: #0b0f19; border: 1px solid #475569; color: white; border-radius: 4px; margin-bottom: 8px;">
-                        <button class="btn-acao" style="background: #a855f7;" onclick="admConcederSkinUnica()">Liberar Skin Única</button>
-                    </div>
-
-                    <div class="item-card" style="border-color: #ef4444; text-align: left;">
-                        <h4 style="color: #f87171;">🔨 Banir / Deletar Jogador</h4>
-                        <p style="font-size: 12px; color: #94a3b8;">Remove permanentemente a conta e os dados do usuário do banco de dados.</p>
-                        <input type="text" id="adm-uid-ban" placeholder="UID Exato do Jogador" style="width: 100%; padding: 8px; background: #0b0f19; border: 1px solid #475569; color: white; border-radius: 4px; margin-bottom: 8px;">
-                        <button class="btn-acao" style="background: #ef4444;" onclick="admBanirJogador()">Banir Jogador</button>
-                    </div>
-                </div>
-
-                <h3 style="color: #38bdf8; margin-bottom: 10px;">Lista Geral de Jogadores Cadastrados</h3>
-                <table style="margin-bottom: 30px;">
-                    <thead>
-                        <tr><th>UID</th><th>NOME</th><th>E-MAIL</th><th>NÍVEL</th><th>MOEDAS</th><th>AÇÕES ADM</th></tr>
-                    </thead>
-                    <tbody id="tabela-adm-jogadores"></tbody>
-                </table>
-
-                <h3 style="color: #a855f7; margin-bottom: 10px;">📋 Logs de Auditoria do Administrador</h3>
-                <p style="font-size: 12px; color: #94a3b8; margin-bottom: 10px;">Registro automático de todas as ações administrativas executadas no servidor.</p>
-                <table>
-                    <thead>
-                        <tr><th>DATA / HORA</th><th>ADM RESPONSÁVEL</th><th>AÇÃO EXECUTADA</th><th>ALVO / DETALHES</th></tr>
-                    </thead>
-                    <tbody id="tabela-adm-logs"></tbody>
-                </table>
             </div>
 
         </div>
     </div>
 
-    <audio id="audio-trilha" loop src="https://actions.google.com/sounds/v1/ambiences/fantasy_game_loop.ogg"></audio>
-
     <script>
-        let jogadorAtual = {
-            uid: "",
-            email: "",
-            nome: "Guerreiro",
-            nivel: 1,
-            pontuacao: 0,
-            moedas: 15000,
-            diamantes: 100,
-            moedaPoder: 20,
-            avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=hero1",
-            guilda: "Nenhuma",
-            guildaDono: "",
-            guildaAdmins: [],
-            diariasResgatadas: {},
-            inventario: [],
-            configAudio: { ligado: true, volume: 50 },
-            isAdmin: false
-        };
-
+        let jogadorAtual = { uid: "", email: "", nome: "Guerreiro", nivel: 1, pontuacao: 0, moedas: 15000, diamantes: 100, avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=hero1", guilda: "Nenhuma", diariasResgatadas: {}, inventario: [] };
         let avatarSelecionadoTemp = "";
-        let hpJogador = 100;
         let hpInimigo = 100;
-        let modoBatalhaAtual = "Fácil (Nv 1)";
-        let abaChatAtual = "geral";
 
         window.addEventListener('DOMContentLoaded', () => {
             let avatarGrid = document.getElementById('grid-10-avatares');
@@ -692,35 +297,12 @@
             let poderesGrid = document.getElementById('loja-poderes-loja');
             let skinsGrid = document.getElementById('loja-skins');
 
-            let itensArmas = [{nome: "Adaga de Cobre", preco: 1000}, {nome: "Espada Curta", preco: 2500}, {nome: "Katana Sombria", preco: 14000}];
-            let itensPoderes = [{nome: "Essência de Mana (+10 Poder)", preco: 500}, {nome: "Orbe Arcana (+30 Poder)", preco: 1400}];
-            let itensSkins = [
-                {nome: "Skin Comum: Novato", preco: 3000, raridade: "Comum", cor: "#94a3b8"},
-                {nome: "Skin Épica: Mago Cinzento", preco: 8000, raridade: "Épica", cor: "#38bdf8"},
-                {nome: "Skin Lendária: Cavaleiro Dragão", preco: 35000, raridade: "Lendária", cor: "#f5af19"},
-                {nome: "Skin Única: Divindade ADM Suprema", preco: 99999, raridade: "Única (Exclusiva ADM)", cor: "#a855f7"}
-            ];
-
-            armasGrid.innerHTML = "";
-            itensArmas.forEach(i => armasGrid.innerHTML += `<div class="item-card"><h4>${i.nome}</h4><p>${i.preco} 🟡</p><button class="btn-acao" onclick="comprarItem('${i.nome}', ${i.preco})">COMPRAR</button></div>`);
-
-            poderesGrid.innerHTML = "";
-            itensPoderes.forEach(i => poderesGrid.innerHTML += `<div class="item-card"><h4>${i.nome}</h4><p>${i.preco} 🟡</p><button class="btn-acao" onclick="comprarItem('${i.nome}', ${i.preco})">COMPRAR</button></div>`);
-
-            skinsGrid.innerHTML = "";
-            itensSkins.forEach(i => {
-                let btn = `<button class="btn-acao" onclick="comprarItem('${i.nome}', ${i.preco})">COMPRAR</button>`;
-                if(i.raridade.includes("Única") && !jogadorAtual.isAdmin) {
-                    btn = `<button class="btn-acao" style="background: #64748b; cursor: not-allowed;" disabled>EXCLUSIVO ADM</button>`;
-                }
-                skinsGrid.innerHTML += `<div class="item-card" style="border-color: ${i.cor};"><span style="font-size: 10px; color: ${i.cor};">${i.raridade}</span><h4 style="margin-top:5px;">${i.nome}</h4><p style="color: ${i.cor};">${i.preco} 🟡</p>${btn}</div>`;
-            });
+            armasGrid.innerHTML = `<div class="item-card"><h4>Espada Curta</h4><p>2500 🟡</p><button class="btn-acao" onclick="comprarItem('Espada Curta', 2500)">COMPRAR</button></div>`;
+            poderesGrid.innerHTML = `<div class="item-card"><h4>Orbe Arcana</h4><p>1400 🟡</p><button class="btn-acao" onclick="comprarItem('Orbe Arcana', 1400)">COMPRAR</button></div>`;
+            skinsGrid.innerHTML = `<div class="item-card"><h4>Skin Lendária</h4><p>35000 🟡</p><button class="btn-acao" onclick="comprarItem('Skin Lendária', 35000)">COMPRAR</button></div>`;
 
             let habGrid = document.getElementById('grid-habilidades');
-            habGrid.innerHTML = "";
-            for(let i = 1; i <= 6; i++) {
-                habGrid.innerHTML += `<div class="item-card" style="border-color: #8b5cf6;"><h4>Habilidade Arcana #${i}</h4><p style="color: #a855f7;">${i*5} 🔮</p><button class="btn-acao" style="background: #8b5cf6;" onclick="comprarHab('Habilidade Arcana #${i}', ${i*5})">DESBLOQUEAR</button></div>`;
-            }
+            habGrid.innerHTML = `<div class="item-card" style="border-color: #8b5cf6;"><h4>Habilidade Fogo</h4><p style="color: #a855f7;">15 🔮</p><button class="btn-acao" style="background: #8b5cf6;" onclick="alert('Desbloqueado!')">DESBLOQUEAR</button></div>`;
         }
 
         function mudarAbaLoja(secao, btn) {
@@ -732,23 +314,16 @@
 
         function renderizarRecompensasDiarias() {
             let container = document.getElementById('grid-diarias-container');
-            let hojeStr = new Date().toDateString();
             container.innerHTML = "";
             for(let d = 1; d <= 7; d++) {
-                let resgatado = jogadorAtual.diariasResgatadas && jogadorAtual.diariasResgatadas[d] === hojeStr;
-                container.innerHTML += `<div class="daily-box ${resgatado ? 'resgatado' : ''}"><h4>Dia ${d}</h4><button class="btn-acao" ${resgatado ? 'disabled style="background:#64748b;"' : ''} onclick="resgatarDiaria(${d})">${resgatado ? 'RESGATADO' : 'RESGATAR'}</button></div>`;
+                container.innerHTML += `<div class="daily-box"><h4>Dia ${d}</h4><button class="btn-acao" onclick="resgatarDiaria(${d})">RESGATAR</button></div>`;
             }
         }
 
         function resgatarDiaria(dia) {
-            let hojeStr = new Date().toDateString();
-            if(!jogadorAtual.diariasResgatadas) jogadorAtual.diariasResgatadas = {};
-            jogadorAtual.diariasResgatadas[dia] = hojeStr;
             jogadorAtual.moedas += 1000;
             atualizarInterfacePerfil();
-            renderizarRecompensasDiarias();
-            salvarProgressoFirebase();
-            alert("Recompensa resgatada!");
+            alert("Recompensa resgatada com sucesso!");
         }
 
         function mostrarTelaRegistro() {
@@ -760,30 +335,22 @@
             document.getElementById('login-screen').classList.add('active');
         }
 
-        function verificarSeEAdmin(email) {
-            return window.ADMIN_EMAILS.includes(email.toLowerCase().trim());
-        }
-
         async function fazerRegistro() {
             let nome = document.getElementById('reg-nome').value.trim();
             let email = document.getElementById('reg-email').value.trim();
             let senha = document.getElementById('reg-senha').value.trim();
-            if(!nome || !email || !senha) { alert("Preencha tudo!"); return; }
+            if(!nome || !email || !senha) { alert("Preencha todos os campos!"); return; }
 
             try {
                 let cred = await window.createUserWithEmailAndPassword(window.fbAuth, email, senha);
-                let isAdmin = verificarSeEAdmin(email);
                 jogadorAtual = {
-                    uid: cred.user.uid, email, nome: isAdmin ? "👑 Gabriel (ADM)" : nome,
-                    nivel: isAdmin ? 999 : 1, pontuacao: 0, moedas: isAdmin ? 500000 : 15000,
-                    diamantes: isAdmin ? 10000 : 100, moedaPoder: isAdmin ? 1000 : 20,
-                    avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=" + nome,
-                    guilda: "Nenhuma", guildaDono: "", guildaAdmins: [],
-                    diariasResgatadas: {}, inventario: [], configAudio: {ligado: true, volume: 50}, isAdmin
+                    uid: cred.user.uid, email, nome, nivel: 1, pontuacao: 0, moedas: 15000,
+                    diamantes: 100, avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=" + nome,
+                    guilda: "Nenhuma", diariasResgatadas: {}, inventario: []
                 };
                 await window.fbSetDoc(window.fbDoc(window.fbDb, "jogadores", cred.user.uid), jogadorAtual);
                 entrarNoJogoPrincipal();
-            } catch(e) { alert("Erro: " + e.message); }
+            } catch(e) { alert("Erro ao registrar: " + e.message); }
         }
 
         async function fazerLogin() {
@@ -794,24 +361,10 @@
             try {
                 let cred = await window.signInWithEmailAndPassword(window.fbAuth, email, senha);
                 let snap = await window.fbGetDoc(window.fbDoc(window.fbDb, "jogadores", cred.user.uid));
-                let isAdmin = verificarSeEAdmin(email);
-
                 if(snap.exists()) {
                     jogadorAtual = snap.data();
-                    jogadorAtual.isAdmin = isAdmin || jogadorAtual.isAdmin;
-                    if(isAdmin && !jogadorAtual.isAdmin) {
-                        jogadorAtual.isAdmin = true;
-                        jogadorAtual.nivel = 999;
-                    }
                 } else {
-                    jogadorAtual = {
-                        uid: cred.user.uid, email, nome: isAdmin ? "👑 Gabriel (ADM)" : "Guerreiro",
-                        nivel: isAdmin ? 999 : 1, pontuacao: 0, moedas: isAdmin ? 500000 : 15000,
-                        diamantes: isAdmin ? 10000 : 100, moedaPoder: isAdmin ? 1000 : 20,
-                        avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=" + email,
-                        guilda: "Nenhuma", guildaDono: "", guildaAdmins: [],
-                        diariasResgatadas: {}, inventario: [], configAudio: {ligado: true, volume: 50}, isAdmin
-                    };
+                    jogadorAtual = { uid: cred.user.uid, email, nome: "Guerreiro", nivel: 1, moedas: 15000, diamantes: 100 };
                 }
                 entrarNoJogoPrincipal();
             } catch(e) { alert("Erro ao fazer login: " + e.message); }
@@ -821,29 +374,14 @@
             document.getElementById('login-screen').classList.remove('active');
             document.getElementById('register-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
-
-            if(verificarSeEAdmin(jogadorAtual.email) || jogadorAtual.isAdmin) {
-                document.getElementById('btn-aba-adm').style.display = 'block';
-                jogadorAtual.isAdmin = true;
-            } else {
-                document.getElementById('btn-aba-adm').style.display = 'none';
-            }
-
             atualizarInterfacePerfil();
             mudarAba('resumo', document.querySelector('.sidebar button:nth-child(1)'));
         }
 
         async function sairParaMenuLogin() {
-            try { 
-                await window.signOut(window.fbAuth); 
-            } catch(e) {}
-            
+            try { await window.signOut(window.fbAuth); } catch(e) {}
             document.getElementById('game-screen').classList.remove('active');
-            document.getElementById('register-screen').classList.remove('active');
             document.getElementById('login-screen').classList.add('active');
-            
-            document.getElementById('login-email').value = "";
-            document.getElementById('login-senha').value = "";
         }
 
         function mudarAba(nomeAba, el) {
@@ -851,13 +389,7 @@
             document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active'));
             document.getElementById(nomeAba).classList.add('active');
             if(el) el.classList.add('active');
-
             if(nomeAba === 'ranking') carregarRankingGlobal();
-            if(nomeAba === 'corporacao') atualizarPainelGuilda();
-            if(nomeAba === 'painel-adm' && jogadorAtual.isAdmin) {
-                carregarPainelAdmJogadores();
-                carregarLogsAuditoria();
-            }
         }
 
         function atualizarInterfacePerfil() {
@@ -867,140 +399,14 @@
             document.getElementById('resumo-pontuacao').innerText = (jogadorAtual.pontuacao || 0).toLocaleString();
             document.getElementById('resumo-moedas').innerText = (jogadorAtual.moedas || 0).toLocaleString();
             document.getElementById('resumo-diamantes').innerText = (jogadorAtual.diamantes || 0).toLocaleString();
-            document.getElementById('resumo-poderes-moeda').innerText = jogadorAtual.moedaPoder || 0;
             document.getElementById('resumo-guilda').innerText = jogadorAtual.guilda || "Nenhuma";
             if(jogadorAtual.avatar) document.getElementById('resumo-avatar-img').src = jogadorAtual.avatar;
         }
 
-        // Sistema de Registro de Logs de Auditoria
-        async function registrarLogAdm(acao, detalhes) {
-            try {
-                let logData = {
-                    dataHora: new Date().toLocaleString('pt-BR'),
-                    admNome: jogadorAtual.nome,
-                    admEmail: jogadorAtual.email,
-                    acao: acao,
-                    detalhes: detalhes,
-                    timestamp: Date.now()
-                };
-                await window.fbAddDoc(window.fbCollection(window.fbDb, "adm_logs"), logData);
-            } catch(e) {
-                console.error("Erro ao registrar log:", e);
-            }
-        }
-
-        async function carregarLogsAuditoria() {
-            let tbody = document.getElementById('tabela-adm-logs');
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">Carregando logs...</td></tr>`;
-            try {
-                let q = window.fbQuery(window.fbCollection(window.fbDb, "adm_logs"), window.fbOrderBy("timestamp", "desc"), window.fbLimit(15));
-                let snap = await window.fbGetDocs(q);
-                tbody.innerHTML = "";
-                if(snap.empty) {
-                    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8;">Nenhum log registrado ainda.</td></tr>`;
-                    return;
-                }
-                snap.forEach(docSnap => {
-                    let log = docSnap.data();
-                    tbody.innerHTML += `
-                        <tr>
-                            <td style="font-size: 11px; color: #38bdf8;">${log.dataHora}</td>
-                            <td>${log.admNome}</td>
-                            <td style="color: #f5af19; font-weight: bold;">${log.acao}</td>
-                            <td style="font-size: 12px; color: #cbd5e1;">${log.detalhes}</td>
-                        </tr>
-                    `;
-                });
-            } catch(e) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #f87171;">Erro ao carregar logs de auditoria.</td></tr>`;
-            }
-        }
-
-        // Funções do Painel Exclusivo ADM
-        async function carregarPainelAdmJogadores() {
-            let tbody = document.getElementById('tabela-adm-jogadores');
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">Carregando banco de dados...</td></tr>`;
-            try {
-                let snap = await window.fbGetDocs(window.fbCollection(window.fbDb, "jogadores"));
-                tbody.innerHTML = "";
-                snap.forEach(docSnap => {
-                    let j = docSnap.data();
-                    tbody.innerHTML += `
-                        <tr>
-                            <td style="font-size: 11px; color: #38bdf8;">${j.uid}</td>
-                            <td>${j.nome}</td>
-                            <td style="font-size: 12px; color: #94a3b8;">${j.email || 'N/A'}</td>
-                            <td>Nv ${j.nivel}</td>
-                            <td>${(j.moedas || 0).toLocaleString()} 🟡</td>
-                            <td>
-                                <button class="btn-acao" style="background: #a855f7; padding: 4px 8px; font-size: 11px;" onclick="admDarMoedas('${j.uid}', '${j.nome}')">+Ouro</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-            } catch(e) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #f87171;">Erro ao carregar jogadores.</td></tr>`;
-            }
-        }
-
-        async function admConcederSkinUnica() {
-            let busca = document.getElementById('adm-uid-skin').value.trim();
-            if(!busca) { alert("Informe o UID ou nome do jogador!"); return; }
-            try {
-                let snap = await window.fbGetDocs(window.fbCollection(window.fbDb, "jogadores"));
-                let achou = false;
-                snap.forEach(async (docSnap) => {
-                    let d = docSnap.data();
-                    if(d.uid === busca || d.nome.toLowerCase() === busca.toLowerCase()) {
-                        achou = true;
-                        if(!d.inventario) d.inventario = [];
-                        d.inventario.push("Skin Única: Divindade ADM Suprema");
-                        await window.fbSetDoc(window.fbDoc(window.fbDb, "jogadores", d.uid), d, {merge: true});
-                        await registrarLogAdm("CONCEDER SKIN", `Skin Única entregue para o jogador ${d.nome} (UID: ${d.uid})`);
-                        alert(`Skin Única concedida com sucesso para ${d.nome}!`);
-                        carregarLogsAuditoria();
-                    }
-                });
-                if(!achou) alert("Jogador não encontrado.");
-            } catch(e) { alert("Erro ao conceder skin."); }
-        }
-
-        async function admBanirJogador() {
-            let uidBan = document.getElementById('adm-uid-ban').value.trim();
-            if(!uidBan) { alert("Informe o UID exato para banir!"); return; }
-            if(confirm(`Tem certeza que deseja deletar/banir o UID ${uidBan}?`)) {
-                try {
-                    await window.fbDeleteDoc(window.fbDoc(window.fbDb, "jogadores", uidBan));
-                    await registrarLogAdm("BANIR JOGADOR", `Conta UID ${uidBan} banida e removida permanentemente.`);
-                    alert("Jogador banido e removido da nuvem.");
-                    carregarPainelAdmJogadores();
-                    carregarLogsAuditoria();
-                } catch(e) { alert("Erro ao banir jogador."); }
-            }
-        }
-
-        async function admDarMoedas(uid, nome) {
-            try {
-                let ref = window.fbDoc(window.fbDb, "jogadores", uid);
-                let snap = await window.fbGetDoc(ref);
-                if(snap.exists()) {
-                    let d = snap.data();
-                    d.moedas = (d.moedas || 0) + 50000;
-                    await window.fbSetDoc(ref, d, {merge: true});
-                    await registrarLogAdm("INJEÇÃO DE OURO", `Adicionado +50.000 Ouro para ${nome} (UID: ${uid})`);
-                    alert(`Adicionado +50.000 Ouro para ${d.nome}!`);
-                    carregarPainelAdmJogadores();
-                    carregarLogsAuditoria();
-                }
-            } catch(e) { alert("Erro ao creditar ouro."); }
-        }
-
-        // Batalhas, Lojas e Demais Funções Padrão
         function entrarNaArena(modo) {
-            modoBatalhaAtual = modo;
             document.getElementById('lista-modos-batalha').style.display = 'none';
             document.getElementById('arena-combate').style.display = 'flex';
-            hpJogador = 100; hpInimigo = 100;
+            hpInimigo = 100;
         }
         function sairDaArena() {
             document.getElementById('arena-combate').style.display = 'none';
@@ -1015,38 +421,12 @@
                 jogadorAtual.moedas -= preco;
                 jogadorAtual.inventario.push(nome);
                 atualizarInterfacePerfil();
-                alert("Comprado!");
+                alert("Compra realizada!");
             } else { alert("Ouro insuficiente!"); }
         }
-        function comprarHab(nome, preco) {
-            if(jogadorAtual.moedaPoder >= preco) {
-                jogadorAtual.moedaPoder -= preco;
-                jogadorAtual.inventario.push(nome);
-                atualizarInterfacePerfil();
-                alert("Habilidade desbloqueada!");
-            } else { alert("Moedas de Poder insuficientes!"); }
-        }
-        async function criarGuilda() {
-            jogadorAtual.guilda = "Minha Guilda";
-            jogadorAtual.guildaDono = jogadorAtual.nome;
-            atualizarInterfacePerfil();
-            await salvarProgressoFirebase();
-        }
-        async function entrarEmGuildaPrompt() {
-            jogadorAtual.guilda = "Guilda Alpha";
-            atualizarInterfacePerfil();
-            await salvarProgressoFirebase();
-        }
-        async function sairDaGuilda() {
-            jogadorAtual.guilda = "Nenhuma";
-            atualizarInterfacePerfil();
-            await salvarProgressoFirebase();
-        }
-        function mudarAbaChat(t, b) {
-            abaChatAtual = t;
-            document.querySelectorAll('.chat-tab-btn').forEach(x => x.classList.remove('active'));
-            b.classList.add('active');
-        }
+        async function criarGuilda() { jogadorAtual.guilda = "Minha Guilda"; atualizarInterfacePerfil(); }
+        async function entrarEmGuildaPrompt() { jogadorAtual.guilda = "Guilda Alpha"; atualizarInterfacePerfil(); }
+        async function sairDaGuilda() { jogadorAtual.guilda = "Nenhuma"; atualizarInterfacePerfil(); }
         function enviarMensagemChat() {
             let i = document.getElementById('chat-msg-input');
             if(!i.value) return;
@@ -1055,25 +435,20 @@
         }
         async function carregarRankingGlobal() {
             let tb = document.getElementById('tabela-ranking-corpo');
-            tb.innerHTML = `<tr><td colspan="5">Carregando...</td></tr>`;
+            tb.innerHTML = `<tr><td colspan="4">Carregando...</td></tr>`;
             let snap = await window.fbGetDocs(window.fbCollection(window.fbDb, "jogadores"));
             tb.innerHTML = "";
             let i = 1;
             snap.forEach(d => {
                 let j = d.data();
-                tb.innerHTML += `<tr><td>#${i++}</td><td>${j.nome}</td><td>Nv ${j.nivel}</td><td>${j.pontuacao || 0} pts</td><td>Online</td></tr>`;
+                tb.innerHTML += `<tr><td>#${i++}</td><td>${j.nome}</td><td>Nv ${j.nivel}</td><td>${j.pontuacao || 0} pts</td></tr>`;
             });
         }
-        function atualizarVolumeAudio(v) { document.getElementById('val-volume').innerText = v; }
         function salvarConfiguracoesPerfil() {
             if(document.getElementById('input-novo-nome').value) jogadorAtual.nome = document.getElementById('input-novo-nome').value;
             if(avatarSelecionadoTemp) jogadorAtual.avatar = avatarSelecionadoTemp;
             atualizarInterfacePerfil();
-            salvarProgressoFirebase();
-            alert("Salvo!");
-        }
-        async function salvarProgressoFirebase() {
-            try { await window.fbSetDoc(window.fbDoc(window.fbDb, "jogadores", jogadorAtual.uid), jogadorAtual, {merge: true}); } catch(e){}
+            alert("Perfil salvo!");
         }
     </script>
 </body>
