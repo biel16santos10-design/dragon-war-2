@@ -150,7 +150,7 @@
       <div>Moedas: 🟡 <strong id="ui-coins">100</strong></div>
       <div>Diamantes: 💎 <strong id="ui-gems">5</strong></div>
       <div>
-        Vida: <span id="ui-hp-text">100/100</span>
+        Vida: <span id="ui-hp-text">200/200</span>
         <div class="bar-container"><div id="bar-hp" class="bar-fill hp-fill" style="width: 100%;"></div></div>
       </div>
       <div>
@@ -248,7 +248,7 @@
 
     <!-- UPGRADES -->
     <div id="panel-upgrades" class="panel-section">
-      <h3>⚒️ Painel de Upgrades</h3>
+      <h3>⚒️️ Painel de Upgrades</h3>
       <div class="item-card" style="margin-bottom: 12px;">
         <strong>Melhorar Arma Atual</strong><br>+5 Ataque por Nível<br>Custo: ✨ 10 Energia de Poder
         <button onclick="upgradeWeapon()">Melhorar Arma</button>
@@ -350,21 +350,21 @@
 
   /* LISTA COMPLETA DE PERSONAGENS */
   const shopCharacters = [
-    { id: 'c1', name: 'Guerreiro Sombra', atk: 5, hp: 20, price: 100, isGem: false, img: 'https://img.icons8.com/color/96/ninja.png' },
-    { id: 'c2', name: 'Mago Elemental', atk: 8, hp: 15, price: 200, isGem: false, img: 'https://img.icons8.com/color/96/wizard.png' },
-    { id: 'c3', name: 'Arqueira Real', atk: 12, hp: 25, price: 350, isGem: false, img: 'https://img.icons8.com/color/96/archer.png' },
-    { id: 'c4', name: 'Paladino Sagrado', atk: 15, hp: 50, price: 500, isGem: false, img: 'https://img.icons8.com/color/96/knight.png' },
-    { id: 'c5', name: 'Ninja do Vento', atk: 20, hp: 30, price: 750, isGem: false, img: 'https://img.icons8.com/color/96/samurai.png' },
-    { id: 'c6', name: 'Berserker de Fogo', atk: 28, hp: 40, price: 1000, isGem: false, img: 'https://img.icons8.com/color/96/barbarian.png' },
-    { id: 'c7', name: 'Invocador Rúnico', atk: 32, hp: 45, price: 1300, isGem: false, img: 'https://img.icons8.com/color/96/witch.png' },
-    { id: 'c8', name: 'Guerreiro Mecânico', atk: 38, hp: 55, price: 1600, isGem: false, img: 'https://img.icons8.com/color/96/cyborg.png' },
-    { id: 'c9', name: 'Assassina Estelar', atk: 42, hp: 50, price: 2000, isGem: false, img: 'https://img.icons8.com/color/96/female-assassin.png' },
-    { id: 'c10', name: 'Caçador de Dragões', atk: 50, hp: 70, price: 10, isGem: true, img: 'https://img.icons8.com/color/96/spartan-helmet.png' },
-    { id: 'c11', name: 'Senhor Elementar', atk: 65, hp: 85, price: 20, isGem: true, img: 'https://img.icons8.com/color/96/genie.png' },
-    { id: 'c12', name: 'Cavaleiro Abissal', atk: 80, hp: 100, price: 30, isGem: true, img: 'https://img.icons8.com/color/96/reaper.png' },
-    { id: 'c13', name: 'Anjo da Vingança', atk: 95, hp: 120, price: 40, isGem: true, img: 'https://img.icons8.com/color/96/angel.png' },
-    { id: 'c14', name: 'Guardião Titânico', atk: 110, hp: 140, price: 50, isGem: true, img: 'https://img.icons8.com/color/96/robot.png' },
-    { id: 'c15', name: 'Imperador Dragão', atk: 140, hp: 180, price: 75, isGem: true, img: 'https://img.icons8.com/color/96/dragon.png' }
+    { id: 'c1', name: 'Guerreiro Sombra', atk: 5, hp: 0, price: 100, isGem: false, img: 'https://img.icons8.com/color/96/ninja.png' },
+    { id: 'c2', name: 'Mago Elemental', atk: 8, hp: 0, price: 200, isGem: false, img: 'https://img.icons8.com/color/96/wizard.png' },
+    { id: 'c3', name: 'Arqueira Real', atk: 12, hp: 0, price: 350, isGem: false, img: 'https://img.icons8.com/color/96/archer.png' },
+    { id: 'c4', name: 'Paladino Sagrado', atk: 15, hp: 0, price: 500, isGem: false, img: 'https://img.icons8.com/color/96/knight.png' },
+    { id: 'c5', name: 'Ninja do Vento', atk: 20, hp: 0, price: 750, isGem: false, img: 'https://img.icons8.com/color/96/samurai.png' },
+    { id: 'c6', name: 'Berserker de Fogo', atk: 28, hp: 0, price: 1000, isGem: false, img: 'https://img.icons8.com/color/96/barbarian.png' },
+    { id: 'c7', name: 'Invocador Rúnico', atk: 32, hp: 0, price: 1300, isGem: false, img: 'https://img.icons8.com/color/96/witch.png' },
+    { id: 'c8', name: 'Guerreiro Mecânico', atk: 38, hp: 0, price: 1600, isGem: false, img: 'https://img.icons8.com/color/96/cyborg.png' },
+    { id: 'c9', name: 'Assassina Estelar', atk: 42, hp: 0, price: 2000, isGem: false, img: 'https://img.icons8.com/color/96/female-assassin.png' },
+    { id: 'c10', name: 'Caçador de Dragões', atk: 50, hp: 0, price: 10, isGem: true, img: 'https://img.icons8.com/color/96/spartan-helmet.png' },
+    { id: 'c11', name: 'Senhor Elementar', atk: 65, hp: 0, price: 20, isGem: true, img: 'https://img.icons8.com/color/96/genie.png' },
+    { id: 'c12', name: 'Cavaleiro Abissal', atk: 80, hp: 0, price: 30, isGem: true, img: 'https://img.icons8.com/color/96/reaper.png' },
+    { id: 'c13', name: 'Anjo da Vingança', atk: 95, hp: 0, price: 40, isGem: true, img: 'https://img.icons8.com/color/96/angel.png' },
+    { id: 'c14', name: 'Guardião Titânico', atk: 110, hp: 0, price: 50, isGem: true, img: 'https://img.icons8.com/color/96/robot.png' },
+    { id: 'c15', name: 'Imperador Dragão', atk: 140, hp: 0, price: 75, isGem: true, img: 'https://img.icons8.com/color/96/dragon.png' }
   ];
 
   /* LISTA COMPLETA DE ARMAS */
@@ -437,8 +437,8 @@
         coins: 100,
         gems: 5,
         powerEnergy: 0,
-        hp: 100,
-        maxHp: 100,
+        hp: 200,
+        maxHp: 200,
         energy: 50,
         maxEnergy: 50,
         atk: 15,
@@ -526,7 +526,6 @@
 
   async function attack() {
     if (player.energy < 5) return log("⚠️ Energia insuficiente! Use Descansar.");
-    if (player.hp <= 0) return log("☠ Você está desmaiado! Use uma poção.");
 
     player.energy -= 5;
     const extraAtk = (player.powerLvl || 0) * 10;
@@ -545,8 +544,6 @@
 
       if (player.exp >= player.level * 100) {
         player.level += 1;
-        player.maxHp += 20;
-        player.hp = player.maxHp;
         player.atk += 5;
         log(`🌟 LEVEL UP! Você subiu para o Nível ${player.level}!`);
       }
@@ -555,7 +552,22 @@
       const bossDmg = Math.max(1, bosses[currentBossIdx].atk - player.def);
       player.hp -= bossDmg;
       log(`💥 O chefe causou ${bossDmg} de dano!`);
-      if (player.hp <= 0) player.hp = 0;
+
+      /* GAME OVER QUANDO A VIDA CHEGAR A ZERO */
+      if (player.hp <= 0) {
+        player.hp = 0;
+        updateUI();
+        await syncData();
+        alert("☠️ GAME OVER! Você perdeu!");
+        log("☠️ GAME OVER! Sua vida chegou a zero. Reiniciando o combate...");
+        
+        /* RESTAURA A VIDA E REINICIA A BATALHA */
+        player.hp = 200;
+        selectBoss();
+        await syncData();
+        updateUI();
+        return;
+      }
     }
 
     const bossHpEl = document.getElementById('boss-hp');
@@ -573,9 +585,11 @@
 
   async function usePotionInCombat() {
     if ((player.inventory?.pocao || 0) <= 0) return log("⚠️ Nenhuma poção disponível!");
+    if (player.hp >= 200) return log("⚠️ Sua vida já está no máximo (200 HP)!");
+    
     player.inventory.pocao -= 1;
-    player.hp = Math.min(player.maxHp, player.hp + 50);
-    log("🧪 Recuperou +50 de HP!");
+    player.hp = Math.min(200, player.hp + 50);
+    log(`🧪 Recuperou +50 de HP! Vida atual: ${player.hp}/200.`);
     await syncData();
     updateUI();
   }
@@ -630,15 +644,12 @@
       const prev = shopCharacters.find(c => c.id === player.equippedChar);
       if (prev) {
         player.atk -= prev.atk;
-        player.maxHp -= prev.hp;
       }
     }
 
     player.equippedChar = id;
     player.avatar = item.img;
     player.atk += item.atk;
-    player.maxHp += item.hp;
-    player.hp = Math.min(player.hp, player.maxHp);
 
     log(`✨ Skin equipada: ${item.name}! Status aplicados.`);
     await syncData();
@@ -668,9 +679,9 @@
     if (isGem) {
       if (player.gems < price) return alert("Diamantes insuficientes!");
       player.gems -= price;
-      player.hp = player.maxHp;
+      player.hp = 200;
       player.energy = player.maxEnergy;
-      log("🧪 Elixir aplicado! Vida e Energia restauradas.");
+      log("🧪 Elixir aplicado! Vida e Energia restauradas ao máximo.");
     } else {
       if (player.coins < price) return alert("Moedas insuficientes!");
       player.coins -= price;
@@ -692,7 +703,7 @@
     player.powerEnergy -= 10;
     player.weaponLvl = (player.weaponLvl || 1) + 1;
     player.atk += 5;
-    log(`⚒️ Arma melhorada para o Nível ${player.weaponLvl}! (+5 Ataque)`);
+    log(`⚒️️ Arma melhorada para o Nível ${player.weaponLvl}! (+5 Ataque)`);
     await syncData();
     updateUI();
   }
@@ -844,7 +855,7 @@
             <img src="${c.img}" alt="${c.name}">
             <div>
               <strong>${c.name}</strong><br>
-              <small>+${c.atk} Atk | +${c.hp} HP</small><br>
+              <small>+${c.atk} Atk</small><br>
               <strong>${owned ? ' Adquirido' : priceTxt}</strong>
             </div>
             <button ${owned ? 'disabled' : ''} onclick="buyChar('${c.id}')">${owned ? 'Na Mochila' : 'Comprar'}</button>
@@ -891,7 +902,7 @@
               <img src="${item.img}" alt="${item.name}">
               <div>
                 <strong>${item.name}</strong><br>
-                <small>+${item.atk} Atk | +${item.hp} HP</small>
+                <small>+${item.atk} Atk</small>
               </div>
               <button onclick="equipChar('${item.id}')" ${isEquipped ? 'disabled style="background:var(--success);"' : ''}>
                 ${isEquipped ? 'Equipado' : 'Equipar'}
@@ -958,11 +969,15 @@
     const avatarEl = document.getElementById('ui-avatar');
     if (avatarEl) avatarEl.src = player.avatar || defaultAvatar;
 
+    /* GARANTE QUE A VIDA MÁXIMA SEJA FIXADA EM 200 */
+    player.maxHp = 200;
+    if (player.hp === undefined || player.hp > 200) player.hp = 200;
+
     setElText('ui-level', player.level || 1);
     setElText('ui-power-eng', player.powerEnergy || 0);
     setElText('ui-coins', player.coins || 0);
     setElText('ui-gems', player.gems || 0);
-    setElText('ui-hp-text', `${player.hp || 0}/${player.maxHp || 100}`);
+    setElText('ui-hp-text', `${player.hp || 0}/200`);
     setElText('ui-energy-text', `${player.energy || 0}/${player.maxEnergy || 50}`);
     setElText('ui-atk', (player.atk || 15) + ((player.powerLvl || 0) * 10));
     setElText('ui-def', player.def || 5);
@@ -971,7 +986,7 @@
     setElText('ui-char-title', `Patente: ${badge.name}`);
 
     const barHp = document.getElementById('bar-hp');
-    if (barHp) barHp.style.width = `${Math.max(0, ((player.hp || 0) / (player.maxHp || 100)) * 100)}%`;
+    if (barHp) barHp.style.width = `${Math.max(0, ((player.hp || 0) / 200) * 100)}%`;
 
     const barEnergy = document.getElementById('bar-energy');
     if (barEnergy) barEnergy.style.width = `${Math.max(0, ((player.energy || 0) / (player.maxEnergy || 50)) * 100)}%`;
@@ -1002,6 +1017,7 @@
 
         if (doc.exists) {
           player = doc.data();
+          player.maxHp = 200;
         } else {
           player = {
             username: user.email.split('@')[0],
@@ -1012,8 +1028,8 @@
             coins: 100,
             gems: 5,
             powerEnergy: 0,
-            hp: 100,
-            maxHp: 100,
+            hp: 200,
+            maxHp: 200,
             energy: 50,
             maxEnergy: 50,
             atk: 15,
