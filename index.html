@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RPG Web Game - Painel ADM & Sistema</title>
+    <title>Dragon War - Rise of Power | Servidor Oficial</title>
     <style>
         :root {
             --bg-color: #0f172a;
             --panel-bg: #1e293b;
-            --accent-color: #3b82f6;
+            --accent-color: #f59e0b;
             --adm-color: #ef4444;
             --text-color: #f8fafc;
             --border-color: #334155;
@@ -19,25 +19,31 @@
         /* Telas de Login / Jogo */
         .screen { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; position: absolute; top: 0; left: 0; background: var(--bg-color); z-index: 10; }
         .hidden { display: none !important; }
-        .card { background: var(--panel-bg); padding: 30px; border-radius: 12px; width: 350px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid var(--border-color); }
-        .card h2 { margin-bottom: 20px; text-align: center; color: var(--accent-color); }
-        .input-group { margin-bottom: 15px; }
+        
+        .card { background: var(--panel-bg); padding: 30px; border-radius: 12px; width: 380px; box-shadow: 0 10px 25px rgba(0,0,0,0.7); border: 1px solid var(--border-color); text-align: center; }
+        .card img.logo-login { width: 100%; max-height: 90px; object-fit: contain; margin-bottom: 20px; border-radius: 6px; }
+        .card h2 { margin-bottom: 20px; color: var(--accent-color); font-size: 20px; }
+        
+        .input-group { margin-bottom: 15px; text-align: left; }
         .input-group label { display: block; margin-bottom: 5px; font-size: 14px; }
         .input-group input { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); background: #0f172a; color: white; }
-        .btn { width: 100%; padding: 10px; background: var(--accent-color); border: none; color: white; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn { width: 100%; padding: 10px; background: var(--accent-color); border: none; color: #000; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; }
         .btn:hover { opacity: 0.9; }
-        .btn-adm { background: var(--adm-color); margin-top: 10px; }
+        .btn-adm { background: var(--adm-color); color: white; margin-top: 10px; }
 
         /* Layout Principal */
         #game-container { display: flex; width: 100%; height: 100%; }
         sidebar { width: 260px; background: var(--panel-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px; }
+        
+        .server-banner { width: 100%; height: 75px; background: url('89097.png') no-repeat center center; background-size: cover; border-radius: 6px; margin-bottom: 15px; border: 1px solid var(--border-color); }
+        
         .user-profile { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color); }
-        .user-avatar { width: 45px; height: 45px; background: var(--accent-color); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 18px; }
+        .user-avatar { width: 45px; height: 45px; background: var(--accent-color); color: #000; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 18px; }
         
         .menu-list { list-style: none; display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
         .menu-item { padding: 10px 15px; border-radius: 6px; cursor: pointer; background: rgba(255,255,255,0.03); transition: 0.2s; font-size: 15px; }
         .menu-item:hover { background: rgba(255,255,255,0.08); }
-        .menu-item.active { background: var(--accent-color); font-weight: bold; }
+        .menu-item.active { background: var(--accent-color); color: #000; font-weight: bold; }
 
         main { flex-grow: 1; display: flex; flex-direction: column; background: #0b0f19; position: relative; }
         header { padding: 15px 25px; background: var(--panel-bg); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
@@ -64,10 +70,11 @@
 </head>
 <body>
 
-    <!-- TELA DE LOGIN -->
+    <!-- TELA DE LOGIN COM LOGO DO SERVIDOR REAL -->
     <div id="login-screen" class="screen">
         <div class="card">
-            <h2>Acessar Jogo</h2>
+            <img src="89097.png" alt="Dragon War Logo" class="logo-login">
+            <h2>Dragon War - Servidor Oficial</h2>
             <div class="input-group">
                 <label>E-mail:</label>
                 <input type="email" id="login-email" placeholder="ex: seuemail@email.com">
@@ -76,13 +83,16 @@
                 <label>Senha:</label>
                 <input type="password" id="login-pass" placeholder="******">
             </div>
-            <button class="btn" onclick="fazerLogin()">Entrar / Criar Conta</button>
+            <button class="btn" onclick="fazerLogin()">Entrar no Servidor</button>
         </div>
     </div>
 
     <!-- TELA PRINCIPAL DO JOGO -->
     <div id="game-container" class="hidden">
         <sidebar>
+            <!-- Banner do Servidor Real na Sidebar -->
+            <div class="server-banner" title="Dragon War - Rise of Power"></div>
+
             <div class="user-profile">
                 <div class="user-avatar" id="sidebar-avatar">U</div>
                 <div>
@@ -99,31 +109,31 @@
         <main>
             <header>
                 <h3 id="current-page-title">Painel</h3>
-                <div style="font-size: 14px;">Moedas: <span id="user-coins" style="color: #eab308; font-weight: bold;">100</span> 🪙</div>
+                <div style="font-size: 14px;">Moedas: <span id="user-coins" style="color: #f59e0b; font-weight: bold;">100</span> 🪙</div>
             </header>
 
             <div class="content-area">
                 
                 <!-- 1. MODO JOGO -->
                 <div id="section-jogar" class="panel-section">
-                    <h2>Modo de Jogo</h2>
-                    <p>Entre em partidas e explore o mundo principal.</p>
-                    <button class="btn" style="margin-top: 15px;" onclick="alert('Entrando na partida...')">Iniciar Partida</button>
+                    <h2>Modo de Jogo - Servidor Real</h2>
+                    <p>Conectado ao ambiente principal de batalhas do Dragon War.</p>
+                    <button class="btn" style="margin-top: 15px; width: auto;" onclick="alert('Conectando à arena oficial do servidor real...')">Entrar na Batalha</button>
                 </div>
 
                 <!-- 2. COMBATE -->
                 <div id="section-combate" class="panel-section">
                     <h2>Arena de Combate</h2>
-                    <p>Enfrente monstros e outros jogadores em tempo real.</p>
+                    <p>Enfrente chefes lendários e outros jogadores em tempo real.</p>
                 </div>
 
                 <!-- 3. LOJA & CAIXAS ÉPICAS -->
                 <div id="section-loja" class="panel-section">
                     <h2>Loja & Caixas Misteriosas</h2>
-                    <p id="loja-desc">Compre itens ou adicione novos produtos ao catálogo (Painel ADM).</p>
+                    <p id="loja-desc">Compre itens ou adicione novos produtos ao catálogo oficial (Painel ADM).</p>
                     
                     <div id="adm-loja-controls" class="hidden" style="margin-top: 15px; background: var(--panel-bg); padding: 15px; border-radius: 6px;">
-                        <h4>Adicionar Item ao Catálogo</h4>
+                        <h4>Adicionar Item ao Catálogo do Servidor</h4>
                         <input type="text" id="new-item-name" class="form-control" placeholder="Nome do item/caixa">
                         <input type="text" id="new-item-price" class="form-control" placeholder="Preço em moedas">
                         <button class="btn" onclick="adicionarItemCatalogo()">Salvar no Catálogo</button>
@@ -137,17 +147,17 @@
                 <div id="section-poderes" class="panel-section">
                     <h2>Gerenciador de Poderes e Armas</h2>
                     <div id="adm-poderes-controls" class="hidden">
-                        <p>Crie novas armas ou poderes mágicos para o jogo:</p>
+                        <p>Crie novas armas ou poderes mágicos para o servidor real:</p>
                         <label>Nome do Poder/Arma:</label>
-                        <input type="text" id="poder-nome" class="form-control" placeholder="Ex: Espada de Fogo Celestial">
+                        <input type="text" id="poder-nome" class="form-control" placeholder="Ex: Lâmina do Dragão de Fogo">
                         <label>Dano / Atributo:</label>
-                        <input type="text" id="poder-dano" class="form-control" placeholder="Ex: +500 Dano Mágico">
+                        <input type="text" id="poder-dano" class="form-control" placeholder="Ex: +1000 Dano de Fogo">
                         <button class="btn" onclick="criarPoder()">Criar e Distribuir</button>
                     </div>
                     <div style="margin-top: 15px;">
                         <h4>Seus Poderes Ativos</h4>
                         <ul id="lista-poderes-user" style="margin-top: 10px; padding-left: 20px;">
-                            <li>Ataque Básico (Nível 1)</li>
+                            <li>Ataque de Garra Básica (Nível 1)</li>
                         </ul>
                     </div>
                 </div>
@@ -155,9 +165,9 @@
                 <!-- 5. INVENTÁRIO -->
                 <div id="section-inventario" class="panel-section">
                     <h2>Inventário</h2>
-                    <p>Seus itens coletados e recompensas.</p>
+                    <p>Seus itens coletados, skins e recompensas do servidor.</p>
                     <div id="inventario-itens" style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
-                        <div style="background: var(--panel-bg); padding: 15px; border-radius: 6px; text-align: center; width: 100px;">Poção HP</div>
+                        <div style="background: var(--panel-bg); padding: 15px; border-radius: 6px; text-align: center; width: 110px;">Poção de Mana</div>
                     </div>
                 </div>
 
@@ -172,20 +182,66 @@
                     <div id="rank-content"></div>
                 </div>
 
-                <!-- 7. EVENTOS & PESQUISA DIÁRIA -->
+                <!-- 7. LISTA DE JOGADORES DO SERVER (NOVA FUNÇÃO ADM) -->
+                <div id="section-jogadores" class="panel-section">
+                    <h2>👥 Lista de Todos os Jogadores do Server</h2>
+                    <p style="color: #94a3b8; margin-bottom: 15px;">Selecione o ID ou Nick do jogador para aplicar ações rápidas (Dar Presentes da Loja, Dar ADM, Remover ADM, etc).</p>
+                    
+                    <div style="background: var(--panel-bg); padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                        <h4>Ação Rápida por ID Selecionado</h4>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <input type="text" id="selected-player-id" class="form-control" placeholder="ID / Nick selecionado" readonly style="margin-bottom:0;">
+                            <button class="btn" style="width: auto; background: #16a34a;" onclick="acaoRapidaLista('presentear')">🎁 Liberar Loja Completa</button>
+                            <button class="btn" style="width: auto; background: var(--accent-color); color: #000;" onclick="acaoRapidaLista('dar_adm')">Dar ADM</button>
+                        </div>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID do Jogador</th>
+                                <th>Nick</th>
+                                <th>Status</th>
+                                <th>Ações Rápidas</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-jogadores-server">
+                            <tr>
+                                <td>#DW-001</td>
+                                <td>Gabriel <span class="adm-tag">[ADM]</span></td>
+                                <td style="color: #16a34a;">Online</td>
+                                <td><button class="btn" style="padding: 4px 10px; font-size: 12px;" onclick="selecionarJogadorServer('#DW-001', 'Gabriel')">Selecionar</button></td>
+                            </tr>
+                            <tr>
+                                <td>#DW-002</td>
+                                <td>ShadowKilled</td>
+                                <td style="color: #16a34a;">Online</td>
+                                <td><button class="btn" style="padding: 4px 10px; font-size: 12px;" onclick="selecionarJogadorServer('#DW-002', 'ShadowKilled')">Selecionar</button></td>
+                            </tr>
+                            <tr>
+                                <td>#DW-003</td>
+                                <td>DragonSlayer</td>
+                                <td style="color: #94a3b8;">Ausente</td>
+                                <td><button class="btn" style="padding: 4px 10px; font-size: 12px;" onclick="selecionarJogadorServer('#DW-003', 'DragonSlayer')">Selecionar</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 8. EVENTOS & PESQUISA DIÁRIA -->
                 <div id="section-evento" class="panel-section">
                     <h2>Eventos Ativos & Pesquisa Diária</h2>
                     <div style="background: var(--panel-bg); padding: 15px; border-radius: 6px; margin-top: 10px;">
-                        <h4>🗓️ Evento Diário: Missão de Caça</h4>
-                        <p style="font-size: 14px; color: #94a3b8; margin-top: 5px;">Derrote chefes para ganhar fragmentos épicos.</p>
-                        <button class="btn" style="margin-top: 10px; width: auto;" onclick="alert('Pesquisa diária respondida! +50 moedas ganhas.')">Responder Pesquisa Diária (+50 Moedas)</button>
+                        <h4>🗓️ Evento do Servidor: Ascensão dos Dragões</h4>
+                        <p style="font-size: 14px; color: #94a3b8; margin-top: 5px;">Derrote chefes mundiais para coletar itens lendários exclusivos.</p>
+                        <button class="btn" style="margin-top: 10px; width: auto;" onclick="alert('Pesquisa diária respondida! +50 moedas ganhas no servidor.')">Responder Pesquisa Diária (+50 Moedas)</button>
                     </div>
                 </div>
 
-                <!-- 8. PAINEL DE ADMINISTRAÇÃO AVANÇADO -->
+                <!-- 9. PAINEL DE ADMINISTRAÇÃO AVANÇADO -->
                 <div id="section-painel-adm" class="panel-section">
                     <h2>👑 Painel de Administração Avançado</h2>
-                    <p style="color: var(--adm-color); margin-bottom: 15px;">Ferramentas exclusivas para controle global do jogo.</p>
+                    <p style="color: var(--adm-color); margin-bottom: 15px;">Controle total do Servidor Real Dragon War.</p>
                     
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                         <div style="background: var(--panel-bg); padding: 15px; border-radius: 6px;">
@@ -195,18 +251,18 @@
                             
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 5px;">
                                 <button class="btn btn-adm" onclick="acaoAdm('banir')">Banir</button>
-                                <button class="btn" style="background:#d97706;" onclick="acaoAdm('mutar')">Mutar</button>
+                                <button class="btn" style="background:#d97706; color:white;" onclick="acaoAdm('mutar')">Mutar</button>
                             </div>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 5px;">
-                                <button class="btn" style="background:#16a34a;" onclick="acaoAdm('dar_adm')">Dar ADM</button>
-                                <button class="btn" style="background:#dc2626;" onclick="acaoAdm('remover_adm')">Remover ADM</button>
+                                <button class="btn" style="background:#16a34a; color:white;" onclick="acaoAdm('dar_adm')">Dar ADM</button>
+                                <button class="btn" style="background:#dc2626; color:white;" onclick="acaoAdm('remover_adm')">Remover ADM</button>
                             </div>
-                            <button class="btn" style="background:#8b5cf6; width:100%;" onclick="acaoAdm('liberar_loja')">🎁 Liberar Todos Avatares/Skins/Loja</button>
+                            <button class="btn" style="background:#8b5cf6; color:white; width:100%;" onclick="acaoAdm('liberar_loja')">🎁 Liberar Todos Avatares/Skins/Loja</button>
                         </div>
 
                         <div style="background: var(--panel-bg); padding: 15px; border-radius: 6px;">
                             <h4>📢 Enviar Mensagem Global</h4>
-                            <p style="font-size: 12px; color: #94a3b8; margin-bottom: 5px;">Aparece no chat de todos instantaneamente.</p>
+                            <p style="font-size: 12px; color: #94a3b8; margin-bottom: 5px;">Aparece no chat de todos os jogadores conectados.</p>
                             <input type="text" id="global-msg-input" class="form-control" placeholder="Digite o aviso global...">
                             <button class="btn btn-adm" onclick="enviarMensagemGlobal()">Transmitir Mensagem</button>
                         </div>
@@ -215,15 +271,37 @@
 
                 <!-- CHAT GLOBAL FIXO -->
                 <div style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                    <h4>Chat do Sistema / Global</h4>
+                    <h4>Chat do Servidor / Global</h4>
                     <div class="chat-box" id="chat-container">
-                        <div class="chat-msg">Sistema: Bem-vindo ao servidor oficial!</div>
+                        <div class="chat-msg">Servidor: Bem-vindo ao Dragon War - Rise of Power!</div>
                     </div>
                 </div>
 
             </div>
         </main>
     </div>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
+          authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
+          projectId: "dragon-war-rise-of-power-2a9f1",
+          storageBucket: "dragon-war-rise-of-power-2a9f1.firebasestorage.app",
+          messagingSenderId: "115455691167",
+          appId: "1:115455691167:web:ff3638f67b66c17c5515aa",
+          measurementId: "G-S7XE2EN9CL"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        console.log("Firebase inicializado com sucesso no Dragon War!");
+    </script>
 
     <script>
         const EMAIL_ADMIN = "groupsacabraldigital@gmail.com";
@@ -245,7 +323,7 @@
                 : usuarioAtual.nome;
             
             document.getElementById('sidebar-avatar').innerText = usuarioAtual.nome.charAt(0).toUpperCase();
-            document.getElementById('sidebar-role').innerText = usuarioAtual.isAdm ? "Administrador" : "Aventureiro";
+            document.getElementById('sidebar-role').innerText = usuarioAtual.isAdm ? "Administrador (Fundador)" : "Aventureiro";
 
             montarMenuLateral();
             construirCaixasEpicas();
@@ -260,11 +338,12 @@
                 { id: 'poderes', label: '⚡ Criar Poderes' },
                 { id: 'inventario', label: '🎒 Inventário' },
                 { id: 'rank', label: '🏆 Rankings' },
+                { id: 'jogadores', label: '👥 Lista de Jogadores' },
                 { id: 'evento', label: '🎉 Eventos & Caixas' },
                 { id: 'painel-adm', label: '👑 Painel ADM' }
             ] : [
                 { id: 'jogar', label: '🎮 Modo de Jogo' },
-                { id: 'combate', label: '⚔️️ Combate' },
+                { id: 'combate', label: '⚔ Combate' },
                 { id: 'loja', label: '🛒 Loja' },
                 { id: 'poderes', label: '⚡ Poderes' },
                 { id: 'inventario', label: '🎒 Inventário' },
@@ -306,8 +385,8 @@
                 grid.innerHTML += `
                     <div class="box-item">
                         <strong>Caixa Épica #${idx+1}</strong>
-                        <p style="font-size:12px; color:#94a3b8; margin:5px 0;">Contém itens raros e lendários.</p>
-                        <span style="color:#eab308; display:block; margin-bottom:8px;">${preco} Moedas</span>
+                        <p style="font-size:12px; color:#94a3b8; margin:5px 0;">Contém itens lendários do Dragon War.</p>
+                        <span style="color:#f59e0b; display:block; margin-bottom:8px;">${preco} Moedas</span>
                         <button class="btn" style="padding:5px; font-size:12px;" onclick="abrirCaixa(${preco})">Comprar e Abrir</button>
                     </div>
                 `;
@@ -315,14 +394,14 @@
         }
 
         function abrirCaixa(preco) {
-            alert(`Caixa aberta com sucesso! Você gastou ${preco} moedas e encontrou um item épico.`);
+            alert(`Caixa aberta com sucesso no servidor! Você gastou ${preco} moedas e encontrou um equipamento lendário.`);
         }
 
         function adicionarItemCatalogo() {
             const nome = document.getElementById('new-item-name').value;
             const preco = document.getElementById('new-item-price').value;
             if(!nome || !preco) { alert('Preencha todos os campos!'); return; }
-            alert(`Item "${nome}" por ${preco} moedas adicionado com sucesso ao catálogo da Loja!`);
+            alert(`Item "${nome}" por ${preco} moedas adicionado com sucesso ao catálogo do servidor real!`);
             document.getElementById('new-item-name').value = "";
             document.getElementById('new-item-price').value = "";
         }
@@ -331,16 +410,32 @@
             const nome = document.getElementById('poder-nome').value;
             const dano = document.getElementById('poder-dano').value;
             if(!nome) { alert('Insira o nome do poder!'); return; }
-            alert(`Novo poder/arma criado: "${nome}" (${dano}) e distribuído para o banco de dados!`);
+            alert(`Novo poder/arma criado no servidor: "${nome}" (${dano}) e distribuído!`);
+        }
+
+        function selecionarJogadorServer(id, nick) {
+            document.getElementById('selected-player-id').value = `${id} - ${nick}`;
+            alert(`Jogador ${nick} (${id}) selecionado para gerenciamento rápido!`);
+        }
+
+        function acaoRapidaLista(tipo) {
+            const selecionado = document.getElementById('selected-player-id').value;
+            if(!selecionado) { alert('Selecione um jogador da tabela primeiro!'); return; }
+
+            if(tipo === 'presentear') {
+                alert(`🎁 Todos os avatares, skins e itens da loja foram liberados 100% para ${selecionado}!`);
+            } else if(tipo === 'dar_adm') {
+                alert(`👑 O cargo de Administrador foi concedido para ${selecionado}!`);
+            }
         }
 
         function acaoAdm(tipo) {
             const target = document.getElementById('target-player').value;
             if(!target) { alert('Digite o nome do jogador alvo!'); return; }
             
-            if(tipo === 'banir') alert(`O jogador ${target} foi banido pelo ADM.`);
-            if(tipo === 'mutar') alert(`O jogador ${target} foi mutado.`);
-            if(tipo === 'dar_adm') alert(`O jogador ${target} agora foi promovido a Administrador!`);
+            if(tipo === 'banir') alert(`O jogador ${target} foi banido do servidor.`);
+            if(tipo === 'mutar') alert(`O jogador ${target} foi mutado no chat.`);
+            if(tipo === 'dar_adm') alert(`O jogador ${target} agora foi promovido a Administrador do servidor!`);
             if(tipo === 'remover_adm') alert(`O cargo de Administrador de ${target} foi removido.`);
             if(tipo === 'liberar_loja') alert(`Todos os avatares, skins e itens da loja foram liberados 100% para ${target}!`);
             
@@ -354,7 +449,7 @@
             const chat = document.getElementById('chat-container');
             const div = document.createElement('div');
             div.className = "chat-msg global";
-            div.innerHTML = `<strong>👑 [AVISO GLOBAL - ADM Gabriel]:</strong> ${msg}`;
+            div.innerHTML = `<strong>👑 [AVISO DO SERVIDOR - ADM Gabriel]:</strong> ${msg}`;
             chat.appendChild(div);
             chat.scrollTop = chat.scrollHeight;
 
@@ -366,7 +461,7 @@
             if(tipo === 'global') {
                 container.innerHTML = `<table><tr><th>Posição</th><th>Jogador</th><th>Nível</th></tr><tr><td>1º</td><td>ShadowKilled</td><td>99</td></tr><tr><td>2º</td><td>DragonSlayer</td><td>95</td></tr></table>`;
             } else if(tipo === 'online') {
-                container.innerHTML = `<table><tr><th>Jogador</th><th>Status</th></tr><tr><td>Gabriel <span class="adm-tag">[ADM]</span></td><td>Online (Painel ADM)</td></tr><tr><td>PlayerX</td><td>Online</td></tr></table>`;
+                container.innerHTML = `<table><tr><th>Jogador</th><th>Status</th></tr><tr><td>Gabriel <span class="adm-tag">[ADM]</span></td><td>Online (Servidor Real)</td></tr><tr><td>PlayerX</td><td>Online</td></tr></table>`;
             } else if(tipo === 'adms') {
                 container.innerHTML = `<table><tr><th>Administrador</th><th>Cargo</th><th>Acesso</th></tr><tr><td>Gabriel <span class="adm-tag">[ADM]</span></td><td>Fundador / Desenvolvedor</td><td>Total</td></tr></table>`;
             }
