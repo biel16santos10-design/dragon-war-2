@@ -82,16 +82,17 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             border-right: 1px solid #334155;
+            overflow-y: auto;
         }
         .sidebar button {
             background: transparent;
             color: #94a3b8;
             border: none;
-            padding: 12px;
+            padding: 10px 12px;
             text-align: left;
-            font-size: 15px;
+            font-size: 14px;
             border-radius: 6px;
             cursor: pointer;
             transition: 0.2s;
@@ -113,7 +114,7 @@
         .card-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
+            gap: 15px;
             margin-top: 15px;
         }
         .item-card {
@@ -150,11 +151,62 @@
             border: 1px solid #334155;
             padding: 20px;
             border-radius: 8px;
-            max-width: 500px;
+            max-width: 600px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
         }
-        .status-box p {
-            margin: 10px 0;
-            font-size: 16px;
+        .avatar-preview {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid #f5af19;
+            object-fit: cover;
+            background: #334155;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #1e293b;
+            font-size: 14px;
+        }
+        th {
+            color: #38bdf8;
+            background: rgba(30, 41, 59, 0.6);
+        }
+        .chat-box {
+            background: #020617;
+            border: 1px solid #334155;
+            height: 350px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input-area input {
+            flex: 1;
+            padding: 10px;
+            background: #1e293b;
+            border: 1px solid #475569;
+            color: white;
+            border-radius: 6px;
         }
     </style>
 </head>
@@ -163,11 +215,11 @@
     <!-- TELA 1: MENU INICIAL -->
     <div id="home-screen" class="screen active">
         <div class="home-left">
-            <div style="display: flex; align-items: center; gap: 12px; background: rgba(15,23,42,0.8); padding: 12px; border-radius: 8px; border: 1px solid #1e3a8a;">
-                <div style="width: 45px; height: 45px; border-radius: 50%; border: 2px solid #f5af19; background: #334155; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #f5af19;">GC</div>
+            <div style="display: flex; align-items: center; gap: 12px; background: rgba(15,23,42,0.85); padding: 12px; border-radius: 8px; border: 1px solid #1e3a8a;">
+                <img id="home-avatar-img" src="https://via.placeholder.com/90" class="avatar-preview" style="width: 50px; height: 50px;" alt="Avatar">
                 <div>
                     <h3 id="display-name" style="font-size: 16px;">Gabriel Cabral</h3>
-                    <small style="color: #94a3b8;">UID: <span id="display-uid">12345678</span></small>
+                    <small style="color: #94a3b8;">UID: <span id="display-uid">12345678</span> | Rank: <span id="display-rank">Iniciante</span></small>
                 </div>
             </div>
             
@@ -175,6 +227,7 @@
             <button class="menu-btn" onclick="abrirNovoJogo()">➕ NOVO JOGO / REGISTRAR</button>
             <button class="menu-btn" onclick="abrirCarregar()">📂 CARREGAR CONTA</button>
             <button class="menu-btn" onclick="abrirSalvar()">📄 SALVAR PROGRESSO</button>
+            <button class="menu-btn" onclick="irParaConfig()">⚙️ CONFIGURAÇÕES</button>
             <button class="menu-btn" onclick="irParaAdmin()" style="border-color: #f5af19; color: #f5af19;">🛡️ PAINEL ADM</button>
         </div>
     </div>
@@ -182,96 +235,105 @@
     <!-- TELA 2: DASHBOARD DO JOGADOR -->
     <div id="game-screen" class="screen">
         <div class="sidebar">
-            <h2 style="color: #f5af19; margin-bottom: 20px; font-size: 18px;">DRAGON WAR</h2>
-            <button onclick="mudarAba('resumo', this)">Resumo</button>
-            <button onclick="mudarAba('campanha', this)">Campanha / Bosses</button>
-            <button onclick="mudarAba('loja', this)" class="active">Loja de Itens</button>
-            <button onclick="mudarAba('poderes', this)">Poderes</button>
+            <h2 style="color: #f5af19; margin-bottom: 15px; font-size: 16px; text-align: center;">DRAGON WAR</h2>
+            <button onclick="mudarAba('resumo', this)" class="active">Resumo</button>
+            <button onclick="mudarAba('campanha', this)">Campanha (Modos)</button>
+            <button onclick="mudarAba('loja', this)">Loja (Armas/Itens)</button>
+            <button onclick="mudarAba('poderes', this)">Poderes & Habilidades</button>
             <button onclick="mudarAba('inventario', this)">Inventário</button>
-            <button onclick="voltarHome()" style="margin-top: auto; color: #f87171;">⬅ Voltar ao Menu</button>
+            <button onclick="mudarAba('chat', this)">Chat Geral</button>
+            <button onclick="mudarAba('ranking', this)">Ranking Global</button>
+            <button onclick="mudarAba('config', this)">Configurações</button>
+            <button onclick="voltarHome()" style="margin-top: 15px; color: #f87171; border-top: 1px solid #334155; padding-top: 10px;">⬅ Voltar ao Menu</button>
         </div>
         <div class="content-area">
             
             <!-- ABA RESUMO -->
-            <div id="resumo" class="tab-content">
+            <div id="resumo" class="tab-content active">
                 <h2>Resumo do Herói</h2>
                 <div class="status-box" style="margin-top: 15px;">
-                    <p><strong>Personagem:</strong> Gabriel Cabral</p>
-                    <p><strong>Nível:</strong> 48</p>
-                    <p><strong>Classe:</strong> Guerreiro / Mago</p>
-                    <p><strong>Moedas:</strong> 356.760 🟡</p>
-                    <p><strong>Diamantes:</strong> 2.540 💎</p>
-                    <p><strong>Status do Servidor:</strong> <span style="color: #22c55e;">Conectado ao Firebase</span></p>
+                    <img id="resumo-avatar-img" src="https://via.placeholder.com/90" class="avatar-preview" alt="Avatar">
+                    <div>
+                        <p><strong>Nome:</strong> <span id="resumo-nome">Gabriel Cabral</span></p>
+                        <p><strong>Classe:</strong> Guerreiro</p>
+                        <p><strong>Rank / Nível:</strong> <span id="resumo-rank-nivel">Iniciante (Nível 1)</span></p>
+                        <p><strong>Moedas:</strong> <span id="resumo-moedas">356.760</span> 🟡</p>
+                        <p><strong>Diamantes:</strong> <span id="resumo- diamantes">2.540</span> 💎</p>
+                        <p><strong>Moedas de Poder:</strong> <span id="resumo-moedas-poder">12</span> 🔮</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- ABA CAMPANHA / BOSSES -->
+            <!-- ABA CAMPANHA -->
             <div id="campanha" class="tab-content">
-                <h2>Batalha contra Chefões</h2>
+                <h2>Modos de Batalha (Campanha)</h2>
+                <p style="color: #94a3b8; margin-top: 5px;">Selecione a dificuldade e lute para ganhar recompensas e moedas de poder!</p>
                 <div class="card-grid">
+                    <div class="item-card" style="border-color: #22c55e;">
+                        <h4>Modo Fácil</h4>
+                        <p style="color: #22c55e;">Ideal para iniciantes com arma básica.</p>
+                        <button class="btn-acao" style="background: #22c55e;" onclick="iniciarBatalha('Fácil')">LUTAR (FÁCIL)</button>
+                    </div>
+                    <div class="item-card" style="border-color: #3b82f6;">
+                        <h4>Modo Médio</h4>
+                        <p style="color: #3b82f6;">Desafio moderado, requer equipamentos melhores.</p>
+                        <button class="btn-acao" style="background: #3b82f6;" onclick="iniciarBatalha('Médio')">LUTAR (MÉDIO)</button>
+                    </div>
+                    <div class="item-card" style="border-color: #eab308;">
+                        <h4>Modo Intermediário</h4>
+                        <p style="color: #eab308;">Inimigos fortes e recompensas generosas.</p>
+                        <button class="btn-acao" style="background: #eab308;" onclick="iniciarBatalha('Intermediário')">LUTAR (INTERMEDIÁRIO)</button>
+                    </div>
                     <div class="item-card" style="border-color: #ef4444;">
-                        <h4>KHALDRON</h4>
-                        <p style="color: #ef4444;">Nível 80 (Sessão SSS)</p>
-                        <button class="btn-acao" style="background: #ef4444;" onclick="atacarBoss('Khaldron')">ENTRAR NA BATALHA</button>
-                    </div>
-                    <div class="item-card" style="border-color: #f97316;">
-                        <h4>IGNEOUS</h4>
-                        <p style="color: #f97316;">Nível 70 (Sessão SS)</p>
-                        <button class="btn-acao" style="background: #f97316;" onclick="atacarBoss('Igneous')">ENTRAR NA BATALHA</button>
-                    </div>
-                    <div class="item-card" style="border-color: #a855f7;">
-                        <h4>MALAKAI</h4>
-                        <p style="color: #a855f7;">Nível 60 (Sessão S)</p>
-                        <button class="btn-acao" style="background: #a855f7;" onclick="atacarBoss('Malakai')">ENTRAR NA BATALHA</button>
+                        <h4>Modo Ferra-Doido (Hard)</h4>
+                        <p style="color: #ef4444;">Extremo! Apenas para os mais poderosos.</p>
+                        <button class="btn-acao" style="background: #ef4444;" onclick="iniciarBatalha('Ferra-Doido')">LUTAR (FERRA-DOIDO)</button>
                     </div>
                 </div>
             </div>
 
             <!-- ABA LOJA -->
-            <div id="loja" class="tab-content active">
-                <h2>Loja de Itens</h2>
+            <div id="loja" class="tab-content">
+                <h2>Loja de Itens e Armas</h2>
+                <p style="color: #94a3b8; margin-top: 5px;">Equipado inicialmente com: <span style="color: #f5af19;">Faquinha de Madeira</span></p>
                 <div class="card-grid">
+                    <div class="item-card">
+                        <h4>Espada Longa de Ferro</h4>
+                        <p>1.500 Moedas 🟡</p>
+                        <button class="btn-acao" onclick="comprarItem('Espada Longa de Ferro', 1500)">COMPRAR ARMA</button>
+                    </div>
                     <div class="item-card">
                         <h4>Lâmina do Dragão</h4>
                         <p>5.000 Moedas 🟡</p>
-                        <button class="btn-acao" onclick="comprarItem('Lâmina do Dragão', 5000)">COMPRAR</button>
+                        <button class="btn-acao" onclick="comprarItem('Lâmina do Dragão', 5000)">COMPRAR ARMA</button>
                     </div>
                     <div class="item-card">
-                        <h4>Armadura do Dragão</h4>
-                        <p>1.000 Moedas 🟡</p>
-                        <button class="btn-acao" onclick="comprarItem('Armadura do Dragão', 1000)">COMPRAR</button>
+                        <h4>Poção de Vida Suprema</h4>
+                        <p>300 Moedas 🟡</p>
+                        <button class="btn-acao" onclick="comprarItem('Poção de Vida Suprema', 300)">COMPRAR RECURSO</button>
                     </div>
                     <div class="item-card">
-                        <h4>Poção de Mana</h4>
-                        <p>500 Moedas 🟡</p>
-                        <button class="btn-acao" onclick="comprarItem('Poção de Mana', 500)">COMPRAR</button>
-                    </div>
-                    <div class="item-card">
-                        <h4>Pergaminho do Poder</h4>
-                        <p>250 Moedas 🟡</p>
-                        <button class="btn-acao" onclick="comprarItem('Pergaminho do Poder', 250)">COMPRAR</button>
+                        <h4>Comida Energética</h4>
+                        <p>150 Moedas 🟡</p>
+                        <button class="btn-acao" onclick="comprarItem('Comida Energética', 150)">COMPRAR RECURSO</button>
                     </div>
                 </div>
             </div>
 
             <!-- ABA PODERES -->
             <div id="poderes" class="tab-content">
-                <h2>Árvore de Habilidades</h2>
+                <h2>Árvore de Habilidades & Cartas de Poder</h2>
+                <p style="color: #94a3b8; margin-top: 5px;">Use suas Moedas de Poder para evoluir suas magias.</p>
                 <div class="card-grid">
                     <div class="item-card">
                         <h4>Raio Espiritual</h4>
                         <p>Nível 5/5 (Ativo)</p>
-                        <button class="btn-acao" style="background: #3b82f6;" onclick="evoluirPoder('Raio Espiritual')">EVOLUIR</button>
+                        <button class="btn-acao" style="background: #8b5cf6;" onclick="evoluirPoder('Raio Espiritual')">EVOLUIR (5 🔮)</button>
                     </div>
                     <div class="item-card">
                         <h4>Torrente do Vazio</h4>
                         <p>Nível 3/5 (Elemental)</p>
-                        <button class="btn-acao" style="background: #3b82f6;" onclick="evoluirPoder('Torrente do Vazio')">EVOLUIR</button>
-                    </div>
-                    <div class="item-card">
-                        <h4>Fôlego de Fogo</h4>
-                        <p>Nível 4/5 (Dano Crítico)</p>
-                        <button class="btn-acao" style="background: #3b82f6;" onclick="evoluirPoder('Fôlego de Fogo')">EVOLUIR</button>
+                        <button class="btn-acao" style="background: #8b5cf6;" onclick="evoluirPoder('Torrente do Vazio')">EVOLUIR (5 🔮)</button>
                     </div>
                 </div>
             </div>
@@ -281,15 +343,66 @@
                 <h2>Inventário / Mochila</h2>
                 <div class="card-grid">
                     <div class="item-card" style="border-color: #22c55e;">
-                        <h4>Espada Longa +2</h4>
+                        <h4>Faquinha de Madeira (Inicial)</h4>
                         <p style="color: #22c55e;">Equipado</p>
-                        <button class="btn-acao" style="background: #64748b;" onclick="usarItem('Espada Longa')">GUARDAR</button>
+                        <button class="btn-acao" style="background: #64748b;">USANDO</button>
                     </div>
-                    <div class="item-card" style="border-color: #22c55e;">
-                        <h4>Poção de Vida (x5)</h4>
+                    <div class="item-card" style="border-color: #38bdf8;">
+                        <h4>Poção de Vida (x3)</h4>
                         <p style="color: #38bdf8;">Consumível</p>
                         <button class="btn-acao" style="background: #eab308;" onclick="usarItem('Poção de Vida')">USAR</button>
                     </div>
+                </div>
+            </div>
+
+            <!-- ABA CHAT GERAL -->
+            <div id="chat" class="tab-content">
+                <h2>Chat Geral da Comunidade</h2>
+                <div class="chat-box" style="margin-top: 15px;">
+                    <div class="chat-messages" id="chat-container">
+                        <p><strong style="color: #38bdf8;">Gromnash:</strong> E aí galera, quem vai encarar o Boss SSS hoje?</p>
+                        <p><strong style="color: #f5af19;">GabrielCabral:</strong> Acabei de comprar a Lâmina do Dragão, bora!</p>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chat-msg-input" placeholder="Digite sua mensagem...">
+                        <button class="btn-acao" style="width: 100px;" onclick="enviarMensagemChat()">Enviar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ABA RANKING GLOBAL -->
+            <div id="ranking" class="tab-content">
+                <h2>Ranking Global do Servidor</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>POS</th>
+                            <th>JOGADOR</th>
+                            <th>CLASSE</th>
+                            <th>NÍVEL</th>
+                            <th>RANK</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>GabrielCabral</td><td>Guerreiro</td><td>150</td><td style="color: #f5af19;">Mestre</td></tr>
+                        <tr><td>2</td><td>Gromnash</td><td>Guerreiro</td><td>150</td><td style="color: #38bdf8;">Avançado</td></tr>
+                        <tr><td>3</td><td>Karansh</td><td>Mago</td><td>142</td><td style="color: #38bdf8;">Avançado</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ABA CONFIGURAÇÕES -->
+            <div id="config" class="tab-content">
+                <h2>Configurações de Perfil</h2>
+                <div class="status-box" style="margin-top: 15px; display: flex; flex-direction: column; align-items: flex-start; gap: 15px; width: 100%; max-width: 500px;">
+                    <h3>Editar Informações Pessoais</h3>
+                    <label style="width: 100%;">Novo Nome / Nick:
+                        <input type="text" id="input-novo-nome" value="Gabriel Cabral" style="width: 100%; padding: 8px; margin-top: 5px; background: #0b0f19; border: 1px solid #334155; color: white; border-radius: 4px;">
+                    </label>
+                    <label style="width: 100%;">URL da Foto de Perfil (Avatar):
+                        <input type="text" id="input-novo-avatar" placeholder="Cole o link da imagem aqui..." style="width: 100%; padding: 8px; margin-top: 5px; background: #0b0f19; border: 1px solid #334155; color: white; border-radius: 4px;">
+                    </label>
+                    <button class="btn-acao" onclick="salvarConfiguracoesPerfil()">Salvar Alterações</button>
                 </div>
             </div>
 
@@ -315,17 +428,23 @@
             if(elementoBtn) elementoBtn.classList.add('active');
         }
 
+        function irParaConfig() {
+            entrarNoJogo();
+            mudarAba('config', document.querySelector('.sidebar button:nth-child(8)'));
+        }
+
         function abrirNovoJogo() {
             let nome = prompt("Digite o nome do seu novo personagem:");
             let email = prompt("Digite o seu e-mail para vincular a conta:");
             if(nome && email) {
                 document.getElementById('display-name').innerText = nome;
-                alert(`Nova conta criada para ${nome} (${email}) com sucesso! Dados prontos para salvar no Firebase.`);
+                document.getElementById('resumo-nome').innerText = nome;
+                alert(`Nova conta criada para ${nome} com sucesso!`);
             }
         }
 
         function abrirSalvar() {
-            alert("Progresso e inventário salvos com sucesso no Firestore!");
+            alert("Progresso, inventário e dados salvos com sucesso no Firestore!");
         }
 
         function abrirCarregar() {
@@ -340,19 +459,45 @@
         }
 
         function comprarItem(nomeItem, preco) {
-            alert(`Compra realizada com sucesso! Você adquiriu: ${nomeItem} por ${preco} moedas.`);
+            alert(`Compra realizada! Você adquiriu: ${nomeItem} por ${preco} moedas 🟡.`);
         }
 
-        function atacarBoss(nomeBoss) {
-            alert(`Iniciando combate épico contra o chefão: ${nomeBoss}! Boa sorte, Herói.`);
+        function iniciarBatalha(modo) {
+            alert(`Entrando na batalha no modo [${modo}]! Derrote os inimigos para ganhar recompensas e cartas de poder.`);
         }
 
         function evoluirPoder(nomePoder) {
-            alert(`Habilidade ${nomePoder} evoluída com sucesso!`);
+            alert(`Habilidade ${nomePoder} evoluída com sucesso usando Moedas de Poder!`);
         }
 
         function usarItem(nomeItem) {
-            alert(`Ação executada no item: ${nomeItem}`);
+            alert(`Você usou o item: ${nomeItem}. Status restaurados!`);
+        }
+
+        function enviarMensagemChat() {
+            let input = document.getElementById('chat-msg-input');
+            let msg = input.value;
+            if(msg.trim() !== "") {
+                let container = document.getElementById('chat-container');
+                container.innerHTML += `<p><strong style="color: #f5af19;">GabrielCabral:</strong> ${msg}</p>`;
+                input.value = "";
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        function salvarConfiguracoesPerfil() {
+            let novoNome = document.getElementById('input-novo-nome').value;
+            let novoAvatar = document.getElementById('input-novo-avatar').value;
+
+            if(novoNome) {
+                document.getElementById('display-name').innerText = novoNome;
+                document.getElementById('resumo-nome').innerText = novoNome;
+            }
+            if(novoAvatar) {
+                document.getElementById('home-avatar-img').src = novoAvatar;
+                document.getElementById('resumo-avatar-img').src = novoAvatar;
+            }
+            alert("Configurações de perfil atualizadas com sucesso!");
         }
     </script>
 </body>
