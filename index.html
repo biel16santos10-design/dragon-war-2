@@ -64,6 +64,11 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 
 .chat-toggle{position:absolute;right:14px;bottom:8px;height:38px;padding:0 14px;border:1px solid var(--accent-color);border-radius:20px;background:rgba(19,27,46,.98);color:#fff;font-weight:800;cursor:pointer;z-index:60;box-shadow:0 5px 18px rgba(0,0,0,.35)}
 .chat-window{position:absolute;right:14px;bottom:60px;width:min(380px,calc(100% - 28px));height:330px;background:rgba(7,10,18,.98);border:1px solid var(--accent-color);border-radius:10px;z-index:70;display:flex;flex-direction:column;box-shadow:0 12px 35px rgba(0,0,0,.65);overflow:hidden}
+
+.adm-contact-btn{position:absolute;left:14px;bottom:8px;height:38px;padding:0 14px;border:1px solid #ef4444;border-radius:20px;background:rgba(19,27,46,.98);color:#fff;font-weight:800;cursor:pointer;z-index:60;box-shadow:0 5px 18px rgba(0,0,0,.35)}
+.adm-contact-card{width:min(480px,92vw)}
+.adm-contact-note{font-size:12px;color:#94a3b8;line-height:1.5;margin:8px 0 15px}
+.adm-name-top{font-weight:900;font-size:14px;letter-spacing:.3px}
 .chat-window.hidden{display:none!important}.chat-window-head{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;background:rgba(19,27,46,.98);border-bottom:1px solid var(--panel-border)}
 .chat-close{border:0;background:transparent;color:#fff;font-size:22px;cursor:pointer;line-height:1}.chat-window .chat-box{height:auto;flex:1;margin:0;border:0;border-radius:0;background:#020617}.chat-compose{display:flex;gap:7px;padding:8px;border-top:1px solid var(--panel-border)}.chat-compose input{flex:1;min-width:0;padding:9px;background:#070a12;color:#fff;border:1px solid var(--panel-border);border-radius:6px}.chat-compose button{width:auto;padding:9px 12px}
 .avatar-gallery{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0}.avatar-option{border:1px solid var(--panel-border);background:#070a12;border-radius:8px;padding:4px;cursor:pointer}.avatar-option img{width:100%;aspect-ratio:1;border-radius:6px;object-fit:cover}.avatar-option.selected{border-color:var(--accent-color);box-shadow:0 0 0 2px rgba(245,158,11,.25)}
@@ -99,7 +104,8 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <main>
 <header>
 <h3 id="current-page-title" style="text-transform:uppercase;font-size:16px;letter-spacing:1px">Painel</h3>
-<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+<div id="header-player-identity" class="adm-name-top">Usuário</div>
 <div style="font-size:13px;background:rgba(0,0,0,.4);padding:5px 10px;border-radius:20px">Moedas: <span id="user-coins" style="color:#f59e0b;font-weight:bold">150</span> 🪙</div>
 <div style="font-size:13px;background:rgba(0,0,0,.4);padding:5px 10px;border-radius:20px">Diamantes: <span id="user-diamonds" style="color:#38bdf8;font-weight:bold">10</span> 💎</div>
 <div style="font-size:13px;background:rgba(0,0,0,.4);padding:5px 10px;border-radius:20px">Nível: <span id="user-level" style="color:#10b981;font-weight:bold">5</span> ⚡</div>
@@ -205,12 +211,28 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <div style="background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)">
 <h4>⚙️ Configuração VIP</h4><button class="btn btn-gray" onclick="alert('Sistema VIP: Em desenvolvimento')">Adicionar VIP</button><button class="btn btn-gray" onclick="alert('Sistema VIP: Em desenvolvimento')">Comprar VIP</button></div>
 </div>
+<div style="margin-top:15px;background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)"><h4>📨 Mensagens para ADM</h4><div id="adm-solicitacoes" class="chat-box"></div></div>
 <div style="margin-top:15px;background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)"><h4>📝 Logs Administrativos</h4><div id="adm-logs" class="chat-box"></div></div>
 </div>
 
 <div style="margin-top:30px;border-top:1px solid var(--panel-border);padding-top:15px"><h4>Histórico do Chat Global</h4><div class="chat-box" id="adm-chat-history"></div></div>
 </div></main>
 
+<button id="adm-contact-toggle" class="adm-contact-btn" onclick="abrirContatoAdm()">👑 FALAR COM ADM</button>
+<div id="modal-contato-adm" class="modal-overlay hidden">
+  <div class="modal-card adm-contact-card">
+    <button class="close-modal" onclick="fecharContatoAdm()">✕</button>
+    <h3 style="color:#ef4444;margin-bottom:4px">👑 ADM GABRIEL</h3>
+    <p class="adm-contact-note">Envie uma solicitação diretamente para o administrador. Preencha seu nome, seu ID e o motivo da mensagem.</p>
+    <label>Seu nome</label>
+    <input id="adm-msg-nome" class="form-control" placeholder="Nome do jogador">
+    <label>Seu ID / UID</label>
+    <input id="adm-msg-id" class="form-control" placeholder="ID do jogador">
+    <label>Motivo da mensagem</label>
+    <textarea id="adm-msg-motivo" class="form-control" rows="5" placeholder="Explique o motivo da mensagem..."></textarea>
+    <button class="btn btn-adm" onclick="enviarSolicitacaoAdm()">📨 ENVIAR PARA ADM</button>
+  </div>
+</div>
 <button id="chat-toggle" class="chat-toggle" onclick="alternarChatGlobal()">💬 CHAT GLOBAL</button>
 <div id="chat-window" class="chat-window hidden">
   <div class="chat-window-head"><b>💬 CHAT GLOBAL</b><button class="chat-close" onclick="fecharChatGlobal()">✕</button></div>
@@ -266,14 +288,53 @@ let catalogo=gerarCatalogo();
 function atualizarMoedasDiamantesUI(){document.getElementById("user-coins").textContent=usuarioAtual.coins;document.getElementById("user-diamonds").textContent=usuarioAtual.diamonds;document.getElementById("user-level").textContent=usuarioAtual.level}
 function nomeAtual(){return usuarioAtual.displayName||usuarioAtual.email.split("@")[0]}
 function patenteAtual(level){level=Number(level)||1;if(level>=100)return "👑 Lendário";if(level>=75)return "💎 Mestre";if(level>=50)return "🔥 Profissional";if(level>=25)return "⚔️ Intermediário";return "🌱 Iniciante"}
-const avataresOficiais=Array.from({length:20},(_,i)=>`https://api.dicebear.com/9.x/adventurer/png?seed=DragonWar${i+1}&size=160`);
-function renderizarGaleriaAvatares(){const g=document.getElementById("avatar-gallery");if(!g)return;g.innerHTML=avataresOficiais.map((url,i)=>`<button type="button" class="avatar-option ${usuarioAtual.avatar===url?"selected":""}" title="Avatar ${i+1}" onclick="selecionarAvatarOficial(${i})"><img src="${url}" alt="Avatar ${i+1}"></button>`).join("")}
+const temasAvatares=[
+ {nome:"Guerreiro do Fogo",simbolo:"🔥",a:"#ff3d00",b:"#ffb300"},
+ {nome:"Guardião Marinho",simbolo:"🌊",a:"#0066ff",b:"#00e5ff"},
+ {nome:"Mestre do Vento",simbolo:"🌪️",a:"#7dd3fc",b:"#e0f2fe"},
+ {nome:"Dragão Sombrio",simbolo:"🐉",a:"#4c1d95",b:"#a855f7"},
+ {nome:"Cavaleiro do Gelo",simbolo:"❄️",a:"#38bdf8",b:"#e0f2fe"},
+ {nome:"Mago Arcano",simbolo:"🔮",a:"#7c3aed",b:"#ec4899"},
+ {nome:"Caçador da Floresta",simbolo:"🌿",a:"#15803d",b:"#84cc16"},
+ {nome:"Guerreiro do Trovão",simbolo:"⚡",a:"#facc15",b:"#38bdf8"},
+ {nome:"Demônio Rubro",simbolo:"😈",a:"#991b1b",b:"#ef4444"},
+ {nome:"Serafim Celestial",simbolo:"✨",a:"#f8fafc",b:"#f59e0b"},
+ {nome:"Ninja da Névoa",simbolo:"🌫️",a:"#334155",b:"#94a3b8"},
+ {nome:"Samurai Carmesim",simbolo:"⚔️",a:"#b91c1c",b:"#fb7185"},
+ {nome:"Feiticeira Lunar",simbolo:"🌙",a:"#312e81",b:"#818cf8"},
+ {nome:"Guardião da Terra",simbolo:"🪨",a:"#78350f",b:"#a3a3a3"},
+ {nome:"Dragão de Cristal",simbolo:"💎",a:"#0891b2",b:"#67e8f9"},
+ {nome:"Rei do Vulcão",simbolo:"🌋",a:"#7f1d1d",b:"#f97316"},
+ {nome:"Oráculo das Águas",simbolo:"💧",a:"#0369a1",b:"#5eead4"},
+ {nome:"Guardião do Caos",simbolo:"☯",a:"#111827",b:"#f43f5e"},
+ {nome:"Paladino Dourado",simbolo:"🛡️",a:"#92400e",b:"#fde68a"},
+ {nome:"Lorde dos Dragões",simbolo:"👑",a:"#581c87",b:"#f59e0b"}
+];
+function criarAvatarDragonWar(t,i){
+ const id=`dw${i}`;
+ const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+ <defs><radialGradient id="${id}bg"><stop offset="0" stop-color="${t.b}"/><stop offset=".48" stop-color="${t.a}"/><stop offset="1" stop-color="#030712"/></radialGradient><linearGradient id="${id}armor" x1="0" x2="1"><stop stop-color="${t.a}"/><stop offset="1" stop-color="${t.b}"/></linearGradient></defs>
+ <rect width="160" height="160" rx="26" fill="url(#${id}bg)"/>
+ <circle cx="80" cy="76" r="58" fill="none" stroke="${t.b}" stroke-opacity=".45" stroke-width="3"/>
+ <path d="M25 150 Q30 105 58 101 L80 116 102 101 Q130 105 135 150Z" fill="#0b1020" stroke="${t.b}" stroke-width="3"/>
+ <path d="M48 72 Q44 30 80 25 Q116 30 112 72 L104 99 Q80 116 56 99Z" fill="#e5c4a8" stroke="#111827" stroke-width="4"/>
+ <path d="M48 69 Q47 29 80 27 Q113 29 112 69 Q101 49 80 49 Q59 49 48 69Z" fill="#111827"/>
+ <path d="M58 78 Q67 72 75 78 M85 78 Q93 72 102 78" fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round"/>
+ <circle cx="67" cy="80" r="3" fill="${t.b}"/><circle cx="93" cy="80" r="3" fill="${t.b}"/>
+ <path d="M67 93 Q80 101 93 93" fill="none" stroke="#7f1d1d" stroke-width="3" stroke-linecap="round"/>
+ <path d="M58 108 L80 121 102 108 112 150 48 150Z" fill="url(#${id}armor)" opacity=".92"/>
+ <text x="80" y="143" text-anchor="middle" font-size="25" font-family="Arial">${t.simbolo}</text>
+ </svg>`;
+ return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+}
+const avataresOficiais=temasAvatares.map((t,i)=>criarAvatarDragonWar(t,i));
+function renderizarGaleriaAvatares(){const g=document.getElementById("avatar-gallery");if(!g)return;g.innerHTML=avataresOficiais.map((url,i)=>`<button type="button" class="avatar-option ${usuarioAtual.avatar===url?"selected":""}" title="${temasAvatares[i].nome}" onclick="selecionarAvatarOficial(${i})"><img src="${url}" alt="${temasAvatares[i].nome}"></button>`).join("")}
 window.selecionarAvatarOficial=i=>{usuarioAtual.avatar=avataresOficiais[i];document.getElementById("player-edit-avatar").value=usuarioAtual.avatar;renderizarGaleriaAvatares();atualizarPerfilUI()};
 
 function atualizarPerfilUI(){
  const img=document.getElementById("sidebar-avatar-img"),txt=document.getElementById("sidebar-avatar-txt");
- if(usuarioAtual.isAdm){document.getElementById("sidebar-name").innerHTML='<span class="dragon-rainbow-name">ADM GABRIEL</span> <span class="adm-tag">[👑 ADM]</span>';document.getElementById("sidebar-role").innerText="SUPER ADM • VIP 10";img.src=usuarioAtual.avatar||"89097.png";img.style.display="block";txt.style.display="none"}
- else{document.getElementById("sidebar-name").innerHTML=nomeAtual()+(usuarioAtual.isSubAdm?' <span style="color:#f59e0b">[MOD]</span>':"");document.getElementById("sidebar-role").innerText=usuarioAtual.isSubAdm?"Moderador":"Aventureiro Real";if(usuarioAtual.avatar){img.src=usuarioAtual.avatar;img.style.display="block";txt.style.display="none"}else{txt.innerText=nomeAtual().charAt(0).toUpperCase();txt.style.display="flex";img.style.display="none"}}
+ if(usuarioAtual.isAdm){document.getElementById("sidebar-name").innerHTML='<span class="dragon-rainbow-name">ADM GABRIEL</span> <span class="adm-tag">[👑 ADM]</span>';document.getElementById("header-player-identity").innerHTML='<span class="dragon-rainbow-name">ADM GABRIEL</span> <span class="adm-tag">👑</span>';document.getElementById("sidebar-role").innerText="SUPER ADM • VIP 10";img.src=usuarioAtual.avatar||"89097.png";img.style.display="block";txt.style.display="none"}
+ else{document.getElementById("sidebar-name").innerHTML=nomeAtual()+(usuarioAtual.isSubAdm?' <span style="color:#f59e0b">[MOD]</span>':"");document.getElementById("header-player-identity").innerHTML=escapeHtml(nomeAtual())+(usuarioAtual.isSubAdm?' <span style="color:#f59e0b">[MOD]</span>':"");document.getElementById("sidebar-role").innerText=usuarioAtual.isSubAdm?"Moderador":"Aventureiro Real";if(usuarioAtual.avatar){img.src=usuarioAtual.avatar;img.style.display="block";txt.style.display="none"}else{txt.innerText=nomeAtual().charAt(0).toUpperCase();txt.style.display="flex";img.style.display="none"}}
  atualizarMoedasDiamantesUI();
  document.getElementById("player-real-id").value=usuarioAtual.uid;
  document.getElementById("player-edit-name").value=usuarioAtual.displayName||nomeAtual();
@@ -369,7 +430,7 @@ window.adicionarItemCatalogo=async()=>{if(!usuarioAtual.isAdm)return alert("Aces
 async function carregarCatalogoCustom(){try{let s=await getDocs(collection(db,"catalogo"));s.forEach(d=>{let x=d.data();if(!catalogo.some(i=>i.id===x.id))catalogo.push(x)});renderLoja();renderizarPoderes()}catch(e){}}
 
 async function verificarAchievements(){let a=new Set(usuarioAtual.achievements||[]),total=usuarioAtual.inventory.length,niveis=Object.values(usuarioAtual.phaseProgress||{}).reduce((s,x)=>s+x-1,0);const checks={first_login:true,first_purchase:total>0,five_battles:niveis>=5,ten_battles:niveis>=10,level10:usuarioAtual.level>=10,level25:usuarioAtual.level>=25,collector10:total>=10,power10:usuarioAtual.inventory.filter(x=>x.category==="power").length>=10,skin5:usuarioAtual.inventory.filter(x=>x.category==="skin").length>=5,weapon10:usuarioAtual.inventory.filter(x=>x.category==="weapon").length>=10,easy30:(usuarioAtual.phaseProgress?.normal||1)>30,hard30:(usuarioAtual.phaseProgress?.dificil||1)>30,advanced25:(usuarioAtual.phaseProgress?.avancada||1)>25,hardcore25:(usuarioAtual.phaseProgress?.hardcore||1)>25,rich:usuarioAtual.coins>=10000,diamond:usuarioAtual.diamonds>=500,admin:usuarioAtual.isAdm};let changed=false;Object.keys(checks).forEach(k=>{if(checks[k]&&!a.has(k)){a.add(k);changed=true}});if(changed){usuarioAtual.achievements=[...a];await updateDoc(doc(db,"jogadores_reais",usuarioAtual.uid),{achievements:usuarioAtual.achievements})}}
-window.mudarTabRank=async tipo=>{let c=document.getElementById("rank-content");if(tipo==="achievements"){c.innerHTML="<h3>🏅 Achievements disponíveis</h3>"+achievementsCatalog.map(a=>`<div class="item-card" style="margin-top:8px"><b>${a[1]}</b> ${usuarioAtual.achievements.includes(a[0])?'<span class="badge online">DESBLOQUEADO</span>':'<span class="badge">BLOQUEADO</span>'}<p>${a[2]}</p></div>`).join("");return}let snap=await getDocs(collection(db,"jogadores_reais")),rows=[];snap.forEach(d=>rows.push(d.data()));rows.sort((a,b)=>(b.level||0)-(a.level||0));if(tipo==="online")rows=rows.filter(x=>x.lastSeen&&x.lastSeen.toMillis?Date.now()-x.lastSeen.toMillis()<90000:(x.status==="Online"));c.innerHTML="<table><tr><th>#</th><th>Jogador</th><th>Nível</th><th>Status</th></tr>"+rows.slice(0,50).map((x,i)=>`<tr><td>${i+1}</td><td>${x.displayName||x.email||x.uid} ${x.isAdm?'<span class="adm-tag">[ADM]</span>':""}</td><td>${x.level||1}</td><td>${x.status==="Online"?"🟢 Online":"⚫ Offline"}</td></tr>`).join("")+"</table>"};
+window.mudarTabRank=async tipo=>{let c=document.getElementById("rank-content");if(tipo==="achievements"){c.innerHTML="<h3>🏅 Achievements disponíveis</h3>"+achievementsCatalog.map(a=>`<div class="item-card" style="margin-top:8px"><b>${a[1]}</b> ${usuarioAtual.achievements.includes(a[0])?'<span class="badge online">DESBLOQUEADO</span>':'<span class="badge">BLOQUEADO</span>'}<p>${a[2]}</p></div>`).join("");return}let snap=await getDocs(collection(db,"jogadores_reais")),rows=[];snap.forEach(d=>{const x=d.data();if(!x.isAdm)rows.push(x)});rows.sort((a,b)=>(b.level||0)-(a.level||0));if(tipo==="online")rows=rows.filter(x=>x.lastSeen&&x.lastSeen.toMillis?Date.now()-x.lastSeen.toMillis()<90000:(x.status==="Online"));c.innerHTML="<table><tr><th>#</th><th>Jogador</th><th>Nível</th><th>Status</th></tr>"+rows.slice(0,50).map((x,i)=>`<tr><td>${i+1}</td><td>${x.displayName||x.email||x.uid} </td><td>${x.level||1}</td><td>${x.status==="Online"?"🟢 Online":"⚫ Offline"}</td></tr>`).join("")+"</table>"};
 
 window.resgatarRecompensaDiaria=async()=>{
  let now=Date.now(),rawLast=usuarioAtual.dailyRewardLastClaim,last=Number(rawLast?.toMillis?rawLast.toMillis():rawLast||0),wait=86400000;
@@ -402,7 +463,41 @@ function assinarMensagensSala(){if(unsubscribeSupport)unsubscribeSupport();if(!s
 window.enviarMensagemAtendimento=async()=>{let input=document.getElementById("support-input"),text=input.value.trim();if(!text||!salaAtualId)return;await addDoc(collection(db,"salas_atendimento",salaAtualId,"mensagens"),{senderUid:usuarioAtual.uid,senderName:nomeAtual(),text,createdAt:serverTimestamp()});input.value="";};
 window.fecharAtendimento=()=>{document.getElementById("modal-atendimento").classList.add("hidden");if(unsubscribeSupport){unsubscribeSupport();unsubscribeSupport=null}};
 async function registrarLog(acao,target){if(!usuarioAtual.isAdm)return;await addDoc(collection(db,"logs_adm"),{acao,target,adminUid:usuarioAtual.uid,adminName:"ADM GABRIEL",createdAt:serverTimestamp()});carregarLogs()};
+async function carregarSolicitacoesAdm(){
+ const c=document.getElementById("adm-solicitacoes");
+ if(!c||!usuarioAtual.isAdm)return;
+ try{
+  const s=await getDocs(query(collection(db,"solicitacoes_adm"),orderBy("createdAt","desc")));
+  const arr=s.docs.slice(0,30);
+  c.innerHTML=arr.length?"":"<div class=\"chat-msg\">Nenhuma mensagem recebida.</div>";
+  arr.forEach(d=>{const x=d.data();const data=x.createdAt?.toDate?x.createdAt.toDate().toLocaleString("pt-BR"):"Agora";const div=document.createElement("div");div.className="chat-msg";div.innerHTML=`<b>👤 ${escapeHtml(x.nome||"Jogador")}</b> <span class=\"badge\">ID: ${escapeHtml(x.id||x.uid||"-")}</span><br><span style=\"color:#94a3b8;font-size:11px\">${data}</span><br><span style=\"display:block;margin-top:5px\">${escapeHtml(x.motivo||"")}</span>`;c.appendChild(div)});
+ }catch(e){c.innerHTML="<div class=\"chat-msg\">Não foi possível carregar as mensagens.</div>"}
+}
+
 async function carregarLogs(){let c=document.getElementById("adm-logs");if(!c)return;try{let s=await getDocs(query(collection(db,"logs_adm"),orderBy("createdAt","desc")));c.innerHTML="";s.forEach(d=>{let x=d.data();c.innerHTML+=`<div class="chat-msg"><b>${x.adminName||"ADM"}:</b> ${x.acao} → ${x.target||""}</div>`})}catch(e){}}
+window.abrirContatoAdm=()=>{
+ const m=document.getElementById("modal-contato-adm");
+ if(!m)return;
+ document.getElementById("adm-msg-nome").value=usuarioAtual.displayName||nomeAtual();
+ document.getElementById("adm-msg-id").value=usuarioAtual.uid||"";
+ document.getElementById("adm-msg-motivo").value="";
+ m.classList.remove("hidden");
+ document.getElementById("adm-msg-motivo")?.focus();
+};
+window.fecharContatoAdm=()=>document.getElementById("modal-contato-adm")?.classList.add("hidden");
+window.enviarSolicitacaoAdm=async()=>{
+ const nome=document.getElementById("adm-msg-nome").value.trim();
+ const id=document.getElementById("adm-msg-id").value.trim();
+ const motivo=document.getElementById("adm-msg-motivo").value.trim();
+ if(!nome||!id||!motivo)return alert("Preencha nome, ID e motivo da mensagem.");
+ if(usuarioAtual.isAdm)return alert("O ADM principal não precisa abrir uma solicitação para si mesmo.");
+ try{
+   await addDoc(collection(db,"solicitacoes_adm"),{nome,id,uid:usuarioAtual.uid,email:usuarioAtual.email||"",motivo,status:"nova",createdAt:serverTimestamp()});
+   notificar("📨 Mensagem enviada para o ADM Gabriel!","success");
+   fecharContatoAdm();
+ }catch(e){console.error(e);alert("Não foi possível enviar a mensagem. Verifique sua conexão com o Firebase.");}
+};
+
 window.enviarMensagemGlobalAdm=async()=>{if(!usuarioAtual.isAdm)return alert("Acesso negado.");let i=document.getElementById("global-msg-adm"),text=i.value.trim();if(!text)return;await addDoc(collection(db,"chat_global"),{senderUid:usuarioAtual.uid,senderName:"👑 ADM GABRIEL",text,global:true,createdAt:serverTimestamp()});await registrarLog("Mensagem global",text);i.value="";};
 window.enviarMensagemRodape=async()=>{let i=document.getElementById("footer-chat-input"),text=i.value.trim();if(!text)return;await addDoc(collection(db,"chat_global"),{senderUid:usuarioAtual.uid,senderName:nomeAtual(),text,global:false,createdAt:serverTimestamp()});i.value=""};
 window.alternarChatGlobal=()=>{const w=document.getElementById("chat-window");w.classList.toggle("hidden");if(!w.classList.contains("hidden")){document.getElementById("footer-chat-input")?.focus()}};
@@ -416,7 +511,7 @@ window.alternarSom=async()=>{let a=document.getElementById("bg-music");if(a.paus
 
 window.sairDaConta=async()=>{try{if(heartbeatTimer)clearInterval(heartbeatTimer);if(unsubscribeGlobal)unsubscribeGlobal();if(unsubscribeSupport)unsubscribeSupport();if(auth.currentUser)await updateDoc(doc(db,"jogadores_reais",auth.currentUser.uid),{status:"Offline",lastSeen:serverTimestamp()});await signOut(auth)}catch(e){console.error(e)}finally{document.getElementById("game-container").classList.add("hidden");document.getElementById("login-screen").classList.remove("hidden");document.getElementById("auth-email").value="";document.getElementById("auth-pass").value="";notificar("🚪 Conta desconectada. Faça login novamente.","info")}};
 
-onAuthStateChanged(auth,async user=>{if(!user)return;try{await carregarJogador();await carregarCatalogoCustom();await carregarLogs();document.getElementById("login-screen").classList.add("hidden");document.getElementById("game-container").classList.remove("hidden");try{document.getElementById("bg-music").volume=.6}catch(e){}}catch(e){console.error(e)}});
+onAuthStateChanged(auth,async user=>{if(!user)return;try{await carregarJogador();await carregarCatalogoCustom();await carregarLogs();carregarSolicitacoesAdm();document.getElementById("login-screen").classList.add("hidden");document.getElementById("game-container").classList.remove("hidden");try{document.getElementById("bg-music").volume=.6}catch(e){}}catch(e){console.error(e)}});
 </script>
 </body>
 </html>
