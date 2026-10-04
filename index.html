@@ -36,8 +36,17 @@
 
         .main-content { flex-grow: 1; display: flex; flex-direction: column; height: 100vh; overflow-y: auto; }
         .top-bar { height: 75px; background: #162032; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; padding: 0 35px; flex-shrink: 0; }
-        .top-bar-title { color: #f97316; font-weight: bold; font-size: 20px; letter-spacing: 1px; }
-        .resources-container { display: flex; gap: 15px; }
+        .top-bar-title { color: #f97316; font-weight: bold; font-size: 20px; letter-spacing: 1px; display: flex; align-items: center; gap: 15px; }
+        
+        .notification-bell-wrapper { position: relative; cursor: pointer; background: #0b0f19; border: 1px solid #334155; width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; }
+        .notification-badge { position: absolute; top: -5px; right: -5px; background: #ef4444; color: #fff; font-size: 10px; font-weight: bold; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
+        
+        .notification-popup { position: absolute; top: 85px; right: 35px; width: 320px; background: #162032; border: 1px solid #3b82f6; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.6); display: none; z-index: 999; padding: 15px; }
+        .notification-popup.show { display: block; }
+        .notification-popup h4 { color: #f97316; margin-bottom: 10px; font-size: 15px; border-bottom: 1px solid #334155; padding-bottom: 5px; }
+        .notification-item { font-size: 12px; color: #94a3b8; margin-bottom: 8px; border-left: 2px solid #3b82f6; padding-left: 8px; }
+
+        .resources-container { display: flex; gap: 15px; align-items: center; }
         .resource-badge { background: #0b0f19; padding: 6px 16px; border-radius: 20px; border: 1px solid #334155; font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 8px; }
 
         .content-area { padding: 30px; flex-grow: 1; }
@@ -54,6 +63,7 @@
 
         .btn-action { padding: 10px 18px; background: linear-gradient(135deg, #f97316, #ea580c); color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 13px; width: 100%; margin-top: 10px; }
         .btn-action:hover { opacity: 0.9; }
+        .btn-action:disabled { opacity: 0.4; cursor: not-allowed; }
 
         /* SUB-ABAS */
         .sub-tabs { display: flex; gap: 12px; margin-bottom: 25px; border-bottom: 1px solid #334155; padding-bottom: 12px; flex-wrap: wrap; }
@@ -78,7 +88,7 @@
 
         /* SELEÇÃO DE AVATARS NO PERFIL */
         .avatar-grid { display: flex; gap: 15px; flex-wrap: wrap; margin: 15px 0; }
-        .avatar-option { width: 75px; height: 75px; border-radius: 50%; border: 3px solid #334155; cursor: pointer; object-fit: cover; transition: 0.2s; }
+        .avatar-option { width: 75px; height: 75px; border-radius: 50%; border: 3px solid #334155; cursor: pointer; object-fit: cover; transition: 0.2s; background: #0f172a; display: flex; align-items: center; justify-content: center; font-size: 30px; }
         .avatar-option.selected { border-color: #f97316; box-shadow: 0 0 15px rgba(249,115,22,0.5); }
         .avatar-option.locked { opacity: 0.4; filter: grayscale(1); cursor: not-allowed; }
 
@@ -88,6 +98,9 @@
         .ranking-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         .ranking-table th, .ranking-table td { padding: 14px; text-align: left; border-bottom: 1px solid #334155; font-size: 14px; }
         .ranking-table th { color: #f97316; background: #0f172a; }
+
+        /* BADGE ADM NO CHAT */
+        .badge-adm { background: #ef4444; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-right: 5px; }
     </style>
 </head>
 <body>
@@ -140,8 +153,22 @@
 
         <div class="main-content">
             <div class="top-bar">
-                <div class="top-bar-title">DRAGON WAR: RISE OF POWER</div>
+                <div class="top-bar-title">
+                    DRAGON WAR: RISE OF POWER
+                </div>
                 <div class="resources-container">
+                    <!-- Sininho de Notificação -->
+                    <div class="notification-bell-wrapper" onclick="toggleNotificationPopup()">
+                        🔔
+                        <div class="notification-badge" id="notif-count">2</div>
+                    </div>
+                    <!-- Popup de Notificações -->
+                    <div class="notification-popup" id="notification-popup">
+                        <h4>Atualizações & Eventos</h4>
+                        <div class="notification-item"><strong>[Novo]:</strong> Sistema de caixas diárias com temporizador de 12h ativo!</div>
+                        <div class="notification-item"><strong>[Evento]:</strong> Tesouros raros atualizados na loja para desbloquear skins lendárias!</div>
+                    </div>
+
                     <div class="resource-badge">🪙 Ouro: <span id="badge-ouro" style="color: #facc15;">0</span></div>
                     <div class="resource-badge">💎 Gemas: <span id="badge-gemas" style="color: #38bdf8;">0</span></div>
                     <div class="resource-badge">⚡ Pts Poder: <span id="badge-pontos-poder" style="color: #f97316;">0</span></div>
@@ -186,7 +213,7 @@
                 <!-- ABA: LOJA -->
                 <div id="tab-loja" class="tab-panel">
                     <h2>Mercadora de Itens</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Equipamentos e customizações completas.</p>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Equipamentos e customizações completas vão direto para o seu inventário.</p>
                     
                     <div class="sub-tabs">
                         <button class="sub-tab-btn active-sub" onclick="trocarSubLoja('armas', this)">⚔️ Armas (16)</button>
@@ -295,7 +322,7 @@
                 <!-- ABA: INVENTÁRIO -->
                 <div id="tab-inventario" class="tab-panel">
                     <h2>Inventário do Jogador</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Gerencie suas armas, armaduras e skins adquiridas.</p>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Gerencie suas armas, armaduras e skins compradas na loja.</p>
                     <div class="card-box">
                         <div id="lista-inventario" class="grid-cards">
                             <p style="color: #94a3b8;">Seu inventário está vazio.</p>
@@ -324,18 +351,46 @@
 
                 <!-- ABA: EVENTOS -->
                 <div id="tab-eventos" class="tab-panel">
-                    <h2>Eventos e Recompensas</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Participe dos eventos diários para ganhar bônus exclusivos.</p>
+                    <h2>Eventos e Caixas de Recompensa</h2>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Participe dos eventos diários e abra as 5 caixas especiais.</p>
+                    
                     <div class="grid-cards">
+                        <!-- Caixa Diária com temporizador 12h -->
                         <div class="item-card">
-                            <h3>Caixa Diária</h3>
-                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Abra uma vez por dia para receber moedas ou gemas reais.</p>
-                            <button class="btn-action" onclick="reclamarCaixaDiaria()">ABRIR CAIXA</button>
+                            <span style="font-size: 35px;">📦</span>
+                            <h3>1. Caixa Diária</h3>
+                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Abra a cada 12 horas para receber Ouro e Gemas.</p>
+                            <button class="btn-action" id="btn-caixa-diaria" onclick="reclamarCaixaDiaria()">ABRIR CAIXA</button>
+                            <small id="timer-caixa-diaria" style="color: #facc15; margin-top: 5px; font-size: 11px;"></small>
                         </div>
+
+                        <!-- 4 Caixas adicionais de recompensa (Total 5) -->
                         <div class="item-card">
-                            <h3>Tesouro Raro</h3>
-                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Gemas acumuladas podem ser usadas para itens especiais na loja.</p>
-                            <button class="btn-action" onclick="trocarTab('loja', document.querySelectorAll('.nav-menu li')[2])">IR PARA LOJA</button>
+                            <span style="font-size: 35px;">🎁</span>
+                            <h3>2. Caixa de Ouro</h3>
+                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Contém uma bolsa pesada de ouro puro.</p>
+                            <button class="btn-action" onclick="abrirCaixaExtra(2, 1000, 0)">ABRIR (🪙 200)</button>
+                        </div>
+
+                        <div class="item-card">
+                            <span style="font-size: 35px;">💎</span>
+                            <h3>3. Caixa de Gemas</h3>
+                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Garantia de gemas místicas para itens raros.</p>
+                            <button class="btn-action" onclick="abrirCaixaExtra(3, 0, 15)">ABRIR (🪙 500)</button>
+                        </div>
+
+                        <div class="item-card">
+                            <span style="font-size: 35px;">⚡</span>
+                            <h3>4. Caixa de Poder</h3>
+                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Concede 2 Pontos de Poder instantâneos.</p>
+                            <button class="btn-action" onclick="abrirCaixaExtra(4, 0, 0, 2)">ABRIR (🪙 800)</button>
+                        </div>
+
+                        <div class="item-card" style="border-color: #38bdf8;">
+                            <span style="font-size: 35px;">👑</span>
+                            <h3>5. Tesouro Raro</h3>
+                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Gasta gemas e garante skins exclusivas de alta raridade!</p>
+                            <button class="btn-action" style="background: #38bdf8; color: #000;" onclick="comprarTesouroRaro()">COMPRAR (💎 25)</button>
                         </div>
                     </div>
                 </div>
@@ -343,11 +398,11 @@
                 <!-- ABA: GUILDAS & CHAT -->
                 <div id="tab-guilda" class="tab-panel">
                     <h2>Sistemas de Guildas & Chat</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Converse com a comunidade e gerencie sua facção.</p>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Converse com a comunidade. Mensagens de ADM aparecem com destaque.</p>
                     
                     <div class="sub-tabs">
-                        <button class="sub-tab-btn active-sub" onclick="trocarSubChat('global', this)">💬 Chat Global</button>
-                        <button class="sub-tab-btn" onclick="trocarSubChat('pv', this)">👤 Mensagens PV</button>
+                        <button class="sub-tab-btn active-sub" onclick="trocarSubChat('geral', this)">💬 Chat Geral</button>
+                        <button class="sub-tab-btn" onclick="trocarSubChat('privado', this)">👤 Chat Privado</button>
                         <button class="sub-tab-btn" onclick="trocarSubChat('guilda', this)">🛡 Chat da Guilda</button>
                     </div>
 
@@ -378,16 +433,16 @@
                 <!-- ABA: CONFIGURAÇÕES E PERFIL -->
                 <div id="tab-config" class="tab-panel">
                     <h2>Configurações e Perfil do Jogador</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Altere seu nome e escolha seu avatar de guerreiro.</p>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Altere seu nome (sem palavrões ou ADM) e escolha seu avatar exclusivo.</p>
                     
                     <div class="card-box">
                         <h3>Escolha seu Avatar</h3>
-                        <p style="color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Alguns avatares exigem nível superior para serem desbloqueados.</p>
+                        <p style="color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Inclui avatares de computador, coroa e robôs elementais.</p>
                         
                         <div class="avatar-grid" id="lista-avatares-perfil"></div>
 
                         <label style="display:block; font-size:13px; color:#94a3b8; margin: 15px 0 5px 0;">Nome do jogador:</label>
-                        <input type="text" id="input-novo-nome" class="form-control" style="max-width:350px;">
+                        <input type="text" id="input-novo-nome" class="form-control" style="max-width:350px;" placeholder="Seu nick">
                         
                         <button class="btn-action" style="max-width: 200px;" onclick="salvarConfiguracoes()">SALVAR PERFIL</button>
                     </div>
@@ -430,12 +485,40 @@
             pontos: 1250,
             avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=Warrior1",
             inventario: [], 
-            guildaNome: "" 
+            guildaNome: "",
+            ultimaCaixaDiaria: 0,
+            isAdm: false 
         };
 
-        let chatCanalAtual = 'global';
+        let chatCanalAtual = 'geral';
         let combateAtual = { ativo: false, dificuldade: '', mobNome: '', mobHp: 0, mobMaxHp: 0, mobDano: 0, defendendo: false };
         let poderSelecionadoNome = null;
+
+        // LISTA DE PALAVRÕES E TERMOS OFENSIVOS / PROIBIDOS (EXIGÊNCIA DE VALIDAÇÃO)
+        const listaPalavrasProibidas = [
+            "adm", "admin", "administrador", "merda", "porra", "caralho", "puta", "desgraça", 
+            "cacete", "cu", "puto", "foder", "fdp", "corno", "bosta", "viado", "gay", "buceta",
+            "krl", "poha", "shit", "fuck", "asshole", "bitch", "cunt"
+        ];
+
+        function validarNomeJogador(nomeInput) {
+            if(!nomeInput || nomeInput.trim() === "") return { valido: false, motivo: "O nome não pode estar vazio." };
+            let nomeLower = nomeInput.trim().toLowerCase();
+
+            // Verificar restrição para "adm" ou variações
+            if(nomeLower.includes("adm") || nomeLower.includes("admin")) {
+                return { valido: false, motivo: "O nome não pode conter a palavra ADM ou administrador." };
+            }
+
+            // Verificar palavrões e xingamentos
+            for(let palavra of listaPalavrasProibidas) {
+                if(nomeLower.includes(palavra)) {
+                    return { valido: false, motivo: "O nome contém termos ofensivos ou impróprios proibidos pelas regras." };
+                }
+            }
+
+            return { valido: true, nomeLimpo: nomeInput.trim() };
+        }
 
         // 16 ARMAS DA LOJA
         const listaArmasLoja = [
@@ -457,14 +540,15 @@
             { id: 16, nome: "Lâmina do Dragão Celestial", preco: 40000 }
         ];
 
-        // 6 SKINS DA LOJA
+        // 6+ SKINS DA LOJA
         const listaSkinsLoja = [
             { id: 101, nome: "Skin Guerreiro Iniciante", preco: 500 },
             { id: 102, nome: "Skin Cavaleiro de Prata", preco: 1500 },
             { id: 103, nome: "Skin Mago Sombrio", preco: 3000 },
             { id: 104, nome: "Skin Guardião de Magma", preco: 6000 },
             { id: 105, nome: "Skin Paladino Dourado", preco: 10000 },
-            { id: 106, nome: "Skin Senhor do Dragão", preco: 25000 }
+            { id: 106, nome: "Skin Senhor do Dragão", preco: 25000 },
+            { id: 107, nome: "Skin Imperador Celestial", preco: 45000 }
         ];
 
         // SUPRIMENTOS
@@ -475,13 +559,17 @@
             { id: 204, nome: "Elixir de Força Ancestral", preco: 1500 }
         ];
 
-        // AVATARES
+        // AVATARES EXPANDIDOS (Com computador, coroinha e diversos estilos)
         const avataresDisponiveis = [
-            { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Warrior1", nivelMinimo: 1 },
-            { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Knight2", nivelMinimo: 1 },
-            { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Mage3", nivelMinimo: 3 },
-            { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Dragon4", nivelMinimo: 5 },
-            { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Titan5", nivelMinimo: 10 }
+            { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Warrior1", nivelMinimo: 1, tipoImg: "img" },
+            { url: "👑", nivelMinimo: 1, tipoImg: "emoji", nomeLabel: "Coroa Real" },
+            { url: "💻", nivelMinimo: 1, tipoImg: "emoji", nomeLabel: "Computador Hacker" },
+            { url: "🛡️", nivelMinimo: 1, tipoImg: "emoji", nomeLabel: "Escudo Lendário" },
+            { url: "🔥", nivelMinimo: 3, tipoImg: "emoji", nomeLabel: "Chama Elemental" },
+            { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Knight2", nivelMinimo: 1, tipoImg: "img" },
+            { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Mage3", nivelMinimo: 3, tipoImg: "img" },
+            { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Dragon4", nivelMinimo: 5, tipoImg: "img" },
+            { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Titan5", nivelMinimo: 10, tipoImg: "img" }
         ];
 
         function alternarModoAuth(modo) {
@@ -517,10 +605,20 @@
                     carregarDadosDoBanco(usuarioAtualId, "Guerreiro");
                 }).catch(err => alert("Erro ao entrar: " + err.message));
             } else {
-                let nome = document.getElementById('auth-nome').value.trim();
+                let nomeInput = document.getElementById('auth-nome').value.trim();
+                let validacao = validarNomeJogador(nomeInput);
+                if(!validacao.valido) {
+                    alert(validacao.motivo);
+                    return;
+                }
+
+                // Definir se é ADM (exemplo: se email for admin ou nome contiver permissão especial)
+                let eAdm = email.toLowerCase().includes("admin") || email.toLowerCase().includes("adm");
+
                 auth.createUserWithEmailAndPassword(email, senha).then(cred => {
                     usuarioAtualId = cred.user.uid;
-                    dadosJogador.nome = nome || "Guerreiro";
+                    dadosJogador.nome = validacao.nomeLimpo;
+                    dadosJogador.isAdm = eAdm;
                     salvarDadosNoBanco();
                     carregarDadosDoBanco(usuarioAtualId, dadosJogador.nome);
                 }).catch(err => alert("Erro ao criar conta: " + err.message));
@@ -531,6 +629,7 @@
             db.collection("jogadores").doc(uid).get().then(doc => {
                 if(doc.exists) {
                     let dadosSalvos = doc.data();
+                    let eAdmBanco = dadosSalvos.isAdm || false;
                     dadosJogador = {
                         nome: dadosSalvos.nome || nomePadrao,
                         ouro: Number(dadosSalvos.ouro) || 500,
@@ -541,7 +640,9 @@
                         pontos: Number(dadosSalvos.pontos) || 1250,
                         avatar: dadosSalvos.avatar || "https://api.dicebear.com/7.x/bottts/svg?seed=Warrior1",
                         inventario: dadosSalvos.inventario || [],
-                        guildaNome: dadosSalvos.guildaNome || ""
+                        guildaNome: dadosSalvos.guildaNome || "",
+                        ultimaCaixaDiaria: Number(dadosSalvos.ultimaCaixaDiaria) || 0,
+                        isAdm: eAdmBanco
                     };
                 } else {
                     dadosJogador.nome = nomePadrao;
@@ -562,8 +663,17 @@
 
         function sincronizarInterface() {
             document.getElementById('sidebar-nome').innerText = dadosJogador.nome;
-            document.getElementById('sidebar-nivel').innerText = `Nível ${dadosJogador.nivel} • Guerreiro`;
-            document.getElementById('sidebar-avatar').src = dadosJogador.avatar;
+            document.getElementById('sidebar-nivel').innerText = `Nível ${dadosJogador.nivel} • ${dadosJogador.isAdm ? 'Administrador' : 'Guerreiro'}`;
+            
+            let sidebarAvatar = document.getElementById('sidebar-avatar');
+            if(dadosJogador.avatar.startsWith("http")) {
+                sidebarAvatar.src = dadosJogador.avatar;
+                sidebarAvatar.style.display = 'block';
+            } else {
+                // Se for emoji, substituímos visualmente se necessário ou mantemos avatar padrão
+                sidebarAvatar.src = "https://api.dicebear.com/7.x/bottts/svg?seed=" + dadosJogador.nome;
+            }
+
             document.getElementById('badge-ouro').innerText = dadosJogador.ouro;
             document.getElementById('badge-gemas').innerText = dadosJogador.gemas;
             document.getElementById('badge-pontos-poder').innerText = dadosJogador.pontosPoder;
@@ -581,6 +691,7 @@
 
             renderizarLoja();
             renderizarAvataresPerfil();
+            verificarTimerCaixaDiaria();
 
             let invContainer = document.getElementById('lista-inventario');
             invContainer.innerHTML = "";
@@ -588,7 +699,11 @@
                 invContainer.innerHTML = `<p style="color: #94a3b8;">Seu inventário está vazio. Visite a loja para comprar itens.</p>`;
             } else {
                 dadosJogador.inventario.forEach(item => {
-                    invContainer.innerHTML += `<div class="item-card"><h4 style="font-size:14px; color:#f97316;">${item.nome}</h4><small style="color:#94a3b8;">${item.tipo.toUpperCase()}</small></div>`;
+                    invContainer.innerHTML += `
+                        <div class="item-card">
+                            <h4 style="font-size:14px; color:#f97316;">${item.nome}</h4>
+                            <small style="color:#38bdf8;">Categoria: ${item.tipo.toUpperCase()}</small>
+                        </div>`;
                 });
             }
         }
@@ -636,9 +751,16 @@
                 let selecionado = dadosJogador.avatar === av.url ? "selected" : "";
                 let classeCss = `avatar-option ${selecionado} ${bloqueado ? 'locked' : ''}`;
                 
-                container.innerHTML += `
-                    <img src="${av.url}" class="${classeCss}" title="${bloqueado ? 'Requer Nível ' + av.nivelMinimo : 'Selecionar Avatar'}" onclick="${bloqueado ? 'alert(\'Avatar bloqueado! Requer Nível ' + av.nivelMinimo + '\')' : 'escolherAvatar(\'' + av.url + '\')'}">
-                `;
+                if(av.tipoImg === 'emoji') {
+                    container.innerHTML += `
+                        <div class="${classeCss}" title="${bloqueado ? 'Requer Nível ' + av.nivelMinimo : av.nomeLabel}" onclick="${bloqueado ? 'alert(\'Avatar bloqueado! Requer Nível ' + av.nivelMinimo + '\')' : 'escolherAvatar(\'' + av.url + '\')'}">
+                            ${av.url}
+                        </div>`;
+                } else {
+                    container.innerHTML += `
+                        <img src="${av.url}" class="${classeCss}" title="${bloqueado ? 'Requer Nível ' + av.nivelMinimo : 'Selecionar Avatar'}" onclick="${bloqueado ? 'alert(\'Avatar bloqueado! Requer Nível ' + av.nivelMinimo + '\')' : 'escolherAvatar(\'' + av.url + '\')'}">
+                    `;
+                }
             });
         }
 
@@ -670,6 +792,11 @@
             document.getElementById('chat-mensagens').innerHTML = `<div><strong>[Sistema - Canal ${canal.toUpperCase()}]:</strong> Conectado com sucesso.</div>`;
         }
 
+        function toggleNotificationPopup() {
+            let popup = document.getElementById('notification-popup');
+            popup.classList.toggle('show');
+        }
+
         function comprarItemLoja(nome, custo, tipo) {
             if(dadosJogador.ouro < custo) {
                 alert("Ouro insuficiente! Participe de combates ou abra caixas diárias para conseguir mais.");
@@ -677,10 +804,89 @@
             }
             dadosJogador.ouro -= custo;
             if(!dadosJogador.inventario) dadosJogador.inventario = [];
+            
+            // Adicionar item comprado ao inventário do jogador
             dadosJogador.inventario.push({ nome, tipo });
             salvarDadosNoBanco();
             sincronizarInterface();
-            alert(`Parabéns! ${nome} foi adquirido com sucesso.`);
+            alert(`Parabéns! ${nome} foi adquirido e enviado para o seu Inventário.`);
+        }
+
+        // SISTEMA DE CAIXA DIÁRIA COM 12 HORAS DE COOLDOWN
+        function verificarTimerCaixaDiaria() {
+            let agora = Date.now();
+            let ultima = dadosJogador.ultimaCaixaDiaria || 0;
+            let dozeHorasMs = 12 * 60 * 60 * 1000;
+            let tempoDecorrido = agora - ultima;
+            let btnCaixa = document.getElementById('btn-caixa-diaria');
+            let timerLabel = document.getElementById('timer-caixa-diaria');
+
+            if(tempoDecorrido < dozeHorasMs) {
+                let tempoRestante = dozeHorasMs - tempoDecorrido;
+                let horasRestantes = Math.floor(tempoRestante / (1000 * 60 * 60));
+                let minutosRestantes = Math.floor((tempoRestante % (1000 * 60 * 60)) / (1000 * 60));
+                
+                btnCaixa.disabled = true;
+                timerLabel.innerText = `Disponível em ${horasRestantes}h ${minutosRestantes}m`;
+            } else {
+                btnCaixa.disabled = false;
+                timerLabel.innerText = "Disponível para abrir!";
+            }
+        }
+
+        function reclamarCaixaDiaria() {
+            let agora = Date.now();
+            let ultima = dadosJogador.ultimaCaixaDiaria || 0;
+            let dozeHorasMs = 12 * 60 * 60 * 1000;
+
+            if((agora - ultima) < dozeHorasMs) {
+                alert("A caixa diária só pode ser aberta a cada 12 horas!");
+                return;
+            }
+
+            dadosJogador.ouro += 600;
+            dadosJogador.gemas += 10;
+            dadosJogador.ultimaCaixaDiaria = agora;
+            
+            // Adicionar ao inventário como registro de brinde
+            dadosJogador.inventario.push({ nome: "Recompensa Caixa Diária", tipo: "suprimento" });
+
+            salvarDadosNoBanco();
+            sincronizarInterface();
+            alert("Caixa Diária aberta com sucesso! +🪙 600 Ouro e +💎 10 Gemas adicionados.");
+        }
+
+        // ABRIR CAIXAS EXTRAS (TOTAL DE 5 CAIXAS NO EVENTO)
+        function abrirCaixaExtra(numCaixa, qtdOuro, qtdGemas, qtdPoder = 0) {
+            let custoOuro = numCaixa === 2 ? 200 : (numCaixa === 3 ? 500 : 800);
+            if(dadosJogador.ouro < custoOuro) {
+                alert(`Ouro insuficiente! Você precisa de 🪙 ${custoOuro} para abrir esta caixa.`);
+                return;
+            }
+
+            dadosJogador.ouro -= custoOuro;
+            if(qtdOuro > 0) dadosJogador.ouro += qtdOuro;
+            if(qtdGemas > 0) dadosJogador.gemas += qtdGemas;
+            if(qtdPoder > 0) dadosJogador.pontosPoder += qtdPoder;
+
+            dadosJogador.inventario.push({ nome: `Caixa de Evento #${numCaixa}`, tipo: "suprimento" });
+            salvarDadosNoBanco();
+            sincronizarInterface();
+            alert(`Caixa #${numCaixa} aberta com sucesso! Prêmios resgatados.`);
+        }
+
+        function comprarTesouroRaro() {
+            if(dadosJogador.gemas < 25) {
+                alert("Gemas insuficientes! Você precisa de 💎 25 Gemas para comprar o Tesouro Raro.");
+                return;
+            }
+
+            dadosJogador.gemas -= 25;
+            let skinPremiada = "Skin Lendária do Tesouro Raro";
+            dadosJogador.inventario.push({ nome: skinPremiada, tipo: "skin" });
+            salvarDadosNoBanco();
+            sincronizarInterface();
+            alert(`Incrível! Você abriu o Tesouro Raro e ganhou a skin exclusiva: ${skinPremiada}!`);
         }
 
         function selecionarPoder(nome, dano) {
@@ -791,7 +997,7 @@
             let ouroPremio = combateAtual.dificuldade === 'facil' ? 150 : (combateAtual.dificuldade === 'medio' ? 400 : (combateAtual.dificuldade === 'dificil' ? 900 : 2000));
             dadosJogador.ouro += ouroPremio;
             dadosJogador.nivel += 1;
-            dadosJogador.pontosPoder += 1; // Ganha 1 Ponto de Poder por vitória
+            dadosJogador.pontosPoder += 1; 
             salvarDadosNoBanco();
             sincronizarInterface();
             
@@ -823,10 +1029,11 @@
                 snapshot.forEach(doc => {
                     let data = doc.data();
                     let eMeu = doc.id === usuarioAtualId ? "style='background: rgba(249,115,22,0.1);'" : "";
+                    let tagAdmRanking = data.isAdm ? '<span class="badge-adm">ADM</span>' : '';
                     tbody.innerHTML += `
                         <tr ${eMeu}>
                             <td>#${posicao}</td>
-                            <td>${data.nome || 'Guerreiro'}</td>
+                            <td>${tagAdmRanking}${data.nome || 'Guerreiro'}</td>
                             <td>Nível ${data.nivel || 1}</td>
                             <td>${data.pontos || 0} pts</td>
                         </tr>`;
@@ -835,14 +1042,6 @@
             }).catch(err => {
                 console.error("Erro ao carregar ranking real:", err);
             });
-        }
-
-        function reclamarCaixaDiaria() {
-            dadosJogador.ouro += 500;
-            dadosJogador.gemas += 5;
-            salvarDadosNoBanco();
-            sincronizarInterface();
-            alert("Você abriu a Caixa Diária e ganhou 🪙 500 Ouro e 💎 5 Gemas reais!");
         }
 
         function criarGuilda() {
@@ -863,25 +1062,38 @@
             alert("Você entrou para a guilda pública: Guerreiros Livres!");
         }
 
+        // CHAT COM SUPORTE A ETIQUETA ADM E CHAT GERAL/PRIVADO
         function enviarMensagemChat() {
             let input = document.getElementById('input-chat-msg');
             let msg = input.value.trim();
             if(!msg) return;
+
+            // Validação de palavrões no chat também
+            let validacaoChat = validarNomeJogador(msg);
+            let textoExibicao = msg;
+
             let chatBox = document.getElementById('chat-mensagens');
-            chatBox.innerHTML += `<div><strong>[${chatCanalAtual.toUpperCase()}] ${dadosJogador.nome}:</strong> ${msg}</div>`;
+            let tagAdmHtml = dadosJogador.isAdm ? '<span class="badge-adm">ADM</span>' : '';
+            
+            chatBox.innerHTML += `<div><strong>${tagAdmHtml}[${chatCanalAtual.toUpperCase()}] ${dadosJogador.nome}:</strong> ${textoExibicao}</div>`;
             chatBox.scrollTop = chatBox.scrollHeight;
             input.value = "";
         }
 
         function salvarConfiguracoes() {
-            let novoNome = document.getElementById('input-novo-nome').value.trim();
-            if(novoNome) {
-                dadosJogador.nome = novoNome;
-                salvarDadosNoBanco();
-                carregarRankingGlobal();
-                sincronizarInterface();
-                alert("Perfil alterado e salvo com sucesso!");
+            let novoNomeInput = document.getElementById('input-novo-nome').value.trim();
+            let validacao = validarNomeJogador(novoNomeInput);
+            
+            if(!validacao.valido) {
+                alert(validacao.motivo);
+                return;
             }
+
+            dadosJogador.nome = validacao.nomeLimpo;
+            salvarDadosNoBanco();
+            carregarRankingGlobal();
+            sincronizarInterface();
+            alert("Perfil alterado e salvo com sucesso!");
         }
     </script>
 </body>
