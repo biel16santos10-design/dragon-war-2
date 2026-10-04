@@ -1,134 +1,266 @@
-// Função para verificar o nível de permissão ao abrir o painel ADM
-async function abrirPainelAdmin(userId) {
-    try {
-        // Busca os dados do usuário no Firestore (coleção 'jogadores')
-        const userDocRef = doc(db, "jogadores", userId);
-        const userDoc = await getDoc(userDocRef);
-
-        if (!userDoc.exists()) {
-            alert("Dados do usuário não encontrados.");
-            return;
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon War: Rise of Power</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .admin-name {
+            color: #ef4444 !important;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
         }
-
-        const dadosUser = userDoc.data();
-
-        // Verifica se o usuário tem permissão de ADM
-        if (!dadosUser.isAdmin) {
-            alert("Acesso negado! Você não é um Administrador.");
-            return;
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
         }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
 
-        // Verifica se é o Administrador Master (sua conta principal)
-        const isMaster = dadosUser.isMaster === true; 
+    <!-- CONTAINER PRINCIPAL -->
+    <div id="app" class="container mx-auto p-4 max-w-4xl">
+        
+        <!-- TELA DE AUTENTICAÇÃO DUAL (LOGIN / CADASTRO) -->
+        <section id="auth-screen" class="max-w-md mx-auto mt-20 bg-slate-800 p-8 rounded-xl shadow-2xl border border-slate-700">
+            <div class="text-center mb-6">
+                <h1 class="text-3xl font-extrabold text-amber-500 tracking-wider">DRAGON WAR</h1>
+                <p class="text-slate-400 text-sm">Rise of Power</p>
+            </div>
 
-        // Renderiza o painel baseado no cargo
-        renderizarInterfaceAdmin(isMaster, dadosUser);
+            <!-- Abas Dual -->
+            <div class="flex mb-6 border-b border-slate-700">
+                <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 pb-2 font-bold text-amber-500 border-b-2 border-amber-500 transition">Entrar</button>
+                <button id="tab-register" onclick="switchAuthTab('register')" class="flex-1 pb-2 font-bold text-slate-400 transition">Cadastrar</button>
+            </div>
 
-    } catch (error) {
-        console.error("Erro ao carregar o painel ADM:", error);
-    }
-}
+            <!-- Formulário -->
+            <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm text-slate-300 mb-1">E-mail</label>
+                    <input type="email" id="auth-email" required class="w-full bg-slate-900 border border-slate-700 rounded p-2.5 text-white focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-sm text-slate-300 mb-1">Senha</label>
+                    <input type="password" id="auth-password" required class="w-full bg-slate-900 border border-slate-700 rounded p-2.5 text-white focus:outline-none focus:border-amber-500">
+                </div>
+                <div id="register-name-field" class="hidden">
+                    <label class="block text-sm text-slate-300 mb-1">Nome de Herói / Jogador</label>
+                    <input type="text" id="auth-username" class="w-full bg-slate-900 border border-slate-700 rounded p-2.5 text-white focus:outline-none focus:border-amber-500">
+                </div>
+                <button type="submit" id="auth-btn" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold p-3 rounded transition shadow-lg">Entrar no Jogo</button>
+            </form>
+            <div id="auth-error" class="mt-4 text-red-400 text-sm text-center"></div>
+        </section>
 
-// Função que monta a interface dinamicamente baseada no nível
-function renderizarInterfaceAdmin(isMaster, dadosUser) {
-    // Cria ou seleciona o container do painel na tela
-    let painelDiv = document.getElementById("painel-adm-container");
-    if (!painelDiv) {
-        painelDiv = document.createElement("div");
-        painelDiv.id = "painel-adm-container";
-        document.body.appendChild(painelDiv);
-    }
-
-    let htmlConteudo = `
-        <div class="modal-admin">
-            <h2>👑 Painel de Administração (${isMaster ? 'Master' : 'Moderador'})</h2>
-            <hr>
+        <!-- TELA DO JOGO (OCULTA ATÉ O LOGIN) -->
+        <div id="game-screen" class="hidden space-y-6">
             
-            <!-- Funções Comuns para ADMs (Moderação e Dados) -->
-            <div class="secao-adm">
-                <h3>Ferramentas de Moderação</h3>
-                <input type="text" id="uid-alvo" placeholder="UID do Jogador Alvo">
-                <button onclick="mutarJogador()">Mutar Jogador</button>
-                <button onclick="banirJogador()">Banir Jogador</button>
-                <button onclick="consultarDadosJogador()">Ver Dados do Jogador</button>
-            </div>
-    `;
+            <!-- TOPO / HEADER DO JOGO -->
+            <header class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center shadow-md">
+                <div>
+                    <h2 id="user-display-name" class="text-xl font-bold">Herói</h2>
+                    <p class="text-xs text-slate-400">Nível 1 | Ouro: <span id="user-gold" class="text-amber-400 font-bold">100</span></p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <!-- Botão do Painel Administrativo (Aparece apenas para o Gabriel/Admin) -->
+                    <button id="btn-admin-panel" onclick="toggleAdminPanel(true)" class="hidden bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded text-sm font-bold transition shadow">
+                        <i class="fas fa-shield-alt mr-1"></i> Painel ADM
+                    </button>
+                    <button onclick="handleLogout()" class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-3 py-1.5 rounded text-sm transition">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </button>
+                </div>
+            </header>
 
-    // Se for o MASTER, adiciona as ferramentas avançadas exclusivas
-    if (isMaster) {
-        htmlConteudo += `
-            <div class="secao-master" style="border-top: 2px solid gold; margin-top: 15px; padding-top: 10px;">
-                <h3 style="color: gold;">Painel Master (Exclusivo)</h3>
-                
-                <div class="grupo-inputs">
-                    <input type="number" id="qtd-gemas" placeholder="Qtd Gemas">
-                    <input type="number" id="qtd-ouro" placeholder="Qtd Ouro">
-                    <button onclick="enviarRecompensaAdmin()">Dar Recursos</button>
+            <!-- CONTEÚDO PRINCIPAL DO JOGO -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Arena de Batalha -->
+                <div class="md:col-span-2 bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-md">
+                    <h3 class="text-lg font-bold text-amber-500 mb-3"><i class="fas fa-gavel mr-2"></i>Arena de Combate</h3>
+                    <p class="text-sm text-slate-300 mb-4">Enfrente monstros e chefes para subir de poder e coletar recompensas exclusivas.</p>
+                    <button onclick="triggerBattle()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-4 py-2 rounded transition">Batalhar contra Dragão Menor</button>
+                    <div id="battle-log" class="mt-4 p-3 bg-slate-900 rounded border border-slate-800 text-xs text-slate-300 h-28 overflow-y-auto">
+                        [Sistema] Pronto para a batalha, guerreiro...
+                    </div>
                 </div>
 
-                <button onclick="abrirCriacaoEventos()">Criar / Gerenciar Eventos</button>
-                <button onclick="abrirGerenciadorLoja()">Gerenciar Loja & Caixas</button>
-                <button onclick="abrirCriacaoPersonagens()">Criar Novos Personagens</button>
-                
-                <div class="grupo-inputs" style="margin-top: 10px;">
-                    <input type="text" id="uid-novo-adm" placeholder="UID para promover/rebaixar">
-                    <button onclick="alterarStatusAdmin(true)">Tornar ADM</button>
-                    <button onclick="alterarStatusAdmin(false)">Remover ADM</button>
+                <!-- Chat da Comunidade / Guilda -->
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col justify-between shadow-md h-72">
+                    <h3 class="text-sm font-bold text-amber-500 mb-2"><i class="fas fa-comments mr-2"></i>Chat Global</h3>
+                    <div id="chat-messages" class="flex-1 bg-slate-900 p-2 rounded border border-slate-800 text-xs overflow-y-auto space-y-1 mb-2">
+                        <!-- Mensagens simuladas com destaque -->
+                        <div><span class="admin-name">Gabriel</span>: Sejam bem-vindos ao Dragon War!</div>
+                        <div><span class="text-slate-400">Aventureiro</span>: Salve galera!</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="chat-input" placeholder="Digite sua mensagem..." class="flex-1 bg-slate-900 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none">
+                        <button onclick="sendChatMessage()" class="bg-amber-600 hover:bg-amber-500 text-white px-3 py-1.5 rounded text-xs font-bold">Enviar</button>
+                    </div>
                 </div>
             </div>
-        `;
-    }
 
-    htmlConteudo += `
-            <br>
-            <button onclick="fecharPainelAdmin()" style="background: red; color: white;">Fechar Painel</button>
         </div>
-    `;
 
-    painelDiv.innerHTML = htmlConteudo;
-    painelDiv.style.display = "block";
-}
+        <!-- MODAL DO PAINEL ADMINISTRATIVO -->
+        <div id="admin-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center hidden z-50 p-4">
+            <div class="bg-slate-800 w-full max-w-2xl rounded-xl border border-red-600/50 shadow-2xl overflow-hidden">
+                <div class="bg-red-900/40 p-4 border-b border-red-600/40 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-red-400"><i class="fas fa-user-shield mr-2"></i>Painel Administrativo Restrito</h3>
+                    <button onclick="toggleAdminPanel(false)" class="text-slate-400 hover:text-white"><i class="fas fa-times text-lg"></i></button>
+                </div>
+                <div class="p-6 space-y-4">
+                    <p class="text-xs text-slate-300">Painel de controle avançado. Como administrador, você possui permissão total sobre os registros, eventos globais e gerenciamento de itens.</p>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-slate-900 p-4 rounded border border-slate-700">
+                            <h4 class="text-sm font-bold text-amber-400 mb-2">Conceder Ouro Global</h4>
+                            <input type="number" id="adm-gold-val" placeholder="Quantidade" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-xs mb-2 text-white">
+                            <button onclick="admAction('gold')" class="w-full bg-red-600 hover:bg-red-500 text-white text-xs font-bold py-2 rounded transition">Distribuir para Todos</button>
+                        </div>
+                        <div class="bg-slate-900 p-4 rounded border border-slate-700">
+                            <h4 class="text-sm font-bold text-amber-400 mb-2">Aviso Global no Chat</h4>
+                            <input type="text" id="adm-msg-val" placeholder="Mensagem do Servidor" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-xs mb-2 text-white">
+                            <button onclick="admAction('broadcast')" class="w-full bg-red-600 hover:bg-red-500 text-white text-xs font-bold py-2 rounded transition">Enviar Alerta</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-slate-900 p-4 border-t border-slate-700 flex justify-end">
+                    <button onclick="toggleAdminPanel(false)" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded text-xs font-bold">Fechar Painel</button>
+                </div>
+            </div>
+        </div>
 
-// --- Funções de Ação do Painel ---
+    </div>
 
-async function banirJogador() {
-    const uidAlvo = document.getElementById("uid-alvo").value;
-    if (!uidAlvo) return alert("Digite o UID do jogador!");
-    
-    try {
-        await updateDoc(doc(db, "jogadores", uidAlvo), { isBanned: true });
-        alert(`O jogador ${uidAlvo} foi banido com sucesso.`);
-    } catch (e) {
-        alert("Erro ao banir jogador: " + e.message);
-    }
-}
+    <!-- SCRIPT DE CONTROLE DO SISTEMA -->
+    <script>
+        let currentMode = 'login';
+        let currentUser = null;
 
-async function mutarJogador() {
-    const uidAlvo = document.getElementById("uid-alvo").value;
-    if (!uidAlvo) return alert("Digite o UID do jogador!");
-    
-    try {
-        await updateDoc(doc(db, "jogadores", uidAlvo), { isMuted: true });
-        alert(`O jogador ${uidAlvo} foi mutado.`);
-    } catch (e) {
-        alert("Erro ao mutar: " + e.message);
-    }
-}
+        // Identificação do Admin (Seu e-mail ou nome configurado)
+        const ADMIN_EMAIL = "markivus25@gmail.com"; 
 
-// Exclusivo do Master: Promover ou despromover alguém a ADM
-async function alterarStatusAdmin(tornarAdmin) {
-    const uidAlvo = document.getElementById("uid-novo-adm").value;
-    if (!uidAlvo) return alert("Digite o UID!");
+        function switchAuthTab(mode) {
+            currentMode = mode;
+            const loginBtn = document.getElementById('tab-login');
+            const registerBtn = document.getElementById('tab-register');
+            const nameField = document.getElementById('register-name-field');
+            const submitBtn = document.getElementById('auth-btn');
+            const errorDiv = document.getElementById('auth-error');
+            
+            errorDiv.innerText = "";
 
-    try {
-        await updateDoc(doc(db, "jogadores", uidAlvo), { isAdmin: tornarAdmin });
-        alert(`Status de ADM do usuário ${uidAlvo} atualizado para: ${tornarAdmin}`);
-    } catch (e) {
-        alert("Erro ao alterar permissão: " + e.message);
-    }
-}
+            if (mode === 'login') {
+                loginBtn.className = "flex-1 pb-2 font-bold text-amber-500 border-b-2 border-amber-500 transition";
+                registerBtn.className = "flex-1 pb-2 font-bold text-slate-400 transition";
+                nameField.classList.add('hidden');
+                submitBtn.innerText = "Entrar no Jogo";
+            } else {
+                registerBtn.className = "flex-1 pb-2 font-bold text-amber-500 border-b-2 border-amber-500 transition";
+                loginBtn.className = "flex-1 pb-2 font-bold text-slate-400 transition";
+                nameField.classList.remove('hidden');
+                submitBtn.innerText = "Cadastrar Herói";
+            }
+        }
 
-function fecharPainelAdmin() {
-    const painelDiv = document.getElementById("painel-adm-container");
-    if (painelDiv) painelDiv.style.display = "none";
-}
+        function handleAuth(event) {
+            event.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            const usernameInput = document.getElementById('auth-username').value;
+
+            // Simulação de autenticação dual local (pode ser conectado ao Firebase Auth facilmente)
+            if (currentMode === 'register' && !usernameInput) {
+                document.getElementById('auth-error').innerText = "Por favor, insira um nome de herói.";
+                return;
+            }
+
+            let finalName = usernameInput || email.split('@')[0];
+            if (email === ADMIN_EMAIL || finalName.toLowerCase() === 'gabriel') {
+                finalName = "Gabriel"; // Garante o nome correto
+            }
+
+            currentUser = {
+                email: email,
+                name: finalName,
+                isAdmin: (email === ADMIN_EMAIL || finalName.toLowerCase() === 'gabriel'),
+                gold: 150
+            };
+
+            initGameSession();
+        }
+
+        function initGameSession() {
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+
+            const nameDisplay = document.getElementById('user-display-name');
+            nameDisplay.innerText = currentUser.name;
+
+            // Aplica a classe de destaque vermelho caso seja você (Admin)
+            if (currentUser.isAdmin) {
+                nameDisplay.className = "text-xl font-bold admin-name";
+                document.getElementById('btn-admin-panel').classList.remove('hidden');
+            } else {
+                nameDisplay.className = "text-xl font-bold text-white";
+                document.getElementById('btn-admin-panel').classList.add('hidden');
+            }
+
+            document.getElementById('user-gold').innerText = currentUser.gold;
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('auth-screen').classList.remove('hidden');
+            document.getElementById('auth-form').reset();
+        }
+
+        function toggleAdminPanel(show) {
+            const modal = document.getElementById('admin-modal');
+            if (show) {
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function admAction(type) {
+            if (type === 'gold') {
+                const val = document.getElementById('adm-gold-val').value;
+                alert(`Sucesso! Concedido ${val || 0} de ouro globalmente.`);
+            } else if (type === 'broadcast') {
+                const msg = document.getElementById('adm-msg-val').value;
+                const chat = document.getElementById('chat-messages');
+                chat.innerHTML += `<div><span class="admin-name">[SERVIDOR/ADM]</span>: ${msg}</div>`;
+                chat.scrollTop = chat.scrollHeight;
+            }
+            toggleAdminPanel(false);
+        }
+
+        function triggerBattle() {
+            const log = document.getElementById('battle-log');
+            log.innerHTML += `<br>[Batalha] Você desferiu um golpe crítico e venceu o monstro! +25 Ouro.`;
+            log.scrollTop = log.scrollHeight;
+            currentUser.gold += 25;
+            document.getElementById('user-gold').innerText = currentUser.gold;
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if(!text) return;
+
+            const chat = document.getElementById('chat-messages');
+            const nameClass = currentUser.isAdmin ? 'admin-name' : 'text-slate-300';
+            
+            chat.innerHTML += `<div><span class="${nameClass}">${currentUser.name}</span>: ${text}</div>`;
+            input.value = '';
+            chat.scrollTop = chat.scrollHeight;
+        }
+    </script>
+</body>
+</html>
