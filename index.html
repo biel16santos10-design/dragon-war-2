@@ -190,7 +190,7 @@
                     <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Equipamentos e customizações completas.</p>
                     
                     <div class="sub-tabs">
-                        <button class="sub-tab-btn active-sub" onclick="trocarSubLoja('armas', this)">⚔️️ Armas (16)</button>
+                        <button class="sub-tab-btn active-sub" onclick="trocarSubLoja('armas', this)">⚔ Armas (16)</button>
                         <button class="sub-tab-btn" onclick="trocarSubLoja('skins', this)">🎭 Skins</button>
                         <button class="sub-tab-btn" onclick="trocarSubLoja('suprimentos', this)">🧪 Suprimentos</button>
                     </div>
@@ -252,7 +252,7 @@
                             </div>
                         </div>
 
-                        <div class="combat-actions">
+                        <div class="combat-actions" id="botoes-acoes-combate">
                             <button class="btn-action" style="width: 22%; background: #3b82f6;" onclick="acaoCombate('atacar')">⚔️ Atacar</button>
                             <button class="btn-action" style="width: 22%; background: #16a34a;" onclick="acaoCombate('defender')">🛡️ Defender</button>
                             <button class="btn-action" style="width: 22%; background: #eab308; color:#000;" onclick="acaoCombate('poder')">⚡ Usar Poder</button>
@@ -263,7 +263,7 @@
                             <div>Início do combate! Escolha sua ação estrategicamente.</div>
                         </div>
 
-                        <button class="btn-action" id="btn-fugir-arena" style="margin-top: 15px; background: #475569; display:none;" onclick="encerrarCombateFuga()">Fugir / Voltar</button>
+                        <button class="btn-action" id="btn-fugir-arena" style="margin-top: 15px; background: #475569;" onclick="encerrarCombateFuga()">Fugir / Voltar</button>
                     </div>
                 </div>
 
@@ -471,7 +471,7 @@
             { id: 204, nome: "Elixir de Força Ancestral", preco: 1500 }
         ];
 
-        // MUITAS OPÇÕES DE AVATAR (Expandido)
+        // AVATARES
         const avataresDisponiveis = [
             { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Warrior1", nivelMinimo: 1 },
             { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Knight2", nivelMinimo: 1 },
@@ -485,19 +485,7 @@
             { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Blaze10", nivelMinimo: 1 }
         ];
 
-        // ÁRVORE DE PODERES (Várias seleções com desbloqueio progressivo)
-        const arvorePoderesLista = [
-            { id: 1, nome: "Sopro de Fogo", icone: "🔥", dano: 35, custoPonto: 1, nivelReq: 1 },
-            { id: 2, nome: "Golpe de Raio", icone: "⚡", dano: 50, custoPonto: 1, nivelReq: 2 },
-            { id: 3, nome: "Nova de Gelo", icone: "❄️", dano: 65, custoPonto: 1, nivelReq: 3 },
-            { id: 4, nome: "Tormenta de Vento", icone: "🌪️", dano: 80, custoPonto: 1, nivelReq: 4 },
-            { id: 5, nome: "Chama Sombria", icone: "🖤", dano: 100, custoPonto: 2, nivelReq: 5 },
-            { id: 6, nome: "Meteorito Estelar", icone: "☄️", dano: 130, custoPonto: 2, nivelReq: 6 },
-            { id: 7, nome: "Fúria do Trovão", icone: "⚡", dano: 160, custoPonto: 3, nivelReq: 7 },
-            { id: 8, nome: "Coração de Dragão", icone: "🐉", dano: 200, custoPonto: 3, nivelReq: 8 }
-        ];
-
-        // 9 INIMIGOS NA ARENA (Adicionados mais 5, alguns bloqueados por nível)
+        // 9 INIMIGOS NA ARENA
         const listaInimigosArena = [
             { id: 'facil', nome: "Goblin Selvagem", hp: 80, dano: 12, nivelReq: 1, cor: "#16a34a", icone: "🟢" },
             { id: 'medio', nome: "Orc Guerreiro", hp: 150, dano: 22, nivelReq: 2, cor: "#3b82f6", icone: "🔵" },
@@ -508,17 +496,6 @@
             { id: 'chefe7', nome: "Besta Abissal", hp: 1100, dano: 120, nivelReq: 7, cor: "#0284c7", icone: "🌊" },
             { id: 'chefe8', nome: "Fênix Cinzenta", hp: 1400, dano: 150, nivelReq: 8, cor: "#f43f5e", icone: "🐦" },
             { id: 'chefe9', nome: "Deus Primordial do Caos", hp: 1800, dano: 190, nivelReq: 10, cor: "#64748b", icone: "💀" }
-        ];
-
-        // EVENTOS EXTRAS ALEATÓRIOS (Mais 5 eventos adicionados)
-        const eventosExtrasLista = [
-            { titulo: "Caixa Diária", desc: "Abra uma vez por dia para receber moedas ou gemas reais.", acao: "reclamarCaixaDiaria()", btnTexto: "ABRIR CAIXA" },
-            { titulo: "Tesouro Raro", desc: "Gemas acumuladas podem ser usadas para itens especiais na loja.", acao: "trocarTab('loja', document.querySelectorAll('.nav-menu li')[2])", btnTexto: "IR PARA LOJA" },
-            { titulo: "Bênção dos Deuses", desc: "Receba uma bonificação instantânea de 🪙 1.000 Ouro grátis!", acao: "reclamarBencaoDeuses()", btnTexto: "RESGATAR BÊNÇÃO" },
-            { titulo: "Desafio do Mercador", desc: "Teste sua sorte e ganhe 💎 10 Gemas puras.", acao: "reclamarDesafioMercador()", btnTexto: "ACEITAR DESAFIO" },
-            { titulo: "Torneio Relâmpago", desc: "Participe do torneio rápido e ganhe ⚡ 3 Pontos de Poder extra.", acao: "reclamarTorneioRelampago()", btnTexto: "COLETAR PONTOS" },
-            { titulo: "Poço da Fortuna", desc: "Jogue uma moeda no poço e receba recompensas misteriosas.", optBtn: "resgatarPocoFortuna()" },
-            { titulo: "Pergaminho Secreto", desc: "Decifre o pergaminho antigo para ganhar XP e Ouro em dobro.", optBtn: "resgatarPergaminho()" }
         ];
 
         function alternarModoAuth(modo) {
@@ -730,31 +707,6 @@
                     <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Gemas acumuladas podem ser usadas para itens especiais na loja.</p>
                     <button class="btn-action" onclick="trocarTab('loja', document.querySelectorAll('.nav-menu li')[2])">IR PARA LOJA</button>
                 </div>
-                <div class="item-card">
-                    <h3>Bênção dos Deuses</h3>
-                    <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Receba uma bonificação instantânea de 🪙 1.000 Ouro grátis!</p>
-                    <button class="btn-action" onclick="reclamarBencaoDeuses()">RESGATAR BÊNÇÃO</button>
-                </div>
-                <div class="item-card">
-                    <h3>Desafio do Mercador</h3>
-                    <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Teste sua sorte e ganhe 💎 10 Gemas puras.</p>
-                    <button class="btn-action" onclick="reclamarDesafioMercador()">ACEITAR DESAFIO</button>
-                </div>
-                <div class="item-card">
-                    <h3>Torneio Relâmpago</h3>
-                    <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Participe do torneio rápido e ganhe ⚡ 3 Pontos de Poder extra.</p>
-                    <button class="btn-action" onclick="reclamarTorneioRelampago()">COLETAR PONTOS</button>
-                </div>
-                <div class="item-card">
-                    <h3>Poço da Fortuna</h3>
-                    <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Jogue uma moeda no poço e receba recompensas misteriosas.</p>
-                    <button class="btn-action" onclick="resgatarPocoFortuna()">JOGAR MOEDA</button>
-                </div>
-                <div class="item-card">
-                    <h3>Pergaminho Secreto</h3>
-                    <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Decifre o pergaminho antigo para ganhar XP e Ouro em dobro.</p>
-                    <button class="btn-action" onclick="resgatarPergaminho()">DECIFRAR</button>
-                </div>
             `;
         }
 
@@ -813,6 +765,12 @@
         }
 
         function iniciarCombatePorId(mobId) {
+            // Verifica se a vida do jogador está esgotada (0)
+            if(dadosJogador.vida <= 0) {
+                alert("Sua vida está esgotada! Você precisa reiniciar/voltar do combate anterior para recuperar 100% da vida antes de lutar novamente.");
+                return;
+            }
+
             let mobEncontrado = listaInimigosArena.find(m => m.id === mobId);
             if(!mobEncontrado) return;
 
@@ -822,6 +780,9 @@
             combateAtual.mobHp = mobEncontrado.hp; 
             combateAtual.mobMaxHp = mobEncontrado.hp; 
             combateAtual.mobDano = mobEncontrado.dano;
+
+            // Restaura os botões de ação caso tenham sido ocultados por derrota anterior
+            document.getElementById('botoes-acoes-combate').style.display = 'flex';
 
             document.getElementById('seletor-mobs-container').style.display = 'none';
             document.getElementById('painel-batalha-ativo').style.display = 'block';
@@ -834,7 +795,7 @@
         }
 
         function atualizarBarrasBatalha() {
-            document.getElementById('combate-meu-hp').innerText = dadosJogador.vida;
+            document.getElementById('combate-meu-hp').innerText = Math.max(0, dadosJogador.vida);
             document.getElementById('barra-meu-hp').style.width = Math.max(0, dadosJogador.vida) + '%';
             document.getElementById('combate-mob-hp').innerText = combateAtual.mobHp;
             document.getElementById('combate-mob-maxhp').innerText = combateAtual.mobMaxHp;
@@ -881,6 +842,8 @@
                 if(combateAtual.defendendo) danoRecebido = Math.floor(danoRecebido / 2);
                 
                 dadosJogador.vida -= danoRecebido;
+                if(dadosJogador.vida < 0) dadosJogador.vida = 0;
+
                 adicionarLogCombate(`O ${combateAtual.mobNome} contra-atacou e causou ${danoRecebido} de dano em você!`);
                 atualizarBarrasBatalha();
 
@@ -899,23 +862,30 @@
             sincronizarInterface();
             
             adicionarLogCombate(`🎉 VITÓRIA! +🪙 ${ouroPremio} Ouro, Nível ${dadosJogador.nivel} e +1 ⚡ Ponto de Poder!`);
-            document.getElementById('btn-fugir-arena').style.display = 'block';
             combateAtual.ativo = false;
         }
 
         function finalizarDerrotaCombate() {
-            dadosJogador.vida = 20;
+            // Vida bloqueada em 0 (não consegue jogar até retornar e reiniciar)
+            dadosJogador.vida = 0;
             salvarDadosNoBanco();
             sincronizarInterface();
-            adicionarLogCombate(`💀 DERROTA! Você foi vencido pelo monstro.`);
-            document.getElementById('btn-fugir-arena').style.display = 'block';
+
+            adicionarLogCombate(`💀 Você perdeu o combate! Sua vida foi bloqueada.`);
+            
+            // Oculta os botões de ação para impedir novas jogadas na mesma tela de derrota
+            document.getElementById('botoes-acoes-combate').style.display = 'none';
             combateAtual.ativo = false;
         }
 
         function encerrarCombateFuga() {
+            // Quando ele volta/reinicia o combate, a vida volta para 100%
+            dadosJogador.vida = 100;
+            salvarDadosNoBanco();
+            sincronizarInterface();
+
             document.getElementById('painel-batalha-ativo').style.display = 'none';
             document.getElementById('seletor-mobs-container').style.display = 'block';
-            document.getElementById('btn-fugir-arena').style.display = 'none';
         }
 
         function carregarRankingGlobal() {
@@ -966,48 +936,6 @@
             salvarDadosNoBanco();
             sincronizarInterface();
             alert("Você abriu a Caixa Diária e ganhou 🪙 500 Ouro e 💎 5 Gemas reais!");
-        }
-
-        function reclamarBencaoDeuses() {
-            dadosJogador.ouro += 1000;
-            salvarDadosNoBanco();
-            sincronizarInterface();
-            alert("Bênção recebida! +🪙 1.000 Ouro adicionados.");
-        }
-
-        function reclamarDesafioMercador() {
-            dadosJogador.gemas += 10;
-            salvarDadosNoBanco();
-            sincronizarInterface();
-            alert("Desafio concluído! +💎 10 Gemas adicionadas.");
-        }
-
-        function reclamarTorneioRelampago() {
-            dadosJogador.pontosPoder += 3;
-            salvarDadosNoBanco();
-            sincronizarInterface();
-            alert("Torneio concluído! +⚡ 3 Pontos de Poder adicionados.");
-        }
-
-        function resgatarPocoFortuna() {
-            let sorte = Math.random();
-            if(sorte > 0.5) {
-                dadosJogador.ouro += 750;
-                alert("O poço sorriu para você! +🪙 750 Ouro.");
-            } else {
-                dadosJogador.gemas += 8;
-                alert("Águas profundas trouxeram tesouros! +💎 8 Gemas.");
-            }
-            salvarDadosNoBanco();
-            sincronizarInterface();
-        }
-
-        function resgatarPergaminho() {
-            dadosJogador.nivel += 1;
-            dadosJogador.ouro += 1500;
-            salvarDadosNoBanco();
-            sincronizarInterface();
-            alert("Pergaminho decifrado! Subiu de Nível e ganhou +🪙 1.500 Ouro.");
         }
 
         function criarGuilda() {
