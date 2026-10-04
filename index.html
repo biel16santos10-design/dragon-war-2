@@ -88,6 +88,12 @@
         .ranking-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         .ranking-table th, .ranking-table td { padding: 14px; text-align: left; border-bottom: 1px solid #334155; font-size: 14px; }
         .ranking-table th { color: #f97316; background: #0f172a; }
+
+        /* ESTILOS EXCLUSIVOS DO PAINEL ADM */
+        .adm-badge { background: #dc2626; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-left: 6px; }
+        .admin-stat-card { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 15px; text-align: center; }
+        .admin-stat-card h4 { color: #94a3b8; font-size: 13px; margin-bottom: 5px; }
+        .admin-stat-card span { font-size: 22px; font-weight: bold; color: #f97316; }
     </style>
 </head>
 <body>
@@ -135,6 +141,8 @@
                 <li onclick="trocarTab('eventos', this)">🎁 Eventos</li>
                 <li onclick="trocarTab('guilda', this)">🛡 Guildas & Chat</li>
                 <li onclick="trocarTab('config', this)">⚙ Configurações</li>
+                <!-- ABA EXCLUSIVA DE ADM (INICIALMENTE OCULTA) -->
+                <li id="menu-btn-adm" style="display: none; color: #f87171; border-color: rgba(239, 68, 68, 0.3);" onclick="trocarTab('adm', this)">👑 Painel ADM</li>
             </ul>
         </div>
 
@@ -155,7 +163,7 @@
                 <div id="tab-inicio" class="tab-panel active">
                     <div class="card-box" style="text-align: center; padding: 40px;">
                         <h2 style="color: #f97316; font-size: 32px; margin-bottom: 15px;">Bem-vindo ao Dragon War!</h2>
-                        <p style="color: #94a3b8; max-width: 600px; margin: 0 auto 25px auto; line-height: 1.6;">Prepare seu guerreiro, colete as 16 armas lendárias e skins na loja mercadora, domine magias elementais com seus pontos de poder e conquiste o topo do ranking global!</p>
+                        <p style="color: #94a3b8; max-width: 600px; margin: 0 auto 25px auto; line-height: 1.6;">Prepare seu guerreiro, colete as armas lendárias e skins na loja mercadora, domine magias elementais com seus pontos de poder e conquiste o topo do ranking global!</p>
                         <button class="btn-action" style="max-width: 250px; margin: 0 auto; font-size: 16px; padding: 14px;" onclick="trocarTab('jogar', document.querySelectorAll('.nav-menu li')[1])">COMEÇAR A JOGAR</button>
                     </div>
                 </div>
@@ -173,7 +181,7 @@
                         <div class="item-card" style="cursor: pointer;" onclick="trocarTab('loja', document.querySelectorAll('.nav-menu li')[2])">
                             <span style="font-size: 40px; margin-bottom: 10px;">🛒</span>
                             <h3>Loja da Mercadora</h3>
-                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">16 armas, skins e suprimentos com seu ouro real.</p>
+                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Armas, skins e suprimentos com seu ouro real.</p>
                         </div>
                         <div class="item-card" style="cursor: pointer;" onclick="trocarTab('poderes', document.querySelectorAll('.nav-menu li')[3])">
                             <span style="font-size: 40px; margin-bottom: 10px;">⚡</span>
@@ -189,7 +197,7 @@
                     <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Equipamentos e customizações completas.</p>
                     
                     <div class="sub-tabs">
-                        <button class="sub-tab-btn active-sub" onclick="trocarSubLoja('armas', this)">⚔️ Armas (16)</button>
+                        <button class="sub-tab-btn active-sub" onclick="trocarSubLoja('armas', this)">⚔️ Armas & Personagens</button>
                         <button class="sub-tab-btn" onclick="trocarSubLoja('skins', this)">🎭 Skins</button>
                         <button class="sub-tab-btn" onclick="trocarSubLoja('suprimentos', this)">🧪 Suprimentos</button>
                     </div>
@@ -217,7 +225,7 @@
                             <div class="power-node" style="top: 15px; left: 145px;" onclick="selecionarPoder('Sopro de Fogo', 35)">🔥</div>
                             <div class="power-node" style="top: 100px; right: 15px;" onclick="selecionarPoder('Golpe de Raio', 50)">⚡</div>
                             <div class="power-node" style="bottom: 40px; right: 45px;" onclick="selecionarPoder('Nova de Gelo', 60)">❄️</div>
-                            <div class="power-node" style="bottom: 40px; left: 45px;" onclick="selecionarPoder('Tormenta de Vento', 75)">🌪️</div>
+                            <div class="power-node" style="bottom: 40px; left: 45px;" onclick="selecionarPoder('Tormenta de Vento', 75)">🌪️️</div>
                         </div>
                         <h3 id="poder-selecionado-titulo" style="margin-top: 15px;">Selecione um poder acima</h3>
                         <p id="poder-selecionado-desc" style="color: #94a3b8; font-size: 14px; margin-bottom: 15px;">Clique em um ícone circular para ver os detalhes e evoluir.</p>
@@ -325,17 +333,12 @@
                 <!-- ABA: EVENTOS -->
                 <div id="tab-eventos" class="tab-panel">
                     <h2>Eventos e Recompensas</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Participe dos eventos diários para ganhar bônus exclusivos.</p>
-                    <div class="grid-cards">
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Participe dos eventos criados pelos administradores para ganhar bônus exclusivos.</p>
+                    <div class="grid-cards" id="container-eventos-jogador">
                         <div class="item-card">
                             <h3>Caixa Diária</h3>
                             <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Abra uma vez por dia para receber moedas ou gemas reais.</p>
                             <button class="btn-action" onclick="reclamarCaixaDiaria()">ABRIR CAIXA</button>
-                        </div>
-                        <div class="item-card">
-                            <h3>Tesouro Raro</h3>
-                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Gemas acumuladas podem ser usadas para itens especiais na loja.</p>
-                            <button class="btn-action" onclick="trocarTab('loja', document.querySelectorAll('.nav-menu li')[2])">IR PARA LOJA</button>
                         </div>
                     </div>
                 </div>
@@ -393,6 +396,90 @@
                     </div>
                 </div>
 
+                <!-- 👑 ABA: PAINEL ADMINISTRATIVO (EXCLUSIVO ADM) -->
+                <div id="tab-adm" class="tab-panel">
+                    <h2>👑 Painel Administrativo do Servidor</h2>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Controle global de itens, loja, eventos e gerenciamento de jogadores do Dragon War.</p>
+
+                    <div class="grid-cards" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 25px;">
+                        <div class="admin-stat-card">
+                            <h4>Jogadores Registrados</h4>
+                            <span id="adm-stat-total-jogadores">0</span>
+                        </div>
+                        <div class="admin-stat-card">
+                            <h4>Servidor</h4>
+                            <span style="color: #10b981;">Online</span>
+                        </div>
+                        <div class="admin-stat-card">
+                            <h4>Versão DB</h4>
+                            <span style="color: #38bdf8;">Firestore v9</span>
+                        </div>
+                        <div class="admin-stat-card">
+                            <h4>Modo ADM</h4>
+                            <span style="color: #f87171;">Ativo</span>
+                        </div>
+                    </div>
+
+                    <div class="sub-tabs">
+                        <button class="sub-tab-btn active-sub" onclick="trocarSubAdm('gerenciar-loja', this)">🛒 Criar / Gerenciar Loja</button>
+                        <button class="sub-tab-btn" onclick="trocarSubAdm('gerenciar-eventos', this)">🎁 Criar Eventos</button>
+                        <button class="sub-tab-btn" onclick="trocarSubAdm('gerenciar-usuarios', this)">👥 Jogadores & Permissões</button>
+                    </div>
+
+                    <!-- SUB-ABA: GERENCIAR LOJA -->
+                    <div id="subadm-gerenciar-loja" class="sub-panel active-sub-panel">
+                        <div class="card-box">
+                            <h3>Adicionar Novo Item ou Arma à Loja Global</h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <input type="text" id="adm-item-nome" class="form-control" placeholder="Nome do Item / Arma / Personagem">
+                                <select id="adm-item-tipo" class="form-control">
+                                    <option value="arma">Arma / Equipamento</option>
+                                    <option value="skin">Skin</option>
+                                    <option value="suprimento">Suprimento / Poção</option>
+                                    <option value="personagem">Personagem Especial</option>
+                                </select>
+                                <input type="number" id="adm-item-preco" class="form-control" placeholder="Preço em Ouro">
+                                <input type="text" id="adm-item-desc" class="form-control" placeholder="Descrição / Atributos (ex: Dano 120)">
+                            </div>
+                            <button class="btn-action" style="max-width: 250px; margin-top: 15px;" onclick="admCriarItemLoja()">🚀 Publicar na Loja Global</button>
+                        </div>
+                    </div>
+
+                    <!-- SUB-ABA: CRIAR EVENTOS -->
+                    <div id="subadm-gerenciar-eventos" class="sub-panel">
+                        <div class="card-box">
+                            <h3>Criar Evento no Servidor</h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <input type="text" id="adm-evento-titulo" class="form-control" placeholder="Nome do Evento (ex: Fúria do Dragão)">
+                                <input type="text" id="adm-evento-recompensa" class="form-control" placeholder="Recompensa (ex: +1000 Ouro e 10 Gemas)">
+                                <input type="date" id="adm-evento-data" class="form-control">
+                            </div>
+                            <textarea id="adm-evento-desc" class="form-control" placeholder="Descrição detalhada do evento..." style="height: 80px; margin-top: 10px;"></textarea>
+                            <button class="btn-action" style="max-width: 250px;" onclick="admCriarEvento()">📢 Lançar Evento para Jogadores</button>
+                        </div>
+                    </div>
+
+                    <!-- SUB-ABA: GERENCIAR USUÁRIOS -->
+                    <div id="subadm-gerenciar-usuarios" class="sub-panel">
+                        <div class="card-box">
+                            <h3>Lista de Jogadores Cadastrados</h3>
+                            <table class="ranking-table">
+                               <thead>
+                                   <tr>
+                                       <th>Nome</th>
+                                       <th>Nível</th>
+                                       <th>Ouro</th>
+                                       <th>Permissão</th>
+                                       <th>Ações ADM</th>
+                                   </tr>
+                               </thead>
+                               <tbody id="adm-tabela-usuarios"></tbody>
+                           </table>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
         </div>
     </div>
@@ -430,52 +517,50 @@
             pontos: 1250,
             avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=Warrior1",
             inventario: [], 
-            guildaNome: "" 
+            guildaNome: "",
+            isAdmin: false 
         };
 
         let chatCanalAtual = 'global';
         let combateAtual = { ativo: false, dificuldade: '', mobNome: '', mobHp: 0, mobMaxHp: 0, mobDano: 0, defendendo: false };
         let poderSelecionadoNome = null;
 
-        // 16 ARMAS DA LOJA
-        const listaArmasLoja = [
-            { id: 1, nome: "Adaga de Cobre", preco: 250 },
-            { id: 2, nome: "Espada Curta do Novato", preco: 450 },
-            { id: 3, nome: "Lâmina de Ferro Sombrio", preco: 800 },
-            { id: 4, nome: "Machado de Batalha Orc", preco: 1200 },
-            { id: 5, nome: "Espada Longa Real", preco: 1800 },
-            { id: 6, nome: "Foice da Névoa", preco: 2400 },
-            { id: 7, nome: "Martelo de Guerra Titã", preco: 3200 },
-            { id: 8, nome: "Lança do Relâmpago", preco: 4100 },
-            { id: 9, nome: "Katana da Lua Sangrenta", preco: 5500 },
-            { id: 10, nome: "Cajado do Mago Supremo", preco: 7000 },
-            { id: 11, nome: "Espada de Plasma Estelar", preco: 9500 },
-            { id: 12, nome: "Lâmina do Fênix Ardente", preco: 12000 },
-            { id: 13, nome: "Machado Glacial Ancestral", preco: 15500 },
-            { id: 14, nome: "Foice do Submundo", preco: 20000 },
-            { id: 15, nome: "Espada Divina do Sol", preco: 28000 },
-            { id: 16, nome: "Lâmina do Dragão Celestial", preco: 40000 }
+        // LOJA PADRÃO (PODE SER EXPANDIDA PELO ADM)
+        let listaArmasLoja = [
+            { id: 1, nome: "Adaga de Cobre", preco: 250, tipo: "arma" },
+            { id: 2, nome: "Espada Curta do Novato", preco: 450, tipo: "arma" },
+            { id: 3, nome: "Lâmina de Ferro Sombrio", preco: 800, tipo: "arma" },
+            { id: 4, nome: "Machado de Batalha Orc", preco: 1200, tipo: "arma" },
+            { id: 5, nome: "Espada Longa Real", preco: 1800, tipo: "arma" },
+            { id: 6, nome: "Foice da Névoa", preco: 2400, tipo: "arma" },
+            { id: 7, nome: "Martelo de Guerra Titã", preco: 3200, tipo: "arma" },
+            { id: 8, nome: "Lança do Relâmpago", preco: 4100, tipo: "arma" },
+            { id: 9, nome: "Katana da Lua Sangrenta", preco: 5500, tipo: "arma" },
+            { id: 10, nome: "Cajado do Mago Supremo", preco: 7000, tipo: "arma" },
+            { id: 11, nome: "Espada de Plasma Estelar", preco: 9500, tipo: "arma" },
+            { id: 12, nome: "Lâmina do Fênix Ardente", preco: 12000, tipo: "arma" },
+            { id: 13, nome: "Machado Glacial Ancestral", preco: 15500, tipo: "arma" },
+            { id: 14, nome: "Foice do Submundo", preco: 20000, tipo: "arma" },
+            { id: 15, nome: "Espada Divina do Sol", preco: 28000, tipo: "arma" },
+            { id: 16, nome: "Lâmina do Dragão Celestial", preco: 40000, tipo: "arma" }
         ];
 
-        // 6 SKINS DA LOJA
-        const listaSkinsLoja = [
-            { id: 101, nome: "Skin Guerreiro Iniciante", preco: 500 },
-            { id: 102, nome: "Skin Cavaleiro de Prata", preco: 1500 },
-            { id: 103, nome: "Skin Mago Sombrio", preco: 3000 },
-            { id: 104, nome: "Skin Guardião de Magma", preco: 6000 },
-            { id: 105, nome: "Skin Paladino Dourado", preco: 10000 },
-            { id: 106, nome: "Skin Senhor do Dragão", preco: 25000 }
+        let listaSkinsLoja = [
+            { id: 101, nome: "Skin Guerreiro Iniciante", preco: 500, tipo: "skin" },
+            { id: 102, nome: "Skin Cavaleiro de Prata", preco: 1500, tipo: "skin" },
+            { id: 103, nome: "Skin Mago Sombrio", preco: 3000, tipo: "skin" },
+            { id: 104, nome: "Skin Guardião de Magma", preco: 6000, tipo: "skin" },
+            { id: 105, nome: "Skin Paladino Dourado", preco: 10000, tipo: "skin" },
+            { id: 106, nome: "Skin Senhor do Dragão", preco: 25000, tipo: "skin" }
         ];
 
-        // SUPRIMENTOS
-        const listaSuprimentosLoja = [
-            { id: 201, nome: "Poção de Cura Pequena (+30 HP)", preco: 100 },
-            { id: 202, nome: "Poção de Cura Média (+60 HP)", preco: 250 },
-            { id: 203, nome: "Poção de Cura Superior (Cura Total)", preco: 600 },
-            { id: 204, nome: "Elixir de Força Ancestral", preco: 1500 }
+        let listaSuprimentosLoja = [
+            { id: 201, nome: "Poção de Cura Pequena (+30 HP)", preco: 100, tipo: "suprimento" },
+            { id: 202, nome: "Poção de Cura Média (+60 HP)", preco: 250, tipo: "suprimento" },
+            { id: 203, nome: "Poção de Cura Superior (Cura Total)", preco: 600, tipo: "suprimento" },
+            { id: 204, nome: "Elixir de Força Ancestral", preco: 1500, tipo: "suprimento" }
         ];
 
-        // AVATARES
         const avataresDisponiveis = [
             { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Warrior1", nivelMinimo: 1 },
             { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Knight2", nivelMinimo: 1 },
@@ -521,6 +606,7 @@
                 auth.createUserWithEmailAndPassword(email, senha).then(cred => {
                     usuarioAtualId = cred.user.uid;
                     dadosJogador.nome = nome || "Guerreiro";
+                    dadosJogador.isAdmin = false; // Contas novas começam como jogador normal
                     salvarDadosNoBanco();
                     carregarDadosDoBanco(usuarioAtualId, dadosJogador.nome);
                 }).catch(err => alert("Erro ao criar conta: " + err.message));
@@ -541,14 +627,27 @@
                         pontos: Number(dadosSalvos.pontos) || 1250,
                         avatar: dadosSalvos.avatar || "https://api.dicebear.com/7.x/bottts/svg?seed=Warrior1",
                         inventario: dadosSalvos.inventario || [],
-                        guildaNome: dadosSalvos.guildaNome || ""
+                        guildaNome: dadosSalvos.guildaNome || "",
+                        isAdmin: dadosSalvos.isAdmin || false
                     };
                 } else {
                     dadosJogador.nome = nomePadrao;
+                    dadosJogador.isAdmin = false;
                     salvarDadosNoBanco();
                 }
+                
+                // Verificar se é ADM para exibir o menu administrativo
+                if(dadosJogador.isAdmin) {
+                    document.getElementById('menu-btn-adm').style.display = 'flex';
+                } else {
+                    document.getElementById('menu-btn-adm').style.display = 'none';
+                }
+
                 sincronizarInterface();
                 carregarRankingGlobal();
+                carregarLojaGlobalDoBanco();
+                carregarEventosDoBanco();
+                
                 document.getElementById('login-screen').classList.remove('active');
                 document.getElementById('game-screen').classList.add('active');
             });
@@ -560,8 +659,44 @@
             db.collection("jogadores").doc(usuarioAtualId).set(dadosJogador, { merge: true });
         }
 
+        function carregarLojaGlobalDoBanco() {
+            db.collection("config_jogo").doc("loja_global").get().then(doc => {
+                if(doc.exists) {
+                    let data = doc.data();
+                    if(data.armas) listaArmasLoja = data.armas;
+                    if(data.skins) listaSkinsLoja = data.skins;
+                    if(data.suprimentos) listaSuprimentosLoja = data.suprimentos;
+                }
+                renderizarLoja();
+            });
+        }
+
+        function carregarEventosDoBanco() {
+            db.collection("config_jogo").doc("eventos_ativos").get().then(doc => {
+                let container = document.getElementById('container-eventos-jogador');
+                container.innerHTML = `
+                    <div class="item-card">
+                        <h3>Caixa Diária</h3>
+                        <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Abra uma vez por dia para receber moedas ou gemas reais.</p>
+                        <button class="btn-action" onclick="reclamarCaixaDiaria()">ABRIR CAIXA</button>
+                    </div>`;
+                if(doc.exists && doc.data().lista) {
+                    doc.data().lista.forEach(ev => {
+                        container.innerHTML += `
+                            <div class="item-card" style="border-color: #f97316;">
+                                <span style="font-size: 35px;">🎁</span>
+                                <h3 style="color: #f97316; margin-top: 5px;">${ev.titulo}</h3>
+                                <p style="color: #94a3b8; font-size: 13px; margin: 8px 0;">${ev.descricao}</p>
+                                <p style="color: #38bdf8; font-size: 12px; font-weight: bold;">Prêmio: ${ev.recompensa}</p>
+                                <button class="btn-action" onclick="alert('Participando do evento ${ev.titulo}!')">PARTICIPAR</button>
+                            </div>`;
+                    });
+                }
+            });
+        }
+
         function sincronizarInterface() {
-            document.getElementById('sidebar-nome').innerText = dadosJogador.nome;
+            document.getElementById('sidebar-nome').innerHTML = dadosJogador.nome + (dadosJogador.isAdmin ? ' <span class="adm-badge">ADM</span>' : '');
             document.getElementById('sidebar-nivel').innerText = `Nível ${dadosJogador.nivel} • Guerreiro`;
             document.getElementById('sidebar-avatar').src = dadosJogador.avatar;
             document.getElementById('badge-ouro').innerText = dadosJogador.ouro;
@@ -654,12 +789,20 @@
             document.getElementById('tab-' + tabId).classList.add('active');
             if(element) element.classList.add('active-tab');
             if(tabId === 'ranking') carregarRankingGlobal();
+            if(tabId === 'adm' && dadosJogador.isAdmin) carregarPainelAdmDados();
         }
 
         function trocarSubLoja(subId, element) {
             document.querySelectorAll('#tab-loja .sub-panel').forEach(p => p.classList.remove('active-sub-panel'));
             document.querySelectorAll('#tab-loja .sub-tab-btn').forEach(b => b.classList.remove('active-sub'));
             document.getElementById('subloja-' + subId).classList.add('active-sub-panel');
+            element.classList.add('active-sub');
+        }
+
+        function trocarSubAdm(subId, element) {
+            document.querySelectorAll('#tab-adm .sub-panel').forEach(p => p.classList.remove('active-sub-panel'));
+            document.querySelectorAll('#tab-adm .sub-tab-btn').forEach(b => b.classList.remove('active-sub'));
+            document.getElementById('subadm-' + subId).classList.add('active-sub-panel');
             element.classList.add('active-sub');
         }
 
@@ -791,7 +934,7 @@
             let ouroPremio = combateAtual.dificuldade === 'facil' ? 150 : (combateAtual.dificuldade === 'medio' ? 400 : (combateAtual.dificuldade === 'dificil' ? 900 : 2000));
             dadosJogador.ouro += ouroPremio;
             dadosJogador.nivel += 1;
-            dadosJogador.pontosPoder += 1; // Ganha 1 Ponto de Poder por vitória
+            dadosJogador.pontosPoder += 1;
             salvarDadosNoBanco();
             sincronizarInterface();
             
@@ -826,7 +969,7 @@
                     tbody.innerHTML += `
                         <tr ${eMeu}>
                             <td>#${posicao}</td>
-                            <td>${data.nome || 'Guerreiro'}</td>
+                            <td>${data.nome || 'Guerreiro'} ${data.isAdmin ? '👑' : ''}</td>
                             <td>Nível ${data.nivel || 1}</td>
                             <td>${data.pontos || 0} pts</td>
                         </tr>`;
@@ -834,6 +977,90 @@
                 });
             }).catch(err => {
                 console.error("Erro ao carregar ranking real:", err);
+            });
+        }
+
+        // FUNÇÕES DO PAINEL ADMINISTRATIVO
+        function carregarPainelAdmDados() {
+            if(!dadosJogador.isAdmin) return;
+            db.collection("jogadores").get().then(snapshot => {
+                document.getElementById('adm-stat-total-jogadores').innerText = snapshot.size;
+                let tbody = document.getElementById('adm-tabela-usuarios');
+                tbody.innerHTML = "";
+                snapshot.forEach(doc => {
+                    let u = doc.data();
+                    let uidDoc = doc.id;
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${u.nome} ${u.isAdmin ? '👑' : ''}</td>
+                            <td>Nível ${u.nivel || 1}</td>
+                            <td>🪙 ${u.ouro || 0}</td>
+                            <td>${u.isAdmin ? '<span style="color:#ef4444">Administrador</span>' : 'Jogador'}</td>
+                            <td>
+                                <button class="btn-action" style="padding: 4px 10px; font-size:11px; margin-top:0;" onclick="admDarMoedas('${uidDoc}')">+1000 Ouro</button>
+                                ${!u.isAdmin ? `<button class="btn-action" style="padding: 4px 10px; font-size:11px; margin-top:4px; background:#16a34a;" onclick="admPromover('${uidDoc}')">Tornar ADM</button>` : ''}
+                            </td>
+                        </tr>`;
+                });
+            });
+        }
+
+        function admCriarItemLoja() {
+            let nome = document.getElementById('adm-item-nome').value.trim();
+            let tipo = document.getElementById('adm-item-tipo').value;
+            let preco = Number(document.getElementById('adm-item-preco').value) || 500;
+            
+            if(!nome) { alert("Preencha o nome do item."); return; }
+
+            let novoItem = { id: Date.now(), nome, preco, tipo };
+            if(tipo === 'arma' || tipo === 'personagem') listaArmasLoja.push(novoItem);
+            else if(tipo === 'skin') listaSkinsLoja.push(novoItem);
+            else listaSuprimentosLoja.push(novoItem);
+
+            db.collection("config_jogo").doc("loja_global").set({
+                armas: listaArmasLoja,
+                skins: listaSkinsLoja,
+                suprimentos: listaSuprimentosLoja
+            }, { merge: true }).then(() => {
+                alert("Item publicado com sucesso na loja global para todos os jogadores!");
+                renderizarLoja();
+            });
+        }
+
+        function admCriarEvento() {
+            let titulo = document.getElementById('adm-evento-titulo').value.trim();
+            let recompensa = document.getElementById('adm-evento-recompensa').value.trim();
+            let descricao = document.getElementById('adm-evento-desc').value.trim();
+
+            if(!titulo) { alert("Preencha o título do evento."); return; }
+
+            db.collection("config_jogo").doc("eventos_ativos").get().then(doc => {
+                let listaEv = doc.exists && doc.data().lista ? doc.data().lista : [];
+                listaEv.push({ titulo, recompensa, descricao });
+
+                db.collection("config_jogo").doc("eventos_ativos").set({ lista: listaEv }).then(() => {
+                    alert("Evento lançado com sucesso no servidor!");
+                    carregarEventosDoBanco();
+                });
+            });
+        }
+
+        function admDarMoedas(uidTarget) {
+            db.collection("jogadores").doc(uidTarget).get().then(doc => {
+                if(doc.exists) {
+                    let ouroAtual = doc.data().ouro || 0;
+                    db.collection("jogadores").doc(uidTarget).update({ ouro: ouroAtual + 1000 }).then(() => {
+                        alert("1000 Ouro adicionados ao jogador com sucesso!");
+                        carregarPainelAdmDados();
+                    });
+                }
+            });
+        }
+
+        function admPromover(uidTarget) {
+            db.collection("jogadores").doc(uidTarget).update({ isAdmin: true }).then(() => {
+                alert("Usuário promovido a Administrador com sucesso!");
+                carregarPainelAdmDados();
             });
         }
 
