@@ -56,7 +56,7 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 .badge.online{background:#14532d;color:#86efac}.badge.offline{background:#334155;color:#cbd5e1}.badge.adm{background:#7f1d1d;color:#fecaca}.badge.vip{background:#78350f;color:#fde68a}
 .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:15px}.stat{background:var(--panel-bg);border:1px solid var(--panel-border);padding:14px;border-radius:8px;text-align:center}.stat b{font-size:22px;color:var(--accent-color);display:block}
 .support-chat{height:260px;background:#020617;border:1px solid var(--panel-border);border-radius:7px;padding:10px;overflow-y:auto;display:flex;flex-direction:column;gap:7px;margin:10px 0}
-.support-msg{max-width:80%;padding:8px;border-radius:8px;background:#172033;font-size:13px}.support-msg.me{align-self:flex-end;background:#713f12}.support-msg.adm{border-left:3px solid var(--adm-color)}
+.adm-action-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.adm-action-grid .btn{margin:0;width:100%;font-size:11px;padding:9px 6px}.support-msg{max-width:80%;padding:8px;border-radius:8px;background:#172033;font-size:13px}.support-msg.me{align-self:flex-end;background:#713f12}.support-msg.adm{border-left:3px solid var(--adm-color)}
 .progress{height:7px;background:#1e293b;border-radius:5px;overflow:hidden;margin-top:5px}.progress>div{height:100%;background:var(--accent-color)}
 #notificacoes-box{position:fixed;top:15px;right:15px;width:min(360px,calc(100vw - 30px));z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}.dw-notificacao{background:rgba(15,23,42,.97);border:1px solid var(--panel-border);border-left:4px solid var(--accent-color);color:#fff;padding:10px 12px;border-radius:8px;box-shadow:0 10px 25px rgba(0,0,0,.45);font-size:12px}.dw-notificacao.success{border-left-color:#10b981}.dw-notificacao.danger{border-left-color:#ef4444}.dw-notificacao.info{border-left-color:#38bdf8}
 @media(max-width:900px){sidebar{width:210px}.grid-boxes,.shop-grid{grid-template-columns:repeat(2,1fr)}.stat-grid{grid-template-columns:repeat(2,1fr)}header{gap:8px;flex-wrap:wrap}.content-area{padding:15px}}
@@ -82,7 +82,7 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
   .shop-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
   .shop-tabs .btn{width:100%;margin:0}
   .shop-grid{grid-template-columns:1fr!important}
-  .modal-card{width:94%!important;max-width:none!important;padding:14px!important}
+  .modal-card{width:94%!important;max-width:none!important;padding:14px!important}.adm-action-grid{grid-template-columns:1fr 1fr}.adm-action-grid .btn{font-size:10px;padding:10px 4px}
   .support-chat{height:45vh;min-height:220px}
   #modal-atendimento .modal-card>div[style*="display:flex"]{display:grid!important;grid-template-columns:1fr!important}
   #modal-atendimento .modal-card .btn{width:100%!important}
@@ -133,7 +133,7 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <div id="section-jogar" class="panel-section">
 <h2>Modo Batalha - Sistema de Fases</h2>
 <p style="color:#94a3b8;margin-top:5px">Progressão salva por jogador no Firestore.</p>
-<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-top:20px">
+<div id="battle-mode-selection" style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-top:20px">
 <div class="box-item" style="cursor:pointer" onclick="iniciarFases('normal')"><h3 style="color:var(--accent-color)">Fase Fácil — 30 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Progressão acessível.</p></div>
 <div class="box-item" style="cursor:pointer" onclick="iniciarFases('dificil')"><h3 style="color:var(--accent-color)">Fase Difícil — 30 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Inimigos mais resistentes.</p></div>
 <div class="box-item" style="cursor:pointer" onclick="iniciarFases('avancada')"><h3 style="color:var(--accent-color)">Fase Avançada — 25 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Alta resistência e recompensas.</p></div>
@@ -149,6 +149,7 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <div style="background:#070a12;padding:15px;border-radius:6px;margin-bottom:15px"><div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px"><span id="inimigo-alvo-nome">Inimigo</span><span id="movel-hp" style="color:var(--adm-color);font-weight:bold">100%</span></div><div style="width:100%;background:#1e293b;height:10px;border-radius:5px;overflow:hidden"><div id="movel-hp-bar" style="width:100%;background:var(--adm-color);height:100%"></div></div></div>
 <div id="log-batalha" style="background:#020617;padding:10px;border-radius:6px;font-size:12px;color:#94a3b8;height:70px;overflow-y:auto;margin-bottom:15px">Início da batalha! O ataque inicial será automático.</div>
 <div style="display:flex;gap:10px;flex-wrap:wrap">
+<button class="btn btn-gray" style="width:auto;padding:10px 15px" onclick="voltarSelecaoFases()">↩️ Modos</button>
 <button class="btn" style="width:auto;padding:10px 15px" onclick="batalhaAcao('atacar')">⚔️ Atacar</button>
 <button class="btn btn-blue" style="width:auto;padding:10px 15px" onclick="batalhaAcao('defender')">🛡️ Defender</button>
 <button class="btn btn-purple" style="width:auto;padding:10px 15px" onclick="batalhaAcao('poder')">🔥 Usar Poder</button>
@@ -217,7 +218,7 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <h2>👑 Painel ADM — Admin Gabriel</h2><div class="stat-grid"><div class="stat"><b id="adm-total2">0</b>Jogadores</div><div class="stat"><b id="adm-online2">0</b>Online</div><div class="stat"><b>VIP 10</b>👑 Principal</div><div class="stat"><b id="adm-chatrooms">0</b>Atendimentos</div></div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:15px">
 <div style="background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)">
-<h4>📢 Mensagem Global</h4><input id="global-msg-adm" class="form-control" placeholder="Mensagem para todos"><button class="btn btn-adm" onclick="enviarMensagemGlobalAdm()">Publicar</button></div>
+<h4>📢 Mensagem Global</h4><input id="global-msg-adm" class="form-control" placeholder="Mensagem para todos"><label style="display:flex;gap:8px;align-items:center;font-size:12px;color:#fca5a5;margin:4px 0 10px"><input type="checkbox" id="global-msg-pinned"> 🔴 Fixar mensagem (fica salva)</label><button class="btn btn-adm" onclick="enviarMensagemGlobalAdm()">Publicar</button></div>
 <div style="background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)">
 <h4>💬 Puxar jogador</h4><input id="target-player" class="form-control" placeholder="UID ou e-mail"><button class="btn btn-purple" onclick="abrirAtendimentoPorBusca()">Abrir Sala de Atendimento</button></div>
 <div style="background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)">
@@ -237,9 +238,18 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <div id="modal-jogador" class="modal-overlay hidden"><div class="modal-card"><button class="close-modal" onclick="fecharModalJogador()">&times;</button>
 <h3 style="color:var(--accent-color);margin-bottom:15px">🛡️ Gestão do Jogador</h3><div style="font-size:14px;display:flex;flex-direction:column;gap:8px;margin-bottom:15px">
 <div><strong>UID:</strong> <span id="m-id" style="color:#f59e0b;font-family:monospace"></span></div><div><strong>Nome:</strong> <span id="m-nome"></span></div><div><strong>Status:</strong> <span id="m-status"></span></div></div>
-<button class="btn btn-purple" onclick="abrirAtendimentoSelecionado()">💬 Puxar para Atendimento</button>
+<div class="adm-action-grid">
+<button class="btn btn-purple" onclick="abrirAtendimentoSelecionado()">💬 Puxar Atendimento</button>
 <button class="btn" onclick="atribuirSubAdm()">👑 Conceder/Remover ADM</button>
-<button class="btn btn-adm" onclick="alternarBanSelecionado()">🚫 Banir/Desbanir</button></div></div>
+<button class="btn btn-adm" onclick="alternarMuteSelecionado()">🔇 Mutar/Desmutar</button>
+<button class="btn btn-adm" onclick="alternarBanSelecionado()">🚫 Banir/Desbanir</button>
+<button class="btn" onclick="concederRecursoSelecionado('diamonds')">💎 Dar Gemas</button>
+<button class="btn" onclick="concederRecursoSelecionado('coins')">🪙 Dar Moedas</button>
+<button class="btn" onclick="concederRecursoSelecionado('xp')">⭐ Dar XP/Pontos</button>
+<button class="btn btn-blue" onclick="concederRecursoSelecionado('health')">❤️ Dar Vida</button>
+<button class="btn btn-purple" onclick="concederRecursoSelecionado('mana')">🔥 Dar Mana</button>
+<button class="btn btn-green" onclick="abrirEntregaItemSelecionado()">🎁 Dar Item</button>
+</div></div></div>
 
 <div id="modal-atendimento" class="modal-overlay hidden"><div class="modal-card" style="width:600px"><button class="close-modal" onclick="fecharAtendimento()">&times;</button>
 <h3 style="color:var(--adm-color);margin-bottom:4px">💬 Sala de Atendimento</h3><div id="support-header" style="font-size:12px;color:#94a3b8;margin-bottom:8px"></div>
@@ -305,7 +315,7 @@ async function carregarJogador(){
  usuarioAtual={...usuarioAtual,...base,uid:auth.currentUser.uid,email:auth.currentUser.email,displayName:base.displayName||auth.currentUser.email.split("@")[0],isAdm:auth.currentUser.email.toLowerCase()===EMAIL_ADMIN||base.isAdm===true,inventory:Array.isArray(base.inventory)?base.inventory:[],phaseProgress:base.phaseProgress||{normal:1,dificil:1,avancada:1,hardcore:1},achievements:base.achievements||[]};
  if(usuarioAtual.isAdm){usuarioAtual.coins=Math.max(Number(usuarioAtual.coins||0),999999);usuarioAtual.diamonds=Math.max(Number(usuarioAtual.diamonds||0),99999);usuarioAtual.level=Math.max(Number(usuarioAtual.level||1),100)}
  await setDoc(ref,{...usuarioAtual,lastSeen:serverTimestamp(),status:"Online",updatedAt:serverTimestamp()},{merge:true});
- atualizarPerfilUI();montarMenuLateral();renderLoja();renderizarPoderes();atualizarInventarioUI();renderizarEventos();atualizarDailyUI();iniciarHeartbeat();assinarChatGlobal();verificarAchievements(); assinarSalaAtendimentoJogador();
+ window._chatSessionStartedAt=Date.now();atualizarPerfilUI();montarMenuLateral();renderLoja();renderizarPoderes();atualizarInventarioUI();renderizarEventos();atualizarDailyUI();iniciarHeartbeat();assinarChatGlobal();verificarAchievements(); assinarSalaAtendimentoJogador();
  if(usuarioAtual.isAdm){carregarJogadoresReaisDoBanco();document.getElementById("adm-loja-controls").classList.remove("hidden");document.getElementById("adm-poderes-controls").classList.remove("hidden");document.getElementById("adm-evento-controls").classList.remove("hidden")}
 }
 window.alternarModoAuth=()=>{modoCadastro=!modoCadastro;document.getElementById("auth-title").innerText=modoCadastro?"Criar Conta Real":"Entrar no Servidor";document.getElementById("auth-btn-action").innerText=modoCadastro?"Registrar e Gerar ID":"Entrar na Partida";document.getElementById("auth-switch-mode").innerText=modoCadastro?"Já tem conta? Faça login":"Não tem conta? Cadastre-se com ID Real"};
@@ -337,7 +347,7 @@ window.iniciarFases=async(cat)=>{
  document.getElementById("fases-titulo-cat").innerText=categorias[cat].nome.toUpperCase();
  document.getElementById("log-batalha").innerHTML="<div>> ⚔️ Batalha iniciada.</div>";
  atualizarBatalhaUI();
- document.querySelector("#section-jogar>div:nth-child(2)").classList.add("hidden");
+ document.getElementById("battle-mode-selection").classList.add("hidden");
  document.getElementById("arena-fases-container").classList.remove("hidden");
  adicionarLogBatalha("🎯 Nível "+faseAtualInfo.etapa+" carregado.");
  notificar("⚔️ Batalha iniciada! Ataque inicial automático.","info");
@@ -520,11 +530,59 @@ function assinarSalaAtendimentoJogador(){
 }
 window.enviarMensagemAtendimento=async()=>{let input=document.getElementById("support-input"),text=input.value.trim();if(!text||!salaAtualId)return;await addDoc(collection(db,"salas_atendimento",salaAtualId,"mensagens"),{senderUid:usuarioAtual.uid,senderName:nomeAtual(),text,createdAt:serverTimestamp()});input.value="";};
 window.fecharAtendimento=()=>{document.getElementById("modal-atendimento").classList.add("hidden");if(unsubscribeSupport){unsubscribeSupport();unsubscribeSupport=null}};
+window.alternarMuteSelecionado=async()=>{
+ if(!usuarioAtual.isAdm)return alert("Acesso negado.");
+ const ref=doc(db,"jogadores_reais",jogadorSelecionadoModal.id),d=jogadorSelecionadoModal.data,newVal=!d.muted;
+ await updateDoc(ref,{muted:newVal,updatedAt:serverTimestamp()});jogadorSelecionadoModal.data.muted=newVal;
+ await registrarLog(newVal?"Jogador mutado":"Jogador desmutado",jogadorSelecionadoModal.id);
+ alert(newVal?"🔇 Jogador mutado.":"🔊 Jogador desmutado.");
+};
+window.concederRecursoSelecionado=async tipo=>{
+ if(!usuarioAtual.isAdm)return alert("Acesso negado.");
+ const labels={diamonds:"gemas",coins:"moedas",xp:"XP/pontos",health:"vida",mana:"mana"};
+ const qtd=Number(prompt(`Quantidade de ${labels[tipo]} para conceder:`,"100"));if(!Number.isFinite(qtd)||qtd<=0)return;
+ const ref=doc(db,"jogadores_reais",jogadorSelecionadoModal.id),snap=await getDoc(ref);if(!snap.exists())return alert("Jogador não encontrado.");const d=snap.data(),patch={};
+ if(tipo==="diamonds")patch.diamonds=Number(d.diamonds||0)+qtd;
+ if(tipo==="coins")patch.coins=Number(d.coins||0)+qtd;
+ if(tipo==="xp")patch.xp=Number(d.xp||0)+qtd;
+ if(tipo==="health")patch.health=Math.min(100,Number(d.health||0)+qtd);
+ if(tipo==="mana")patch.mana=Math.min(500,Number(d.mana||0)+qtd);
+ await updateDoc(ref,patch);await registrarLog("Recurso concedido",jogadorSelecionadoModal.id+" +"+qtd+" "+labels[tipo]);alert(`✅ ${qtd} ${labels[tipo]} concedidos.`);
+};
+window.abrirEntregaItemSelecionado=async()=>{
+ if(!usuarioAtual.isAdm)return alert("Acesso negado.");
+ const termo=prompt("Digite o nome ou ID do item para entregar:");if(!termo)return;
+ const item=catalogo.find(x=>x.id===termo||x.nome.toLowerCase()===termo.toLowerCase())||catalogo.find(x=>x.nome.toLowerCase().includes(termo.toLowerCase()));
+ if(!item)return alert("Item não encontrado.");
+ const ref=doc(db,"jogadores_reais",jogadorSelecionadoModal.id),snap=await getDoc(ref);if(!snap.exists())return alert("Jogador não encontrado.");const inv=Array.isArray(snap.data().inventory)?snap.data().inventory:[];
+ inv.push({...item,grantedByAdm:true,grantedAt:Date.now()});await updateDoc(ref,{inventory:inv});await registrarLog("Item concedido",jogadorSelecionadoModal.id+" → "+item.nome);alert(`🎁 ${item.nome} enviado para o inventário.`);
+};
 async function registrarLog(acao,target){if(!usuarioAtual.isAdm)return;await addDoc(collection(db,"logs_adm"),{acao,target,adminUid:usuarioAtual.uid,adminName:"ADM GABRIEL",createdAt:serverTimestamp()});carregarLogs()};
 async function carregarLogs(){let c=document.getElementById("adm-logs");if(!c)return;try{let s=await getDocs(query(collection(db,"logs_adm"),orderBy("createdAt","desc")));c.innerHTML="";s.forEach(d=>{let x=d.data();c.innerHTML+=`<div class="chat-msg"><b>${x.adminName||"ADM"}:</b> ${x.acao} → ${x.target||""}</div>`})}catch(e){}}
-window.enviarMensagemGlobalAdm=async()=>{if(!usuarioAtual.isAdm)return alert("Acesso negado.");let i=document.getElementById("global-msg-adm"),text=i.value.trim();if(!text)return;await addDoc(collection(db,"chat_global"),{senderUid:usuarioAtual.uid,senderName:"👑 ADM GABRIEL",text,global:true,createdAt:serverTimestamp()});await registrarLog("Mensagem global",text);i.value="";};
-window.enviarMensagemRodape=async()=>{let i=document.getElementById("footer-chat-input"),text=i.value.trim();if(!text)return;await addDoc(collection(db,"chat_global"),{senderUid:usuarioAtual.uid,senderName:nomeAtual(),text,global:false,createdAt:serverTimestamp()});i.value=""};
-function assinarChatGlobal(){if(unsubscribeGlobal)unsubscribeGlobal();let q=query(collection(db,"chat_global"),orderBy("createdAt","asc"));unsubscribeGlobal=onSnapshot(q,s=>{let c=document.getElementById("chat-container");c.innerHTML="";s.docs.slice(-80).forEach(d=>{let x=d.data(),div=document.createElement("div");div.className="chat-msg"+(x.global?" global":"");div.innerHTML=`<strong>${escapeHtml(x.senderName||"Jogador")}:</strong> ${escapeHtml(x.text||"")}`;c.appendChild(div)});c.scrollTop=c.scrollHeight})}
+window.enviarMensagemGlobalAdm=async()=>{
+ if(!usuarioAtual.isAdm)return alert("Acesso negado.");
+ const i=document.getElementById("global-msg-adm"),text=i.value.trim(),pinned=!!document.getElementById("global-msg-pinned")?.checked;
+ if(!text)return alert("Digite a mensagem.");
+ await addDoc(collection(db,"chat_global"),{senderUid:usuarioAtual.uid,senderName:"👑 ADM GABRIEL",text,global:true,pinned,createdAt:serverTimestamp()});
+ await registrarLog(pinned?"Mensagem global fixada":"Mensagem global",text);
+ i.value="";if(document.getElementById("global-msg-pinned"))document.getElementById("global-msg-pinned").checked=false;
+};
+window.enviarMensagemRodape=async()=>{
+ if(usuarioAtual.muted)return notificar("🔇 Você está mutado e não pode enviar mensagens.","danger");
+ const i=document.getElementById("footer-chat-input"),text=i.value.trim();if(!text)return;
+ await addDoc(collection(db,"chat_global"),{senderUid:usuarioAtual.uid,senderName:nomeAtual(),text,global:false,pinned:false,sessionCreatedAt:Date.now(),createdAt:serverTimestamp()});i.value="";
+};
+function assinarChatGlobal(){
+ if(unsubscribeGlobal)unsubscribeGlobal();
+ const q=query(collection(db,"chat_global"),orderBy("createdAt","asc"));
+ unsubscribeGlobal=onSnapshot(q,s=>{
+  const c=document.getElementById("chat-container");if(!c)return;c.innerHTML="";
+  const welcome=document.createElement("div");welcome.className="chat-msg global";welcome.innerHTML='<strong>🐉 Dragon War:</strong> Bem-vindo ao Dragon War: Rise of Power!';c.appendChild(welcome);
+  const inicio=window._chatSessionStartedAt||Date.now();
+  s.docs.slice(-120).forEach(d=>{let x=d.data(),created=x.createdAt?.toMillis?x.createdAt.toMillis():0;if(!x.pinned&&created&&created<inicio)return;let div=document.createElement("div");div.className="chat-msg"+(x.pinned?" global":"");div.innerHTML=`<strong>${escapeHtml(x.senderName||"Jogador")}:</strong> ${escapeHtml(x.text||"")}${x.pinned?" <span class=\"badge\" style=\"background:#991b1b;color:#fecaca\">FIXADA</span>":""}`;c.appendChild(div)});
+  c.scrollTop=c.scrollHeight;
+ });
+}
 window.darRecompensaAdm=async()=>{if(!usuarioAtual.isAdm)return alert("Acesso negado.");let uid=document.getElementById("reward-target").value.trim(),coins=Number(document.getElementById("reward-coins").value)||0;if(!uid||coins<=0)return alert("Informe UID e recompensa.");let r=doc(db,"jogadores_reais",uid),s=await getDoc(r);if(!s.exists())return alert("Jogador não encontrado.");let d=s.data();await updateDoc(r,{coins:Number(d.coins||0)+coins});await registrarLog("Recompensa enviada",uid+" +"+coins+" moedas");alert("Recompensa enviada.");};
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 
