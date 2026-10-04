@@ -198,14 +198,14 @@
     </div>
 
     <script>
-        // CONFIGURAÇÃO DO FIREBASE (Com seus dados reais extraídos da imagem anterior)
+        // CONFIGURAÇÃO DO FIREBASE (Insira os dados corretos do seu painel do Firebase)
         const firebaseConfig = {
-            apiKey: "AIzaSyDgooL-9qYU2qB2d8i_...",
+            apiKey: "COLE_SUA_API_KEY_AQUI",
             authDomain: "dragon-war-rise-of-power.firebaseapp.com",
             projectId: "dragon-war-rise-of-power",
             storageBucket: "dragon-war-rise-of-power.appspot.com",
             messagingSenderId: "115455691167",
-            appId: "1:115455691167:web:e2b3c4d5e6..."
+            appId: "COLE_SEU_APP_ID_AQUI"
         };
 
         if (!firebase.apps.length) {
@@ -226,7 +226,7 @@
             document.getElementById('switchText').innerText = isLoginMode ? "Cadastre-se" : "Faça Login";
         }
 
-        // Sistema de Autenticação
+        // Sistema de Autenticação (Salvando na coleção correta 'jogadores')
         function handleAuth() {
             const email = document.getElementById('emailInput').value;
             const pass = document.getElementById('passwordInput').value;
@@ -242,7 +242,7 @@
             } else {
                 auth.createUserWithEmailAndPassword(email, pass)
                     .then(cred => {
-                        return db.collection('users').doc(cred.user.uid).set({
+                        return db.collection('jogadores').doc(cred.user.uid).set({
                             name: email.split('@')[0],
                             level: 1,
                             gold: 150,
@@ -270,9 +270,9 @@
             auth.signOut();
         }
 
-        // Carregar Dados do Firestore
+        // Carregar Dados do Firestore usando a coleção 'jogadores'
         function loadUserData(uid) {
-            db.collection('users').doc(uid).onSnapshot(doc => {
+            db.collection('jogadores').doc(uid).onSnapshot(doc => {
                 if(doc.exists) {
                     currentUserData = doc.data();
                     document.getElementById('uiPlayerName').innerText = currentUserData.name;
@@ -313,7 +313,7 @@
             if(monsterHp <= 0) {
                 logMsg(`🎉 Você derrotou o monstro e ganhou 40 de ouro!`);
                 if(currentUserUid) {
-                    db.collection('users').doc(currentUserUid).update({
+                    db.collection('jogadores').doc(currentUserUid).update({
                         gold: currentUserData.gold + 40
                     });
                 }
@@ -353,11 +353,11 @@
             logMsg(`Um novo monstro apareceu na arena!`);
         }
 
-        // Lógica de Compra na Loja
+        // Lógica de Compra na Loja (atualizando na coleção 'jogadores')
         function buyItem(name, powerBoost, cost) {
             if(!currentUserUid) return;
             if(currentUserData.gold >= cost) {
-                db.collection('users').doc(currentUserUid).update({
+                db.collection('jogadores').doc(currentUserUid).update({
                     gold: currentUserData.gold - cost,
                     power: currentUserData.power + powerBoost
                 }).then(() => {
