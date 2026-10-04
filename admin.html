@@ -6,19 +6,12 @@
 <title>Dragon War — Painel ADM</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    background: #0a0e1a;
-    color: #fff;
-    min-height: 100vh;
-}
+body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0a0e1a; color: #fff; min-height: 100vh; }
 
 /* SIDEBAR */
 .sidebar {
-    position: fixed;
-    left: 0; top: 0;
-    width: 250px;
-    height: 100vh;
+    position: fixed; left: 0; top: 0;
+    width: 250px; height: 100vh;
     background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
     border-right: 2px solid #334155;
     padding: 20px 0;
@@ -36,16 +29,126 @@ body {
     background: linear-gradient(135deg, #ff6b00, #ffd700);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    margin-bottom: 15px;
 }
-.sidebar-header .admin-badge {
-    display: inline-block;
-    background: #7c3aed;
+
+/* PERFIL ADM EXCLUSIVO */
+.admin-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(255, 215, 0, 0.1));
+    border-radius: 15px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    margin: 0 15px 15px;
+}
+
+.admin-avatar-container {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    margin-bottom: 10px;
+}
+
+/* MOLDURA DOURADA ANIMADA */
+.admin-avatar-frame {
+    position: absolute;
+    top: -5px; left: -5px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, #ffd700, #ff6b00, #ffd700, #ffaa00, #ffd700);
+    animation: rotateFrame 3s linear infinite;
+    padding: 3px;
+}
+.admin-avatar-frame::before {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px; right: 3px; bottom: 3px;
+    background: #0f172a;
+    border-radius: 50%;
+}
+@keyframes rotateFrame {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* BRILHO EXTERNO */
+.admin-avatar-glow {
+    position: absolute;
+    top: -10px; left: -10px;
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, transparent 70%);
+    animation: pulseGlow 2s ease-in-out infinite;
+    z-index: -1;
+}
+@keyframes pulseGlow {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
+}
+
+/* FOTO DO ADM */
+.admin-avatar {
+    position: relative;
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5em;
+    z-index: 2;
+    border: 3px solid #0f172a;
+}
+
+/* SELO VERIFICADO */
+.verified-badge {
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9em;
+    font-weight: bold;
     color: #fff;
+    border: 2px solid #0f172a;
+    z-index: 3;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.8);
+}
+
+/* BADGE SUPER ADM */
+.super-adm-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #ffd700, #ffaa00);
+    color: #000;
     padding: 4px 12px;
     border-radius: 12px;
-    font-size: 0.75em;
-    margin-top: 8px;
+    font-size: 0.7em;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+    animation: badgeShine 2s ease-in-out infinite;
 }
+@keyframes badgeShine {
+    0%, 100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); }
+    50% { box-shadow: 0 0 25px rgba(255, 215, 0, 1); }
+}
+
+.admin-name {
+    font-size: 1em;
+    font-weight: bold;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* SIDEBAR ITEMS */
 .sidebar-item {
     padding: 15px 25px;
     cursor: pointer;
@@ -88,25 +191,16 @@ body {
     margin-bottom: 30px;
     backdrop-filter: blur(10px);
 }
-.top-bar h2 {
-    font-size: 1.5em;
-    color: #fbbf24;
-}
-.top-bar-actions {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-.admin-avatar {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #7c3aed, #a855f7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5em;
-    border: 2px solid #ffd700;
+.top-bar h2 { font-size: 1.5em; color: #fbbf24; }
+.top-bar-actions { display: flex; gap: 10px; align-items: center; }
+.notification-btn {
+    background: #f59e0b;
+    color: #000;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
 }
 
 /* STATS GRID */
@@ -130,46 +224,17 @@ body {
     border-color: #3b82f6;
     box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
 }
-.stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0; right: 0;
-    width: 100px; height: 100px;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
-}
-.stat-icon {
-    font-size: 2.5em;
-    margin-bottom: 10px;
-}
-.stat-value {
-    font-size: 2.5em;
-    font-weight: 900;
-    color: #fbbf24;
-    margin-bottom: 5px;
-}
-.stat-label {
-    color: #94a3b8;
-    font-size: 0.9em;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-.stat-change {
-    margin-top: 10px;
-    font-size: 0.85em;
-}
+.stat-icon { font-size: 2.5em; margin-bottom: 10px; }
+.stat-value { font-size: 2.5em; font-weight: 900; color: #fbbf24; margin-bottom: 5px; }
+.stat-label { color: #94a3b8; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px; }
+.stat-change { margin-top: 10px; font-size: 0.85em; }
 .stat-change.up { color: #22c55e; }
 .stat-change.down { color: #ef4444; }
 
 /* SECTIONS */
-.section {
-    display: none;
-    animation: fadeIn 0.4s;
-}
+.section { display: none; animation: fadeIn 0.4s; }
 .section.active { display: block; }
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 .section-title {
     font-size: 1.8em;
@@ -196,19 +261,11 @@ body {
     padding-bottom: 15px;
     border-bottom: 1px solid #334155;
 }
-.card-header h3 {
-    font-size: 1.3em;
-    color: #60a5fa;
-}
+.card-header h3 { font-size: 1.3em; color: #60a5fa; }
 
 /* TABLE */
-.table-container {
-    overflow-x: auto;
-}
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
+.table-container { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
 th, td {
     padding: 12px 15px;
     text-align: left;
@@ -221,22 +278,13 @@ th {
     text-transform: uppercase;
     letter-spacing: 1px;
 }
-tr:hover {
-    background: rgba(59, 130, 246, 0.05);
-}
-.player-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
+tr:hover { background: rgba(59, 130, 246, 0.05); }
+.player-row { display: flex; align-items: center; gap: 12px; }
 .player-row-avatar {
-    width: 40px;
-    height: 40px;
+    width: 40px; height: 40px;
     border-radius: 50%;
     background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     font-size: 1.3em;
     border: 2px solid #ffd700;
 }
@@ -277,15 +325,8 @@ tr:hover {
 .btn-sm { padding: 5px 10px; font-size: 0.75em; }
 
 /* FORMS */
-.form-group {
-    margin-bottom: 15px;
-}
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    color: #94a3b8;
-    font-size: 0.9em;
-}
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 5px; color: #94a3b8; font-size: 0.9em; }
 .form-group input, .form-group select, .form-group textarea {
     width: 100%;
     padding: 12px;
@@ -305,7 +346,7 @@ tr:hover {
     gap: 15px;
 }
 
-/* CHARTS (FICTÍCIOS) */
+/* CHART */
 .chart-container {
     background: rgba(0,0,0,0.3);
     border-radius: 12px;
@@ -322,9 +363,7 @@ tr:hover {
     border-radius: 4px 4px 0 0;
     transition: height 0.5s;
 }
-.chart-bar:hover {
-    background: linear-gradient(180deg, #60a5fa, #3b82f6);
-}
+.chart-bar:hover { background: linear-gradient(180deg, #60a5fa, #3b82f6); }
 
 /* LOGS */
 .log-entry {
@@ -340,18 +379,9 @@ tr:hover {
 .log-entry.warning { border-left-color: #f59e0b; }
 .log-entry.danger { border-left-color: #ef4444; }
 .log-entry.success { border-left-color: #22c55e; }
-.log-time {
-    font-size: 0.8em;
-    color: #64748b;
-}
-.log-action {
-    font-weight: bold;
-    color: #e2e8f0;
-}
-.log-detail {
-    font-size: 0.85em;
-    color: #94a3b8;
-}
+.log-time { font-size: 0.8em; color: #64748b; }
+.log-action { font-weight: bold; color: #e2e8f0; }
+.log-detail { font-size: 0.85em; color: #94a3b8; }
 
 /* QUICK ACTIONS */
 .quick-actions {
@@ -373,15 +403,8 @@ tr:hover {
     transform: translateY(-3px);
     box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
 }
-.quick-action-btn .qa-icon {
-    font-size: 2.5em;
-    margin-bottom: 10px;
-}
-.quick-action-btn .qa-label {
-    font-size: 0.9em;
-    font-weight: bold;
-    color: #e2e8f0;
-}
+.quick-action-btn .qa-icon { font-size: 2.5em; margin-bottom: 10px; }
+.quick-action-btn .qa-label { font-size: 0.9em; font-weight: bold; color: #e2e8f0; }
 
 /* MODAL */
 .modal-overlay {
@@ -407,11 +430,7 @@ tr:hover {
     overflow-y: auto;
     box-shadow: 0 20px 60px rgba(59, 130, 246, 0.4);
 }
-.modal h2 {
-    color: #60a5fa;
-    margin-bottom: 20px;
-    font-size: 1.5em;
-}
+.modal h2 { color: #60a5fa; margin-bottom: 20px; font-size: 1.5em; }
 .modal-close {
     width: auto;
     padding: 10px 20px;
@@ -444,28 +463,6 @@ tr:hover {
     to { transform: translateX(0); opacity: 1; }
 }
 
-/* SEARCH */
-.search-box {
-    position: relative;
-    margin-bottom: 20px;
-}
-.search-box input {
-    width: 100%;
-    padding: 12px 20px 12px 45px;
-    border-radius: 10px;
-    border: 1px solid #334155;
-    background: #0f172a;
-    color: #fff;
-    font-size: 14px;
-}
-.search-box::before {
-    content: '🔍';
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
 /* NOTIFICATION */
 .notification {
     position: fixed;
@@ -486,6 +483,28 @@ tr:hover {
     to { transform: translateY(0); opacity: 1; }
 }
 
+/* SEARCH */
+.search-box {
+    position: relative;
+    margin-bottom: 20px;
+}
+.search-box input {
+    width: 100%;
+    padding: 12px 20px 12px 45px;
+    border-radius: 10px;
+    border: 1px solid #334155;
+    background: #0f172a;
+    color: #fff;
+    font-size: 14px;
+}
+.search-box::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 @media (max-width: 768px) {
     .sidebar { width: 70px; }
     .sidebar-item .label { display: none; }
@@ -501,9 +520,20 @@ tr:hover {
 <div class="sidebar">
     <div class="sidebar-header">
         <h1>🐉 DRAGON WAR</h1>
-        <div class="admin-badge"> SUPER ADM</div>
-        <div style="color:#94a3b8;font-size:0.8em;margin-top:8px;">Gabriel Cabral</div>
     </div>
+    
+    <!-- PERFIL ADM EXCLUSIVO -->
+    <div class="admin-profile">
+        <div class="admin-avatar-container">
+            <div class="admin-avatar-glow"></div>
+            <div class="admin-avatar-frame"></div>
+            <div class="admin-avatar"></div>
+            <div class="verified-badge">✓</div>
+        </div>
+        <div class="super-adm-badge">SUPER ADM</div>
+        <div class="admin-name">Gabriel Cabral ✓</div>
+    </div>
+
     <div class="sidebar-item active" onclick="showSection('dashboard', this)">
         <span class="icon">📊</span><span class="label">Dashboard</span>
     </div>
@@ -511,13 +541,13 @@ tr:hover {
         <span class="icon">👥</span><span class="label">Jogadores</span>
     </div>
     <div class="sidebar-item" onclick="showSection('server', this)">
-        <span class="icon">️</span><span class="label">Servidor</span>
+        <span class="icon">🖥️</span><span class="label">Servidor</span>
     </div>
     <div class="sidebar-item" onclick="showSection('events', this)">
-        <span class="icon"></span><span class="label">Eventos</span>
+        <span class="icon">🎉</span><span class="label">Eventos</span>
     </div>
     <div class="sidebar-item" onclick="showSection('shop', this)">
-        <span class="icon"></span><span class="label">Loja Admin</span>
+        <span class="icon">🛒</span><span class="label">Loja Admin</span>
     </div>
     <div class="sidebar-item" onclick="showSection('logs', this)">
         <span class="icon">📜</span><span class="label">Logs</span>
@@ -543,8 +573,7 @@ tr:hover {
     <div class="top-bar">
         <h2 id="sectionTitle">📊 Dashboard</h2>
         <div class="top-bar-actions">
-            <button class="btn btn-warning" onclick="showNotification('🔔 3 novas notificações!')">🔔 3</button>
-            <div class="admin-avatar"></div>
+            <button class="notification-btn" onclick="showNotification('🔔 3 novas notificações!')">🔔 3</button>
         </div>
     </div>
 
@@ -564,7 +593,7 @@ tr:hover {
                 <div class="stat-change up">↑ 5% vs ontem</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">💰</div>
+                <div class="stat-icon"></div>
                 <div class="stat-value">2.4M</div>
                 <div class="stat-label">Moedas em Circulação</div>
                 <div class="stat-change down">↓ 3% inflação</div>
@@ -576,7 +605,7 @@ tr:hover {
                 <div class="stat-change up">↑ 18% vs ontem</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon"></div>
+                <div class="stat-icon">🛒</div>
                 <div class="stat-value">8,921</div>
                 <div class="stat-label">Compras na Loja</div>
                 <div class="stat-change up">↑ 7% esta semana</div>
@@ -592,7 +621,7 @@ tr:hover {
         <div class="card">
             <div class="card-header">
                 <h3>📈 Atividade dos Jogadores (Últimas 24h)</h3>
-                <button class="btn btn-primary btn-sm">Exportar</button>
+                <button class="btn btn-primary btn-sm" onclick="showToast(' Exportado!')">Exportar</button>
             </div>
             <div class="chart-container" id="activityChart"></div>
         </div>
@@ -603,7 +632,7 @@ tr:hover {
             </div>
             <div class="quick-actions">
                 <div class="quick-action-btn" onclick="openModal('broadcastModal')">
-                    <div class="qa-icon">📢</div>
+                    <div class="qa-icon"></div>
                     <div class="qa-label">Mensagem Global</div>
                 </div>
                 <div class="quick-action-btn" onclick="openModal('eventModal')">
@@ -622,7 +651,7 @@ tr:hover {
                     <div class="qa-icon">🔄</div>
                     <div class="qa-label">Reiniciar Servidor</div>
                 </div>
-                <div class="quick-action-btn" onclick="showToast('📊 Backup criado!')">
+                <div class="quick-action-btn" onclick="showToast(' Backup criado!')">
                     <div class="qa-icon">💾</div>
                     <div class="qa-label">Backup Database</div>
                 </div>
@@ -632,7 +661,7 @@ tr:hover {
 
     <!-- PLAYERS -->
     <div id="players" class="section">
-        <h2 class="section-title">👥 Gerenciar Jogadores</h2>
+        <h2 class="section-title"> Gerenciar Jogadores</h2>
         
         <div class="search-box">
             <input type="text" placeholder="Buscar por nome, UID ou e-mail..." id="playerSearch" oninput="filterPlayers()">
@@ -660,13 +689,13 @@ tr:hover {
                     </thead>
                     <tbody id="playersTable">
                         <tr>
-                            <td><div class="player-row"><div class="player-row-avatar">🥷</div><div><strong>Gabriel Cabral</strong><br><small style="color:#94a3b8;">UID: 12345678</small></div></div></td>
+                            <td><div class="player-row"><div class="player-row-avatar"></div><div><strong>Gabriel Cabral</strong><br><small style="color:#94a3b8;">UID: 12345678</small></div></div></td>
                             <td><strong>48</strong></td>
-                            <td>💰 356.780<br>💎 2.540</td>
+                            <td> 356.780<br> 2.540</td>
                             <td><span class="badge badge-online">Online</span></td>
                             <td><span class="badge badge-admin">ADM</span> <span class="badge badge-vip">VIP 10</span></td>
                             <td>
-                                <button class="btn btn-warning btn-sm" onclick="openModal('editPlayerModal')">✏️ Editar</button>
+                                <button class="btn btn-warning btn-sm" onclick="openModal('editPlayerModal')">️ Editar</button>
                                 <button class="btn btn-danger btn-sm" onclick="confirmAction('banir')">🚫 Banir</button>
                             </td>
                         </tr>
@@ -693,24 +722,24 @@ tr:hover {
                             </td>
                         </tr>
                         <tr>
-                            <td><div class="player-row"><div class="player-row-avatar">🏹</div><div><strong>DarkBlade</strong><br><small style="color:#94a3b8;">UID: 55667788</small></div></div></td>
+                            <td><div class="player-row"><div class="player-row-avatar"></div><div><strong>DarkBlade</strong><br><small style="color:#94a3b8;">UID: 55667788</small></div></div></td>
                             <td><strong>58</strong></td>
                             <td>💰 45.600<br>💎 420</td>
                             <td><span class="badge badge-muted">Mutado</span></td>
                             <td><span class="badge" style="background:#c0c0c0;color:#000;">Prata</span></td>
                             <td>
                                 <button class="btn btn-warning btn-sm" onclick="openModal('editPlayerModal')">✏️ Editar</button>
-                                <button class="btn btn-success btn-sm" onclick="confirmAction('desmutar')">🔊 Desmutar</button>
+                                <button class="btn btn-success btn-sm" onclick="confirmAction('desmutar')"> Desmutar</button>
                             </td>
                         </tr>
                         <tr>
-                            <td><div class="player-row"><div class="player-row-avatar">🧛</div><div><strong>FireWolf</strong><br><small style="color:#94a3b8;">UID: 99887766</small></div></div></td>
+                            <td><div class="player-row"><div class="player-row-avatar"></div><div><strong>FireWolf</strong><br><small style="color:#94a3b8;">UID: 99887766</small></div></div></td>
                             <td><strong>44</strong></td>
                             <td>💰 12.300<br>💎 150</td>
                             <td><span class="badge badge-banned">Banido</span></td>
                             <td><span class="badge" style="background:#64748b;">Iniciante</span></td>
                             <td>
-                                <button class="btn btn-warning btn-sm" onclick="openModal('editPlayerModal')">✏️ Editar</button>
+                                <button class="btn btn-warning btn-sm" onclick="openModal('editPlayerModal')">️ Editar</button>
                                 <button class="btn btn-success btn-sm" onclick="confirmAction('desbanir')">✅ Desbanir</button>
                             </td>
                         </tr>
@@ -726,12 +755,12 @@ tr:hover {
         
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-icon"></div>
+                <div class="stat-icon">📡</div>
                 <div class="stat-value">38ms</div>
                 <div class="stat-label">Ping Médio</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">️</div>
+                <div class="stat-icon">⚙️</div>
                 <div class="stat-value">99.8%</div>
                 <div class="stat-label">Uptime</div>
             </div>
@@ -797,8 +826,8 @@ tr:hover {
             <div style="display:grid;gap:15px;">
                 <div class="log-entry success">
                     <div>
-                        <div class="log-action"> Torneio dos Campeões</div>
-                        <div class="log-detail">Recompensa: 10.000  + 1.000 💎 | Participantes: 234</div>
+                        <div class="log-action">⚔️ Torneio dos Campeões</div>
+                        <div class="log-detail">Recompensa: 10.000 💰 + 1.000 💎 | Participantes: 234</div>
                     </div>
                     <div>
                         <span class="badge badge-online">Ativo</span>
@@ -807,7 +836,7 @@ tr:hover {
                 </div>
                 <div class="log-entry warning">
                     <div>
-                        <div class="log-action">🎃 Halloween Especial</div>
+                        <div class="log-action"> Halloween Especial</div>
                         <div class="log-detail">Recompensa: Skin exclusiva | Participantes: 567</div>
                     </div>
                     <div>
@@ -886,27 +915,27 @@ tr:hover {
                 <table>
                     <thead>
                         <tr>
-                            <th>Item</th>
-                            <th>Tipo</th>
-                            <th>Raridade</th>
-                            <th>Preço</th>
-                            <th>Vendidos</th>
-                            <th>Ações</th>
+                            <th>ITEM</th>
+                            <th>TIPO</th>
+                            <th>RARIDADE</th>
+                            <th>PREÇO</th>
+                            <th>VENDIDOS</th>
+                            <th>AÇÕES</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>🗡️ Espada Lendária</td>
+                            <td>⚔️ Espada Lendária</td>
                             <td>Equipamento</td>
-                            <td><span class="badge" style="background:#fbbf24;color:#000;">Lendário</span></td>
-                            <td> 500</td>
+                            <td><span class="badge" style="background:#fbbf24;color:#000;">LENDÁRIO</span></td>
+                            <td>💎 500</td>
                             <td>234</td>
                             <td><button class="btn btn-danger btn-sm" onclick="confirmAction('remover item')">Remover</button></td>
                         </tr>
                         <tr>
                             <td>🧪 Poção de Vida</td>
                             <td>Consumível</td>
-                            <td><span class="badge" style="background:#22c55e;">Comum</span></td>
+                            <td><span class="badge" style="background:#22c55e;">COMUM</span></td>
                             <td>💰 50</td>
                             <td>8,921</td>
                             <td><button class="btn btn-danger btn-sm" onclick="confirmAction('remover item')">Remover</button></td>
@@ -924,7 +953,7 @@ tr:hover {
         <div class="card">
             <div class="card-header">
                 <h3>Atividades Recentes</h3>
-                <button class="btn btn-primary btn-sm" onclick="showToast(' Logs exportados!')">Exportar</button>
+                <button class="btn btn-primary btn-sm" onclick="showToast('📥 Logs exportados!')">Exportar</button>
             </div>
             <div id="logsContainer">
                 <div class="log-entry success">
@@ -1014,7 +1043,7 @@ tr:hover {
                     <option>Desativado</option>
                 </select>
             </div>
-            <button class="btn btn-success" onclick="showToast('🔒 Configurações de segurança salvas!')"> Salvar Segurança</button>
+            <button class="btn btn-success" onclick="showToast('🔒 Configurações de segurança salvas!')">🔒 Salvar Segurança</button>
         </div>
     </div>
 
@@ -1086,7 +1115,7 @@ tr:hover {
                 </div>
                 <div class="log-entry">
                     <div>
-                        <div class="log-action"> Gabriel Cabral</div>
+                        <div class="log-action">👑 Gabriel Cabral</div>
                         <div class="log-detail">Perfeito! Vamos multiplicar as recompensas por 2x.</div>
                     </div>
                     <div class="log-time">09:10</div>
@@ -1094,7 +1123,7 @@ tr:hover {
             </div>
             <div style="display:flex;gap:10px;">
                 <input type="text" placeholder="Digite sua mensagem..." style="flex:1;">
-                <button class="btn btn-primary" onclick="showToast('💬 Mensagem enviada!')">Enviar</button>
+                <button class="btn btn-primary" onclick="showToast(' Mensagem enviada!')">Enviar</button>
             </div>
         </div>
     </div>
@@ -1113,14 +1142,14 @@ tr:hover {
             <label>Durarante quanto tempo exibir? (minutos)</label>
             <input type="number" value="30">
         </div>
-        <button class="btn btn-primary" onclick="closeModal('broadcastModal');showToast(' Mensagem enviada!')">📤 Enviar</button>
+        <button class="btn btn-primary" onclick="closeModal('broadcastModal');showToast('📢 Mensagem enviada!')">📤 Enviar</button>
         <button class="modal-close" onclick="closeModal('broadcastModal')">Cancelar</button>
     </div>
 </div>
 
 <div class="modal-overlay" id="eventModal">
     <div class="modal">
-        <h2> Criar Evento</h2>
+        <h2>🎉 Criar Evento</h2>
         <div class="form-group">
             <label>Nome do Evento:</label>
             <input type="text" placeholder="Ex: Torneio dos Campeões">
@@ -1150,7 +1179,7 @@ tr:hover {
 
 <div class="modal-overlay" id="giveModal">
     <div class="modal">
-        <h2> Dar Recompensa</h2>
+        <h2>🎁 Dar Recompensa</h2>
         <div class="form-group">
             <label>UID do Jogador:</label>
             <input type="text" placeholder="Digite o UID...">
@@ -1169,7 +1198,7 @@ tr:hover {
                 <input type="number" placeholder="0">
             </div>
         </div>
-        <button class="btn btn-success" onclick="closeModal('giveModal');showToast('🎁 Recompensa enviada!')">🎁 Enviar</button>
+        <button class="btn btn-success" onclick="closeModal('giveModal');showToast(' Recompensa enviada!')">🎁 Enviar</button>
         <button class="modal-close" onclick="closeModal('giveModal')">Cancelar</button>
     </div>
 </div>
@@ -1195,7 +1224,7 @@ tr:hover {
                 <option selected>Permanente</option>
             </select>
         </div>
-        <button class="btn btn-danger" onclick="closeModal('banModal');showToast('🚫 Jogador banido!')"> Banir</button>
+        <button class="btn btn-danger" onclick="closeModal('banModal');showToast('🚫 Jogador banido!')">🚫 Banir</button>
         <button class="modal-close" onclick="closeModal('banModal')">Cancelar</button>
     </div>
 </div>
