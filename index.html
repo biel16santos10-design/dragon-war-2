@@ -71,9 +71,10 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 .adm-name-top{font-weight:900;font-size:14px;letter-spacing:.3px}
 .chat-window.hidden{display:none!important}.chat-window-head{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;background:rgba(19,27,46,.98);border-bottom:1px solid var(--panel-border)}
 .chat-close{border:0;background:transparent;color:#fff;font-size:22px;cursor:pointer;line-height:1}.chat-window .chat-box{height:auto;flex:1;margin:0;border:0;border-radius:0;background:#020617}.chat-compose{display:flex;gap:7px;padding:8px;border-top:1px solid var(--panel-border)}.chat-compose input{flex:1;min-width:0;padding:9px;background:#070a12;color:#fff;border:1px solid var(--panel-border);border-radius:6px}.chat-compose button{width:auto;padding:9px 12px}
-.avatar-gallery{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0}.avatar-option{border:1px solid var(--panel-border);background:#070a12;border-radius:8px;padding:4px;cursor:pointer}.avatar-option img{width:100%;aspect-ratio:1;border-radius:6px;object-fit:cover}.avatar-option.selected{border-color:var(--accent-color);box-shadow:0 0 0 2px rgba(245,158,11,.25)}
+.avatar-gallery{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0}.avatar-option{border:1px solid var(--panel-border);background:#070a12;border-radius:8px;padding:5px;cursor:pointer;text-align:center;color:#cbd5e1}.avatar-option img{width:100%;aspect-ratio:1;border-radius:6px;object-fit:cover}.avatar-option.selected{border-color:var(--accent-color);box-shadow:0 0 0 2px rgba(245,158,11,.25)}
 .profile-rank{display:inline-flex;gap:6px;align-items:center;padding:5px 9px;border-radius:20px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35);color:#fbbf24;font-weight:800;font-size:11px;margin:5px 0 10px}.avatar-help{font-size:11px;color:#94a3b8;margin:-8px 0 10px}
 .battle-resource{font-size:11px;color:#94a3b8;margin-top:6px}.battle-cost{font-size:10px;opacity:.85;margin-left:5px}
+.skin-shop-img{width:100%;aspect-ratio:1;border-radius:8px;object-fit:cover;background:#020617;border:1px solid var(--panel-border);margin-bottom:8px}.rank-me-card{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid rgba(245,158,11,.35);background:linear-gradient(135deg,rgba(245,158,11,.10),rgba(15,23,42,.8));border-radius:10px}.rank-me-avatar{width:58px;height:58px;border-radius:50%;object-fit:cover;border:2px solid var(--accent-color)}.rank-me-name{font-weight:900;font-size:16px}.rank-reward-box{margin-top:12px;padding:14px;border:1px solid var(--panel-border);border-radius:10px;background:rgba(2,6,23,.45)}
 </style>
 </head>
 <body>
@@ -155,7 +156,7 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 
 <div id="section-poderes" class="panel-section">
 <h2>⚡ Catálogo de Poderes</h2><p style="color:#94a3b8;margin-top:5px">Poderes oficiais e poderes publicados pelo ADM. O jogador pode apenas visualizar e comprar.</p>
-<div class="box-item" style="margin-top:15px;border-left:3px solid #8b5cf6"><b>👑 Criação de poderes</b><p style="font-size:12px;color:#94a3b8;margin-top:5px">Somente o ADM pode criar e publicar novos poderes no catálogo.</p></div>
+<div id="player-power-admin-note" class="box-item hidden" style="margin-top:15px;border-left:3px solid #8b5cf6"><b>👑 Criação de poderes — ADM</b><p style="font-size:12px;color:#94a3b8;margin-top:5px">A criação e publicação de poderes é exclusiva do ADM.</p></div>
 <div id="lista-mais-de-50-poderes" class="shop-grid" style="margin-top:15px"></div></div>
 
 <div id="section-guildas" class="panel-section">
@@ -184,9 +185,10 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <h2>🎒 Seu Inventário</h2><p style="color:#94a3b8;margin-top:5px">Itens comprados e recompensas ficam salvos na sua conta.</p><div id="inventario-itens" style="margin-top:15px;display:flex;gap:15px;flex-wrap:wrap"></div></div>
 
 <div id="section-rank" class="panel-section">
-<h2>🏆 Rankings e Achievements</h2>
-<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;margin-bottom:15px">
-<button class="btn" style="width:auto;padding:6px 15px" onclick="mudarTabRank('global')">🌎 Global</button><button class="btn btn-green" style="width:auto;padding:6px 15px" onclick="mudarTabRank('online')">🟢 Online</button><button class="btn btn-purple" style="width:auto;padding:6px 15px" onclick="mudarTabRank('achievements')">🏅 Achievements</button>
+<h2>🏆 Rankings, Atividades e Achievements</h2>
+<div id="rank-me-card" style="margin-top:12px"></div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;margin-bottom:15px">
+<button class="btn" style="width:auto;padding:6px 15px" onclick="mudarTabRank('global')">🌎 Ranking Global</button><button class="btn btn-green" style="width:auto;padding:6px 15px" onclick="mudarTabRank('online')">🟢 Atividades</button><button class="btn btn-purple" style="width:auto;padding:6px 15px" onclick="mudarTabRank('achievements')">🏅 Achievements</button><button class="btn btn-gray" style="width:auto;padding:6px 15px" onclick="mostrarBaúsRank()">🎁 Baú / Recompensas de Rank</button>
 </div><div id="rank-content"></div></div>
 
 <div id="section-config-jogador" class="panel-section">
@@ -199,7 +201,7 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <div class="avatar-help">Ou escolha uma das 20 fotos de perfil oficiais do Dragon War.</div>
 <div id="avatar-gallery" class="avatar-gallery"></div>
 <div id="perfil-rank" class="profile-rank">⭐ Iniciante</div>
-<div id="perfil-recursos" style="margin:5px 0 12px;color:#94a3b8"></div><div id="perfil-guilda" class="profile-rank" style="margin-bottom:12px">🛡️ Sem guilda</div><button class="btn" onclick="salvarPerfilJogador()">Salvar Alterações</button>
+<div id="perfil-recursos" style="margin:5px 0 12px;color:#94a3b8"></div><div id="perfil-vida" class="profile-rank" style="margin-bottom:12px">❤️ Vida restaurada</div><div id="perfil-guilda" class="profile-rank" style="margin-bottom:12px">🛡️ Sem guilda</div><button class="btn" onclick="salvarPerfilJogador()">Salvar Alterações</button>
 </div>
 <div style="background:var(--panel-bg);padding:20px;border-radius:8px;border:1px solid var(--panel-border)">
 <h4>🔊 Sistema de Som</h4><label>Volume da Música:</label><input type="range" min="0" max="100" value="60" class="form-control" id="vol-musica" oninput="atualizarVolume()">
@@ -214,7 +216,7 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <div id="section-evento" class="panel-section">
 <h2>🎉 Eventos & Recompensa Diária</h2>
 <div style="background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border);margin-top:10px">
-<h4>🎁 Recompensa Diária</h4><p style="font-size:14px;color:#94a3b8;margin-top:5px">Disponível uma vez a cada 24 horas.</p>
+<h4>🎁 Recompensa Diária</h4><p style="font-size:14px;color:#94a3b8;margin-top:5px">Disponível uma vez por dia. O próximo resgate libera automaticamente à meia-noite.</p>
 <button id="daily-btn" class="btn" style="margin-top:10px;width:auto" onclick="resgatarRecompensaDiaria()">🎁 Resgatar +100 🪙 +5 💎</button><div id="daily-countdown" style="margin-top:8px;color:#94a3b8"></div></div>
 <div id="adm-evento-controls" class="hidden" style="margin-top:15px;background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)">
 <h4>👑 Criar Evento Global</h4><input type="text" id="novo-evento-titulo" class="form-control" placeholder="Título"><input type="text" id="novo-evento-desc" class="form-control" placeholder="Descrição"><input type="number" id="novo-evento-reward" class="form-control" placeholder="Recompensa em moedas" value="100"><button class="btn btn-purple" onclick="criarEventoGlobal()">Publicar Evento</button></div>
@@ -289,7 +291,7 @@ const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 const EMAIL_ADMIN="groupsacabraldigital@gmail.com";
 let modoCadastro=false, unsubscribeGlobal=null, unsubscribeSupport=null, heartbeatTimer=null;
 let categoriaLoja="all", jogadorSelecionadoModal={id:"",nome:"",data:{}}, salaAtualId="";
-let usuarioAtual={uid:"",email:"",displayName:"",avatar:"",isAdm:false,isSubAdm:false,coins:150,diamonds:10,level:5,xp:0,inventory:[],phaseProgress:{normal:1,dificil:1,avancada:1,hardcore:1},achievements:[],dailyRewardLastClaim:0,dailyRewardCount:0,mana:100,maxMana:100,banned:false,guildId:"",guildName:"",guildRank:""};
+let usuarioAtual={uid:"",email:"",displayName:"",avatar:"",isAdm:false,isSubAdm:false,coins:150,diamonds:10,level:5,xp:0,inventory:[],phaseProgress:{normal:1,dificil:1,avancada:1,hardcore:1},achievements:[],dailyRewardLastClaim:0,dailyRewardCount:0,dailyRewardDay:"",currentHp:100,mana:100,maxMana:100,banned:false,guildId:"",guildName:"",guildRank:""};
 let faseAtualInfo={categoria:"",etapa:1,hpMovel:100,maxHp:100,playerHp:100,playerMp:100,defend:false};
 
 const categorias={
@@ -362,6 +364,8 @@ function criarAvatarDragonWar(t,i){
  <path d="M25 150 Q30 105 58 101 L80 116 102 101 Q130 105 135 150Z" fill="#0b1020" stroke="${t.b}" stroke-width="3"/>
  <path d="M48 72 Q44 30 80 25 Q116 30 112 72 L104 99 Q80 116 56 99Z" fill="#e5c4a8" stroke="#111827" stroke-width="4"/>
  <path d="M48 69 Q47 29 80 27 Q113 29 112 69 Q101 49 80 49 Q59 49 48 69Z" fill="#111827"/>
+ <path d="M58 43 L48 22 L68 34 M102 43 L112 22 L92 34" fill="${t.a}" stroke="${t.b}" stroke-width="3" stroke-linejoin="round"/>
+ <path d="M27 143 Q12 116 29 100 Q42 110 49 128 M133 143 Q148 116 131 100 Q118 110 111 128" fill="none" stroke="${t.b}" stroke-width="6" stroke-linecap="round" opacity=".75"/>
  <path d="M58 78 Q67 72 75 78 M85 78 Q93 72 102 78" fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round"/>
  <circle cx="67" cy="80" r="3" fill="${t.b}"/><circle cx="93" cy="80" r="3" fill="${t.b}"/>
  <path d="M67 93 Q80 101 93 93" fill="none" stroke="#7f1d1d" stroke-width="3" stroke-linecap="round"/>
@@ -371,7 +375,8 @@ function criarAvatarDragonWar(t,i){
  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
 const avataresOficiais=temasAvatares.map((t,i)=>criarAvatarDragonWar(t,i));
-function renderizarGaleriaAvatares(){const g=document.getElementById("avatar-gallery");if(!g)return;g.innerHTML=avataresOficiais.map((url,i)=>`<button type="button" class="avatar-option ${usuarioAtual.avatar===url?"selected":""}" title="${temasAvatares[i].nome}" onclick="selecionarAvatarOficial(${i})"><img src="${url}" alt="${temasAvatares[i].nome}"></button>`).join("")}
+catalogo.filter(x=>x.category==="skin").forEach((x,i)=>{x.avatarIndex=i%avataresOficiais.length});
+function renderizarGaleriaAvatares(){const g=document.getElementById("avatar-gallery");if(!g)return;g.innerHTML=avataresOficiais.map((url,i)=>`<button type="button" class="avatar-option ${usuarioAtual.avatar===url?"selected":""}" title="${temasAvatares[i].nome}" onclick="selecionarAvatarOficial(${i})"><img src="${url}" alt="${temasAvatares[i].nome}"><span style="display:block;color:#cbd5e1;font-size:9px;margin-top:4px;line-height:1.1">${temasAvatares[i].nome}</span></button>`).join("")}
 window.selecionarAvatarOficial=i=>{usuarioAtual.avatar=avataresOficiais[i];document.getElementById("player-edit-avatar").value=usuarioAtual.avatar;renderizarGaleriaAvatares();atualizarPerfilUI()};
 
 function atualizarPerfilUI(){
@@ -383,7 +388,7 @@ function atualizarPerfilUI(){
  document.getElementById("player-edit-name").value=usuarioAtual.displayName||nomeAtual();
  document.getElementById("player-edit-email").value=usuarioAtual.email;
  document.getElementById("player-edit-avatar").value=usuarioAtual.avatar||"";
- document.getElementById("perfil-recursos").innerHTML=`Nível ${usuarioAtual.level} • ${patenteAtual(usuarioAtual.level)} • XP ${usuarioAtual.xp}`;document.getElementById("perfil-rank").innerText=patenteAtual(usuarioAtual.level);renderPerfilGuilda();renderizarGaleriaAvatares();
+ document.getElementById("perfil-recursos").innerHTML=`Nível ${usuarioAtual.level} • ${patenteAtual(usuarioAtual.level)} • XP ${usuarioAtual.xp}`;document.getElementById("perfil-rank").innerText=patenteAtual(usuarioAtual.level);const vidaEl=document.getElementById("perfil-vida");if(vidaEl)vidaEl.innerHTML=`❤️ Vida: ${Math.max(0,Number(usuarioAtual.currentHp??100))}/100`;renderPerfilGuilda();renderizarGaleriaAvatares();
 }
 function montarMenuLateral(){
  const m=document.getElementById("menu-list");m.innerHTML="";
@@ -392,7 +397,7 @@ function montarMenuLateral(){
  itens.forEach((x,i)=>{let li=document.createElement("li");li.className="menu-item"+(i===0?" active":"");li.innerText=x.label;li.onclick=()=>trocarSecao(x.id,li);m.appendChild(li)});
  trocarSecao("jogar",m.children[0]);
 }
-window.trocarSecao=(id,el)=>{document.querySelectorAll(".panel-section").forEach(x=>x.classList.remove("active"));document.getElementById("section-"+id)?.classList.add("active");document.querySelectorAll(".menu-item").forEach(x=>x.classList.remove("active"));if(el)el.classList.add("active");document.getElementById("current-page-title").innerText=el?el.innerText:id;if(id==="jogar"){document.getElementById("arena-fases-container")?.classList.add("hidden");document.getElementById("battle-mode-selection")?.classList.remove("hidden")}if(id==="jogadores"&&usuarioAtual.isAdm)carregarJogadoresReaisDoBanco();if(id==="loja")renderLoja();if(id==="inventario")atualizarInventarioUI();if(id==="rank")mudarTabRank("global");if(id==="guildas")carregarGuildaDoJogador();if(id==="config-jogador")renderPerfilGuilda()};
+window.trocarSecao=(id,el)=>{document.querySelectorAll(".panel-section").forEach(x=>x.classList.remove("active"));document.getElementById("section-"+id)?.classList.add("active");document.querySelectorAll(".menu-item").forEach(x=>x.classList.remove("active"));if(el)el.classList.add("active");document.getElementById("current-page-title").innerText=el?el.innerText:id;if(id==="jogar"){document.getElementById("arena-fases-container")?.classList.add("hidden");document.getElementById("battle-mode-selection")?.classList.remove("hidden")}if(id==="jogadores"&&usuarioAtual.isAdm)carregarJogadoresReaisDoBanco();if(id==="loja")renderLoja();if(id==="inventario")atualizarInventarioUI();if(id==="rank"){renderMeuRankTopo();mudarTabRank("global")}if(id==="guildas")carregarGuildaDoJogador();if(id==="config-jogador")renderPerfilGuilda()};
 
 async function carregarJogador(){
  const ref=doc(db,"jogadores_reais",auth.currentUser.uid),snap=await getDoc(ref),base=snap.exists()?snap.data():{};
@@ -400,7 +405,7 @@ async function carregarJogador(){
  if(usuarioAtual.isAdm){usuarioAtual.coins=Math.max(Number(usuarioAtual.coins||0),999999);usuarioAtual.diamonds=Math.max(Number(usuarioAtual.diamonds||0),99999);usuarioAtual.level=Math.max(Number(usuarioAtual.level||1),100)}
  await setDoc(ref,{...usuarioAtual,lastSeen:serverTimestamp(),status:"Online",updatedAt:serverTimestamp()},{merge:true});
  atualizarPerfilUI();montarMenuLateral();renderLoja();renderizarPoderes();atualizarInventarioUI();renderizarEventos();atualizarDailyUI();iniciarHeartbeat();assinarChatGlobal();verificarAchievements();
- if(usuarioAtual.isAdm){carregarJogadoresReaisDoBanco();document.getElementById("adm-loja-controls").classList.remove("hidden");document.getElementById("adm-poderes-controls").classList.remove("hidden");document.getElementById("adm-evento-controls").classList.remove("hidden")}
+ if(usuarioAtual.isAdm){carregarJogadoresReaisDoBanco();document.getElementById("adm-loja-controls").classList.remove("hidden");document.getElementById("adm-poderes-controls").classList.remove("hidden");document.getElementById("adm-evento-controls").classList.remove("hidden");document.getElementById("player-power-admin-note")?.classList.remove("hidden")}
 }
 window.alternarModoAuth=()=>{modoCadastro=!modoCadastro;document.getElementById("auth-title").innerText=modoCadastro?"Criar Conta Real":"Entrar no Servidor";document.getElementById("auth-btn-action").innerText=modoCadastro?"Registrar e Gerar ID":"Entrar na Partida";document.getElementById("auth-switch-mode").innerText=modoCadastro?"Já tem conta? Faça login":"Não tem conta? Cadastre-se com ID Real"};
 window.realizarAutenticacao=async()=>{
@@ -428,7 +433,7 @@ window.iniciarFases=async(cat)=>{
  const nivel=dadosNivelBatalha(cat,faseAtualInfo.etapa);
  faseAtualInfo.maxHp=nivel.hp;
  faseAtualInfo.hpMovel=nivel.hp;
- faseAtualInfo.playerHp=100;
+ faseAtualInfo.playerHp=Number(usuarioAtual.currentHp??100);
  faseAtualInfo.playerMp=Math.max(0,Number(usuarioAtual.mana??usuarioAtual.maxMana??100));
  faseAtualInfo.defend=false;
  document.getElementById("fases-titulo-cat").innerText=`${c.nome.toUpperCase()} • ${nivel.faixa}`;
@@ -478,7 +483,7 @@ async function iniciarProximaFase(){
  const proximo=dadosNivelBatalha(faseAtualInfo.categoria,faseAtualInfo.etapa);
  faseAtualInfo.maxHp=proximo.hp;
  faseAtualInfo.hpMovel=proximo.hp;
- faseAtualInfo.playerHp=100;
+ faseAtualInfo.playerHp=Number(usuarioAtual.currentHp??100);
  faseAtualInfo.playerMp=Math.max(0,Number(usuarioAtual.mana??usuarioAtual.maxMana??100));
  faseAtualInfo.defend=false;
  await salvarProgresso();
@@ -511,11 +516,12 @@ window.batalhaAcao=async acao=>{
  if(faseAtualInfo.hpMovel<=0){const avancou=await iniciarProximaFase();if(!avancou)return;atualizarMoedasDiamantesUI();return}
  const danoInimigo=faseAtualInfo.defend?Math.max(4,Math.round(nivel.dano*0.35)):nivel.dano;
  faseAtualInfo.defend=false;
- faseAtualInfo.playerHp=Math.max(0,faseAtualInfo.playerHp-danoInimigo);
+ faseAtualInfo.playerHp=Math.max(0,faseAtualInfo.playerHp-danoInimigo);usuarioAtual.currentHp=faseAtualInfo.playerHp;
  adicionarLogBatalha(`👹 O inimigo contra-atacou causando ${danoInimigo} de dano.`);
  notificar(`👹 Inimigo contra-atacou: -${danoInimigo} Vida.` ,"danger");
  if(faseAtualInfo.playerHp<=0){
    faseAtualInfo.playerHp=100;
+   usuarioAtual.currentHp=100;
    faseAtualInfo.playerMp=Number(usuarioAtual.maxMana||100);
    usuarioAtual.mana=faseAtualInfo.playerMp;
    faseAtualInfo.hpMovel=faseAtualInfo.maxHp;
@@ -530,13 +536,13 @@ window.batalhaAcao=async acao=>{
  atualizarBatalhaUI();atualizarMoedasDiamantesUI();
 };
 
-async function salvarProgresso(){await updateDoc(doc(db,"jogadores_reais",usuarioAtual.uid),{coins:usuarioAtual.coins,diamonds:usuarioAtual.diamonds,level:usuarioAtual.level,xp:usuarioAtual.xp,phaseProgress:usuarioAtual.phaseProgress,inventory:usuarioAtual.inventory,achievements:usuarioAtual.achievements,mana:Number(usuarioAtual.mana??100),maxMana:Number(usuarioAtual.maxMana??100),updatedAt:serverTimestamp()});atualizarMoedasDiamantesUI();verificarAchievements()}
+async function salvarProgresso(){await updateDoc(doc(db,"jogadores_reais",usuarioAtual.uid),{coins:usuarioAtual.coins,diamonds:usuarioAtual.diamonds,level:usuarioAtual.level,xp:usuarioAtual.xp,phaseProgress:usuarioAtual.phaseProgress,inventory:usuarioAtual.inventory,achievements:usuarioAtual.achievements,mana:Number(usuarioAtual.mana??100),maxMana:Number(usuarioAtual.maxMana??100),currentHp:Number(usuarioAtual.currentHp??100),dailyRewardDay:usuarioAtual.dailyRewardDay||"",dailyRewardLastClaim:usuarioAtual.dailyRewardLastClaim||0,updatedAt:serverTimestamp()});atualizarMoedasDiamantesUI();verificarAchievements()}
 
-function renderLoja(){let g=document.getElementById("loja-grid");let arr=categoriaLoja==="all"?catalogo:catalogo.filter(x=>x.category===categoriaLoja);g.innerHTML=arr.map(i=>`<div class="item-card"><h4>${icone(i.category)} ${i.nome}</h4><p>${i.desc}</p><div class="price">${i.price} 🪙</div><button class="btn" style="padding:6px;margin-top:7px;font-size:11px" onclick="comprarItem('${i.id}')">Comprar</button></div>`).join("")}
+function renderLoja(){let g=document.getElementById("loja-grid");let arr=categoriaLoja==="all"?catalogo:catalogo.filter(x=>x.category===categoriaLoja);g.innerHTML=arr.map((i,n)=>{const skinImg=i.category==="skin"?avataresOficiais[(Number(i.avatarIndex??n))%avataresOficiais.length]:"";return `<div class="item-card">${skinImg?`<img class="skin-shop-img" src="${skinImg}" alt="${escapeHtml(i.nome)}">`:""}<h4>${icone(i.category)} ${escapeHtml(i.nome)}</h4><p>${escapeHtml(i.desc||"")}</p><div class="price">${i.price} 🪙</div><button class="btn" style="padding:6px;margin-top:7px;font-size:11px" onclick="comprarItem('${i.id}')">${i.category==="skin"?"Comprar Skin":"Comprar"}</button></div>`}).join("")}
 function icone(c){return c==="weapon"?"⚔️":c==="skin"?"🧙":c==="potion"?"🧪":"⚡"}
 window.mudarCategoriaLoja=c=>{categoriaLoja=c;renderLoja()};
 window.comprarItem=async id=>{let i=catalogo.find(x=>x.id===id);if(!i)return;if(usuarioAtual.coins<i.price)return alert("Moedas insuficientes.");usuarioAtual.coins-=i.price;usuarioAtual.inventory.push({...i,purchasedAt:Date.now()});await salvarProgresso();alert(`Compra realizada: ${i.nome}. Foi para seu inventário.`);renderLoja();atualizarInventarioUI()};
-function atualizarInventarioUI(){let c=document.getElementById("inventario-itens");if(!usuarioAtual.inventory.length){c.innerHTML='<div class="box-item">Seu inventário está vazio.</div>';return}c.innerHTML=usuarioAtual.inventory.map((i,n)=>`<div class="item-card" style="width:170px"><h4>${icone(i.category)} ${i.nome}</h4><p>${i.desc||"Item Dragon War"}</p><button class="btn btn-blue" style="padding:5px;font-size:10px" onclick="usarItemInventario(${n})">Usar / Equipar</button></div>`).join("")}
+function atualizarInventarioUI(){let c=document.getElementById("inventario-itens");if(!usuarioAtual.inventory.length){c.innerHTML='<div class="box-item">Seu inventário está vazio.</div>';return}c.innerHTML=usuarioAtual.inventory.map((i,n)=>{const skinImg=i.category==="skin"?avataresOficiais[(Number(i.avatarIndex??n))%avataresOficiais.length]:"";return `<div class="item-card" style="width:170px">${skinImg?`<img class="skin-shop-img" src="${skinImg}" alt="${escapeHtml(i.nome)}">`:""}<h4>${icone(i.category)} ${escapeHtml(i.nome)}</h4><p>${escapeHtml(i.desc||"Item Dragon War")}</p><button class="btn btn-blue" style="padding:5px;font-size:10px" onclick="usarItemInventario(${n})">Usar / Equipar</button></div>`}).join("")}
 window.usarItemInventario=async n=>{let i=usuarioAtual.inventory[n];if(!i)return;if(i.category==="potion"){usuarioAtual.coins+=0;alert(`🧪 ${i.nome} usado.`)}else alert(`${icone(i.category)} ${i.nome} equipado.`);await salvarProgresso()};
 function renderizarPoderes(){let c=document.getElementById("lista-mais-de-50-poderes");c.innerHTML=catalogo.filter(x=>x.category==="power").map(p=>`<div class="item-card"><h4>${p.nome}</h4><p>${p.desc}</p><div class="price">${p.price} 🪙</div><button class="btn" style="padding:5px;font-size:10px" onclick="comprarItem('${p.id}')">Comprar</button></div>`).join("")}
 /* ===================== GUILDAS ===================== */
@@ -602,18 +608,24 @@ window.adicionarItemCatalogo=async()=>{if(!usuarioAtual.isAdm)return alert("Aces
 async function carregarCatalogoCustom(){try{let s=await getDocs(collection(db,"catalogo"));s.forEach(d=>{let x=d.data();if(!catalogo.some(i=>i.id===x.id))catalogo.push(x)});renderLoja();renderizarPoderes()}catch(e){}}
 
 async function verificarAchievements(){let a=new Set(usuarioAtual.achievements||[]),total=usuarioAtual.inventory.length,niveis=Object.values(usuarioAtual.phaseProgress||{}).reduce((s,x)=>s+x-1,0);const checks={first_login:true,first_purchase:total>0,five_battles:niveis>=5,ten_battles:niveis>=10,level10:usuarioAtual.level>=10,level25:usuarioAtual.level>=25,collector10:total>=10,power10:usuarioAtual.inventory.filter(x=>x.category==="power").length>=10,skin5:usuarioAtual.inventory.filter(x=>x.category==="skin").length>=5,weapon10:usuarioAtual.inventory.filter(x=>x.category==="weapon").length>=10,easy30:(usuarioAtual.phaseProgress?.normal||1)>30,hard30:(usuarioAtual.phaseProgress?.dificil||1)>30,advanced25:(usuarioAtual.phaseProgress?.avancada||1)>25,hardcore25:(usuarioAtual.phaseProgress?.hardcore||1)>25,rich:usuarioAtual.coins>=10000,diamond:usuarioAtual.diamonds>=500,admin:usuarioAtual.isAdm};let changed=false;Object.keys(checks).forEach(k=>{if(checks[k]&&!a.has(k)){a.add(k);changed=true}});if(changed){usuarioAtual.achievements=[...a];await updateDoc(doc(db,"jogadores_reais",usuarioAtual.uid),{achievements:usuarioAtual.achievements})}}
-window.mudarTabRank=async tipo=>{let c=document.getElementById("rank-content");if(tipo==="achievements"){c.innerHTML="<h3>🏅 Achievements disponíveis</h3>"+achievementsCatalog.map(a=>`<div class="item-card" style="margin-top:8px"><b>${a[1]}</b> ${usuarioAtual.achievements.includes(a[0])?'<span class="badge online">DESBLOQUEADO</span>':'<span class="badge">BLOQUEADO</span>'}<p>${a[2]}</p></div>`).join("");return}let snap=await getDocs(collection(db,"jogadores_reais")),rows=[];snap.forEach(d=>{const x=d.data();if(!x.isAdm)rows.push(x)});rows.sort((a,b)=>(b.level||0)-(a.level||0));if(tipo==="online")rows=rows.filter(x=>x.lastSeen&&x.lastSeen.toMillis?Date.now()-x.lastSeen.toMillis()<90000:(x.status==="Online"));c.innerHTML="<table><tr><th>#</th><th>Jogador</th><th>Nível</th><th>Status</th></tr>"+rows.slice(0,50).map((x,i)=>`<tr><td>${i+1}</td><td>${x.displayName||x.email||x.uid} </td><td>${x.level||1}</td><td>${x.status==="Online"?"🟢 Online":"⚫ Offline"}</td></tr>`).join("")+"</table>"};
+function renderMeuRankTopo(){const c=document.getElementById("rank-me-card");if(!c)return;const nome=usuarioAtual.isAdm?"ADM GABRIEL":nomeAtual();const avatar=usuarioAtual.avatar||avataresOficiais[19];const cargo=usuarioAtual.isAdm?"👑 SUPER ADM • VIP 10":patenteAtual(usuarioAtual.level);c.innerHTML=`<div class="rank-me-card"><img class="rank-me-avatar" src="${avatar}" alt="Avatar"><div style="flex:1"><div class="rank-me-name">${usuarioAtual.isAdm?'<span class="dragon-rainbow-name">ADM GABRIEL</span> 👑':escapeHtml(nome)}</div><div style="color:#fbbf24;font-size:12px;margin-top:3px">Nível ${usuarioAtual.level} • ${cargo}</div><div style="color:#94a3b8;font-size:11px;margin-top:3px">Seu perfil aparece aqui, mas ${usuarioAtual.isAdm?'não entra no ranking geral.':'acompanha sua posição entre os jogadores.'}</div></div><div style="text-align:right"><div style="font-size:22px">🎁</div><b style="font-size:11px">Recompensas de Rank</b></div></div>`}
+function mostrarBaúsRank(){const c=document.getElementById("rank-content");if(!c)return;const l=Number(usuarioAtual.level||1);const premio=l>=100?"Baú Lendário":l>=75?"Baú Mestre":l>=50?"Baú Profissional":l>=25?"Baú Intermediário":"Baú Iniciante";c.innerHTML=`<div class="rank-reward-box"><h3>🎁 Recompensas de Rank</h3><p style="color:#94a3b8;margin-top:6px">Sua patente atual: <b style="color:#fbbf24">${patenteAtual(l)}</b></p><div class="item-card" style="margin-top:12px"><div style="font-size:38px">🧰</div><h3>${premio}</h3><p>Recompensas vinculadas ao nível e à patente do seu próprio jogador.</p><span class="badge vip">${usuarioAtual.isAdm?'ADM • fora do ranking':'Perfil do jogador'}</span></div></div>`}
+window.mudarTabRank=async tipo=>{let c=document.getElementById("rank-content");renderMeuRankTopo();if(tipo==="achievements"){c.innerHTML="<h3>🏅 Achievements de "+(usuarioAtual.isAdm?"ADM GABRIEL":escapeHtml(nomeAtual()))+"</h3>"+achievementsCatalog.map(a=>`<div class="item-card" style="margin-top:8px"><b>${a[1]}</b> ${usuarioAtual.achievements.includes(a[0])?'<span class="badge online">DESBLOQUEADO</span>':'<span class="badge">BLOQUEADO</span>'}<p>${a[2]}</p></div>`).join("");return}let snap=await getDocs(collection(db,"jogadores_reais")),rows=[];snap.forEach(d=>{const x=d.data();if(!x.isAdm)rows.push(x)});rows.sort((a,b)=>(b.level||0)-(a.level||0));if(tipo==="online")rows=rows.filter(x=>x.lastSeen&&x.lastSeen.toMillis?Date.now()-x.lastSeen.toMillis()<90000:(x.status==="Online"));c.innerHTML=`<h3 style="margin-bottom:8px">${tipo==="online"?'🟢 Atividades dos jogadores':'🌎 Ranking Global'}</h3><table><tr><th>#</th><th>Jogador</th><th>Nível</th><th>Patente</th><th>Status</th></tr>`+rows.slice(0,50).map((x,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(x.displayName||x.email||x.uid)}</td><td>${x.level||1}</td><td>${patenteAtual(x.level||1)}</td><td>${x.status==="Online"?"🟢 Online":"⚫ Offline"}</td></tr>`).join("")+"</table>"};
 
+function chaveDiaAtual(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function proximaMeiaNoite(){const d=new Date();d.setHours(24,0,0,0);return d}
 window.resgatarRecompensaDiaria=async()=>{
- let now=Date.now(),rawLast=usuarioAtual.dailyRewardLastClaim,last=Number(rawLast?.toMillis?rawLast.toMillis():rawLast||0),wait=86400000;
- if(last>0 && now-last<wait){atualizarDailyUI();notificar("🎁 A recompensa diária já foi resgatada. Aguarde o contador terminar.","info");return}
- usuarioAtual.coins+=100;usuarioAtual.diamonds+=5;usuarioAtual.dailyRewardLastClaim=now;usuarioAtual.dailyRewardCount=Number(usuarioAtual.dailyRewardCount||0)+1;
- await salvarProgresso();atualizarDailyUI();notificar("🎁 Recompensa diária resgatada: +100 moedas e +5 diamantes!","success");
+ const hoje=chaveDiaAtual();
+ let ultimoDia=String(usuarioAtual.dailyRewardDay||"");
+ if(!ultimoDia){const rawLast=usuarioAtual.dailyRewardLastClaim,last=Number(rawLast?.toMillis?rawLast.toMillis():rawLast||0);if(last>0){const d=new Date(last);ultimoDia=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}}
+ if(ultimoDia===hoje){atualizarDailyUI();notificar("🎁 A recompensa de hoje já foi resgatada. Você poderá pegar outra quando der meia-noite.","info");return}
+ const now=Date.now();usuarioAtual.coins+=100;usuarioAtual.diamonds+=5;usuarioAtual.dailyRewardLastClaim=now;usuarioAtual.dailyRewardDay=hoje;usuarioAtual.dailyRewardCount=Number(usuarioAtual.dailyRewardCount||0)+1;
+ await salvarProgresso();atualizarDailyUI();notificar("🎁 Recompensa diária resgatada: +100 moedas e +5 diamantes! Próxima recompensa à meia-noite.","success");
 };
 function atualizarDailyUI(){
  const b=document.getElementById("daily-btn"),c=document.getElementById("daily-countdown");if(!b||!c)return;
- const rawLast=usuarioAtual.dailyRewardLastClaim;const last=Number(rawLast?.toMillis?rawLast.toMillis():rawLast||0),r=86400000-(Date.now()-last);
- if(last>0&&r>0){b.disabled=true;b.style.opacity=".5";b.style.cursor="not-allowed";let h=Math.floor(r/3600000),m=Math.floor(r%3600000/60000),s=Math.floor(r%60000/1000);c.innerText=`Próxima recompensa em ${h}h ${m}m ${s}s`}else{b.disabled=false;b.style.opacity="1";b.style.cursor="pointer";c.innerText="Recompensa disponível agora!"}
+ const hoje=chaveDiaAtual();let ultimoDia=String(usuarioAtual.dailyRewardDay||"");if(!ultimoDia){const rawLast=usuarioAtual.dailyRewardLastClaim,last=Number(rawLast?.toMillis?rawLast.toMillis():rawLast||0);if(last>0){const d=new Date(last);ultimoDia=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}}
+ if(ultimoDia===hoje){const r=proximaMeiaNoite().getTime()-Date.now();b.disabled=true;b.style.opacity=".5";b.style.cursor="not-allowed";let h=Math.floor(r/3600000),m=Math.floor(r%3600000/60000),s=Math.floor(r%60000/1000);c.innerText=`Próximo resgate à meia-noite • ${h}h ${m}m ${s}s`}else{b.disabled=false;b.style.opacity="1";b.style.cursor="pointer";c.innerText="🎁 Recompensa disponível agora!"}
 }
 setInterval(atualizarDailyUI,1000);
 
