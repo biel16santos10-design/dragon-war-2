@@ -30,7 +30,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 
 .btn-primary { background: linear-gradient(135deg, #ff6b00, #ff4500); color: #fff; }
 .btn-success { background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; }
-.btn-danger { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; }
 
 .game-layout { display: flex; min-height: 100vh; }
 .sidebar { width: 200px; background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); border-right: 2px solid #334155; padding: 20px 0; position: fixed; height: 100vh; overflow-y: auto; }
@@ -54,7 +53,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .resource-value { font-weight: bold; color: #ffd700; }
 .badge-adm { background: #7c3aed; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 0.7em; margin-left: 5px; }
 .badge-vip { background: #ffd700; color: #000; padding: 2px 8px; border-radius: 10px; font-size: 0.7em; margin-left: 5px; }
-.badge-muted { background: #64748b; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 0.7em; margin-left: 5px; }
 .text-admin { color: #c4b5fd; text-shadow: 0 0 10px rgba(196, 181, 253, 0.6); }
 
 .screen { display: none; animation: fadeIn 0.4s ease-out; }
@@ -64,10 +62,10 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .screen-title { font-size: 2em; margin-bottom: 20px; color: #fbbf24; display: flex; align-items: center; gap: 10px; }
 
 /* BOSSES */
-.bosses-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px; }
+.bosses-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
 .boss-card { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 16px; padding: 20px; border: 2px solid #334155; position: relative; transition: all 0.3s; }
 .boss-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-.boss-rank { position: absolute; top: 15px; right: 15px; font-size: 2em; font-weight: 900; color: #fbbf24; text-shadow: 0 0 10px rgba(251, 191, 36, 0.6); }
+.boss-rank { position: absolute; top: 15px; right: 15px; font-size: 2em; font-weight: 900; color: #fbbf24; }
 .boss-image { font-size: 100px; text-align: center; margin: 20px 0; animation: float 3s ease-in-out infinite; }
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 .boss-name { font-size: 1.8em; font-weight: 900; text-align: center; margin-bottom: 5px; }
@@ -81,12 +79,11 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .rewards-grid { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
 .reward-item { display: flex; flex-direction: column; align-items: center; font-size: 0.8em; }
 .reward-icon { font-size: 1.5em; }
-.btn-battle { width: 100%; padding: 18px; background: linear-gradient(135deg, #ff8c00, #ff4500); color: #fff; border: none; border-radius: 12px; font-size: 1.2em; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+.btn-battle { width: 100%; padding: 18px; background: linear-gradient(135deg, #ff8c00, #ff4500); color: #fff; border: none; border-radius: 12px; font-size: 1.2em; font-weight: 900; cursor: pointer; }
 
-/* SHOP WITH CATEGORIES */
+/* SHOP */
 .shop-categories { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
 .category-btn { padding: 12px 20px; background: #1e293b; border: 2px solid #334155; border-radius: 8px; color: #fff; cursor: pointer; font-weight: bold; transition: all 0.3s; }
-.category-btn:hover { border-color: #3b82f6; }
 .category-btn.active { background: #3b82f6; border-color: #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
 .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; }
 .shop-item { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 12px; padding: 15px; border: 2px solid #334155; transition: all 0.3s; }
@@ -100,71 +97,25 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .item-name { font-weight: bold; margin-bottom: 5px; font-size: 0.95em; }
 .item-price { color: #fbbf24; font-weight: bold; margin-bottom: 10px; font-size: 0.9em; }
 .btn-buy { width: 100%; padding: 10px; background: #22c55e; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+.btn-owned { background: #64748b; cursor: default; }
 
-/* SKILLS */
-.skills-container { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
-.skill-tree { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 16px; padding: 30px; border: 2px solid #334155; position: relative; min-height: 500px; }
-.skill-node { position: absolute; width: 70px; height: 70px; border-radius: 50%; background: #0f172a; border: 3px solid #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 2em; cursor: pointer; transition: all 0.3s; }
-.skill-node:hover { transform: scale(1.1); }
-.skill-node.unlocked { border-color: #22c55e; background: #14532d; }
-.skill-node.locked { border-color: #64748b; opacity: 0.5; }
-.skill-detail { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 16px; padding: 20px; border: 2px solid #334155; }
-.skill-detail h3 { color: #fbbf24; margin-bottom: 15px; }
-.skill-stat { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #334155; }
-.skill-stat-label { color: #94a3b8; }
-.skill-stat-value { font-weight: bold; }
-.btn-upgrade { width: 100%; padding: 15px; background: linear-gradient(135deg, #a855f7, #7c3aed); color: #fff; border: none; border-radius: 12px; font-size: 1.1em; font-weight: bold; cursor: pointer; margin-top: 15px; }
-
-/* RESUMO */
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
-.stat-card { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 12px; padding: 20px; border: 1px solid #334155; text-align: center; transition: all 0.3s; }
-.stat-card:hover { transform: translateY(-3px); border-color: #3b82f6; }
-.stat-card .stat-icon { font-size: 2.5em; margin-bottom: 10px; }
-.stat-card .stat-value { font-size: 2em; font-weight: bold; color: #fbbf24; }
-.stat-card .stat-label { color: #94a3b8; font-size: 0.9em; margin-top: 5px; }
-
-/* CAMPANHA */
-.campaign-chapters { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
-.chapter-card { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 12px; padding: 20px; border: 2px solid #334155; cursor: pointer; transition: all 0.3s; position: relative; }
-.chapter-card:hover { transform: translateY(-3px); border-color: #3b82f6; }
-.chapter-card.locked { opacity: 0.5; cursor: not-allowed; }
-.chapter-card.completed { border-color: #22c55e; }
-.chapter-number { position: absolute; top: 10px; right: 10px; font-size: 1.5em; font-weight: bold; color: #fbbf24; }
-.chapter-title { font-size: 1.2em; font-weight: bold; margin-bottom: 5px; }
-.chapter-desc { color: #94a3b8; font-size: 0.9em; margin-bottom: 10px; }
-.chapter-rewards { display: flex; gap: 10px; font-size: 0.85em; }
-
-/* DUNGEONS */
-.dungeon-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-.dungeon-card { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 16px; padding: 20px; border: 2px solid #334155; transition: all 0.3s; }
-.dungeon-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-.dungeon-image { font-size: 80px; text-align: center; margin: 15px 0; }
-.dungeon-name { font-size: 1.5em; font-weight: bold; text-align: center; margin-bottom: 5px; }
-.dungeon-level { text-align: center; color: #94a3b8; margin-bottom: 15px; }
-.dungeon-info { display: flex; justify-content: space-around; margin-bottom: 15px; }
-.btn-dungeon { width: 100%; padding: 15px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #fff; border: none; border-radius: 12px; font-size: 1.1em; font-weight: bold; cursor: pointer; }
-
-/* ARENA */
-.arena-players { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-.arena-player-card { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 16px; padding: 20px; border: 2px solid #334155; display: flex; align-items: center; gap: 15px; transition: all 0.3s; }
-.arena-player-card:hover { border-color: #ef4444; }
-.arena-avatar { font-size: 3em; }
-.arena-info { flex: 1; }
-.arena-name { font-size: 1.3em; font-weight: bold; }
-.arena-rank { color: #fbbf24; font-size: 0.9em; }
-.arena-power { color: #94a3b8; font-size: 0.85em; }
-.btn-arena { padding: 12px 20px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; width: auto; }
-
-/* EVENTOS */
-.events-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-.event-card { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 16px; padding: 20px; border: 2px solid #f59e0b; position: relative; }
-.event-badge { position: absolute; top: 15px; right: 15px; background: #f59e0b; color: #000; padding: 5px 10px; border-radius: 8px; font-size: 0.8em; font-weight: bold; }
-.event-title { font-size: 1.5em; font-weight: bold; margin-bottom: 10px; color: #fbbf24; }
-.event-desc { color: #94a3b8; margin-bottom: 15px; }
-.event-timer { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 15px; }
-.event-timer-label { font-size: 0.8em; color: #94a3b8; }
-.event-timer-value { font-size: 1.5em; font-weight: bold; color: #fbbf24; }
-.btn-event { width: 100%; padding: 15px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
+/* CHARACTERS */
+.characters-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+.character-card { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 16px; padding: 20px; border: 2px solid #334155; transition: all 0.3s; position: relative; }
+.character-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.character-card.owned { border-color: #22c55e; }
+.character-card.equipped { border-color: #ffd700; box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+.character-emoji { font-size: 80px; text-align: center; margin-bottom: 10px; }
+.character-name { font-size: 1.3em; font-weight: bold; text-align: center; margin-bottom: 5px; }
+.character-class { text-align: center; color: #94a3b8; font-size: 0.9em; margin-bottom: 10px; }
+.character-stats { display: flex; justify-content: space-around; margin-bottom: 15px; font-size: 0.85em; }
+.character-stat { text-align: center; }
+.character-stat-label { color: #94a3b8; font-size: 0.8em; }
+.character-stat-value { font-weight: bold; color: #fbbf24; }
+.btn-character { width: 100%; padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; }
+.btn-buy-char { background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; }
+.btn-equip { background: linear-gradient(135deg, #3b82f6, #1e40af); color: #fff; }
+.btn-equipped { background: #ffd700; color: #000; }
 
 /* MODAL */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(5px); }
@@ -176,30 +127,32 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .modal-section p { color: #94a3b8; font-size: 0.9em; margin-bottom: 10px; }
 .modal-close { width: auto; padding: 10px 20px; background: #64748b; color: #fff; border-radius: 8px; margin-top: 10px; }
 
+/* DAILY REWARD MODAL */
+.daily-rewards-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin: 20px 0; }
+.daily-day { background: rgba(0,0,0,0.3); border: 2px solid #334155; border-radius: 10px; padding: 10px 5px; text-align: center; transition: all 0.3s; }
+.daily-day.claimed { background: rgba(34, 197, 94, 0.2); border-color: #22c55e; }
+.daily-day.today { background: rgba(251, 191, 36, 0.2); border-color: #fbbf24; animation: pulse 2s infinite; }
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 10px rgba(251, 191, 36, 0.3); } 50% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.6); } }
+.daily-day-num { font-size: 0.7em; color: #94a3b8; margin-bottom: 5px; }
+.daily-day-reward { font-size: 1.5em; }
+.daily-day-label { font-size: 0.65em; color: #94a3b8; margin-top: 3px; }
+
 /* AVATAR */
 .avatar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 15px; margin-top: 15px; }
 .avatar-option { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 2.5em; cursor: pointer; border: 3px solid transparent; transition: all 0.3s; margin: 0 auto; }
-.avatar-option:hover { transform: scale(1.15); border-color: #ffd700; box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
-.avatar-option.selected { border-color: #22c55e; box-shadow: 0 0 20px rgba(34, 197, 94, 0.6); }
+.avatar-option:hover { transform: scale(1.15); border-color: #ffd700; }
+.avatar-option.selected { border-color: #22c55e; }
 .btn-change-avatar { width: 100%; padding: 15px; background: linear-gradient(135deg, #3b82f6, #1e40af); color: #fff; border: none; border-radius: 12px; font-size: 1.1em; font-weight: bold; cursor: pointer; margin-top: 15px; }
 
-/* ADM ACTIONS */
-.adm-actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-.adm-action-btn { padding: 15px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; transition: all 0.3s; display: flex; flex-direction: column; align-items: center; gap: 5px; }
-.adm-action-btn:hover { transform: translateY(-2px); }
-.adm-action-btn .action-icon { font-size: 1.5em; }
-.adm-action-btn .action-label { font-size: 0.85em; }
-.action-mute { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; }
-.action-silence { background: linear-gradient(135deg, #64748b, #475569); color: #fff; }
-.action-chat { background: linear-gradient(135deg, #3b82f6, #1e40af); color: #fff; }
-.action-tempban { background: linear-gradient(135deg, #f97316, #ea580c); color: #fff; }
-.action-permban { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; }
-.action-unban { background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; }
-.action-give { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
-.action-promote { background: linear-gradient(135deg, #a855f7, #7c3aed); color: #fff; }
-.ban-duration { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-.ban-duration button { flex: 1; min-width: 100px; padding: 10px; background: #1e293b; border: 2px solid #334155; color: #fff; border-radius: 8px; cursor: pointer; }
-.ban-duration button:hover { border-color: #ef4444; background: rgba(239, 68, 68, 0.2); }
+/* MUSIC TOGGLE */
+.music-toggle { display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; margin-top: 10px; }
+.music-toggle label { cursor: pointer; flex: 1; }
+.toggle-switch { position: relative; width: 50px; height: 26px; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #64748b; border-radius: 26px; transition: 0.3s; }
+.toggle-slider:before { content: ""; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; }
+input:checked + .toggle-slider { background: #22c55e; }
+input:checked + .toggle-slider:before { transform: translateX(24px); }
 
 /* CHAT */
 .chat-toggle { position: fixed; bottom: 20px; left: 20px; width: 55px; height: 55px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #1e40af); border: 2px solid #60a5fa; color: #fff; font-size: 1.5em; cursor: pointer; z-index: 100; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(59, 130, 246, 0.6); }
@@ -214,7 +167,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; }
 .message { background: rgba(30, 41, 59, 0.4); padding: 10px 12px; border-radius: 10px; border-left: 3px solid #3b82f6; }
 .message.own { border-left-color: #22c55e; background: rgba(34, 197, 94, 0.1); }
-.message.muted-user { opacity: 0.5; border-left-color: #64748b; }
 .message-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
 .message-author { font-weight: bold; font-size: 0.85em; }
 .message-uid { font-size: 0.65em; color: #64748b; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; }
@@ -224,35 +176,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .chat-input { flex: 1; padding: 10px 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #fff; font-size: 0.85em; margin: 0; }
 .chat-send { width: auto; padding: 10px 16px; background: linear-gradient(135deg, #3b82f6, #1e40af); border-radius: 8px; margin: 0; font-size: 0.85em; }
 
-/* BATTLE ANIMATION */
-.battle-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 2000; flex-direction: column; }
-.battle-overlay.active { display: flex; animation: fadeIn 0.3s; }
-.battle-scene { text-align: center; }
-.battle-player { font-size: 100px; animation: playerAttack 1s ease-in-out; display: inline-block; }
-.battle-enemy { font-size: 120px; animation: enemyHit 1s ease-in-out; display: inline-block; margin-left: 50px; }
-@keyframes playerAttack { 0% { transform: translateX(0); } 50% { transform: translateX(100px) rotate(15deg); } 100% { transform: translateX(0); } }
-@keyframes enemyHit { 0% { transform: translateX(0); opacity: 1; } 50% { transform: translateX(-30px); opacity: 0.5; } 100% { transform: translateX(0); opacity: 1; } }
-@keyframes dodge { 0% { transform: translateX(0); } 30% { transform: translateX(-80px) skewX(-15deg); } 60% { transform: translateX(40px) skewX(10deg); } 100% { transform: translateX(0); } }
-.dodging { animation: dodge 0.6s ease-out !important; }
-.battle-result { font-size: 2em; font-weight: bold; margin-top: 30px; }
-.battle-result.win { color: #22c55e; text-shadow: 0 0 20px rgba(34, 197, 94, 0.6); }
-.battle-result.lose { color: #ef4444; text-shadow: 0 0 20px rgba(239, 68, 68, 0.6); }
-.battle-actions { display: flex; gap: 20px; margin-top: 30px; }
-.battle-btn { padding: 15px 30px; font-size: 1.2em; border-radius: 12px; border: none; cursor: pointer; font-weight: bold; width: auto; }
-.btn-attack { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; }
-.btn-dodge { background: linear-gradient(135deg, #3b82f6, #1e40af); color: #fff; }
-.btn-flee { background: linear-gradient(135deg, #64748b, #475569); color: #fff; }
-
-/* MUSIC TOGGLE */
-.music-toggle { display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; margin-top: 10px; }
-.music-toggle label { cursor: pointer; flex: 1; }
-.toggle-switch { position: relative; width: 50px; height: 26px; }
-.toggle-switch input { opacity: 0; width: 0; height: 0; }
-.toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #64748b; border-radius: 26px; transition: 0.3s; }
-.toggle-slider:before { content: ""; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; }
-input:checked + .toggle-slider { background: #22c55e; }
-input:checked + .toggle-slider:before { transform: translateX(24px); }
-
 #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.9); border: 2px solid #ff6b00; color: #fff; padding: 15px 30px; border-radius: 12px; display: none; z-index: 9999; font-weight: bold; box-shadow: 0 0 30px rgba(255, 107, 0, 0.6); animation: slideUp 0.3s; }
 @keyframes slideUp { from { transform: translateX(-50%) translateY(20px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
 .hidden { display: none !important; }
@@ -261,14 +184,11 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
     .sidebar { width: 60px; }
     .sidebar-item .label { display: none; }
     .main-content { margin-left: 60px; }
-    .bosses-grid, .campaign-chapters, .dungeon-grid, .arena-players, .events-list { grid-template-columns: 1fr; }
-    .skills-container { grid-template-columns: 1fr; }
+    .bosses-grid, .characters-grid { grid-template-columns: 1fr; }
     .chat-panel { width: calc(100% - 40px); }
     .resources { gap: 8px; }
     .resource { padding: 6px 10px; }
-    .avatar-grid { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); }
-    .avatar-option { width: 60px; height: 60px; font-size: 2em; }
-    .adm-actions-grid { grid-template-columns: 1fr; }
+    .daily-rewards-grid { grid-template-columns: repeat(4, 1fr); }
 }
 </style>
 </head>
@@ -304,13 +224,10 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
     <div class="game-layout">
         <div class="sidebar">
             <div class="sidebar-item active" onclick="showScreen('combat', this)"><span class="icon">⚔️</span><span class="label">JOGAR</span></div>
-            <div class="sidebar-item" onclick="showScreen('resumo', this)"><span class="icon">📊</span><span class="label">RESUMO</span></div>
-            <div class="sidebar-item" onclick="showScreen('campanha', this)"><span class="icon">🏰</span><span class="label">CAMPANHA</span></div>
-            <div class="sidebar-item" onclick="showScreen('dungeons', this)"><span class="icon">👁️</span><span class="label">DUNGEONS</span></div>
-            <div class="sidebar-item" onclick="showScreen('arena', this)"><span class="icon">🏟️</span><span class="label">ARENA</span></div>
-            <div class="sidebar-item" onclick="showScreen('eventos', this)"><span class="icon">📅</span><span class="label">EVENTOS</span></div>
-            <div class="sidebar-item" onclick="showScreen('shop', this)"><span class="icon"></span><span class="label">INVENTÁRIO</span></div>
+            <div class="sidebar-item" onclick="showScreen('characters', this)"><span class="icon">👥</span><span class="label">PERSONAGENS</span></div>
+            <div class="sidebar-item" onclick="showScreen('shop', this)"><span class="icon">🛒</span><span class="label">LOJA</span></div>
             <div class="sidebar-item" onclick="showScreen('skills', this)"><span class="icon">✨</span><span class="label">PODERES</span></div>
+            <div class="sidebar-item" onclick="showScreen('resumo', this)"><span class="icon">📊</span><span class="label">RESUMO</span></div>
         </div>
 
         <div class="main-content">
@@ -323,122 +240,89 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
                     </div>
                 </div>
                 <div class="resources">
-                    <div class="resource"><span class="resource-icon">⚡</span><span class="resource-value" id="resEnergy">120/120</span></div>
                     <div class="resource"><span class="resource-icon">💰</span><span class="resource-value" id="resCoins">0</span></div>
                     <div class="resource"><span class="resource-icon">💎</span><span class="resource-value" id="resGems">0</span></div>
                     <div class="resource"><span class="resource-icon">🔮</span><span class="resource-value" id="resCrystals">0</span></div>
                     <div class="resource"><span class="resource-icon">⭐</span><span class="resource-value" id="resPoints">0</span></div>
                     <button onclick="openSettings()" style="width:auto;padding:8px 15px;background:#3b82f6;color:#fff;border-radius:8px;margin:0;">⚙️ Config</button>
-                    <button id="btnOpenAdmin" class="hidden" style="width:auto;padding:8px 15px;background:#7c3aed;color:#fff;border-radius:8px;margin:0;" onclick="window.location.href='admin.html'">️ ADM</button>
+                    <button id="btnDaily" onclick="openDailyReward()" style="width:auto;padding:8px 15px;background:#fbbf24;color:#000;border-radius:8px;margin:0;">🎁 Diário</button>
                     <button id="logoutBtn" style="width:auto;padding:8px 15px;background:#ef4444;color:#fff;border-radius:8px;margin:0;">Sair</button>
                 </div>
             </div>
 
+            <!-- COMBAT -->
             <div id="combatScreen" class="screen active">
                 <h2 class="screen-title">⚔️ SELEÇÃO DE BOSS</h2>
                 <div class="bosses-grid">
-                    <div class="boss-card"><div class="boss-rank">SSS</div><div class="boss-image">🐉</div><div class="boss-name">KHALDRON</div><div class="boss-title">The Nightmare Dragon</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">80</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">2.5M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>500</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>5.000</span></div><div class="reward-item"><span class="reward-icon">🔮</span><span>100</span></div></div></div><button class="btn-battle" onclick="startBattle('Khaldrón', '🐉', 5000, 500, 100)">⚔️ ENTRAR NA BATALHA</button></div>
-                    <div class="boss-card"><div class="boss-rank">SS</div><div class="boss-image">👹</div><div class="boss-name">IGNEOUS</div><div class="boss-title">The Fire Demon</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">70</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">1.8M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>300</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>3.000</span></div><div class="reward-item"><span class="reward-icon">🔮</span><span>60</span></div></div></div><button class="btn-battle" onclick="startBattle('Igneous', '👹', 3000, 300, 60)">⚔️ ENTRAR NA BATALHA</button></div>
-                    <div class="boss-card"><div class="boss-rank">S</div><div class="boss-image">⚔️</div><div class="boss-name">MALAKAI</div><div class="boss-title">The Shadow Warrior</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">60</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">1.2M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>200</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>2.000</span></div><div class="reward-item"><span class="reward-icon">🔮</span><span>40</span></div></div></div><button class="btn-battle" onclick="startBattle('Malakai', '⚔️', 2000, 200, 40)">⚔️ ENTRAR NA BATALHA</button></div>
-                    <div class="boss-card"><div class="boss-rank">SSS</div><div class="boss-image"></div><div class="boss-name">DRAGON KING</div><div class="boss-title">The Ancient Ruler</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">100</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">5M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>1.000</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>10.000</span></div><div class="reward-item"><span class="reward-icon">🔮</span><span>200</span></div></div></div><button class="btn-battle" onclick="startBattle('Dragon King', '👑', 10000, 1000, 200)">⚔️ ENTRAR NA BATALHA</button></div>
-                    <div class="boss-card"><div class="boss-rank">SS</div><div class="boss-image"></div><div class="boss-name">ARCHMAGE</div><div class="boss-title">The Dark Sorcerer</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">75</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">2M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>400</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>4.000</span></div><div class="reward-item"><span class="reward-icon">🔮</span><span>80</span></div></div></div><button class="btn-battle" onclick="startBattle('Archmage', '🧙', 4000, 400, 80)">️ ENTRAR NA BATALHA</button></div>
-                    <div class="boss-card"><div class="boss-rank">S</div><div class="boss-image">🧛</div><div class="boss-name">VAMPIRE LORD</div><div class="boss-title">The Blood King</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">65</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">1.5M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>250</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>2.500</span></div><div class="reward-item"><span class="reward-icon">🔮</span><span>50</span></div></div></div><button class="btn-battle" onclick="startBattle('Vampire Lord', '🧛', 2500, 250, 50)">⚔️ ENTRAR NA BATALHA</button></div>
+                    <div class="boss-card"><div class="boss-rank">SSS</div><div class="boss-image"></div><div class="boss-name">KHALDRON</div><div class="boss-title">The Nightmare Dragon</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">80</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">2.5M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon"></span><span>500</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>5.000</span></div><div class="reward-item"><span class="reward-icon">🔮</span><span>100</span></div></div></div><button class="btn-battle" onclick="startBattle('Khaldrón', '', 5000, 500, 100)">⚔️ BATALHAR</button></div>
+                    <div class="boss-card"><div class="boss-rank">SS</div><div class="boss-image">👹</div><div class="boss-name">IGNEOUS</div><div class="boss-title">The Fire Demon</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">70</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">1.8M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>300</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>3.000</span></div><div class="reward-item"><span class="reward-icon">🔮</span><span>60</span></div></div></div><button class="btn-battle" onclick="startBattle('Igneous', '👹', 3000, 300, 60)">⚔️ BATALHAR</button></div>
+                    <div class="boss-card"><div class="boss-rank">S</div><div class="boss-image">⚔️</div><div class="boss-name">MALAKAI</div><div class="boss-title">The Shadow Warrior</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">60</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">1.2M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>200</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>2.000</span></div><div class="reward-item"><span class="reward-icon"></span><span>40</span></div></div></div><button class="btn-battle" onclick="startBattle('Malakai', '️', 2000, 200, 40)">⚔️ BATALHAR</button></div>
+                    <div class="boss-card"><div class="boss-rank">SSS</div><div class="boss-image"></div><div class="boss-name">DRAGON KING</div><div class="boss-title">The Ancient Ruler</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">100</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">5M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>1.000</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>10.000</span></div><div class="reward-item"><span class="reward-icon">🔮</span><span>200</span></div></div></div><button class="btn-battle" onclick="startBattle('Dragon King', '👑', 10000, 1000, 200)">⚔️ BATALHAR</button></div>
+                    <div class="boss-card"><div class="boss-rank">SS</div><div class="boss-image">🧙</div><div class="boss-name">ARCHMAGE</div><div class="boss-title">The Dark Sorcerer</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">75</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">2M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>400</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>4.000</span></div><div class="reward-item"><span class="reward-icon">🔮</span><span>80</span></div></div></div><button class="btn-battle" onclick="startBattle('Archmage', '🧙', 4000, 400, 80)">️ BATALHAR</button></div>
+                    <div class="boss-card"><div class="boss-rank">S</div><div class="boss-image">🧛</div><div class="boss-name">VAMPIRE LORD</div><div class="boss-title">The Blood King</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">65</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">1.5M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>250</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>2.500</span></div><div class="reward-item"><span class="reward-icon"></span><span>50</span></div></div></div><button class="btn-battle" onclick="startBattle('Vampire Lord', '', 2500, 250, 50)">⚔️ BATALHAR</button></div>
                 </div>
             </div>
 
-            <div id="resumoScreen" class="screen">
-                <h2 class="screen-title">📊 RESUMO DO JOGADOR</h2>
-                <div class="stats-grid">
-                    <div class="stat-card"><div class="stat-icon">️</div><div class="stat-value" id="statWins">0</div><div class="stat-label">Vitórias</div></div>
-                    <div class="stat-card"><div class="stat-icon">💀</div><div class="stat-value" id="statLosses">0</div><div class="stat-label">Derrotas</div></div>
-                    <div class="stat-card"><div class="stat-icon">🏆</div><div class="stat-value" id="statBattles">0</div><div class="stat-label">Batalhas Totais</div></div>
-                    <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-value" id="statLevel">1</div><div class="stat-label">Nível</div></div>
-                    <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-value" id="statCoins">0</div><div class="stat-label">Moedas</div></div>
-                    <div class="stat-card"><div class="stat-icon">💎</div><div class="stat-value" id="statGems">0</div><div class="stat-label">Gemas</div></div>
-                    <div class="stat-card"><div class="stat-icon">🔮</div><div class="stat-value" id="statCrystals">0</div><div class="stat-label">Cristais</div></div>
-                    <div class="stat-card"><div class="stat-icon"></div><div class="stat-value" id="statWinRate">0%</div><div class="stat-label">Taxa de Vitória</div></div>
-                </div>
-                <div class="modal-section">
-                    <h3>📈 Progresso</h3>
-                    <p>XP Atual: <span id="statXP">0</span> / <span id="statNextLevel">100</span></p>
-                    <div style="background:#0f172a;border-radius:10px;height:20px;margin-top:10px;overflow:hidden;">
-                        <div id="xpBar" style="background:linear-gradient(90deg,#3b82f6,#8b5cf6);height:100%;width:0%;transition:width 0.5s;"></div>
-                    </div>
-                </div>
+            <!-- CHARACTERS -->
+            <div id="charactersScreen" class="screen">
+                <h2 class="screen-title"> PERSONAGENS</h2>
+                <p style="color:#94a3b8;margin-bottom:20px;">Compre e equipe personagens únicos com habilidades especiais!</p>
+                <div class="characters-grid" id="charactersGrid"></div>
             </div>
 
-            <div id="campanhaScreen" class="screen">
-                <h2 class="screen-title">🏰 CAMPANHA</h2>
-                <div class="campaign-chapters" id="campaignChapters"></div>
-            </div>
-
-            <div id="dungeonsScreen" class="screen">
-                <h2 class="screen-title">👁️ DUNGEONS</h2>
-                <div class="dungeon-grid">
-                    <div class="dungeon-card"><div class="dungeon-image">🕯️</div><div class="dungeon-name">Caverna das Sombras</div><div class="dungeon-level">Nível Recomendado: 10+</div><div class="dungeon-info"><div class="boss-stat"><div class="boss-stat-label">Dificuldade</div><div class="boss-stat-value">⭐⭐</div></div><div class="boss-stat"><div class="boss-stat-label">Recompensa</div><div class="boss-stat-value">💰 800</div></div></div><button class="btn-dungeon" onclick="enterDungeon('Caverna das Sombras', 800, 10)">ENTRAR</button></div>
-                    <div class="dungeon-card"><div class="dungeon-image">🏚️</div><div class="dungeon-name">Mansão Amaldiçoada</div><div class="dungeon-level">Nível Recomendado: 25+</div><div class="dungeon-info"><div class="boss-stat"><div class="boss-stat-label">Dificuldade</div><div class="boss-stat-value">⭐⭐⭐</div></div><div class="boss-stat"><div class="boss-stat-label">Recompensa</div><div class="boss-stat-value">💰 2.000</div></div></div><button class="btn-dungeon" onclick="enterDungeon('Mansão Amaldiçoada', 2000, 25)">ENTRAR</button></div>
-                    <div class="dungeon-card"><div class="dungeon-image">🌋</div><div class="dungeon-name">Vulcão Infernal</div><div class="dungeon-level">Nível Recomendado: 50+</div><div class="dungeon-info"><div class="boss-stat"><div class="boss-stat-label">Dificuldade</div><div class="boss-stat-value">⭐⭐⭐⭐</div></div><div class="boss-stat"><div class="boss-stat-label">Recompensa</div><div class="boss-stat-value">💰 5.000</div></div></div><button class="btn-dungeon" onclick="enterDungeon('Vulcão Infernal', 5000, 50)">ENTRAR</button></div>
-                    <div class="dungeon-card"><div class="dungeon-image">🏯</div><div class="dungeon-name">Castelo do Dragão</div><div class="dungeon-level">Nível Recomendado: 75+</div><div class="dungeon-info"><div class="boss-stat"><div class="boss-stat-label">Dificuldade</div><div class="boss-stat-value">⭐⭐⭐⭐⭐</div></div><div class="boss-stat"><div class="boss-stat-label">Recompensa</div><div class="boss-stat-value">💰 10.000</div></div></div><button class="btn-dungeon" onclick="enterDungeon('Castelo do Dragão', 10000, 75)">ENTRAR</button></div>
-                </div>
-            </div>
-
-            <div id="arenaScreen" class="screen">
-                <h2 class="screen-title">🏟️ ARENA PVP</h2>
-                <p style="color:#94a3b8;margin-bottom:20px;">Desafie outros jogadores em batalhas PvP!</p>
-                <div class="arena-players" id="arenaPlayers"></div>
-            </div>
-
-            <div id="eventosScreen" class="screen">
-                <h2 class="screen-title"> EVENTOS</h2>
-                <div class="events-list" id="eventsList"></div>
-            </div>
-
+            <!-- SHOP -->
             <div id="shopScreen" class="screen">
                 <h2 class="screen-title">🛒 LOJA DE ITENS</h2>
                 <div class="shop-categories">
-                    <button class="category-btn active" onclick="filterShop('all', this)"> Todos</button>
+                    <button class="category-btn active" onclick="filterShop('all', this)">📦 Todos</button>
                     <button class="category-btn" onclick="filterShop('equipment', this)">⚔️ Equipamentos</button>
-                    <button class="category-btn" onclick="filterShop('consumable', this)">🧪 Consumíveis</button>
-                    <button class="category-btn" onclick="filterShop('material', this)"> Materiais</button>
+                    <button class="category-btn" onclick="filterShop('consumable', this)"> Consumíveis</button>
+                    <button class="category-btn" onclick="filterShop('material', this)">📜 Materiais</button>
                     <button class="category-btn" onclick="filterShop('gem', this)">💎 Gemas</button>
                 </div>
                 <div class="shop-grid" id="shopGrid">
                     <div class="shop-item rarity-common" data-category="equipment"><div class="item-image">🗡️</div><div class="item-name">Espada de Ferro</div><div class="item-price">💰 100</div><button class="btn-buy" onclick="buyItem('Espada de Ferro', 100, 'coins')">COMPRAR</button></div>
                     <div class="shop-item rarity-common" data-category="equipment"><div class="item-image">🛡️</div><div class="item-name">Escudo de Madeira</div><div class="item-price">💰 150</div><button class="btn-buy" onclick="buyItem('Escudo de Madeira', 150, 'coins')">COMPRAR</button></div>
                     <div class="shop-item rarity-rare" data-category="equipment"><div class="item-image">⚔️</div><div class="item-name">Espada de Aço</div><div class="item-price">💰 500</div><button class="btn-buy" onclick="buyItem('Espada de Aço', 500, 'coins')">COMPRAR</button></div>
-                    <div class="shop-item rarity-rare" data-category="equipment"><div class="item-image">🏹</div><div class="item-name">Arco Élfico</div><div class="item-price">💰 800</div><button class="btn-buy" onclick="buyItem('Arco Élfico', 800, 'coins')">COMPRAR</button></div>
+                    <div class="shop-item rarity-rare" data-category="equipment"><div class="item-image"></div><div class="item-name">Arco Élfico</div><div class="item-price">💰 800</div><button class="btn-buy" onclick="buyItem('Arco Élfico', 800, 'coins')">COMPRAR</button></div>
                     <div class="shop-item rarity-epic" data-category="equipment"><div class="item-image">🗡️</div><div class="item-name">Lâmina do Dragão</div><div class="item-price">💰 3.000</div><button class="btn-buy" onclick="buyItem('Lâmina do Dragão', 3000, 'coins')">COMPRAR</button></div>
-                    <div class="shop-item rarity-epic" data-category="equipment"><div class="item-image">🛡️</div><div class="item-name">Armadura Mágica</div><div class="item-price"> 4.000</div><button class="btn-buy" onclick="buyItem('Armadura Mágica', 4000, 'coins')">COMPRAR</button></div>
-                    <div class="shop-item rarity-legendary" data-category="equipment"><div class="item-image">⚔️</div><div class="item-name">Espada Lendária</div><div class="item-price">💎 500</div><button class="btn-buy" onclick="buyItem('Espada Lendária', 500, 'gems')">COMPRAR</button></div>
+                    <div class="shop-item rarity-epic" data-category="equipment"><div class="item-image">🛡️</div><div class="item-name">Armadura Mágica</div><div class="item-price">💰 4.000</div><button class="btn-buy" onclick="buyItem('Armadura Mágica', 4000, 'coins')">COMPRAR</button></div>
+                    <div class="shop-item rarity-legendary" data-category="equipment"><div class="item-image">️</div><div class="item-name">Espada Lendária</div><div class="item-price">💎 500</div><button class="btn-buy" onclick="buyItem('Espada Lendária', 500, 'gems')">COMPRAR</button></div>
                     <div class="shop-item rarity-legendary" data-category="equipment"><div class="item-image">👑</div><div class="item-name">Coroa do Rei</div><div class="item-price">💎 1.000</div><button class="btn-buy" onclick="buyItem('Coroa do Rei', 1000, 'gems')">COMPRAR</button></div>
                     <div class="shop-item rarity-common" data-category="consumable"><div class="item-image">🧪</div><div class="item-name">Poção de Vida</div><div class="item-price">💰 50</div><button class="btn-buy" onclick="buyItem('Poção de Vida', 50, 'coins')">COMPRAR</button></div>
                     <div class="shop-item rarity-rare" data-category="consumable"><div class="item-image">🧪</div><div class="item-name">Poção de Mana</div><div class="item-price">💰 200</div><button class="btn-buy" onclick="buyItem('Poção de Mana', 200, 'coins')">COMPRAR</button></div>
                     <div class="shop-item rarity-epic" data-category="consumable"><div class="item-image">⚗️</div><div class="item-name">Elixir de Poder</div><div class="item-price">💰 1.500</div><button class="btn-buy" onclick="buyItem('Elixir de Poder', 1500, 'coins')">COMPRAR</button></div>
-                    <div class="shop-item rarity-legendary" data-category="consumable"><div class="item-image"></div><div class="item-name">Poção Lendária</div><div class="item-price">💎 300</div><button class="btn-buy" onclick="buyItem('Poção Lendária', 300, 'gems')">COMPRAR</button></div>
+                    <div class="shop-item rarity-legendary" data-category="consumable"><div class="item-image">🌟</div><div class="item-name">Poção Lendária</div><div class="item-price">💎 300</div><button class="btn-buy" onclick="buyItem('Poção Lendária', 300, 'gems')">COMPRAR</button></div>
                     <div class="shop-item rarity-common" data-category="material"><div class="item-image">🪵</div><div class="item-name">Madeira</div><div class="item-price">💰 20</div><button class="btn-buy" onclick="buyItem('Madeira', 20, 'coins')">COMPRAR</button></div>
                     <div class="shop-item rarity-rare" data-category="material"><div class="item-image">🪨</div><div class="item-name">Pedra Rara</div><div class="item-price">💰 300</div><button class="btn-buy" onclick="buyItem('Pedra Rara', 300, 'coins')">COMPRAR</button></div>
                     <div class="shop-item rarity-epic" data-category="material"><div class="item-image">📜</div><div class="item-name">Pergaminho Raro</div><div class="item-price">🔮 50</div><button class="btn-buy" onclick="buyItem('Pergaminho Raro', 50, 'crystals')">COMPRAR</button></div>
-                    <div class="shop-item rarity-legendary" data-category="material"><div class="item-image">💎</div><div class="item-name">Cristal Místico</div><div class="item-price">🔮 200</div><button class="btn-buy" onclick="buyItem('Cristal Místico', 200, 'crystals')">COMPRAR</button></div>
-                    <div class="shop-item rarity-rare" data-category="gem"><div class="item-image"></div><div class="item-name">Pacote de Gemas</div><div class="item-price">💰 5.000</div><button class="btn-buy" onclick="buyItem('Pacote de Gemas', 5000, 'coins')">COMPRAR</button></div>
-                    <div class="shop-item rarity-epic" data-category="gem"><div class="item-image"></div><div class="item-name">Caixa de Gemas</div><div class="item-price">🔮 100</div><button class="btn-buy" onclick="buyItem('Caixa de Gemas', 100, 'crystals')">COMPRAR</button></div>
+                    <div class="shop-item rarity-legendary" data-category="material"><div class="item-image"></div><div class="item-name">Cristal Místico</div><div class="item-price">🔮 200</div><button class="btn-buy" onclick="buyItem('Cristal Místico', 200, 'crystals')">COMPRAR</button></div>
+                    <div class="shop-item rarity-rare" data-category="gem"><div class="item-image">💎</div><div class="item-name">Pacote de Gemas</div><div class="item-price">💰 5.000</div><button class="btn-buy" onclick="buyItem('Pacote de Gemas', 5000, 'coins')">COMPRAR</button></div>
+                    <div class="shop-item rarity-epic" data-category="gem"><div class="item-image">💠</div><div class="item-name">Caixa de Gemas</div><div class="item-price"> 100</div><button class="btn-buy" onclick="buyItem('Caixa de Gemas', 100, 'crystals')">COMPRAR</button></div>
                 </div>
             </div>
 
+            <!-- SKILLS -->
             <div id="skillsScreen" class="screen">
                 <h2 class="screen-title">✨ PODERES</h2>
-                <div class="skills-container">
-                    <div class="skill-tree">
-                        <div class="skill-node unlocked" style="top: 50px; left: 50%; transform: translateX(-50%);" onclick="selectSkill('fire')">🔥</div>
-                        <div class="skill-node unlocked" style="top: 150px; left: 30%;" onclick="selectSkill('lightning')">⚡</div>
-                        <div class="skill-node" style="top: 150px; left: 70%;" onclick="selectSkill('ice')">❄️</div>
-                        <div class="skill-node locked" style="top: 250px; left: 50%; transform: translateX(-50%);" onclick="selectSkill('void')"></div>
-                        <div class="skill-node unlocked" style="top: 350px; left: 20%;" onclick="selectSkill('slash')">⚔️</div>
-                        <div class="skill-node" style="top: 350px; left: 80%;" onclick="selectSkill('serpent')">🐍</div>
-                    </div>
-                    <div class="skill-detail">
-                        <h3 id="skillName">Selecione uma habilidade</h3>
-                        <div id="skillContent"><p style="color: #94a3b8;">Clique em um nó da árvore para ver os detalhes.</p></div>
-                    </div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;">
+                    <div class="boss-card"><div class="boss-image">🔥</div><div class="boss-name">Fôlego de Fogo</div><div class="boss-title">Dano: 680% + 120%</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">MP</div><div class="boss-stat-value">120</div></div><div class="boss-stat"><div class="boss-stat-label">Recarga</div><div class="boss-stat-value">18s</div></div></div></div>
+                    <div class="boss-card"><div class="boss-image">⚡</div><div class="boss-name">Raio Espiritual</div><div class="boss-title">Dano: 520% + 80%</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">MP</div><div class="boss-stat-value">90</div></div><div class="boss-stat"><div class="boss-stat-label">Recarga</div><div class="boss-stat-value">12s</div></div></div></div>
+                    <div class="boss-card"><div class="boss-image">❄️</div><div class="boss-name">Nova Glacial</div><div class="boss-title">Dano: 450% + 60%</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">MP</div><div class="boss-stat-value">75</div></div><div class="boss-stat"><div class="boss-stat-label">Recarga</div><div class="boss-stat-value">15s</div></div></div></div>
+                    <div class="boss-card"><div class="boss-image">🌌</div><div class="boss-name">Torrente do Vazio</div><div class="boss-title">Dano: 800% + 150%</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">MP</div><div class="boss-stat-value">150</div></div><div class="boss-stat"><div class="boss-stat-label">Recarga</div><div class="boss-stat-value">25s</div></div></div></div>
+                    <div class="boss-card"><div class="boss-image">⚔️</div><div class="boss-name">Mestre da Espada</div><div class="boss-title">Dano: 300% + 50%</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">MP</div><div class="boss-stat-value">50</div></div><div class="boss-stat"><div class="boss-stat-label">Recarga</div><div class="boss-stat-value">8s</div></div></div></div>
+                    <div class="boss-card"><div class="boss-image"></div><div class="boss-name">Golpe da Serpente</div><div class="boss-title">Dano: 400% + 70%</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">MP</div><div class="boss-stat-value">65</div></div><div class="boss-stat"><div class="boss-stat-label">Recarga</div><div class="boss-stat-value">10s</div></div></div></div>
+                </div>
+            </div>
+
+            <!-- RESUMO -->
+            <div id="resumoScreen" class="screen">
+                <h2 class="screen-title"> RESUMO</h2>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;">
+                    <div class="boss-card" style="text-align:center;"><div style="font-size:2.5em;">️</div><div style="font-size:2em;font-weight:bold;color:#fbbf24;" id="statWins">0</div><div style="color:#94a3b8;">Vitórias</div></div>
+                    <div class="boss-card" style="text-align:center;"><div style="font-size:2.5em;">💀</div><div style="font-size:2em;font-weight:bold;color:#fbbf24;" id="statLosses">0</div><div style="color:#94a3b8;">Derrotas</div></div>
+                    <div class="boss-card" style="text-align:center;"><div style="font-size:2.5em;">🏆</div><div style="font-size:2em;font-weight:bold;color:#fbbf24;" id="statBattles">0</div><div style="color:#94a3b8;">Batalhas</div></div>
+                    <div class="boss-card" style="text-align:center;"><div style="font-size:2.5em;">🎯</div><div style="font-size:2em;font-weight:bold;color:#fbbf24;" id="statWinRate">0%</div><div style="color:#94a3b8;">Taxa de Vitória</div></div>
                 </div>
             </div>
 
@@ -446,29 +330,23 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
     </div>
 </div>
 
-<!-- BATTLE OVERLAY -->
-<div class="battle-overlay" id="battleOverlay">
-    <div class="battle-scene">
-        <div style="display:flex;align-items:center;justify-content:center;gap:50px;">
-            <div class="battle-player" id="battlePlayer">🥷</div>
-            <div style="font-size:3em;">⚔️</div>
-            <div class="battle-enemy" id="battleEnemy">🐉</div>
-        </div>
-        <div class="battle-result" id="battleResult"></div>
-        <div class="battle-actions" id="battleActions">
-            <button class="battle-btn btn-attack" onclick="battleAttack()">⚔️ ATACAR</button>
-            <button class="battle-btn btn-dodge" onclick="battleDodge()"> ESQUIVAR</button>
-            <button class="battle-btn btn-flee" onclick="battleFlee()">🏃 FUGIR</button>
-        </div>
+<!-- DAILY REWARD MODAL -->
+<div class="modal-overlay" id="dailyModal">
+    <div class="modal">
+        <h2>🎁 BÔNUS DIÁRIO</h2>
+        <p style="color:#94a3b8;margin-bottom:15px;">Resgate sua recompensa diária! Volte todos os dias para ganhar prêmios melhores.</p>
+        <div class="daily-rewards-grid" id="dailyGrid"></div>
+        <button class="btn-primary" id="btnClaimDaily" onclick="claimDailyReward()" style="font-size:1.2em;padding:18px;">🎁 RESGATAR RECOMPENSA</button>
+        <button class="modal-close" onclick="closeDailyReward()">FECHAR</button>
     </div>
 </div>
 
 <!-- SETTINGS MODAL -->
 <div class="modal-overlay" id="settingsModal">
     <div class="modal">
-        <h2>️ Configurações</h2>
+        <h2>⚙️ Configurações</h2>
         <div class="modal-section">
-            <h3>🎵 Música de Fundo</h3>
+            <h3> Música</h3>
             <div class="music-toggle">
                 <label for="musicToggle">Ativar/Desativar Música</label>
                 <div class="toggle-switch">
@@ -476,7 +354,6 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
                     <span class="toggle-slider"></span>
                 </div>
             </div>
-            <p style="margin-top:10px;font-size:0.85em;">🎶 Música épica de fundo enquanto você joga</p>
         </div>
         <div class="modal-section">
             <h3>✏️ Editar Nome</h3>
@@ -485,23 +362,16 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
             <button class="btn-primary" onclick="changeNick()">ALTERAR NOME</button>
         </div>
         <div class="modal-section">
-            <h3> Alterar Avatar</h3>
-            <p>Escolha um avatar para o seu perfil. Custo: 💰 500 moedas</p>
-            <button class="btn-change-avatar" onclick="openAvatarModal()">📷 ESCOLHER AVATAR</button>
+            <h3>📷 Alterar Avatar</h3>
+            <p>Custo:  500 moedas</p>
+            <button class="btn-change-avatar" onclick="openAvatarModal()">ESCOLHER AVATAR</button>
         </div>
         <div class="modal-section">
-            <h3> Informações da Conta</h3>
+            <h3>📊 Conta</h3>
             <p><strong>UID:</strong> <span id="settingsUid">---</span></p>
             <p><strong>E-mail:</strong> <span id="settingsEmail">---</span></p>
             <p><strong>Nível:</strong> <span id="settingsLevel">1</span></p>
             <p><strong>Função:</strong> <span id="settingsRole">Jogador</span></p>
-        </div>
-        <div class="modal-section">
-            <h3>💰 Recursos Atuais</h3>
-            <p>💰 Moedas: <span id="settingsCoins">0</span></p>
-            <p>💎 Gemas: <span id="settingsGems">0</span></p>
-            <p>🔮 Cristais: <span id="settingsCrystals">0</span></p>
-            <p>⭐ Pontos: <span id="settingsPoints">0</span></p>
         </div>
         <button class="modal-close" onclick="closeSettings()">FECHAR</button>
     </div>
@@ -511,45 +381,15 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
 <div class="modal-overlay" id="avatarModal">
     <div class="modal">
         <h2>📷 Escolher Avatar</h2>
-        <p style="color: #94a3b8; margin-bottom: 15px;">Selecione um avatar. Custo: 💰 500 moedas</p>
+        <p style="color: #94a3b8; margin-bottom: 15px;">Custo: 💰 500 moedas</p>
         <div class="avatar-grid" id="avatarGrid"></div>
         <button class="modal-close" onclick="closeAvatarModal()" style="margin-top: 20px;">CANCELAR</button>
     </div>
 </div>
 
-<!-- ADM ACTIONS MODAL -->
-<div class="modal-overlay" id="admActionsModal">
-    <div class="modal">
-        <h2>🛡️ Ações Administrativas</h2>
-        <div class="modal-section">
-            <h3 id="admTargetName">Jogador</h3>
-            <p>UID: <span id="admTargetUid">---</span></p>
-            <p>Status: <span id="admTargetStatus">---</span></p>
-        </div>
-        <div class="adm-actions-grid">
-            <button class="adm-action-btn action-mute" onclick="admMute(60)"><span class="action-icon">🔇</span><span class="action-label">Mutar 1h</span></button>
-            <button class="adm-action-btn action-silence" onclick="admMute(1440)"><span class="action-icon">🤐</span><span class="action-label">Silenciar 24h</span></button>
-            <button class="adm-action-btn action-chat" onclick="admOpenChat()"><span class="action-icon">💬</span><span class="action-label">Chat Privado</span></button>
-            <button class="adm-action-btn action-tempban" onclick="showTempBanOptions()"><span class="action-icon">⏰</span><span class="action-label">Ban Temporário</span></button>
-            <button class="adm-action-btn action-permban" onclick="admPermBan()"><span class="action-icon"></span><span class="action-label">Ban Permanente</span></button>
-            <button class="adm-action-btn action-unban" onclick="admUnban()"><span class="action-icon">✅</span><span class="action-label">Desbanir</span></button>
-            <button class="adm-action-btn action-give" onclick="admGiveResources()"><span class="action-icon">🎁</span><span class="action-label">Dar Recursos</span></button>
-            <button class="adm-action-btn action-promote" onclick="admToggleAdmin()"><span class="action-icon">👑</span><span class="action-label" id="admPromoteLabel">Dar ADM</span></button>
-        </div>
-        <div id="tempBanOptions" class="ban-duration hidden">
-            <button onclick="admTempBan(60)">1 Hora</button>
-            <button onclick="admTempBan(1440)">24 Horas</button>
-            <button onclick="admTempBan(10080)">7 Dias</button>
-            <button onclick="admTempBan(43200)">30 Dias</button>
-        </div>
-        <button class="modal-close" onclick="closeAdmActions()">FECHAR</button>
-    </div>
-</div>
-
-<!-- CHAT -->
-<button class="chat-toggle" id="chatToggle" onclick="toggleChat()">💬<span class="notification hidden" id="chatNotif">0</span></button>
+<button class="chat-toggle" onclick="toggleChat()">💬<span class="notification hidden" id="chatNotif">0</span></button>
 <div class="chat-panel" id="chatPanel">
-    <div class="chat-header"><h3>💬 Chat do Servidor</h3><button onclick="toggleChat()" style="width:auto;padding:5px 10px;background:#64748b;margin:0;">✕</button></div>
+    <div class="chat-header"><h3>💬 Chat</h3><button onclick="toggleChat()" style="width:auto;padding:5px 10px;background:#64748b;margin:0;">✕</button></div>
     <div class="chat-tabs">
         <div class="chat-tab active" onclick="switchChatTab('global', this)">🌎 Global</div>
         <div class="chat-tab" onclick="switchChatTab('private', this)">🔒 Privado</div>
@@ -562,7 +402,7 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
         </div>
     </div>
     <div id="privateChatView" style="display:none;flex-direction:column;flex:1;">
-        <div class="chat-messages" id="privateMessages" style="flex:1;"><p style="text-align:center;color:#64748b;padding:20px;">Selecione um jogador para conversar.</p></div>
+        <div class="chat-messages" id="privateMessages" style="flex:1;"><p style="text-align:center;color:#94a3b8;padding:20px;">Selecione um jogador.</p></div>
     </div>
 </div>
 
@@ -588,94 +428,77 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
     const db = getFirestore(app);
     const SUPER_ADMIN_UIDS = ["DJ0865XZ51V7G5neeqVP2mr1h8T2"];
 
-    const AVATARS = ['🥷','','🧝','🧛','','🦸','🦹','🧞','🧜','','👨‍🚀','‍✈️','👨‍🎨','👨‍','👨‍💻','‍🏫','👨🍳','👨‍','👨‍🏭','‍💼','👨‍⚕️','👨‍','🦊','🐯','','🐨','🐼','','🦄','🐲','','🦕','🐍','👺','👹','','🤖','👑','️','🛡️','🏹','🌟','💀','🔥','🦅'];
-
-    const CHAPTERS = [
-        { num: 1, title: 'O Despertar', desc: 'Sua jornada começa aqui', rewards: '💰 500 💎 50', locked: false, completed: false },
-        { num: 2, title: 'A Floresta Sombria', desc: 'Enfrente criaturas das trevas', rewards: '💰 1.000 💎 100', locked: false, completed: false },
-        { num: 3, title: 'O Castelo Abandonado', desc: 'Descubra os segredos do castelo', rewards: '💰 2.000 💎 200', locked: false, completed: false },
-        { num: 4, title: 'A Montanha do Dragão', desc: 'O covil de Khaldrón', rewards: '💰 5.000 💎 500', locked: true, completed: false },
-        { num: 5, title: 'O Reino das Sombras', desc: 'A batalha final se aproxima', rewards: '💰 10.000 💎 1.000', locked: true, completed: false }
+    // PERSONAGENS COMPRÁVEIS
+    const CHARACTERS = [
+        { id: 'warrior', name: 'Guerreiro', emoji: '️', class: 'Guerreiro', atk: 100, def: 80, spd: 60, price: 2000, currency: 'coins' },
+        { id: 'mage', name: 'Mago', emoji: '🧙', class: 'Mago', atk: 120, def: 50, spd: 70, price: 2500, currency: 'coins' },
+        { id: 'archer', name: 'Arqueiro', emoji: '🏹', class: 'Arqueiro', atk: 90, def: 60, spd: 100, price: 3000, currency: 'coins' },
+        { id: 'assassin', name: 'Assassino', emoji: '', class: 'Assassino', atk: 130, def: 40, spd: 120, price: 500, currency: 'gems' },
+        { id: 'paladin', name: 'Paladino', emoji: '🛡️', class: 'Paladino', atk: 80, def: 120, spd: 50, price: 800, currency: 'gems' },
+        { id: 'necromancer', name: 'Necromante', emoji: '💀', class: 'Necromante', atk: 140, def: 55, spd: 75, price: 150, currency: 'crystals' },
+        { id: 'dragonknight', name: 'Cavaleiro Dragão', emoji: '🐉', class: 'Cavaleiro Dragão', atk: 150, def: 100, spd: 80, price: 300, currency: 'crystals' },
+        { id: 'angel', name: 'Anjo', emoji: '👼', class: 'Anjo', atk: 110, def: 110, spd: 90, price: 500, currency: 'crystals' }
     ];
 
-    const EVENTS = [
-        { title: ' Evento de Aniversário', desc: 'Comemore conosco e ganhe recompensas especiais!', timer: '2d 14h', active: true },
-        { title: '⚔️ Torneio dos Campeões', desc: 'Lute contra os melhores jogadores e ganhe prêmios!', timer: '5d 8h', active: true },
-        { title: '🎃 Halloween Especial', desc: 'Eventos temáticos com recompensas exclusivas', timer: '12d 3h', active: true }
+    const AVATARS = ['','🧙','🧝','','🧟','','🦹','🧞','','🧚','👨‍','👨‍✈️','👨‍🎨','‍🔬','👨‍💻','👨‍🏫','👨‍🍳','👨‍🌾','👨‍','👨‍💼','','🐯','🐻','','🐼','🐸','','🐲','🦕','🐍','👺','','👽','🤖','','⚔️','🛡️','🏹','🌟','💀','🔥','🦅'];
+
+    // RECOMPENSAS DIÁRIAS (7 dias)
+    const DAILY_REWARDS = [
+        { day: 1, reward: '💰', amount: 500, label: '500 Moedas' },
+        { day: 2, reward: '💰', amount: 750, label: '750 Moedas' },
+        { day: 3, reward: '💎', amount: 50, label: '50 Gemas' },
+        { day: 4, reward: '💰', amount: 1000, label: '1000 Moedas' },
+        { day: 5, reward: '', amount: 30, label: '30 Cristais' },
+        { day: 6, reward: '💎', amount: 100, label: '100 Gemas' },
+        { day: 7, reward: '👑', amount: 1, label: 'Baú Lendário' }
     ];
 
     let currentUserData = null, currentUserId = null, isUserAdmin = false;
-    let heartbeatInterval = null, playerRef = null, chatOpen = false, unreadMessages = 0;
-    let selectedAvatar = null, admTargetPlayer = null;
-    let allPlayers = [];
-    let musicEnabled = false;
-    let audioContext = null;
-    let currentBattle = null;
+    let playerRef = null, chatOpen = false, unreadMessages = 0;
+    let selectedAvatar = null;
+    let musicEnabled = false, audioContext = null;
 
     const $ = id => document.getElementById(id);
     setTimeout(() => { $('loadingScreen').style.display = 'none'; }, 1000);
 
     window.showToast = (msg) => { const t = $('toast'); t.textContent = msg; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 3000); };
 
-    // MUSIC SYSTEM
-    function initAudio() {
-        if (!audioContext) {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        }
-    }
-
+    // MÚSICA
+    function initAudio() { if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)(); }
     function playEpicMusic() {
         if (!musicEnabled || !audioContext) return;
-        
-        // Criar uma melodia épica simples
-        const notes = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63]; // C, E, G, C, G, E
+        const notes = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63];
         let noteIndex = 0;
-        
         function playNote() {
             if (!musicEnabled) return;
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            oscillator.frequency.value = notes[noteIndex];
-            oscillator.type = 'sine';
-            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-            
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.5);
-            
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.connect(gain); gain.connect(audioContext.destination);
+            osc.frequency.value = notes[noteIndex]; osc.type = 'sine';
+            gain.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            osc.start(audioContext.currentTime); osc.stop(audioContext.currentTime + 0.5);
             noteIndex = (noteIndex + 1) % notes.length;
             setTimeout(playNote, 600);
         }
-        
         playNote();
     }
-
     window.toggleMusic = () => {
         musicEnabled = $('musicToggle').checked;
-        if (musicEnabled) {
-            initAudio();
-            playEpicMusic();
-            showToast('🎵 Música ativada!');
-        } else {
-            showToast('🔇 Música desativada!');
-        }
+        if (musicEnabled) { initAudio(); playEpicMusic(); showToast('🎵 Música ativada!'); }
+        else showToast('🔇 Música desativada!');
     };
 
+    // NAVEGAÇÃO
     window.showScreen = (screenId, btn) => {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-        const screenMap = { 'combat': 'combatScreen', 'resumo': 'resumoScreen', 'campanha': 'campanhaScreen', 'dungeons': 'dungeonsScreen', 'arena': 'arenaScreen', 'eventos': 'eventosScreen', 'shop': 'shopScreen', 'skills': 'skillsScreen' };
-        const target = $(screenMap[screenId]);
+        const map = { 'combat': 'combatScreen', 'characters': 'charactersScreen', 'shop': 'shopScreen', 'skills': 'skillsScreen', 'resumo': 'resumoScreen' };
+        const target = $(map[screenId]);
         if (target) target.classList.add('active');
         if (btn) btn.classList.add('active');
+        if (screenId === 'characters') renderCharacters();
         if (screenId === 'resumo') updateResumo();
-        if (screenId === 'campanha') renderCampaign();
-        if (screenId === 'arena') renderArena();
-        if (screenId === 'eventos') renderEvents();
     };
 
     window.switchAuthTab = (tab) => {
@@ -685,12 +508,18 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
         else { document.querySelectorAll('.auth-tab')[1].classList.add('active'); $('registerForm').classList.add('active'); }
     };
 
+    // LOGIN - O NOME FICA SALVO NO FIREBASE
     window.doLogin = async () => {
         const email = $('loginEmail').value.trim(), pass = $('loginPass').value;
         if (!email || !pass) return showToast('Preencha e-mail e senha.');
-        try { await signInWithEmailAndPassword(auth, email, pass); showToast('Bem-vindo de volta!'); } catch(e) { showToast('Erro: ' + e.message); }
+        try {
+            await signInWithEmailAndPassword(auth, email, pass);
+            // O nome será carregado automaticamente do Firebase via onSnapshot
+            showToast('Bem-vindo de volta! Seu nome foi carregado.');
+        } catch(e) { showToast('Erro: ' + e.message); }
     };
 
+    // REGISTRO - NOME SALVO PERMANENTEMENTE
     window.doRegister = async () => {
         const nick = $('regNick').value.trim(), email = $('regEmail').value.trim(), pass = $('regPass').value;
         if (!nick || !email || !pass) return showToast('Preencha todos os campos.');
@@ -699,29 +528,55 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
             const cred = await createUserWithEmailAndPassword(auth, email, pass);
             await updateProfile(cred.user, { displayName: nick });
             await setDoc(doc(db, "players", cred.user.uid), {
-                uid: cred.user.uid, nick, email, avatar: '', coins: 1000, gems: 100, crystals: 50, points: 0, level: 1, xp: 0, hp: 100, maxHp: 100, energy: 120, role: "player", vipLevel: 0, banned: false, mutedUntil: 0, godMode: false, wins: 0, losses: 0, battles: 0, createdAt: serverTimestamp(), lastSeen: serverTimestamp()
+                uid: cred.user.uid,
+                nick: nick,  // NOME SALVO PERMANENTEMENTE
+                email: email,
+                avatar: '🥷',
+                equippedCharacter: 'warrior',
+                ownedCharacters: ['warrior'],
+                coins: 1000, gems: 100, crystals: 50, points: 0,
+                level: 1, xp: 0, hp: 100, maxHp: 100, energy: 120,
+                role: "player", vipLevel: 0, banned: false, mutedUntil: 0,
+                wins: 0, losses: 0, battles: 0,
+                dailyStreak: 0, lastDailyClaim: 0,
+                createdAt: serverTimestamp(),
+                lastSeen: serverTimestamp()
             });
-            showToast('🎉 Bem-vindo ao Dragon War, ' + nick + '!');
+            showToast('🎉 Bem-vindo ao Dragon War, ' + nick + '! Seu nome foi salvo.');
         } catch(e) { showToast('Erro: ' + e.message); }
     };
 
+    // CONFIGURAÇÕES
     window.openSettings = () => {
-        if (!currentUserData) return showToast('Carregando dados...');
+        if (!currentUserData) return showToast('Carregando...');
         $('settingsUid').textContent = currentUserId.substring(0, 12) + '...';
         $('settingsEmail').textContent = currentUserData.email || '---';
         $('settingsLevel').textContent = currentUserData.level || 1;
         $('settingsRole').textContent = isUserAdmin ? '👑 Administrador' : 'Jogador';
-        $('settingsCoins').textContent = Number(currentUserData.coins || 0).toLocaleString('pt-BR');
-        $('settingsGems').textContent = Number(currentUserData.gems || 0).toLocaleString('pt-BR');
-        $('settingsCrystals').textContent = Number(currentUserData.crystals || 0).toLocaleString('pt-BR');
-        $('settingsPoints').textContent = Number(currentUserData.points || 0).toLocaleString('pt-BR');
         $('newNickInput').value = currentUserData.nick || '';
         $('settingsModal').classList.add('active');
     };
     window.closeSettings = () => $('settingsModal').classList.remove('active');
 
+    window.changeNick = async () => {
+        const newNick = $('newNickInput').value.trim();
+        if (!newNick) return showToast('Digite um nome válido.');
+        if (newNick.length < 3) return showToast('Nome muito curto (mín. 3).');
+        if (newNick.length > 20) return showToast('Nome muito longo (máx. 20).');
+        const cost = 1000;
+        if (currentUserData.coins < cost) return showToast('❌ Moedas insuficientes! Custo:  1.000');
+        if (confirm(`Alterar nome para "${newNick}" por 💰 1.000?`)) {
+            try {
+                await updateDoc(playerRef, { nick: newNick, coins: currentUserData.coins - cost });
+                showToast('✅ Nome alterado para: ' + newNick);
+                closeSettings();
+            } catch(e) { showToast('Erro: ' + e.message); }
+        }
+    };
+
+    // AVATAR
     window.openAvatarModal = () => {
-        if (!currentUserData) return showToast('Carregando dados...');
+        if (!currentUserData) return showToast('Carregando...');
         const grid = $('avatarGrid'); grid.innerHTML = '';
         AVATARS.forEach(avatar => {
             const div = document.createElement('div');
@@ -733,145 +588,199 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
         });
         $('avatarModal').classList.add('active');
     };
-    window.closeAvatarModal = () => { $('avatarModal').classList.remove('active'); selectedAvatar = null; };
+    window.closeAvatarModal = () => $('avatarModal').classList.remove('active');
     window.selectAvatar = (avatar, element) => {
         document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
         element.classList.add('selected');
-        selectedAvatar = avatar;
-        if (confirm(`Selecionar avatar ${avatar}? Custo: 💰 500 moedas`)) changeAvatar(avatar);
+        if (confirm(`Selecionar avatar ${avatar}? Custo: 💰 500`)) changeAvatar(avatar);
     };
     window.changeAvatar = async (avatar) => {
-        const cost = 500;
-        if (currentUserData.coins < cost) return showToast('❌ Moedas insuficientes! Custo: 💰 500');
-        try { await updateDoc(playerRef, { avatar, coins: currentUserData.coins - cost }); showToast('✅ Avatar alterado!'); closeAvatarModal(); } catch(e) { showToast('Erro: ' + e.message); }
+        if (currentUserData.coins < 500) return showToast('❌ Moedas insuficientes!');
+        try { await updateDoc(playerRef, { avatar, coins: currentUserData.coins - 500 }); showToast('✅ Avatar alterado!'); closeAvatarModal(); } catch(e) { showToast('Erro: ' + e.message); }
     };
 
-    window.changeNick = async () => {
-        const newNick = $('newNickInput').value.trim();
-        if (!newNick) return showToast('Digite um nome válido.');
-        if (newNick.length < 3) return showToast('Nome muito curto (mín. 3 caracteres).');
-        if (newNick.length > 20) return showToast('Nome muito longo (máx. 20 caracteres).');
-        const cost = 1000;
-        if (currentUserData.coins < cost) return showToast('❌ Moedas insuficientes! Custo: 💰 1.000');
-        if (confirm(`Alterar nome para "${newNick}" por 💰 1.000 moedas?`)) {
-            try { await updateDoc(playerRef, { nick: newNick, coins: currentUserData.coins - cost }); showToast('✅ Nome alterado!'); closeSettings(); } catch(e) { showToast('Erro: ' + e.message); }
+    // PERSONAGENS
+    function renderCharacters() {
+        if (!currentUserData) return;
+        const owned = currentUserData.ownedCharacters || ['warrior'];
+        const equipped = currentUserData.equippedCharacter || 'warrior';
+        const grid = $('charactersGrid');
+        grid.innerHTML = CHARACTERS.map(ch => {
+            const isOwned = owned.includes(ch.id);
+            const isEquipped = equipped === ch.id;
+            const priceLabel = ch.currency === 'coins' ? `💰 ${ch.price.toLocaleString()}` : ch.currency === 'gems' ? `💎 ${ch.price}` : `🔮 ${ch.price}`;
+            return `
+                <div class="character-card ${isOwned ? 'owned' : ''} ${isEquipped ? 'equipped' : ''}">
+                    <div class="character-emoji">${ch.emoji}</div>
+                    <div class="character-name">${ch.name}</div>
+                    <div class="character-class">${ch.class}</div>
+                    <div class="character-stats">
+                        <div class="character-stat"><div class="character-stat-label">ATK</div><div class="character-stat-value">${ch.atk}</div></div>
+                        <div class="character-stat"><div class="character-stat-label">DEF</div><div class="character-stat-value">${ch.def}</div></div>
+                        <div class="character-stat"><div class="character-stat-label">SPD</div><div class="character-stat-value">${ch.spd}</div></div>
+                    </div>
+                    ${isOwned 
+                        ? (isEquipped 
+                            ? `<button class="btn-character btn-equipped">✅ EQUIPADO</button>` 
+                            : `<button class="btn-character btn-equip" onclick="equipCharacter('${ch.id}')">EQUIPAR</button>`)
+                        : `<button class="btn-character btn-buy-char" onclick="buyCharacter('${ch.id}')">COMPRAR ${priceLabel}</button>`
+                    }
+                </div>
+            `;
+        }).join('');
+    }
+
+    window.buyCharacter = async (charId) => {
+        const ch = CHARACTERS.find(c => c.id === charId);
+        if (!ch) return;
+        const current = currentUserData[ch.currency] || 0;
+        if (current < ch.price) {
+            const currName = ch.currency === 'coins' ? '💰 Moedas' : ch.currency === 'gems' ? '💎 Gemas' : ' Cristais';
+            return showToast(` ${currName} insuficientes!`);
+        }
+        if (confirm(`Comprar ${ch.name} por ${priceLabel(ch)}?`)) {
+            try {
+                const owned = currentUserData.ownedCharacters || [];
+                await updateDoc(playerRef, {
+                    [ch.currency]: current - ch.price,
+                    ownedCharacters: [...owned, ch.id]
+                });
+                showToast(`✅ ${ch.name} comprado!`);
+                renderCharacters();
+            } catch(e) { showToast('Erro: ' + e.message); }
         }
     };
 
-    // SHOP FILTER
+    window.equipCharacter = async (charId) => {
+        try {
+            await updateDoc(playerRef, { equippedCharacter: charId });
+            const ch = CHARACTERS.find(c => c.id === charId);
+            showToast(`✅ ${ch.name} equipado!`);
+            renderCharacters();
+        } catch(e) { showToast('Erro: ' + e.message); }
+    };
+
+    function priceLabel(ch) {
+        return ch.currency === 'coins' ? `💰 ${ch.price.toLocaleString()}` : ch.currency === 'gems' ? `💎 ${ch.price}` : `🔮 ${ch.price}`;
+    }
+
+    // BÔNUS DIÁRIO
+    window.openDailyReward = () => {
+        if (!currentUserData) return showToast('Carregando...');
+        renderDailyGrid();
+        $('dailyModal').classList.add('active');
+    };
+    window.closeDailyReward = () => $('dailyModal').classList.remove('active');
+
+    function renderDailyGrid() {
+        const streak = currentUserData.dailyStreak || 0;
+        const lastClaim = currentUserData.lastDailyClaim || 0;
+        const now = Date.now();
+        const oneDay = 24 * 60 * 60 * 1000;
+        const canClaim = (now - lastClaim) >= oneDay;
+        const currentDay = (streak % 7) + 1;
+
+        const grid = $('dailyGrid');
+        grid.innerHTML = DAILY_REWARDS.map((r, i) => {
+            const dayNum = i + 1;
+            const isClaimed = dayNum < currentDay || (dayNum === currentDay && !canClaim && lastClaim > 0);
+            const isToday = dayNum === currentDay && canClaim;
+            return `
+                <div class="daily-day ${isClaimed ? 'claimed' : ''} ${isToday ? 'today' : ''}">
+                    <div class="daily-day-num">Dia ${dayNum}</div>
+                    <div class="daily-day-reward">${r.reward}</div>
+                    <div class="daily-day-label">${r.label}</div>
+                </div>
+            `;
+        }).join('');
+
+        const btn = $('btnClaimDaily');
+        if (canClaim) {
+            btn.style.display = 'block';
+            btn.textContent = `🎁 RESGATAR DIA ${currentDay}`;
+        } else {
+            btn.style.display = 'none';
+        }
+    }
+
+    window.claimDailyReward = async () => {
+        if (!currentUserData) return;
+        const streak = currentUserData.dailyStreak || 0;
+        const lastClaim = currentUserData.lastDailyClaim || 0;
+        const now = Date.now();
+        const oneDay = 24 * 60 * 60 * 1000;
+
+        if ((now - lastClaim) < oneDay) {
+            const hoursLeft = Math.ceil((oneDay - (now - lastClaim)) / (60 * 60 * 1000));
+            return showToast(`⏰ Volte em ${hoursLeft} horas!`);
+        }
+
+        const currentDay = (streak % 7) + 1;
+        const reward = DAILY_REWARDS[currentDay - 1];
+        const newStreak = streak + 1;
+
+        const updates = {
+            dailyStreak: newStreak,
+            lastDailyClaim: now
+        };
+
+        if (reward.reward === '💰') updates.coins = (currentUserData.coins || 0) + reward.amount;
+        else if (reward.reward === '💎') updates.gems = (currentUserData.gems || 0) + reward.amount;
+        else if (reward.reward === '🔮') updates.crystals = (currentUserData.crystals || 0) + reward.amount;
+
+        try {
+            await updateDoc(playerRef, updates);
+            showToast(`🎁 Dia ${currentDay} resgatado! +${reward.label}`);
+            renderDailyGrid();
+        } catch(e) { showToast('Erro: ' + e.message); }
+    };
+
+    // LOJA
     window.filterShop = (category, btn) => {
         document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        
-        const items = document.querySelectorAll('.shop-item');
-        items.forEach(item => {
-            if (category === 'all' || item.dataset.category === category) {
-                item.classList.remove('hidden-item');
-            } else {
-                item.classList.add('hidden-item');
-            }
+        document.querySelectorAll('.shop-item').forEach(item => {
+            item.classList.toggle('hidden-item', category !== 'all' && item.dataset.category !== category);
         });
     };
 
     window.buyItem = async (name, price, currency) => {
-        if (!currentUserData) return showToast('Carregando dados...');
-        const currentAmount = currentUserData[currency] || 0;
-        if (currentAmount < price) { const currencyName = currency === 'coins' ? '💰 Moedas' : currency === 'gems' ? '💎 Gemas' : '🔮 Cristais'; return showToast(`❌ ${currencyName} insuficientes!`); }
-        if (confirm(`Comprar ${name} por ${price.toLocaleString('pt-BR')} ${currency === 'coins' ? '💰' : currency === 'gems' ? '💎' : '🔮'}?`)) {
-            try { await updateDoc(playerRef, { [currency]: currentAmount - price }); showToast('✅ ' + name + ' comprado!'); } catch(e) { showToast('Erro: ' + e.message); }
+        if (!currentUserData) return showToast('Carregando...');
+        const current = currentUserData[currency] || 0;
+        if (current < price) {
+            const currName = currency === 'coins' ? '💰 Moedas' : currency === 'gems' ? '💎 Gemas' : '🔮 Cristais';
+            return showToast(`❌ ${currName} insuficientes!`);
+        }
+        if (confirm(`Comprar ${name} por ${price.toLocaleString()} ${currency === 'coins' ? '💰' : currency === 'gems' ? '💎' : '🔮'}?`)) {
+            try {
+                await updateDoc(playerRef, { [currency]: current - price });
+                showToast('✅ ' + name + ' comprado!');
+            } catch(e) { showToast('Erro: ' + e.message); }
         }
     };
 
-    // BATTLE SYSTEM WITH DODGE
-    window.startBattle = (bossName, bossEmoji, rewardCoins, rewardGems, rewardCrystals) => {
-        if (!currentUserData) return showToast('Carregando dados...');
-        currentBattle = { bossName, bossEmoji, rewardCoins, rewardGems, rewardCrystals, playerDodged: false };
-        
-        $('battlePlayer').textContent = currentUserData.avatar || '🥷';
-        $('battleEnemy').textContent = bossEmoji;
-        $('battleResult').textContent = '';
-        $('battleResult').className = 'battle-result';
-        $('battleActions').style.display = 'flex';
-        $('battleOverlay').classList.add('active');
-    };
-
-    window.battleAttack = async () => {
-        if (!currentBattle) return;
+    // BATALHA
+    window.startBattle = async (bossName, bossEmoji, rewardCoins, rewardGems, rewardCrystals) => {
+        if (!currentUserData) return showToast('Carregando...');
         const win = Math.random() > 0.3;
-        $('battleActions').style.display = 'none';
-        
         if (win) {
-            $('battleResult').textContent = `⚔️ VITÓRIA! +${currentBattle.rewardCoins}💰 +${currentBattle.rewardGems}💎 +${currentBattle.rewardCrystals}🔮`;
-            $('battleResult').className = 'battle-result win';
             await updateDoc(playerRef, {
-                coins: (currentUserData.coins || 0) + currentBattle.rewardCoins,
-                gems: (currentUserData.gems || 0) + currentBattle.rewardGems,
-                crystals: (currentUserData.crystals || 0) + currentBattle.rewardCrystals,
+                coins: (currentUserData.coins || 0) + rewardCoins,
+                gems: (currentUserData.gems || 0) + rewardGems,
+                crystals: (currentUserData.crystals || 0) + rewardCrystals,
                 points: (currentUserData.points || 0) + 100,
                 xp: (currentUserData.xp || 0) + 50,
                 wins: (currentUserData.wins || 0) + 1,
                 battles: (currentUserData.battles || 0) + 1
             });
+            showToast(`️ Vitória contra ${bossName}! +${rewardCoins}💰 +${rewardGems}💎 +${rewardCrystals}`);
         } else {
-            $('battleResult').textContent = `💀 DERROTA contra ${currentBattle.bossName}!`;
-            $('battleResult').className = 'battle-result lose';
             await updateDoc(playerRef, {
                 losses: (currentUserData.losses || 0) + 1,
                 battles: (currentUserData.battles || 0) + 1
             });
+            showToast(`💀 Derrota contra ${bossName}!`);
         }
-        
-        setTimeout(() => {
-            $('battleOverlay').classList.remove('active');
-            currentBattle = null;
-        }, 3000);
-    };
-
-    window.battleDodge = () => {
-        if (!currentBattle) return;
-        const player = $('battlePlayer');
-        player.classList.add('dodging');
-        currentBattle.playerDodged = true;
-        showToast('💨 Esquiva bem-sucedida!');
-        setTimeout(() => {
-            player.classList.remove('dodging');
-            battleAttack();
-        }, 600);
-    };
-
-    window.battleFlee = () => {
-        if (!currentBattle) return;
-        $('battleOverlay').classList.remove('active');
-        currentBattle = null;
-        showToast('🏃 Você fugiu da batalha!');
-    };
-
-    window.enterDungeon = async (name, reward, levelReq) => {
-        if (!currentUserData) return showToast('Carregando dados...');
-        if (currentUserData.level < levelReq) return showToast(`❌ Nível insuficiente! Requer nível ${levelReq}`);
-        const win = Math.random() > 0.4;
-        if (win) {
-            await updateDoc(playerRef, { coins: (currentUserData.coins || 0) + reward, points: (currentUserData.points || 0) + 50, wins: (currentUserData.wins || 0) + 1, battles: (currentUserData.battles || 0) + 1 });
-            showToast(`✅ Dungeon ${name} completa! +${reward}💰`);
-        } else {
-            await updateDoc(playerRef, { losses: (currentUserData.losses || 0) + 1, battles: (currentUserData.battles || 0) + 1 });
-            showToast(`💀 Você falhou na dungeon ${name}!`);
-        }
-    };
-
-    window.selectSkill = (skill) => {
-        const skills = {
-            fire: { name: '🔥 Fôlego de Fogo', damage: '680% + 120%', mp: 120, cooldown: '18s', points: 3, description: 'Libera uma onda de fogo que causa dano massivo em área.' },
-            lightning: { name: '⚡ Raio Espiritual', damage: '520% + 80%', mp: 90, cooldown: '12s', points: 2, description: 'Invoca um raio que atinge inimigos em linha reta.' },
-            ice: { name: '❄️ Nova Glacial', damage: '450% + 60%', mp: 75, cooldown: '15s', points: 2, description: 'Congela todos os inimigos próximos por 3 segundos.' },
-            void: { name: '🌌 Torrente do Vazio', damage: '800% + 150%', mp: 150, cooldown: '25s', points: 5, description: 'Libera uma onda de energia do vazio que causa dano enorme.' },
-            slash: { name: '⚔️ Mestre da Espada', damage: '300% + 50%', mp: 50, cooldown: '8s', points: 1, description: 'Ataque rápido com a espada que causa dano físico.' },
-            serpent: { name: '🐍 Golpe da Serpente', damage: '400% + 70%', mp: 65, cooldown: '10s', points: 2, description: 'Ataque venenoso que causa dano ao longo do tempo.' }
-        };
-        const s = skills[skill];
-        if (!s) return;
-        $('skillName').textContent = s.name;
-        $('skillContent').innerHTML = `<p style="color: #94a3b8; margin-bottom: 15px;">${s.description}</p><div class="skill-stat"><span class="skill-stat-label">Dano:</span><span class="skill-stat-value">${s.damage}</span></div><div class="skill-stat"><span class="skill-stat-label">Custo de MP:</span><span class="skill-stat-value">${s.mp}</span></div><div class="skill-stat"><span class="skill-stat-label">Recarga:</span><span class="skill-stat-value">${s.cooldown}</span></div><div class="skill-stat"><span class="skill-stat-label">Pontos:</span><span class="skill-stat-value">${s.points}</span></div><button class="btn-upgrade" onclick="showToast('Sistema de upgrade em desenvolvimento!')">MELHORAR</button>`;
     };
 
     function updateResumo() {
@@ -879,161 +788,10 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
         $('statWins').textContent = currentUserData.wins || 0;
         $('statLosses').textContent = currentUserData.losses || 0;
         $('statBattles').textContent = currentUserData.battles || 0;
-        $('statLevel').textContent = currentUserData.level || 1;
-        $('statCoins').textContent = Number(currentUserData.coins || 0).toLocaleString('pt-BR');
-        $('statGems').textContent = Number(currentUserData.gems || 0).toLocaleString('pt-BR');
-        $('statCrystals').textContent = Number(currentUserData.crystals || 0).toLocaleString('pt-BR');
         const total = (currentUserData.wins || 0) + (currentUserData.losses || 0);
         const rate = total > 0 ? Math.round(((currentUserData.wins || 0) / total) * 100) : 0;
         $('statWinRate').textContent = rate + '%';
-        $('statXP').textContent = currentUserData.xp || 0;
-        const nextLevel = (currentUserData.level || 1) * 100;
-        $('statNextLevel').textContent = nextLevel;
-        const xpPercent = Math.min(100, ((currentUserData.xp || 0) / nextLevel) * 100);
-        $('xpBar').style.width = xpPercent + '%';
     }
-
-    function renderCampaign() {
-        const container = $('campaignChapters');
-        container.innerHTML = CHAPTERS.map(ch => `
-            <div class="chapter-card ${ch.locked ? 'locked' : ''} ${ch.completed ? 'completed' : ''}" onclick="${ch.locked ? '' : `playChapter(${ch.num})`}">
-                <div class="chapter-number">Cap. ${ch.num}</div>
-                <div class="chapter-title">${ch.title}</div>
-                <div class="chapter-desc">${ch.desc}</div>
-                <div class="chapter-rewards">${ch.rewards}</div>
-                ${ch.locked ? '<p style="color:#ef4444;margin-top:10px;font-size:0.85em;"> Bloqueado</p>' : ch.completed ? '<p style="color:#22c55e;margin-top:10px;font-size:0.85em;">✅ Completo</p>' : '<p style="color:#3b82f6;margin-top:10px;font-size:0.85em;">▶ Jogar</p>'}
-            </div>
-        `).join('');
-    }
-
-    window.playChapter = async (num) => {
-        if (!currentUserData) return;
-        const win = Math.random() > 0.3;
-        const rewards = [500, 1000, 2000, 5000, 10000][num - 1] || 500;
-        if (win) {
-            await updateDoc(playerRef, { coins: (currentUserData.coins || 0) + rewards, points: (currentUserData.points || 0) + 100, wins: (currentUserData.wins || 0) + 1, battles: (currentUserData.battles || 0) + 1 });
-            showToast(`✅ Capítulo ${num} completo! +${rewards}💰`);
-        } else {
-            await updateDoc(playerRef, { losses: (currentUserData.losses || 0) + 1, battles: (currentUserData.battles || 0) + 1 });
-            showToast(`💀 Falhou no capítulo ${num}!`);
-        }
-    };
-
-    function renderArena() {
-        const container = $('arenaPlayers');
-        const others = allPlayers.filter(p => p.uid !== currentUserId).slice(0, 6);
-        if (others.length === 0) { container.innerHTML = '<p style="color:#94a3b8;">Nenhum jogador disponível para batalha.</p>'; return; }
-        container.innerHTML = others.map(p => {
-            const power = (p.level || 1) * 1000 + (p.points || 0);
-            return `
-                <div class="arena-player-card">
-                    <div class="arena-avatar">${p.avatar || '🥷'}</div>
-                    <div class="arena-info">
-                        <div class="arena-name">${p.nick}</div>
-                        <div class="arena-rank">Nível ${p.level || 1}</div>
-                        <div class="arena-power">Poder: ${power.toLocaleString()}</div>
-                    </div>
-                    <button class="btn-arena" onclick="challengePlayer('${p.uid}', '${p.nick.replace(/'/g, "")}')">DESAFIAR</button>
-                </div>
-            `;
-        }).join('');
-    }
-
-    window.challengePlayer = async (uid, nick) => {
-        if (!currentUserData) return;
-        const win = Math.random() > 0.5;
-        if (win) {
-            await updateDoc(playerRef, { coins: (currentUserData.coins || 0) + 500, points: (currentUserData.points || 0) + 50, wins: (currentUserData.wins || 0) + 1, battles: (currentUserData.battles || 0) + 1 });
-            showToast(`⚔️ Vitória contra ${nick}! +500💰`);
-        } else {
-            await updateDoc(playerRef, { losses: (currentUserData.losses || 0) + 1, battles: (currentUserData.battles || 0) + 1 });
-            showToast(`💀 Derrota contra ${nick}!`);
-        }
-    };
-
-    function renderEvents() {
-        const container = $('eventsList');
-        container.innerHTML = EVENTS.map(ev => `
-            <div class="event-card">
-                <div class="event-badge">ATIVO</div>
-                <div class="event-title">${ev.title}</div>
-                <div class="event-desc">${ev.desc}</div>
-                <div class="event-timer">
-                    <div class="event-timer-label">Tempo Restante</div>
-                    <div class="event-timer-value">${ev.timer}</div>
-                </div>
-                <button class="btn-event" onclick="showToast('🎉 Evento em andamento!')">PARTICIPAR</button>
-            </div>
-        `).join('');
-    }
-
-    // ADM ACTIONS
-    window.openAdmActions = (player) => {
-        if (!isUserAdmin) return showToast('Acesso negado.');
-        admTargetPlayer = player;
-        $('admTargetName').textContent = player.nick || 'Jogador';
-        $('admTargetUid').textContent = player.uid;
-        const isBanned = player.banned;
-        const isMuted = player.mutedUntil && player.mutedUntil > Date.now();
-        const isAdmin = player.role === 'admin' || SUPER_ADMIN_UIDS.includes(player.uid);
-        $('admTargetStatus').innerHTML = `${isBanned ? ' BANIDO' : '✅ Ativo'} ${isMuted ? '🔇 MUTADO' : ''} ${isAdmin ? '👑 ADM' : ''}`;
-        $('admPromoteLabel').textContent = isAdmin ? 'Remover ADM' : 'Dar ADM';
-        $('admActionsModal').classList.add('active');
-    };
-    window.closeAdmActions = () => { $('admActionsModal').classList.remove('active'); $('tempBanOptions').classList.add('hidden'); admTargetPlayer = null; };
-
-    window.admMute = async (minutes) => {
-        if (!admTargetPlayer || !isUserAdmin) return;
-        const mutedUntil = Date.now() + (minutes * 60 * 1000);
-        try { await updateDoc(doc(db, "players", admTargetPlayer.uid), { mutedUntil }); showToast(`✅ ${admTargetPlayer.nick} mutado por ${minutes} minutos.`); closeAdmActions(); } catch(e) { showToast('Erro: ' + e.message); }
-    };
-
-    window.showTempBanOptions = () => $('tempBanOptions').classList.toggle('hidden');
-
-    window.admTempBan = async (minutes) => {
-        if (!admTargetPlayer || !isUserAdmin) return;
-        const banUntil = Date.now() + (minutes * 60 * 1000);
-        try { await updateDoc(doc(db, "players", admTargetPlayer.uid), { banned: true, banUntil }); showToast(`⏰ ${admTargetPlayer.nick} banido por ${minutes} minutos.`); closeAdmActions(); } catch(e) { showToast('Erro: ' + e.message); }
-    };
-
-    window.admPermBan = async () => {
-        if (!admTargetPlayer || !isUserAdmin) return;
-        if (!confirm(`Banir PERMANENTEMENTE ${admTargetPlayer.nick}?`)) return;
-        try { await updateDoc(doc(db, "players", admTargetPlayer.uid), { banned: true, banUntil: null }); showToast(` ${admTargetPlayer.nick} banido permanentemente.`); closeAdmActions(); } catch(e) { showToast('Erro: ' + e.message); }
-    };
-
-    window.admUnban = async () => {
-        if (!admTargetPlayer || !isUserAdmin) return;
-        try { await updateDoc(doc(db, "players", admTargetPlayer.uid), { banned: false, banUntil: null, mutedUntil: 0 }); showToast(`✅ ${admTargetPlayer.nick} desbanido.`); closeAdmActions(); } catch(e) { showToast('Erro: ' + e.message); }
-    };
-
-    window.admOpenChat = () => {
-        if (!admTargetPlayer) return;
-        closeAdmActions();
-        toggleChat();
-        switchChatTab('private', document.querySelectorAll('.chat-tab')[1]);
-        openPrivateChatWindow({ uid: admTargetPlayer.uid, nick: admTargetPlayer.nick });
-    };
-
-    window.admGiveResources = async () => {
-        if (!admTargetPlayer || !isUserAdmin) return;
-        const amount = prompt(`Quantas moedas dar para ${admTargetPlayer.nick}?`, '1000');
-        if (!amount || isNaN(amount)) return;
-        try {
-            const current = (await getDoc(doc(db, "players", admTargetPlayer.uid))).data();
-            await updateDoc(doc(db, "players", admTargetPlayer.uid), { coins: (current.coins || 0) + Number(amount) });
-            showToast(` ${amount} moedas enviadas para ${admTargetPlayer.nick}.`);
-            closeAdmActions();
-        } catch(e) { showToast('Erro: ' + e.message); }
-    };
-
-    window.admToggleAdmin = async () => {
-        if (!admTargetPlayer || !isUserAdmin) return;
-        const isAdmin = admTargetPlayer.role === 'admin' || SUPER_ADMIN_UIDS.includes(admTargetPlayer.uid);
-        const newRole = isAdmin ? 'player' : 'admin';
-        if (!confirm(`${isAdmin ? 'Remover' : 'Dar'} ADM de ${admTargetPlayer.nick}?`)) return;
-        try { await updateDoc(doc(db, "players", admTargetPlayer.uid), { role: newRole }); showToast(`✅ ${admTargetPlayer.nick} agora é ${newRole === 'admin' ? 'ADMINISTRADOR' : 'JOGADOR'}.`); closeAdmActions(); } catch(e) { showToast('Erro: ' + e.message); }
-    };
 
     // CHAT
     window.toggleChat = () => { chatOpen = !chatOpen; $('chatPanel').classList.toggle('active', chatOpen); if (chatOpen) { unreadMessages = 0; $('chatNotif').classList.add('hidden'); } };
@@ -1051,7 +809,7 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
         if (text.length > 200) return showToast('Mensagem muito longa!');
         if (currentUserData.mutedUntil && currentUserData.mutedUntil > Date.now()) {
             const remaining = Math.ceil((currentUserData.mutedUntil - Date.now()) / 60000);
-            return showToast(`🔇 Você está mutado. Aguarde ${remaining} minutos.`);
+            return showToast(`🔇 Mutado. Aguarde ${remaining} min.`);
         }
         try {
             await addDoc(collection(db, "chatMessages"), {
@@ -1061,38 +819,6 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
                 createdAt: serverTimestamp()
             });
             input.value = '';
-        } catch(e) { showToast('Erro ao enviar: ' + e.message); }
-    };
-
-    window.openPrivateChatWindow = (player) => {
-        $('privateMessages').innerHTML = '<p style="text-align:center;color:#64748b;padding:20px;">Carregando mensagens...</p>';
-        const chatId = [currentUserId, player.uid].sort().join('_');
-        const q = query(collection(db, "privateMessages"), where("chatId", "==", chatId), orderBy("createdAt", "asc"), limit(100));
-        onSnapshot(q, (snap) => {
-            const container = $('privateMessages');
-            if (snap.empty) { container.innerHTML = '<p style="text-align:center;color:#64748b;padding:20px;">Nenhuma mensagem ainda.</p>'; return; }
-            container.innerHTML = snap.docs.map(d => {
-                const msg = d.data();
-                const isOwn = msg.fromUid === currentUserId;
-                const time = msg.createdAt?.toDate ? msg.createdAt.toDate().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'}) : '';
-                return `<div class="message ${isOwn ? 'own' : ''}"><div class="message-header"><span class="message-author">${msg.fromNick}</span><span class="message-time">${time}</span></div><div class="message-text">${escapeHtml(msg.text)}</div></div>`;
-            }).join('');
-            container.scrollTop = container.scrollHeight;
-        });
-        $('privateMessages').dataset.targetUid = player.uid;
-        $('privateMessages').dataset.targetNick = player.nick;
-    };
-
-    window.sendPrivateMessage = async () => {
-        const input = $('privateInput');
-        const text = input.value.trim();
-        const targetUid = $('privateMessages').dataset.targetUid;
-        const targetNick = $('privateMessages').dataset.targetNick;
-        if (!text || !targetUid) return;
-        try {
-            const chatId = [currentUserId, targetUid].sort().join('_');
-            await addDoc(collection(db, "privateMessages"), { chatId, text, fromUid: currentUserId, fromNick: currentUserData.nick, toUid: targetUid, toNick: targetNick, createdAt: serverTimestamp });
-            input.value = '';
         } catch(e) { showToast('Erro: ' + e.message); }
     };
 
@@ -1100,16 +826,16 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
         const q = query(collection(db, "chatMessages"), where("type", "==", "global"), orderBy("createdAt", "desc"), limit(100));
         onSnapshot(q, (snap) => {
             const container = $('globalMessages');
-            if (snap.empty) { container.innerHTML = '<p style="text-align:center;color:#64748b;padding:20px;">Nenhuma mensagem ainda.</p>'; return; }
+            if (snap.empty) { container.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:20px;">Nenhuma mensagem.</p>'; return; }
             const messages = snap.docs.map(d => ({id: d.id, ...d.data()})).reverse();
             container.innerHTML = messages.map(msg => {
                 const isAdmin = msg.authorRole === "admin" || SUPER_ADMIN_UIDS.includes(msg.authorUid);
                 const isOwn = msg.authorUid === currentUserId;
                 const time = msg.createdAt?.toDate ? msg.createdAt.toDate().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'}) : '';
                 let badges = '';
-                if (isAdmin) badges += '<span class="badge-adm"> ADM</span>';
+                if (isAdmin) badges += '<span class="badge-adm">👑 ADM</span>';
                 if (msg.authorVip > 0) badges += `<span class="badge-vip">VIP ${msg.authorVip}</span>`;
-                return `<div class="message ${isOwn ? 'own' : ''}"><div class="message-header"><span style="font-size:1.5em;margin-right:5px;">${msg.authorAvatar || '🥷'}</span><span class="message-author" style="${isAdmin ? 'color:#c4b5fd;' : ''}">${msg.authorNick}</span><span class="badge-adm" style="font-size:0.6em;padding:1px 5px;">Lv.${msg.authorLevel || 1}</span>${badges}<span class="message-uid">ID: ${msg.authorUid.substring(0, 8)}</span><span class="message-time">${time}</span></div><div class="message-text">${escapeHtml(msg.text)}</div></div>`;
+                return `<div class="message ${isOwn ? 'own' : ''}"><div class="message-header"><span style="font-size:1.5em;margin-right:5px;">${msg.authorAvatar || '🥷'}</span><span class="message-author" style="${isAdmin ? 'color:#c4b5fd;' : ''}">${msg.authorNick}</span><span style="font-size:0.6em;padding:1px 5px;background:#334155;border-radius:4px;">Lv.${msg.authorLevel || 1}</span>${badges}<span class="message-uid">ID: ${msg.authorUid.substring(0, 8)}</span><span class="message-time">${time}</span></div><div class="message-text">${escapeHtml(msg.text)}</div></div>`;
             }).join('');
             container.scrollTop = container.scrollHeight;
             if (!chatOpen && messages.length > 0) {
@@ -1119,18 +845,10 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
         });
     }
 
-    function loadAllPlayers() {
-        const q = query(collection(db, "players"), limit(200));
-        onSnapshot(q, (snap) => {
-            allPlayers = snap.docs.map(d => d.data());
-            if ($('arenaScreen').classList.contains('active')) renderArena();
-        });
-    }
-
     function escapeHtml(text) { const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
 
+    // AUTENTICAÇÃO - NOME PERSISTENTE
     onAuthStateChanged(auth, async (user) => {
-        if (heartbeatInterval) clearInterval(heartbeatInterval);
         if (!user) { $('loadingScreen').style.display = 'none'; $('authView').classList.remove('hidden'); $('gameView').classList.add('hidden'); return; }
         currentUserId = user.uid;
         $('authView').classList.add('hidden');
@@ -1143,6 +861,7 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
             const data = snap.data();
             currentUserData = data;
             
+            // Verifica ban temporário
             if (data.banned && data.banUntil && data.banUntil < Date.now()) {
                 await updateDoc(playerRef, { banned: false, banUntil: null });
             } else if (data.banned) {
@@ -1152,13 +871,15 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
             }
 
             isUserAdmin = SUPER_ADMIN_UIDS.includes(user.uid) || (data.role === "admin");
-            const avatar = data.avatar || '';
+            const avatar = data.avatar || '🥷';
             $('playerAvatar').textContent = avatar;
+            
+            // NOME CARREGADO DO FIREBASE - PERSISTE ENTRE SESSÕES
             let nameHtml = `<span class="${isUserAdmin ? 'text-admin' : ''}">${data.nick || 'Jogador'}</span>`;
-            if (isUserAdmin) { nameHtml += ` <span class="badge-adm">👑 ADM</span><span class="badge-vip">VIP 10</span>`; $('btnOpenAdmin').classList.remove('hidden'); }
-            else { if (data.vipLevel && data.vipLevel > 0) nameHtml += ` <span class="badge-vip">VIP ${data.vipLevel}</span>`; $('btnOpenAdmin').classList.add('hidden'); }
-            if (data.mutedUntil && data.mutedUntil > Date.now()) nameHtml += ` <span class="badge-muted">🔇 MUTADO</span>`;
+            if (isUserAdmin) { nameHtml += ` <span class="badge-adm">👑 ADM</span><span class="badge-vip">VIP 10</span>`; }
+            if (data.vipLevel && data.vipLevel > 0) nameHtml += ` <span class="badge-vip">VIP ${data.vipLevel}</span>`;
             $('playerNameDisplay').innerHTML = nameHtml;
+            
             $('playerLevel').textContent = data.level || 1;
             $('playerHP').textContent = data.hp || 100;
             $('playerMaxHP').textContent = data.maxHp || 100;
@@ -1166,20 +887,16 @@ input:checked + .toggle-slider:before { transform: translateX(24px); }
             $('resGems').textContent = Number(data.gems || 0).toLocaleString('pt-BR');
             $('resCrystals').textContent = Number(data.crystals || 0).toLocaleString('pt-BR');
             $('resPoints').textContent = Number(data.points || 0).toLocaleString('pt-BR');
-            $('resEnergy').textContent = `${data.energy || 120}/120`;
 
-            if (heartbeatInterval) clearInterval(heartbeatInterval);
-            heartbeatInterval = setInterval(async () => { try { await updateDoc(playerRef, { lastSeen: serverTimestamp() }); } catch(e){} }, 20000);
+            // Atualiza lastSeen
             try { await updateDoc(playerRef, { lastSeen: serverTimestamp() }); } catch(e){}
         });
 
         loadGlobalMessages();
-        loadAllPlayers();
     });
 
     $('logoutBtn').onclick = () => { signOut(auth).then(() => { showToast('Desconectado!'); window.location.reload(); }); };
     $('globalInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendGlobalMessage(); });
-    if ($('privateInput')) $('privateInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendPrivateMessage(); });
 </script>
 
 </body>
