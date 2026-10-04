@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dragon War: Rise of Power</title>
-    <!-- Firebase SDKs (Versão Compatível) -->
+    <!-- Firebase SDKs (Versão Compatível para HTML Único) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -198,14 +198,15 @@
     </div>
 
     <script>
-        // CONFIGURAÇÃO DO FIREBASE (Insira os dados corretos do seu painel do Firebase)
+        // CONFIGURAÇÃO DO FIREBASE (Com suas credenciais exatas)
         const firebaseConfig = {
-            apiKey: "COLE_SUA_API_KEY_AQUI",
-            authDomain: "dragon-war-rise-of-power.firebaseapp.com",
-            projectId: "dragon-war-rise-of-power",
-            storageBucket: "dragon-war-rise-of-power.appspot.com",
+            apiKey: "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
+            authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
+            projectId: "dragon-war-rise-of-power-2a9f1",
+            storageBucket: "dragon-war-rise-of-power-2a9f1.firebasestorage.app",
             messagingSenderId: "115455691167",
-            appId: "COLE_SEU_APP_ID_AQUI"
+            appId: "1:115455691167:web:ff3638f67b66c17c5515aa",
+            measurementId: "G-S7XE2EN9CL"
         };
 
         if (!firebase.apps.length) {
@@ -226,7 +227,7 @@
             document.getElementById('switchText').innerText = isLoginMode ? "Cadastre-se" : "Faça Login";
         }
 
-        // Sistema de Autenticação (Salvando na coleção correta 'jogadores')
+        // Sistema de Autenticação (Salvando na coleção 'jogadores')
         function handleAuth() {
             const email = document.getElementById('emailInput').value;
             const pass = document.getElementById('passwordInput').value;
