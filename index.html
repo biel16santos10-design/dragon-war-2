@@ -423,7 +423,17 @@ window.trocarSecao=(id,el)=>{document.querySelectorAll(".panel-section").forEach
 async function carregarJogador(){
  if(!auth.currentUser) throw new Error("Sessão Firebase não encontrada.");
  const ref=doc(db,"jogadores_reais",auth.currentUser.uid);
- const snap=await getDoc(ref),existe=snap.exists(),base=existe?snap.data():{};
+ let snap=null,existe=false,base={},leituraBancoFalhou=false;
+ try{
+   snap=await getDoc(ref);
+   existe=snap.exists();
+   base=existe?snap.data():{};
+ }catch(err){
+   console.warn("Firestore indisponível ao carregar jogador. Entrada liberada em modo de contingência:",err);
+   leituraBancoFalhou=true;
+   existe=false;
+   base={};
+ }
  if(existe && base.banned===true) throw Object.assign(new Error("Esta conta está banida."),{code:"account-banned"});
  const novoJogador={role:"USER",isAdm:false,isSubAdm:false,vip:0,coins:10000,diamonds:0,level:0,xp:0,inventory:[],characters:[],selectedCharacterId:"",phaseProgress:{normal:0,dificil:0,avancada:0,hardcore:0},achievements:[],dailyRewardLastClaim:0,dailyRewardCount:0,dailyRewardDay:"",currentHp:100,mana:100,maxMana:100,banned:false,guildId:"",guildName:"",guildRank:""};
  const roleRaw=String(base.role||"USER").toUpperCase();
@@ -436,7 +446,9 @@ async function carregarJogador(){
  const bs=base.battleState;
  if(bs&&bs.categoria&&categorias[bs.categoria]){faseAtualInfo={categoria:bs.categoria,etapa:Number(bs.etapa||1),hpMovel:Number(bs.hpMovel||0),maxHp:Number(bs.maxHp||0),playerHp:Number(bs.playerHp!=null?bs.playerHp:(usuarioAtual.currentHp!=null?usuarioAtual.currentHp:100)),playerMp:Number(bs.playerMp!=null?bs.playerMp:(usuarioAtual.mana!=null?usuarioAtual.mana:100)),defend:!!bs.defend}}
  else{faseAtualInfo={categoria:"",etapa:1,hpMovel:100,maxHp:100,playerHp:Number(usuarioAtual.currentHp??100),playerMp:Number(usuarioAtual.mana??100),defend:false}}
- setDoc(ref,{...montarEstadoPersistente(),uid:usuarioAtual.uid,email:usuarioAtual.email,lastSeen:serverTimestamp(),status:"Online",updatedAt:serverTimestamp()},{merge:true}).catch(err=>console.warn("Salvamento inicial em segundo plano:",err));
+ if(!leituraBancoFalhou){
+   setDoc(ref,{...montarEstadoPersistente(),uid:usuarioAtual.uid,email:usuarioAtual.email,lastSeen:serverTimestamp(),status:"Online",updatedAt:serverTimestamp()},{merge:true}).catch(err=>console.warn("Salvamento inicial em segundo plano:",err));
+ }
  atualizarPerfilUI();montarMenuLateral();renderLoja();renderizarPoderes();atualizarInventarioUI();renderizarEventos();atualizarDailyUI();iniciarHeartbeat();assinarChatGlobal();verificarAchievements();
  if(usuarioAtual.isAdm){carregarJogadoresReaisDoBanco();document.getElementById("adm-loja-controls").classList.remove("hidden");document.getElementById("adm-poderes-controls").classList.remove("hidden");document.getElementById("adm-evento-controls").classList.remove("hidden");document.getElementById("player-power-admin-note")?.classList.remove("hidden")}
 }
@@ -821,6 +833,7 @@ async function abrirSessaoComSeguranca(user){
   document.getElementById('dw-central')?.classList.add('hidden');
   const bm=document.querySelector('#menu-list .menu-item'); if(bm)trocarSecao('jogar',bm);
   notificar(usuarioAtual.isAdm?'👑 Painel ADM carregado.':'🎮 Conta do jogador carregada.','success');
+  if(!navigator.onLine) notificar('📡 Você entrou offline. Os dados serão sincronizados quando a conexão voltar.','info');
  }catch(e){
   console.error("Falha ao carregar sessão:",e);
   if(e.code==="account-banned"){alert("🚫 Esta conta está banida.");try{await signOut(auth)}catch(_){} }
