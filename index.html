@@ -5,1038 +5,202 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dragon War — Rise of Power</title>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Segoe UI', Arial, sans-serif; background: #0a0e1a; color: #fff; min-height: 100vh; overflow-x: hidden; }
-
-/* LOADING */
-#loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0e1a; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
-.spinner { width: 60px; height: 60px; border: 5px solid #333; border-top: 5px solid #ff6b00; border-radius: 50%; animation: spin 1s linear infinite; }
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-.loading-text { margin-top: 20px; color: #ff6b00; font-size: 1.2em; font-weight: bold; }
-.hidden { display: none !important; }
-
-/* AUTH */
-.auth-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); }
-.auth-card { background: rgba(30, 41, 59, 0.95); border: 2px solid #ff6b00; border-radius: 20px; padding: 40px; max-width: 450px; width: 100%; box-shadow: 0 20px 60px rgba(255, 107, 0, 0.4); }
-.auth-card h1 { text-align: center; font-size: 2.8em; margin-bottom: 10px; background: linear-gradient(135deg, #ff6b00, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.auth-card .subtitle { text-align: center; color: #94a3b8; letter-spacing: 4px; margin-bottom: 25px; font-size: 0.9em; }
-.auth-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-.auth-tab { flex: 1; padding: 14px; background: #0f172a; border: 2px solid #334155; border-radius: 10px; color: #fff; cursor: pointer; font-weight: bold; text-align: center; transition: all 0.3s; }
-.auth-tab.active { background: #ff6b00; border-color: #ff6b00; }
-.auth-form { display: none; }
-.auth-form.active { display: block; animation: fadeIn 0.3s; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-input { width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; border: 2px solid #334155; background: #0f172a; color: #fff; font-size: 15px; }
-input:focus { outline: none; border-color: #ff6b00; }
-button { width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; border: none; font-weight: bold; font-size: 15px; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
-button:hover { transform: translateY(-2px); filter: brightness(1.2); }
-.btn-primary { background: linear-gradient(135deg, #ff6b00, #ff4500); color: #fff; }
-.btn-success { background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; }
-.btn-danger { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; }
-.btn-info { background: linear-gradient(135deg, #3b82f6, #1e40af); color: #fff; }
-
-/* LAYOUT */
-.game-layout { display: flex; min-height: 100vh; }
-.sidebar { width: 200px; background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); border-right: 2px solid #334155; padding: 20px 0; position: fixed; height: 100vh; overflow-y: auto; z-index: 10; }
-.sidebar-item { padding: 15px 20px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 10px; border-left: 3px solid transparent; color: #94a3b8; }
-.sidebar-item:hover { background: rgba(59, 130, 246, 0.1); border-left-color: #3b82f6; color: #fff; }
-.sidebar-item.active { background: rgba(59, 130, 246, 0.2); border-left-color: #3b82f6; color: #fff; }
-.sidebar-item .icon { font-size: 1.3em; }
-.sidebar-item .label { font-size: 0.9em; font-weight: bold; }
-
-.main-content { margin-left: 200px; flex: 1; padding: 20px; }
-
-/* TOP BAR */
-.top-bar { display: flex; justify-content: space-between; align-items: center; background: rgba(30, 41, 59, 0.9); padding: 15px 20px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
-.player-info { display: flex; align-items: center; gap: 15px; }
-.player-avatar { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 2em; border: 3px solid #ffd700; cursor: pointer; transition: all 0.3s; }
-.player-avatar:hover { transform: scale(1.1); box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
-.player-details h3 { font-size: 1.2em; margin-bottom: 3px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.player-details .level { font-size: 0.85em; color: #94a3b8; }
-.player-rank-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.7em; font-weight: bold; }
-.rank-iniciante { background: #64748b; color: #fff; }
-.rank-bronze { background: #cd7f32; color: #fff; }
-.rank-prata { background: #c0c0c0; color: #000; }
-.rank-ouro { background: #ffd700; color: #000; }
-.rank-platina { background: #00d4ff; color: #000; }
-.rank-diamante { background: #b9f2ff; color: #000; }
-.rank-mestre { background: #9333ea; color: #fff; }
-.rank-lendario { background: linear-gradient(135deg, #ff6b00, #ffd700); color: #000; box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); }
-
-.resources { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-.resource { display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.4); padding: 8px 12px; border-radius: 8px; border: 1px solid #ffd700; font-size: 0.9em; }
-.resource-value { font-weight: bold; color: #ffd700; }
-.badge-adm { background: #7c3aed; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 0.7em; }
-.badge-vip { background: #ffd700; color: #000; padding: 2px 8px; border-radius: 10px; font-size: 0.7em; }
-.text-admin { color: #c4b5fd; text-shadow: 0 0 10px rgba(196, 181, 253, 0.6); }
-
-/* SCREENS */
-.screen { display: none; animation: fadeIn 0.4s; }
-.screen.active { display: block; }
-.screen-title { font-size: 2em; margin-bottom: 20px; color: #fbbf24; display: flex; align-items: center; gap: 10px; }
-
-/* HOME */
-.home-hero { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, rgba(255, 107, 0, 0.1), rgba(139, 92, 246, 0.1)); border-radius: 20px; border: 2px solid #334155; margin-bottom: 30px; }
-.home-title { font-size: 3em; font-weight: 900; background: linear-gradient(135deg, #ff6b00, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
-.home-subtitle { font-size: 1.2em; color: #94a3b8; margin-bottom: 30px; }
-.home-actions { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
-.home-btn { padding: 18px 35px; font-size: 1.1em; border-radius: 12px; border: none; cursor: pointer; font-weight: 900; width: auto; color: #fff; }
-.btn-play { background: linear-gradient(135deg, #ff6b00, #ff4500); box-shadow: 0 0 30px rgba(255, 107, 0, 0.5); animation: pulse 2s infinite; }
-@keyframes pulse { 0%, 100% { box-shadow: 0 0 30px rgba(255, 107, 0, 0.5); } 50% { box-shadow: 0 0 50px rgba(255, 107, 0, 0.8); } }
-.btn-start { background: linear-gradient(135deg, #22c55e, #15803d); }
-.btn-daily-home { background: linear-gradient(135deg, #fbbf24, #d97706); color: #000; }
-.home-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-top: 30px; }
-.home-stat { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; border: 1px solid #334155; }
-.home-stat-value { font-size: 1.8em; font-weight: bold; color: #fbbf24; }
-.home-stat-label { font-size: 0.85em; color: #94a3b8; margin-top: 5px; }
-
-/* BOSSES */
-.bosses-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-.boss-card { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 16px; padding: 20px; border: 2px solid #334155; position: relative; transition: all 0.3s; }
-.boss-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-.boss-rank { position: absolute; top: 15px; right: 15px; font-size: 2em; font-weight: 900; color: #fbbf24; }
-.boss-image { font-size: 80px; text-align: center; margin: 15px 0; }
-.boss-name { font-size: 1.6em; font-weight: 900; text-align: center; margin-bottom: 5px; }
-.boss-title { text-align: center; color: #94a3b8; font-size: 0.9em; margin-bottom: 15px; }
-.boss-stats { display: flex; justify-content: space-around; margin-bottom: 15px; }
-.boss-stat { text-align: center; }
-.boss-stat-label { font-size: 0.8em; color: #94a3b8; }
-.boss-stat-value { font-size: 1.2em; font-weight: bold; color: #fbbf24; }
-.btn-battle { width: 100%; padding: 15px; background: linear-gradient(135deg, #ff8c00, #ff4500); color: #fff; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 900; cursor: pointer; }
-
-/* SHOP */
-.shop-tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-.shop-tab { padding: 12px 20px; background: #1e293b; border: 2px solid #334155; border-radius: 10px; color: #fff; cursor: pointer; font-weight: bold; transition: all 0.3s; }
-.shop-tab.active { background: linear-gradient(135deg, #3b82f6, #1e40af); border-color: #60a5fa; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
-.shop-section { display: none; }
-.shop-section.active { display: block; animation: fadeIn 0.3s; }
-.characters-grid, .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; }
-.character-card, .shop-item { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 12px; padding: 15px; border: 2px solid #334155; transition: all 0.3s; }
-.character-card:hover, .shop-item:hover { transform: translateY(-5px); }
-.character-card.owned { border-color: #22c55e; }
-.character-card.equipped { border-color: #ffd700; box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
-.character-emoji, .item-image { font-size: 60px; text-align: center; margin-bottom: 10px; }
-.character-name, .item-name { font-weight: bold; text-align: center; margin-bottom: 5px; font-size: 1em; }
-.character-class { text-align: center; color: #94a3b8; font-size: 0.85em; margin-bottom: 10px; }
-.character-stats { display: flex; justify-content: space-around; margin-bottom: 15px; font-size: 0.85em; }
-.character-stat { text-align: center; }
-.character-stat-label { color: #94a3b8; font-size: 0.75em; }
-.character-stat-value { font-weight: bold; color: #fbbf24; }
-.item-price { color: #fbbf24; font-weight: bold; text-align: center; margin-bottom: 10px; font-size: 0.9em; }
-.btn-character, .btn-buy { width: 100%; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; font-size: 0.9em; }
-.btn-buy-char { background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; }
-.btn-equip { background: linear-gradient(135deg, #3b82f6, #1e40af); color: #fff; }
-.btn-equipped { background: #ffd700; color: #000; cursor: default; }
-.btn-buy { background: #22c55e; color: #fff; }
-.rarity-legendary { border-color: #fbbf24; box-shadow: 0 0 15px rgba(251, 191, 36, 0.3); }
-.rarity-epic { border-color: #a855f7; box-shadow: 0 0 15px rgba(168, 85, 247, 0.3); }
-.rarity-rare { border-color: #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
-.rarity-common { border-color: #22c55e; }
-
-/* POWERS */
-.powers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
-.power-card { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 16px; padding: 20px; border: 2px solid #334155; transition: all 0.3s; position: relative; }
-.power-card:hover { transform: translateY(-5px); }
-.power-card.unlocked { border-color: #22c55e; }
-.power-card.locked { opacity: 0.6; }
-.power-card.locked::after { content: ' BLOQUEADO'; position: absolute; top: 10px; right: 10px; background: #ef4444; color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 0.7em; font-weight: bold; }
-.power-emoji { font-size: 60px; text-align: center; margin-bottom: 10px; }
-.power-name { font-size: 1.3em; font-weight: bold; text-align: center; margin-bottom: 5px; color: #fbbf24; }
-.power-desc { text-align: center; color: #94a3b8; font-size: 0.85em; margin-bottom: 15px; }
-.power-stats { display: flex; justify-content: space-around; }
-.power-stat { text-align: center; }
-.power-stat-label { font-size: 0.75em; color: #94a3b8; }
-.power-stat-value { font-weight: bold; color: #fbbf24; }
-
-/* RESUMO */
-.rank-display { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 16px; padding: 30px; border: 2px solid #334155; text-align: center; margin-bottom: 20px; }
-.rank-icon { font-size: 4em; margin-bottom: 10px; }
-.rank-name { font-size: 2em; font-weight: 900; margin-bottom: 5px; }
-.rank-progress { background: #0f172a; border-radius: 10px; height: 20px; margin-top: 15px; overflow: hidden; }
-.rank-progress-bar { height: 100%; background: linear-gradient(90deg, #3b82f6, #8b5cf6); transition: width 0.5s; }
-.resumo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
-.resumo-card { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 12px; padding: 20px; border: 1px solid #334155; text-align: center; transition: all 0.3s; }
-.resumo-card:hover { transform: translateY(-3px); border-color: #3b82f6; }
-.resumo-icon { font-size: 2em; margin-bottom: 8px; }
-.resumo-value { font-size: 1.8em; font-weight: bold; color: #fbbf24; }
-.resumo-label { color: #94a3b8; font-size: 0.85em; margin-top: 5px; }
-
-/* MODAL */
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(5px); }
-.modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
-.modal { background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid #3b82f6; border-radius: 20px; padding: 30px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; }
-.modal h2 { color: #60a5fa; margin-bottom: 20px; font-size: 1.5em; }
-.modal-section { margin-bottom: 20px; padding: 15px; background: rgba(0, 0, 0, 0.3); border-radius: 12px; border: 1px solid #334155; }
-.modal-section h3 { color: #fbbf24; margin-bottom: 10px; font-size: 1.1em; }
-.modal-section p { color: #94a3b8; font-size: 0.9em; margin-bottom: 10px; }
-.modal-close { width: auto; padding: 10px 20px; background: #64748b; color: #fff; border-radius: 8px; margin-top: 10px; border: none; cursor: pointer; }
-
-/* DAILY */
-.daily-rewards-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin: 20px 0; }
-.daily-day { background: rgba(0,0,0,0.3); border: 2px solid #334155; border-radius: 10px; padding: 10px 5px; text-align: center; }
-.daily-day.claimed { background: rgba(34, 197, 94, 0.2); border-color: #22c55e; }
-.daily-day.today { background: rgba(251, 191, 36, 0.2); border-color: #fbbf24; animation: pulseDay 2s infinite; }
-@keyframes pulseDay { 0%, 100% { box-shadow: 0 0 10px rgba(251, 191, 36, 0.3); } 50% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.6); } }
-.daily-day-num { font-size: 0.7em; color: #94a3b8; margin-bottom: 5px; }
-.daily-day-reward { font-size: 1.5em; }
-.daily-day-label { font-size: 0.65em; color: #94a3b8; margin-top: 3px; }
-
-/* AVATAR */
-.avatar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 10px; margin-top: 15px; }
-.avatar-option { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 2em; cursor: pointer; border: 3px solid transparent; transition: all 0.3s; margin: 0 auto; }
-.avatar-option:hover { transform: scale(1.15); border-color: #ffd700; }
-.avatar-option.selected { border-color: #22c55e; }
-
-/* MUSIC */
-.music-toggle { display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; margin-top: 10px; }
-.music-toggle label { cursor: pointer; flex: 1; }
-.toggle-switch { position: relative; width: 50px; height: 26px; }
-.toggle-switch input { opacity: 0; width: 0; height: 0; }
-.toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #64748b; border-radius: 26px; transition: 0.3s; }
-.toggle-slider:before { content: ""; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; }
-input:checked + .toggle-slider { background: #22c55e; }
-input:checked + .toggle-slider:before { transform: translateX(24px); }
-
-/* CHAT */
-.chat-toggle { position: fixed; bottom: 20px; left: 20px; width: 55px; height: 55px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #1e40af); border: 2px solid #60a5fa; color: #fff; font-size: 1.5em; cursor: pointer; z-index: 100; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(59, 130, 246, 0.6); }
-.chat-toggle .notification { position: absolute; top: -5px; right: -5px; background: #ef4444; color: #fff; font-size: 0.5em; padding: 3px 8px; border-radius: 10px; font-weight: bold; }
-.chat-panel { position: fixed; bottom: 85px; left: 20px; width: 340px; height: 450px; background: rgba(10, 14, 39, 0.95); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 16px; z-index: 100; display: none; flex-direction: column; backdrop-filter: blur(15px); }
-.chat-panel.active { display: flex; }
-.chat-header { padding: 12px 15px; background: rgba(30, 41, 59, 0.9); border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
-.chat-header h3 { color: #60a5fa; font-size: 1em; }
-.chat-tabs { display: flex; gap: 8px; padding: 10px 15px; background: rgba(0, 0, 0, 0.3); }
-.chat-tab { flex: 1; padding: 8px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; color: #94a3b8; cursor: pointer; font-size: 0.8em; font-weight: bold; text-align: center; }
-.chat-tab.active { background: linear-gradient(135deg, #3b82f6, #1e40af); color: #fff; }
-.chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-.message { background: rgba(30, 41, 59, 0.4); padding: 10px; border-radius: 10px; border-left: 3px solid #3b82f6; }
-.message.own { border-left-color: #22c55e; background: rgba(34, 197, 94, 0.1); }
-.message-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; flex-wrap: wrap; }
-.message-author { font-weight: bold; font-size: 0.85em; }
-.message-time { font-size: 0.65em; color: #64748b; margin-left: auto; }
-.message-text { font-size: 0.85em; color: #e2e8f0; word-wrap: break-word; }
-.chat-input-area { padding: 12px; background: rgba(0, 0, 0, 0.4); border-top: 1px solid #334155; display: flex; gap: 8px; }
-.chat-input { flex: 1; padding: 10px; background: rgba(15, 23, 42, 0.8); border: 1px solid #334155; border-radius: 8px; color: #fff; font-size: 0.85em; margin: 0; }
-.chat-send { width: auto; padding: 10px 16px; background: #3b82f6; border-radius: 8px; margin: 0; font-size: 0.85em; }
-
-#toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e293b; border: 2px solid #ff6b00; color: #fff; padding: 15px 30px; border-radius: 12px; display: none; z-index: 9999; font-weight: bold; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-
-@media (max-width: 768px) {
-    .sidebar { width: 60px; }
-    .sidebar-item .label { display: none; }
-    .main-content { margin-left: 60px; padding: 10px; }
-    .bosses-grid, .characters-grid, .shop-grid, .powers-grid { grid-template-columns: 1fr; }
-    .chat-panel { width: calc(100% - 40px); }
-    .daily-rewards-grid { grid-template-columns: repeat(4, 1fr); }
-    .home-title { font-size: 2em; }
-    .home-actions { flex-direction: column; }
-}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0a0e1a;color:#fff;min-height:100vh;overflow-x:hidden}
+#loading{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0e1a;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999}
+.spinner{width:60px;height:60px;border:5px solid #333;border-top:5px solid #ff6b00;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.loading-text{margin-top:20px;color:#ff6b00;font-size:1.2em;font-weight:bold}
+.hidden{display:none!important}
+.auth-container{display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px;background:linear-gradient(135deg,#0a0e27,#1a1f3a)}
+.auth-card{background:rgba(30,41,59,.95);border:2px solid #ff6b00;border-radius:20px;padding:40px;max-width:450px;width:100%;box-shadow:0 20px 60px rgba(255,107,0,.4)}
+.auth-card h1{text-align:center;font-size:2.8em;margin-bottom:10px;background:linear-gradient(135deg,#ff6b00,#ffd700);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.auth-card .subtitle{text-align:center;color:#94a3b8;letter-spacing:4px;margin-bottom:25px;font-size:.9em}
+.auth-tabs{display:flex;gap:10px;margin-bottom:20px}
+.auth-tab{flex:1;padding:14px;background:#0f172a;border:2px solid #334155;border-radius:10px;color:#fff;cursor:pointer;font-weight:bold;text-align:center;transition:all .3s}
+.auth-tab.active{background:#ff6b00;border-color:#ff6b00}
+.auth-form{display:none}
+.auth-form.active{display:block;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+input{width:100%;padding:14px;margin:8px 0;border-radius:10px;border:2px solid #334155;background:#0f172a;color:#fff;font-size:15px}
+input:focus{outline:none;border-color:#ff6b00}
+button{width:100%;padding:14px;margin:8px 0;border-radius:10px;border:none;font-weight:bold;font-size:15px;cursor:pointer;transition:all .3s;text-transform:uppercase}
+button:hover{transform:translateY(-2px);filter:brightness(1.2)}
+.btn-primary{background:linear-gradient(135deg,#ff6b00,#ff4500);color:#fff}
+.btn-success{background:linear-gradient(135deg,#22c55e,#15803d);color:#fff}
+.btn-danger{background:linear-gradient(135deg,#ef4444,#b91c1c);color:#fff}
+.btn-info{background:linear-gradient(135deg,#3b82f6,#1e40af);color:#fff}
+.game-layout{display:flex;min-height:100vh}
+.sidebar{width:200px;background:linear-gradient(180deg,#0f172a,#1e293b);border-right:2px solid #334155;padding:20px 0;position:fixed;height:100vh;overflow-y:auto;z-index:10}
+.sidebar-item{padding:15px 20px;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:10px;border-left:3px solid transparent;color:#94a3b8}
+.sidebar-item:hover{background:rgba(59,130,246,.1);border-left-color:#3b82f6;color:#fff}
+.sidebar-item.active{background:rgba(59,130,246,.2);border-left-color:#3b82f6;color:#fff}
+.sidebar-item .icon{font-size:1.3em}
+.sidebar-item .label{font-size:.9em;font-weight:bold}
+.main-content{margin-left:200px;flex:1;padding:20px}
+.top-bar{display:flex;justify-content:space-between;align-items:center;background:rgba(30,41,59,.9);padding:15px 20px;border-radius:12px;border:1px solid #334155;margin-bottom:20px;flex-wrap:wrap;gap:15px}
+.player-info{display:flex;align-items:center;gap:15px}
+.player-avatar{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:2em;border:3px solid #ffd700;cursor:pointer;transition:all .3s}
+.player-avatar:hover{transform:scale(1.1);box-shadow:0 0 20px rgba(255,215,0,.6)}
+.player-details h3{font-size:1.2em;margin-bottom:3px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.player-details .level{font-size:.85em;color:#94a3b8}
+.player-rank-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.7em;font-weight:bold}
+.rank-iniciante{background:#64748b;color:#fff}
+.rank-bronze{background:#cd7f32;color:#fff}
+.rank-prata{background:#c0c0c0;color:#000}
+.rank-ouro{background:#ffd700;color:#000}
+.rank-platina{background:#00d4ff;color:#000}
+.rank-diamante{background:#b9f2ff;color:#000}
+.rank-mestre{background:#9333ea;color:#fff}
+.rank-lendario{background:linear-gradient(135deg,#ff6b00,#ffd700);color:#000;box-shadow:0 0 15px rgba(255,215,0,.6)}
+.resources{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.resource{display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.4);padding:8px 12px;border-radius:8px;border:1px solid #ffd700;font-size:.9em}
+.resource-value{font-weight:bold;color:#ffd700}
+.badge-adm{background:#7c3aed;color:#fff;padding:2px 8px;border-radius:10px;font-size:.7em}
+.badge-vip{background:#ffd700;color:#000;padding:2px 8px;border-radius:10px;font-size:.7em}
+.text-admin{color:#c4b5fd;text-shadow:0 0 10px rgba(196,181,253,.6)}
+.screen{display:none;animation:fadeIn .4s}
+.screen.active{display:block}
+.screen-title{font-size:2em;margin-bottom:20px;color:#fbbf24;display:flex;align-items:center;gap:10px}
+.home-hero{text-align:center;padding:40px 20px;background:linear-gradient(135deg,rgba(255,107,0,.1),rgba(139,92,246,.1));border-radius:20px;border:2px solid #334155;margin-bottom:30px}
+.home-title{font-size:3em;font-weight:900;background:linear-gradient(135deg,#ff6b00,#ffd700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
+.home-subtitle{font-size:1.2em;color:#94a3b8;margin-bottom:30px}
+.home-actions{display:flex;gap:15px;justify-content:center;flex-wrap:wrap}
+.home-btn{padding:18px 35px;font-size:1.1em;border-radius:12px;border:none;cursor:pointer;font-weight:900;width:auto;color:#fff}
+.btn-play{background:linear-gradient(135deg,#ff6b00,#ff4500);box-shadow:0 0 30px rgba(255,107,0,.5);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 30px rgba(255,107,0,.5)}50%{box-shadow:0 0 50px rgba(255,107,0,.8)}}
+.btn-start{background:linear-gradient(135deg,#22c55e,#15803d)}
+.btn-daily-home{background:linear-gradient(135deg,#fbbf24,#d97706);color:#000}
+.home-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:15px;margin-top:30px}
+.home-stat{background:rgba(0,0,0,.3);padding:15px;border-radius:12px;border:1px solid #334155}
+.home-stat-value{font-size:1.8em;font-weight:bold;color:#fbbf24}
+.home-stat-label{font-size:.85em;color:#94a3b8;margin-top:5px}
+.bosses-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.boss-card{background:linear-gradient(135deg,#1e293b,#0f172a);border-radius:16px;padding:20px;border:2px solid #334155;position:relative;transition:all .3s}
+.boss-card:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.boss-rank{position:absolute;top:15px;right:15px;font-size:2em;font-weight:900;color:#fbbf24}
+.boss-image{font-size:80px;text-align:center;margin:15px 0}
+.boss-name{font-size:1.6em;font-weight:900;text-align:center;margin-bottom:5px}
+.boss-title{text-align:center;color:#94a3b8;font-size:.9em;margin-bottom:15px}
+.boss-stats{display:flex;justify-content:space-around;margin-bottom:15px}
+.boss-stat{text-align:center}
+.boss-stat-label{font-size:.8em;color:#94a3b8}
+.boss-stat-value{font-size:1.2em;font-weight:bold;color:#fbbf24}
+.btn-battle{width:100%;padding:15px;background:linear-gradient(135deg,#ff8c00,#ff4500);color:#fff;border:none;border-radius:12px;font-size:1.1em;font-weight:900;cursor:pointer}
+.shop-tabs{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.shop-tab{padding:12px 20px;background:#1e293b;border:2px solid #334155;border-radius:10px;color:#fff;cursor:pointer;font-weight:bold;transition:all .3s}
+.shop-tab.active{background:linear-gradient(135deg,#3b82f6,#1e40af);border-color:#60a5fa;box-shadow:0 0 15px rgba(59,130,246,.5)}
+.shop-section{display:none}
+.shop-section.active{display:block;animation:fadeIn .3s}
+.characters-grid,.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:15px}
+.character-card,.shop-item{background:linear-gradient(135deg,#1e293b,#0f172a);border-radius:12px;padding:15px;border:2px solid #334155;transition:all .3s}
+.character-card:hover,.shop-item:hover{transform:translateY(-5px)}
+.character-card.owned{border-color:#22c55e}
+.character-card.equipped{border-color:#ffd700;box-shadow:0 0 20px rgba(255,215,0,.5)}
+.character-emoji,.item-image{font-size:60px;text-align:center;margin-bottom:10px}
+.character-name,.item-name{font-weight:bold;text-align:center;margin-bottom:5px;font-size:1em}
+.character-class{text-align:center;color:#94a3b8;font-size:.85em;margin-bottom:10px}
+.character-stats{display:flex;justify-content:space-around;margin-bottom:15px;font-size:.85em}
+.character-stat{text-align:center}
+.character-stat-label{color:#94a3b8;font-size:.75em}
+.character-stat-value{font-weight:bold;color:#fbbf24}
+.item-price{color:#fbbf24;font-weight:bold;text-align:center;margin-bottom:10px;font-size:.9em}
+.btn-character,.btn-buy{width:100%;padding:10px;border-radius:8px;border:none;cursor:pointer;font-weight:bold;font-size:.9em}
+.btn-buy-char{background:linear-gradient(135deg,#22c55e,#15803d);color:#fff}
+.btn-equip{background:linear-gradient(135deg,#3b82f6,#1e40af);color:#fff}
+.btn-equipped{background:#ffd700;color:#000;cursor:default}
+.btn-buy{background:#22c55e;color:#fff}
+.rarity-legendary{border-color:#fbbf24;box-shadow:0 0 15px rgba(251,191,36,.3)}
+.rarity-epic{border-color:#a855f7;box-shadow:0 0 15px rgba(168,85,247,.3)}
+.rarity-rare{border-color:#3b82f6;box-shadow:0 0 15px rgba(59,130,246,.3)}
+.rarity-common{border-color:#22c55e}
+.powers-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px}
+.power-card{background:linear-gradient(135deg,#1e293b,#0f172a);border-radius:16px;padding:20px;border:2px solid #334155;transition:all .3s;position:relative}
+.power-card:hover{transform:translateY(-5px)}
+.power-card.unlocked{border-color:#22c55e}
+.power-card.locked{opacity:.6}
+.power-card.locked::after{content:'🔒 BLOQUEADO';position:absolute;top:10px;right:10px;background:#ef4444;color:#fff;padding:4px 10px;border-radius:8px;font-size:.7em;font-weight:bold}
+.power-emoji{font-size:60px;text-align:center;margin-bottom:10px}
+.power-name{font-size:1.3em;font-weight:bold;text-align:center;margin-bottom:5px;color:#fbbf24}
+.power-desc{text-align:center;color:#94a3b8;font-size:.85em;margin-bottom:15px}
+.power-stats{display:flex;justify-content:space-around}
+.power-stat{text-align:center}
+.power-stat-label{font-size:.75em;color:#94a3b8}
+.power-stat-value{font-weight:bold;color:#fbbf24}
+.rank-display{background:linear-gradient(135deg,#1e293b,#0f172a);border-radius:16px;padding:30px;border:2px solid #334155;text-align:center;margin-bottom:20px}
+.rank-icon{font-size:4em;margin-bottom:10px}
+.rank-name{font-size:2em;font-weight:900;margin-bottom:5px}
+.rank-progress{background:#0f172a;border-radius:10px;height:20px;margin-top:15px;overflow:hidden}
+.rank-progress-bar{height:100%;background:linear-gradient(90deg,#3b82f6,#8b5cf6);transition:width .5s}
+.resumo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}
+.resumo-card{background:linear-gradient(135deg,#1e293b,#0f172a);border-radius:12px;padding:20px;border:1px solid #334155;text-align:center;transition:all .3s}
+.resumo-card:hover{transform:translateY(-3px);border-color:#3b82f6}
+.resumo-icon{font-size:2em;margin-bottom:8px}
+.resumo-value{font-size:1.8em;font-weight:bold;color:#fbbf24}
+.resumo-label{color:#94a3b8;font-size:.85em;margin-top:5px}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(5px)}
+.modal-overlay.active{display:flex;animation:fadeIn .3s}
+.modal{background:linear-gradient(135deg,#1e293b,#0f172a);border:2px solid #3b82f6;border-radius:20px;padding:30px;max-width:600px;width:90%;max-height:90vh;overflow-y:auto}
+.modal h2{color:#60a5fa;margin-bottom:20px;font-size:1.5em}
+.modal-section{margin-bottom:20px;padding:15px;background:rgba(0,0,0,.3);border-radius:12px;border:1px solid #334155}
+.modal-section h3{color:#fbbf24;margin-bottom:10px;font-size:1.1em}
+.modal-section p{color:#94a3b8;font-size:.9em;margin-bottom:10px}
+.modal-close{width:auto;padding:10px 20px;background:#64748b;color:#fff;border-radius:8px;margin-top:10px;border:none;cursor:pointer}
+.daily-rewards-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin:20px 0}
+.daily-day{background:rgba(0,0,0,.3);border:2px solid #334155;border-radius:10px;padding:10px 5px;text-align:center}
+.daily-day.claimed{background:rgba(34,197,94,.2);border-color:#22c55e}
+.daily-day.today{background:rgba(251,191,36,.2);border-color:#fbbf24;animation:pulseDay 2s infinite}
+@keyframes pulseDay{0%,100%{box-shadow:0 0 10px rgba(251,191,36,.3)}50%{box-shadow:0 0 20px rgba(251,191,36,.6)}}
+.daily-day-num{font-size:.7em;color:#94a3b8;margin-bottom:5px}
+.daily-day-reward{font-size:1.5em}
+.daily-day-label{font-size:.65em;color:#94a3b8;margin-top:3px}
+.avatar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:10px;margin-top:15px}
+.avatar-option{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:2em;cursor:pointer;border:3px solid transparent;transition:all .3s;margin:0 auto}
+.avatar-option:hover{transform:scale(1.15);border-color:#ffd700}
+.avatar-option.selected{border-color:#22c55e}
+.music-toggle{display:flex;align-items:center;gap:10px;padding:10px;background:rgba(0,0,0,.3);border-radius:8px;margin-top:10px}
+.music-toggle label{cursor:pointer;flex:1}
+.toggle-switch{position:relative;width:50px;height:26px}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#64748b;border-radius:26px;transition:.3s}
+.toggle-slider:before{content:"";position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+input:checked+.toggle-slider{background:#22c55e}
+input:checked+.toggle-slider:before{transform:translateX(24px)}
+.chat-toggle{position:fixed;bottom:20px;left:20px;width:55px;height:55px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#1e40af);border:2px solid #60a5fa;color:#fff;font-size:1.5em;cursor:pointer;z-index:100;display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(59,130,246,.6)}
+.chat-toggle .notification{position:absolute;top:-5px;right:-5px;background:#ef4444;color:#fff;font-size:.5em;padding:3px 8px;border-radius:10px;font-weight:bold}
+.chat-panel{position:fixed;bottom:85px;left:20px;width:340px;height:450px;background:rgba(10,14,39,.95);border:1px solid rgba(59,130,246,.3);border-radius:16px;z-index:100;display:none;flex-direction:column;backdrop-filter:blur(15px)}
+.chat-panel.active{display:flex}
+.chat-header{padding:12px 15px;background:rgba(30,41,59,.9);border-bottom:1px solid #334155;display:flex;justify-content:space-between;align-items:center}
+.chat-header h3{color:#60a5fa;font-size:1em}
+.chat-tabs{display:flex;gap:8px;padding:10px 15px;background:rgba(0,0,0,.3)}
+.chat-tab{flex:1;padding:8px;background:rgba(30,41,59,.5);border:1px solid rgba(255,255,255,.05);border-radius:8px;color:#94a3b8;cursor:pointer;font-size:.8em;font-weight:bold;text-align:center}
+.chat-tab.active{background:linear-gradient(135deg,#3b82f6,#1e40af);color:#fff}
+.chat-messages{flex:1;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:10px}
+.message{background:rgba(30,41,59,.4);padding:10px;border-radius:10px;border-left:3px solid #3b82f6}
+.message.own{border-left-color:#22c55e;background:rgba(34,197,94,.1)}
+.message-header{display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap}
+.message-author{font-weight:bold;font-size:.85em}
+.message-time{font-size:.65em;color:#64748b;margin-left:auto}
+.message-text{font-size:.85em;color:#e2e8f0;word-wrap:break-word}
+.chat-input-area{padding:12px;background:rgba(0,0,0,.4);border-top:1px solid #334155;display:flex;gap:8px}
+.chat-input{flex:1;padding:10px;background:rgba(15,23,42,.8);border:1px solid #334155;border-radius:8px;color:#fff;font-size:.85em;margin:0}
+.chat-send{width:auto;padding:10px 16px;background:#3b82f6;border-radius:8px;margin:0;font-size:.85em}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;border:2px solid #ff6b00;color:#fff;padding:15px 30px;border-radius:12px;display:none;z-index:9999;font-weight:bold;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+@media(max-width:768px){.sidebar{width:60px}.sidebar-item .label{display:none}.main-content{margin-left:60px;padding:10px}.bosses-grid,.characters-grid,.shop-grid,.powers-grid{grid-template-columns:1fr}.chat-panel{width:calc(100% - 40px)}.daily-rewards-grid{grid-template-columns:repeat(4,1fr)}.home-title{font-size:2em}.home-actions{flex-direction:column}}
 </style>
 </head>
 <body>
-
 <div id="loading"><div class="spinner"></div><div class="loading-text">Carregando Dragon War...</div></div>
-
-<div id="authView" class="hidden">
-    <div class="auth-container">
-        <div class="auth-card">
-            <h1>🐉 DRAGON WAR</h1>
-            <div class="subtitle">RISE OF POWER</div>
-            <div class="auth-tabs">
-                <div class="auth-tab active" onclick="showTab('login')">Entrar</div>
-                <div class="auth-tab" onclick="showTab('register')">Criar Conta</div>
-            </div>
-            <div id="loginForm" class="auth-form active">
-                <input id="loginEmail" type="email" placeholder="E-mail">
-                <input id="loginPass" type="password" placeholder="Senha">
-                <button class="btn-primary" onclick="doLogin()">ENTRAR</button>
-            </div>
-            <div id="registerForm" class="auth-form">
-                <input id="regNick" placeholder="Nome do Personagem">
-                <input id="regEmail" type="email" placeholder="E-mail">
-                <input id="regPass" type="password" placeholder="Senha (mín. 6)">
-                <button class="btn-success" onclick="doRegister()">CADASTRAR</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="gameView" class="hidden">
-    <div class="game-layout">
-        <div class="sidebar">
-            <div class="sidebar-item active" onclick="showScreen('home', this)"><span class="icon">🏠</span><span class="label">INÍCIO</span></div>
-            <div class="sidebar-item" onclick="showScreen('combat', this)"><span class="icon">⚔️</span><span class="label">JOGAR</span></div>
-            <div class="sidebar-item" onclick="showScreen('shop', this)"><span class="icon">🛒</span><span class="label">LOJA</span></div>
-            <div class="sidebar-item" onclick="showScreen('powers', this)"><span class="icon">✨</span><span class="label">PODERES</span></div>
-            <div class="sidebar-item" onclick="showScreen('resumo', this)"><span class="icon">📊</span><span class="label">RESUMO</span></div>
-        </div>
-
-        <div class="main-content">
-            <div class="top-bar">
-                <div class="player-info">
-                    <div class="player-avatar" id="playerAvatar" onclick="openAvatarModal()"></div>
-                    <div class="player-details">
-                        <h3 id="playerNameDisplay">Carregando...</h3>
-                        <div class="level">Nível <span id="playerLevel">1</span></div>
-                    </div>
-                </div>
-                <div class="resources">
-                    <div class="resource">💰 <span class="resource-value" id="resCoins">0</span></div>
-                    <div class="resource">💎 <span class="resource-value" id="resGems">0</span></div>
-                    <div class="resource"> <span class="resource-value" id="resCrystals">0</span></div>
-                    <div class="resource">⭐ <span class="resource-value" id="resPoints">0</span></div>
-                    <button onclick="openSettings()" style="width:auto;padding:8px 12px;background:#3b82f6;border-radius:8px;margin:0;">⚙️</button>
-                    <button onclick="openDailyReward()" style="width:auto;padding:8px 12px;background:#fbbf24;color:#000;border-radius:8px;margin:0;">🎁</button>
-                    <button onclick="doLogout()" style="width:auto;padding:8px 12px;background:#ef4444;border-radius:8px;margin:0;">Sair</button>
-                </div>
-            </div>
-
-            <!-- HOME -->
-            <div id="homeScreen" class="screen active">
-                <div class="home-hero">
-                    <div class="home-title">🐉 DRAGON WAR</div>
-                    <div class="home-subtitle">Rise of Power</div>
-                    <div class="home-actions">
-                        <button class="home-btn btn-play" onclick="showScreen('combat', document.querySelectorAll('.sidebar-item')[1])">⚔️ JOGAR</button>
-                        <button class="home-btn btn-start" onclick="quickBattle()"> BATALHA RÁPIDA</button>
-                        <button class="home-btn btn-daily-home" onclick="openDailyReward()">🎁 BÔNUS DIÁRIO</button>
-                    </div>
-                    <div class="home-stats">
-                        <div class="home-stat"><div class="home-stat-value" id="homeWins">0</div><div class="home-stat-label">Vitórias</div></div>
-                        <div class="home-stat"><div class="home-stat-value" id="homeLosses">0</div><div class="home-stat-label">Derrotas</div></div>
-                        <div class="home-stat"><div class="home-stat-value" id="homeLevel">1</div><div class="home-stat-label">Nível</div></div>
-                        <div class="home-stat"><div class="home-stat-value" id="homeRank"> Iniciante</div><div class="home-stat-label">Rank</div></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- COMBAT -->
-            <div id="combatScreen" class="screen">
-                <h2 class="screen-title">⚔️ SELEÇÃO DE BOSS</h2>
-                <div class="bosses-grid">
-                    <div class="boss-card"><div class="boss-rank">SSS</div><div class="boss-image"></div><div class="boss-name">KHALDRON</div><div class="boss-title">The Nightmare Dragon</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">80</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">2.5M</div></div></div><button class="btn-battle" onclick="battle('Khaldrón', 5000, 500)">️ BATALHAR</button></div>
-                    <div class="boss-card"><div class="boss-rank">SS</div><div class="boss-image">👹</div><div class="boss-name">IGNEOUS</div><div class="boss-title">The Fire Demon</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">70</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">1.8M</div></div></div><button class="btn-battle" onclick="battle('Igneous', 3000, 300)">️ BATALHAR</button></div>
-                    <div class="boss-card"><div class="boss-rank">S</div><div class="boss-image">⚔️</div><div class="boss-name">MALAKAI</div><div class="boss-title">The Shadow Warrior</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">60</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">1.2M</div></div></div><button class="btn-battle" onclick="battle('Malakai', 2000, 200)">️ BATALHAR</button></div>
-                    <div class="boss-card"><div class="boss-rank">SSS</div><div class="boss-image">👑</div><div class="boss-name">DRAGON KING</div><div class="boss-title">The Ancient Ruler</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">100</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">5M</div></div></div><button class="btn-battle" onclick="battle('Dragon King', 10000, 1000)">⚔️ BATALHAR</button></div>
-                </div>
-            </div>
-
-            <!-- SHOP -->
-            <div id="shopScreen" class="screen">
-                <h2 class="screen-title">🛒 LOJA</h2>
-                <div class="shop-tabs">
-                    <button class="shop-tab active" onclick="switchShop('characters', this)">👥 Personagens</button>
-                    <button class="shop-tab" onclick="switchShop('equipment', this)">⚔️ Equipamentos</button>
-                    <button class="shop-tab" onclick="switchShop('consumables', this)">🧪 Consumíveis</button>
-                    <button class="shop-tab" onclick="switchShop('materials', this)">📜 Materiais</button>
-                </div>
-                <div id="shop-characters" class="shop-section active"><div class="characters-grid" id="charactersGrid"></div></div>
-                <div id="shop-equipment" class="shop-section">
-                    <div class="shop-grid">
-                        <div class="shop-item rarity-common"><div class="item-image">🗡️</div><div class="item-name">Espada de Ferro</div><div class="item-price">💰 100</div><button class="btn-buy" onclick="buyItem('Espada de Ferro', 100, 'coins')">COMPRAR</button></div>
-                        <div class="shop-item rarity-rare"><div class="item-image">⚔️</div><div class="item-name">Espada de Aço</div><div class="item-price">💰 500</div><button class="btn-buy" onclick="buyItem('Espada de Aço', 500, 'coins')">COMPRAR</button></div>
-                        <div class="shop-item rarity-epic"><div class="item-image">🗡️</div><div class="item-name">Lâmina do Dragão</div><div class="item-price">💰 3.000</div><button class="btn-buy" onclick="buyItem('Lâmina do Dragão', 3000, 'coins')">COMPRAR</button></div>
-                        <div class="shop-item rarity-legendary"><div class="item-image">⚔️</div><div class="item-name">Espada Lendária</div><div class="item-price">💎 500</div><button class="btn-buy" onclick="buyItem('Espada Lendária', 500, 'gems')">COMPRAR</button></div>
-                    </div>
-                </div>
-                <div id="shop-consumables" class="shop-section">
-                    <div class="shop-grid">
-                        <div class="shop-item rarity-common"><div class="item-image">🧪</div><div class="item-name">Poção de Vida</div><div class="item-price">💰 50</div><button class="btn-buy" onclick="buyItem('Poção de Vida', 50, 'coins')">COMPRAR</button></div>
-                        <div class="shop-item rarity-rare"><div class="item-image">🧪</div><div class="item-name">Poção de Mana</div><div class="item-price">💰 200</div><button class="btn-buy" onclick="buyItem('Poção de Mana', 200, 'coins')">COMPRAR</button></div>
-                        <div class="shop-item rarity-epic"><div class="item-image">⚗️</div><div class="item-name">Elixir de Poder</div><div class="item-price">💰 1.500</div><button class="btn-buy" onclick="buyItem('Elixir de Poder', 1500, 'coins')">COMPRAR</button></div>
-                    </div>
-                </div>
-                <div id="shop-materials" class="shop-section">
-                    <div class="shop-grid">
-                        <div class="shop-item rarity-common"><div class="item-image">🪵</div><div class="item-name">Madeira</div><div class="item-price">💰 20</div><button class="btn-buy" onclick="buyItem('Madeira', 20, 'coins')">COMPRAR</button></div>
-                        <div class="shop-item rarity-rare"><div class="item-image">🪨</div><div class="item-name">Pedra Rara</div><div class="item-price">💰 300</div><button class="btn-buy" onclick="buyItem('Pedra Rara', 300, 'coins')">COMPRAR</button></div>
-                        <div class="shop-item rarity-legendary"><div class="item-image">💎</div><div class="item-name">Cristal Místico</div><div class="item-price">🔮 200</div><button class="btn-buy" onclick="buyItem('Cristal Místico', 200, 'crystals')">COMPRAR</button></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- POWERS -->
-            <div id="powersScreen" class="screen">
-                <h2 class="screen-title">✨ PODERES</h2>
-                <p style="color:#94a3b8;margin-bottom:20px;">Seus poderes desbloqueados. Novos poderes desbloqueiam com o nível.</p>
-                <div class="powers-grid" id="powersGrid"></div>
-            </div>
-
-            <!-- RESUMO -->
-            <div id="resumoScreen" class="screen">
-                <h2 class="screen-title">📊 RESUMO</h2>
-                <div class="rank-display">
-                    <div class="rank-icon" id="rankIcon">🌱</div>
-                    <div class="rank-name" id="rankName">Iniciante</div>
-                    <div style="color:#94a3b8;" id="rankDesc">Continue jogando para subir de rank!</div>
-                    <div class="rank-progress"><div class="rank-progress-bar" id="rankBar" style="width:0%"></div></div>
-                    <div style="margin-top:10px;color:#94a3b8;font-size:0.9em;">Progresso: <span id="rankProgress">0</span> / <span id="rankNext">10</span> vitórias</div>
-                </div>
-                <div class="resumo-grid">
-                    <div class="resumo-card"><div class="resumo-icon">⚔️</div><div class="resumo-value" id="statWins">0</div><div class="resumo-label">Vitórias</div></div>
-                    <div class="resumo-card"><div class="resumo-icon">💀</div><div class="resumo-value" id="statLosses">0</div><div class="resumo-label">Derrotas</div></div>
-                    <div class="resumo-card"><div class="resumo-icon">🏆</div><div class="resumo-value" id="statBattles">0</div><div class="resumo-label">Batalhas</div></div>
-                    <div class="resumo-card"><div class="resumo-icon">🎯</div><div class="resumo-value" id="statRate">0%</div><div class="resumo-label">Taxa Vitória</div></div>
-                    <div class="resumo-card"><div class="resumo-icon">⭐</div><div class="resumo-value" id="statLevel">1</div><div class="resumo-label">Nível</div></div>
-                    <div class="resumo-card"><div class="resumo-icon">💰</div><div class="resumo-value" id="statCoins">0</div><div class="resumo-label">Moedas</div></div>
-                    <div class="resumo-card"><div class="resumo-icon">💎</div><div class="resumo-value" id="statGems">0</div><div class="resumo-label">Gemas</div></div>
-                    <div class="resumo-card"><div class="resumo-icon">🔮</div><div class="resumo-value" id="statCrystals">0</div><div class="resumo-label">Cristais</div></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- MODAIS -->
-<div class="modal-overlay" id="dailyModal">
-    <div class="modal">
-        <h2>🎁 BÔNUS DIÁRIO</h2>
-        <p style="color:#94a3b8;margin-bottom:15px;">Resgate sua recompensa diária!</p>
-        <div class="daily-rewards-grid" id="dailyGrid"></div>
-        <button class="btn-primary" id="btnClaimDaily" onclick="claimDaily()" style="font-size:1.1em;padding:15px;"> RESGATAR</button>
-        <button class="modal-close" onclick="closeModal('dailyModal')">FECHAR</button>
-    </div>
-</div>
-
-<div class="modal-overlay" id="settingsModal">
-    <div class="modal">
-        <h2>⚙️ Configurações</h2>
-        <div class="modal-section">
-            <h3> Música</h3>
-            <div class="music-toggle">
-                <label for="musicToggle">Ativar Música</label>
-                <div class="toggle-switch"><input type="checkbox" id="musicToggle" onchange="toggleMusic()"><span class="toggle-slider"></span></div>
-            </div>
-        </div>
-        <div class="modal-section">
-            <h3>✏️ Editar Nome</h3>
-            <p>Custo:  1.000 moedas</p>
-            <input id="newNickInput" placeholder="Novo nome" maxlength="20">
-            <button class="btn-primary" onclick="changeNick()">ALTERAR NOME</button>
-        </div>
-        <div class="modal-section">
-            <h3>📷 Alterar Avatar</h3>
-            <p>Custo: 💰 500 moedas</p>
-            <button class="btn-info" onclick="openAvatarModal()">ESCOLHER AVATAR</button>
-        </div>
-        <div class="modal-section">
-            <h3>📊 Conta</h3>
-            <p><strong>UID:</strong> <span id="settingsUid">---</span></p>
-            <p><strong>E-mail:</strong> <span id="settingsEmail">---</span></p>
-            <p><strong>Nível:</strong> <span id="settingsLevel">1</span></p>
-            <p><strong>Rank:</strong> <span id="settingsRank">Iniciante</span></p>
-        </div>
-        <button class="modal-close" onclick="closeModal('settingsModal')">FECHAR</button>
-    </div>
-</div>
-
-<div class="modal-overlay" id="avatarModal">
-    <div class="modal">
-        <h2>📷 Escolher Avatar</h2>
-        <p style="color:#94a3b8;margin-bottom:15px;">Custo: 💰 500 moedas</p>
-        <div class="avatar-grid" id="avatarGrid"></div>
-        <button class="modal-close" onclick="closeModal('avatarModal')">CANCELAR</button>
-    </div>
-</div>
-
+<div id="authView" class="hidden"><div class="auth-container"><div class="auth-card"><h1>🐉 DRAGON WAR</h1><div class="subtitle">RISE OF POWER</div><div class="auth-tabs"><div class="auth-tab active" onclick="showTab('login')">Entrar</div><div class="auth-tab" onclick="showTab('register')">Criar Conta</div></div><div id="loginForm" class="auth-form active"><input id="loginEmail" type="email" placeholder="E-mail"><input id="loginPass" type="password" placeholder="Senha"><button class="btn-primary" onclick="doLogin()">ENTRAR</button></div><div id="registerForm" class="auth-form"><input id="regNick" placeholder="Nome do Personagem"><input id="regEmail" type="email" placeholder="E-mail"><input id="regPass" type="password" placeholder="Senha (mín. 6)"><button class="btn-success" onclick="doRegister()">CADASTRAR</button></div></div></div></div>
+<div id="gameView" class="hidden"><div class="game-layout"><div class="sidebar"><div class="sidebar-item active" onclick="showScreen('home',this)"><span class="icon">🏠</span><span class="label">INÍCIO</span></div><div class="sidebar-item" onclick="showScreen('combat',this)"><span class="icon">⚔️</span><span class="label">JOGAR</span></div><div class="sidebar-item" onclick="showScreen('shop',this)"><span class="icon">🛒</span><span class="label">LOJA</span></div><div class="sidebar-item" onclick="showScreen('powers',this)"><span class="icon">✨</span><span class="label">PODERES</span></div><div class="sidebar-item" onclick="showScreen('resumo',this)"><span class="icon">📊</span><span class="label">RESUMO</span></div></div><div class="main-content"><div class="top-bar"><div class="player-info"><div class="player-avatar" id="playerAvatar" onclick="openAvatarModal()"></div><div class="player-details"><h3 id="playerNameDisplay">Carregando...</h3><div class="level">Nível <span id="playerLevel">1</span></div></div></div><div class="resources"><div class="resource">💰 <span class="resource-value" id="resCoins">0</span></div><div class="resource">💎 <span class="resource-value" id="resGems">0</span></div><div class="resource">🔮 <span class="resource-value" id="resCrystals">0</span></div><div class="resource">⭐ <span class="resource-value" id="resPoints">0</span></div><button onclick="openSettings()" style="width:auto;padding:8px 12px;background:#3b82f6;border-radius:8px;margin:0">⚙️</button><button onclick="openDailyReward()" style="width:auto;padding:8px 12px;background:#fbbf24;color:#000;border-radius:8px;margin:0">🎁</button><button onclick="doLogout()" style="width:auto;padding:8px 12px;background:#ef4444;border-radius:8px;margin:0">Sair</button></div></div><div id="homeScreen" class="screen active"><div class="home-hero"><div class="home-title"> DRAGON WAR</div><div class="home-subtitle">Rise of Power</div><div class="home-actions"><button class="home-btn btn-play" onclick="showScreen('combat',document.querySelectorAll('.sidebar-item')[1])">⚔️ JOGAR</button><button class="home-btn btn-start" onclick="quickBattle()">🚀 BATALHA RÁPIDA</button><button class="home-btn btn-daily-home" onclick="openDailyReward()"> BÔNUS DIÁRIO</button></div><div class="home-stats"><div class="home-stat"><div class="home-stat-value" id="homeWins">0</div><div class="home-stat-label">Vitórias</div></div><div class="home-stat"><div class="home-stat-value" id="homeLosses">0</div><div class="home-stat-label">Derrotas</div></div><div class="home-stat"><div class="home-stat-value" id="homeLevel">1</div><div class="home-stat-label">Nível</div></div><div class="home-stat"><div class="home-stat-value" id="homeRank">🌱 Iniciante</div><div class="home-stat-label">Rank</div></div></div></div></div><div id="combatScreen" class="screen"><h2 class="screen-title">️ SELEÇÃO DE BOSS</h2><div class="bosses-grid"><div class="boss-card"><div class="boss-rank">SSS</div><div class="boss-image">🐉</div><div class="boss-name">KHALDRON</div><div class="boss-title">The Nightmare Dragon</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">80</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">2.5M</div></div></div><button class="btn-battle" onclick="battle('Khaldrón',5000,500)">⚔️ BATALHAR</button></div><div class="boss-card"><div class="boss-rank">SS</div><div class="boss-image">👹</div><div class="boss-name">IGNEOUS</div><div class="boss-title">The Fire Demon</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">70</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">1.8M</div></div></div><button class="btn-battle" onclick="battle('Igneous',3000,300)">⚔️ BATALHAR</button></div><div class="boss-card"><div class="boss-rank">S</div><div class="boss-image">⚔️</div><div class="boss-name">MALAKAI</div><div class="boss-title">The Shadow Warrior</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">60</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">1.2M</div></div></div><button class="btn-battle" onclick="battle('Malakai',2000,200)">⚔️ BATALHAR</button></div><div class="boss-card"><div class="boss-rank">SSS</div><div class="boss-image"></div><div class="boss-name">DRAGON KING</div><div class="boss-title">The Ancient Ruler</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">100</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">5M</div></div></div><button class="btn-battle" onclick="battle('Dragon King',10000,1000)">⚔️ BATALHAR</button></div></div></div><div id="shopScreen" class="screen"><h2 class="screen-title">🛒 LOJA</h2><div class="shop-tabs"><button class="shop-tab active" onclick="switchShop('characters',this)">👥 Personagens</button><button class="shop-tab" onclick="switchShop('equipment',this)">⚔️ Equipamentos</button><button class="shop-tab" onclick="switchShop('consumables',this)">🧪 Consumíveis</button><button class="shop-tab" onclick="switchShop('materials',this)">📜 Materiais</button></div><div id="shop-characters" class="shop-section active"><div class="characters-grid" id="charactersGrid"></div></div><div id="shop-equipment" class="shop-section"><div class="shop-grid"><div class="shop-item rarity-common"><div class="item-image">🗡️</div><div class="item-name">Espada de Ferro</div><div class="item-price">💰 100</div><button class="btn-buy" onclick="buyItem('Espada de Ferro',100,'coins')">COMPRAR</button></div><div class="shop-item rarity-rare"><div class="item-image">⚔️</div><div class="item-name">Espada de Aço</div><div class="item-price"> 500</div><button class="btn-buy" onclick="buyItem('Espada de Aço',500,'coins')">COMPRAR</button></div><div class="shop-item rarity-epic"><div class="item-image">🗡️</div><div class="item-name">Lâmina do Dragão</div><div class="item-price"> 3.000</div><button class="btn-buy" onclick="buyItem('Lâmina do Dragão',3000,'coins')">COMPRAR</button></div><div class="shop-item rarity-legendary"><div class="item-image">️</div><div class="item-name">Espada Lendária</div><div class="item-price">💎 500</div><button class="btn-buy" onclick="buyItem('Espada Lendária',500,'gems')">COMPRAR</button></div></div></div><div id="shop-consumables" class="shop-section"><div class="shop-grid"><div class="shop-item rarity-common"><div class="item-image">🧪</div><div class="item-name">Poção de Vida</div><div class="item-price">💰 50</div><button class="btn-buy" onclick="buyItem('Poção de Vida',50,'coins')">COMPRAR</button></div><div class="shop-item rarity-rare"><div class="item-image">🧪</div><div class="item-name">Poção de Mana</div><div class="item-price">💰 200</div><button class="btn-buy" onclick="buyItem('Poção de Mana',200,'coins')">COMPRAR</button></div><div class="shop-item rarity-epic"><div class="item-image">⚗️</div><div class="item-name">Elixir de Poder</div><div class="item-price"> 1.500</div><button class="btn-buy" onclick="buyItem('Elixir de Poder',1500,'coins')">COMPRAR</button></div></div></div><div id="shop-materials" class="shop-section"><div class="shop-grid"><div class="shop-item rarity-common"><div class="item-image">🪵</div><div class="item-name">Madeira</div><div class="item-price">💰 20</div><button class="btn-buy" onclick="buyItem('Madeira',20,'coins')">COMPRAR</button></div><div class="shop-item rarity-rare"><div class="item-image">🪨</div><div class="item-name">Pedra Rara</div><div class="item-price">💰 300</div><button class="btn-buy" onclick="buyItem('Pedra Rara',300,'coins')">COMPRAR</button></div><div class="shop-item rarity-legendary"><div class="item-image">💎</div><div class="item-name">Cristal Místico</div><div class="item-price">🔮 200</div><button class="btn-buy" onclick="buyItem('Cristal Místico',200,'crystals')">COMPRAR</button></div></div></div></div><div id="powersScreen" class="screen"><h2 class="screen-title">✨ PODERES</h2><p style="color:#94a3b8;margin-bottom:20px">Seus poderes desbloqueados. Novos poderes desbloqueiam com o nível.</p><div class="powers-grid" id="powersGrid"></div></div><div id="resumoScreen" class="screen"><h2 class="screen-title">📊 RESUMO</h2><div class="rank-display"><div class="rank-icon" id="rankIcon">🌱</div><div class="rank-name" id="rankName">Iniciante</div><div style="color:#94a3b8" id="rankDesc">Continue jogando para subir de rank!</div><div class="rank-progress"><div class="rank-progress-bar" id="rankBar" style="width:0%"></div></div><div style="margin-top:10px;color:#94a3b8;font-size:.9em">Progresso: <span id="rankProgress">0</span> / <span id="rankNext">10</span> vitórias</div></div><div class="resumo-grid"><div class="resumo-card"><div class="resumo-icon">⚔️</div><div class="resumo-value" id="statWins">0</div><div class="resumo-label">Vitórias</div></div><div class="resumo-card"><div class="resumo-icon">💀</div><div class="resumo-value" id="statLosses">0</div><div class="resumo-label">Derrotas</div></div><div class="resumo-card"><div class="resumo-icon">🏆</div><div class="resumo-value" id="statBattles">0</div><div class="resumo-label">Batalhas</div></div><div class="resumo-card"><div class="resumo-icon"></div><div class="resumo-value" id="statRate">0%</div><div class="resumo-label">Taxa Vitória</div></div><div class="resumo-card"><div class="resumo-icon">⭐</div><div class="resumo-value" id="statLevel">1</div><div class="resumo-label">Nível</div></div><div class="resumo-card"><div class="resumo-icon">💰</div><div class="resumo-value" id="statCoins">0</div><div class="resumo-label">Moedas</div></div><div class="resumo-card"><div class="resumo-icon">💎</div><div class="resumo-value" id="statGems">0</div><div class="resumo-label">Gemas</div></div><div class="resumo-card"><div class="resumo-icon">🔮</div><div class="resumo-value" id="statCrystals">0</div><div class="resumo-label">Cristais</div></div></div></div></div></div></div>
+<div class="modal-overlay" id="dailyModal"><div class="modal"><h2>🎁 BÔNUS DIÁRIO</h2><p style="color:#94a3b8;margin-bottom:15px">Resgate sua recompensa diária!</p><div class="daily-rewards-grid" id="dailyGrid"></div><button class="btn-primary" id="btnClaimDaily" onclick="claimDaily()" style="font-size:1.1em;padding:15px">🎁 RESGATAR</button><button class="modal-close" onclick="closeModal('dailyModal')">FECHAR</button></div></div>
+<div class="modal-overlay" id="settingsModal"><div class="modal"><h2>⚙️ Configurações</h2><div class="modal-section"><h3>🎵 Música</h3><div class="music-toggle"><label for="musicToggle">Ativar Música</label><div class="toggle-switch"><input type="checkbox" id="musicToggle" onchange="toggleMusic()"><span class="toggle-slider"></span></div></div></div><div class="modal-section"><h3>✏️ Editar Nome</h3><p>Custo: 💰 1.000 moedas</p><input id="newNickInput" placeholder="Novo nome" maxlength="20"><button class="btn-primary" onclick="changeNick()">ALTERAR NOME</button></div><div class="modal-section"><h3>📷 Alterar Avatar</h3><p>Custo: 💰 500 moedas</p><button class="btn-info" onclick="openAvatarModal()">ESCOLHER AVATAR</button></div><div class="modal-section"><h3>📊 Conta</h3><p><strong>UID:</strong> <span id="settingsUid">---</span></p><p><strong>E-mail:</strong> <span id="settingsEmail">---</span></p><p><strong>Nível:</strong> <span id="settingsLevel">1</span></p><p><strong>Rank:</strong> <span id="settingsRank">Iniciante</span></p></div><button class="modal-close" onclick="closeModal('settingsModal')">FECHAR</button></div></div>
+<div class="modal-overlay" id="avatarModal"><div class="modal"><h2>📷 Escolher Avatar</h2><p style="color:#94a3b8;margin-bottom:15px">Custo: 💰 500 moedas</p><div class="avatar-grid" id="avatarGrid"></div><button class="modal-close" onclick="closeModal('avatarModal')">CANCELAR</button></div></div>
 <button class="chat-toggle" onclick="toggleChat()">💬<span class="notification hidden" id="chatNotif">0</span></button>
-<div class="chat-panel" id="chatPanel">
-    <div class="chat-header"><h3>💬 Chat</h3><button onclick="toggleChat()" style="width:auto;padding:5px 10px;background:#64748b;margin:0;">✕</button></div>
-    <div class="chat-tabs">
-        <div class="chat-tab active" onclick="switchChat('global', this)">🌎 Global</div>
-        <div class="chat-tab" onclick="switchChat('private', this)">🔒 Privado</div>
-    </div>
-    <div id="globalChatView" style="display:flex;flex-direction:column;flex:1;">
-        <div class="chat-messages" id="globalMessages"></div>
-        <div class="chat-input-area">
-            <input class="chat-input" id="globalInput" placeholder="Mensagem..." maxlength="200">
-            <button class="chat-send" onclick="sendChat()">Enviar</button>
-        </div>
-    </div>
-    <div id="privateChatView" style="display:none;flex-direction:column;flex:1;">
-        <div class="chat-messages" id="privateMessages" style="flex:1;"><p style="text-align:center;color:#94a3b8;padding:20px;">Selecione um jogador.</p></div>
-    </div>
-</div>
-
+<div class="chat-panel" id="chatPanel"><div class="chat-header"><h3> Chat</h3><button onclick="toggleChat()" style="width:auto;padding:5px 10px;background:#64748b;margin:0">✕</button></div><div class="chat-tabs"><div class="chat-tab active" onclick="switchChat('global',this)">🌎 Global</div><div class="chat-tab" onclick="switchChat('private',this)">🔒 Privado</div></div><div id="globalChatView" style="display:flex;flex-direction:column;flex:1"><div class="chat-messages" id="globalMessages"></div><div class="chat-input-area"><input class="chat-input" id="globalInput" placeholder="Mensagem..." maxlength="200"><button class="chat-send" onclick="sendChat()">Enviar</button></div></div><div id="privateChatView" style="display:none;flex-direction:column;flex:1"><div class="chat-messages" id="privateMessages" style="flex:1"><p style="text-align:center;color:#94a3b8;padding:20px">Selecione um jogador.</p></div></div></div>
 <div id="toast"></div>
-
 <script type="module">
-try {
-    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
-    const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
-    const { getFirestore, doc, setDoc, updateDoc, onSnapshot, serverTimestamp, collection, query, orderBy, limit, addDoc, where } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
-        authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
-        projectId: "dragon-war-rise-of-power-2a9f1",
-        storageBucket: "dragon-war-rise-of-power-2a9f1.firebasestorage.app",
-        messagingSenderId: "115455691167",
-        appId: "1:115455691167:web:ff3638f67b66c17c5515aa"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app); // CORRETO!
-
-    const CHARACTERS = [
-        { id: 'warrior', name: 'Guerreiro', emoji: '️', class: 'Guerreiro', atk: 100, def: 80, spd: 60, price: 2000, currency: 'coins' },
-        { id: 'mage', name: 'Mago', emoji: '🧙', class: 'Mago', atk: 120, def: 50, spd: 70, price: 2500, currency: 'coins' },
-        { id: 'archer', name: 'Arqueiro', emoji: '🏹', class: 'Arqueiro', atk: 90, def: 60, spd: 100, price: 3000, currency: 'coins' },
-        { id: 'assassin', name: 'Assassino', emoji: '🥷', class: 'Assassino', atk: 130, def: 40, spd: 120, price: 500, currency: 'gems' },
-        { id: 'paladin', name: 'Paladino', emoji: '🛡️', class: 'Paladino', atk: 80, def: 120, spd: 50, price: 800, currency: 'gems' },
-        { id: 'necromancer', name: 'Necromante', emoji: '💀', class: 'Necromante', atk: 140, def: 55, spd: 75, price: 150, currency: 'crystals' },
-        { id: 'dragonknight', name: 'Cavaleiro Dragão', emoji: '🐉', class: 'Cavaleiro Dragão', atk: 150, def: 100, spd: 80, price: 300, currency: 'crystals' },
-        { id: 'angel', name: 'Anjo', emoji: '', class: 'Anjo', atk: 110, def: 110, spd: 90, price: 500, currency: 'crystals' }
-    ];
-
-    const POWERS = [
-        { id: 'fire', name: 'Fôlego de Fogo', emoji: '🔥', damage: '680%', mp: 120, cd: '18s', desc: 'Onda de fogo em área.', unlockAt: 1 },
-        { id: 'lightning', name: 'Raio Espiritual', emoji: '⚡', damage: '520%', mp: 90, cd: '12s', desc: 'Raio em linha reta.', unlockAt: 1 },
-        { id: 'slash', name: 'Mestre da Espada', emoji: '⚔️', damage: '300%', mp: 50, cd: '8s', desc: 'Ataque rápido físico.', unlockAt: 1 },
-        { id: 'ice', name: 'Nova Glacial', emoji: '❄️', damage: '450%', mp: 75, cd: '15s', desc: 'Congela inimigos.', unlockAt: 10 },
-        { id: 'serpent', name: 'Golpe da Serpente', emoji: '🐍', damage: '400%', mp: 65, cd: '10s', desc: 'Dano venenoso.', unlockAt: 20 },
-        { id: 'void', name: 'Torrente do Vazio', emoji: '🌌', damage: '800%', mp: 150, cd: '25s', desc: 'Dano enorme do vazio.', unlockAt: 50 }
-    ];
-
-    const AVATARS = ['🥷','🧙','🧝','🧛','🧟','','🦹','🧞','','🧚','👨‍','👨‍✈️','👨‍🎨','‍🔬','👨‍💻','👨‍🏫','👨‍🍳','👨‍🌾','👨‍','👨‍💼','','🐯','🐻','','🐼','🐸','','🐲','🐍','👺','👹','','🤖','⚔️','🛡️','🏹','🌟','💀','🔥','🦅'];
-
-    const DAILY_REWARDS = [
-        { day: 1, reward: '💰', amount: 500, label: '500 Moedas' },
-        { day: 2, reward: '💰', amount: 750, label: '750 Moedas' },
-        { day: 3, reward: '💎', amount: 50, label: '50 Gemas' },
-        { day: 4, reward: '💰', amount: 1000, label: '1000 Moedas' },
-        { day: 5, reward: '🔮', amount: 30, label: '30 Cristais' },
-        { day: 6, reward: '💎', amount: 100, label: '100 Gemas' },
-        { day: 7, reward: '👑', amount: 1, label: 'Baú Lendário' }
-    ];
-
-    const RANKS = [
-        { name: 'Iniciante', icon: '🌱', min: 0, max: 9, cls: 'rank-iniciante' },
-        { name: 'Bronze', icon: '🥉', min: 10, max: 24, cls: 'rank-bronze' },
-        { name: 'Prata', icon: '🥈', min: 25, max: 49, cls: 'rank-prata' },
-        { name: 'Ouro', icon: '🥇', min: 50, max: 99, cls: 'rank-ouro' },
-        { name: 'Platina', icon: '💠', min: 100, max: 199, cls: 'rank-platina' },
-        { name: 'Diamante', icon: '💎', min: 200, max: 499, cls: 'rank-diamante' },
-        { name: 'Mestre', icon: '👑', min: 500, max: 999, cls: 'rank-mestre' },
-        { name: 'Lendário', icon: '🐉', min: 1000, max: 999999, cls: 'rank-lendario' }
-    ];
-
-    function getRank(wins) {
-        for (let i = RANKS.length - 1; i >= 0; i--) {
-            if (wins >= RANKS[i].min) return RANKS[i];
-        }
-        return RANKS[0];
-    }
-
-    let currentUserData = null, currentUserId = null, isUserAdmin = false;
-    let playerRef = null, chatOpen = false, unreadMessages = 0;
-    let selectedAvatar = null, musicEnabled = false, audioCtx = null;
-
-    const $ = (id) => document.getElementById(id);
-    setTimeout(() => { $('loading').classList.add('hidden'); }, 3000);
-
-    window.showToast = (msg) => {
-        const t = $('toast');
-        t.textContent = msg;
-        t.style.display = 'block';
-        setTimeout(() => t.style.display = 'none', 3000);
-    };
-
-    function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-    function playMusic() {
-        if (!musicEnabled || !audioCtx) return;
-        const notes = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63];
-        let i = 0;
-        function play() {
-            if (!musicEnabled) return;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.frequency.value = notes[i]; osc.type = 'sine';
-            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.5);
-            i = (i + 1) % notes.length;
-            setTimeout(play, 600);
-        }
-        play();
-    }
-    window.toggleMusic = () => {
-        musicEnabled = $('musicToggle').checked;
-        if (musicEnabled) { initAudio(); playMusic(); showToast('🎵 Música ativada!'); }
-        else showToast('🔇 Música desativada!');
-    };
-
-    window.showTab = (tab) => {
-        document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
-        if (tab === 'login') {
-            document.querySelectorAll('.auth-tab')[0].classList.add('active');
-            $('loginForm').classList.add('active');
-        } else {
-            document.querySelectorAll('.auth-tab')[1].classList.add('active');
-            $('registerForm').classList.add('active');
-        }
-    };
-
-    window.showScreen = (screenId, btn) => {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-        const map = { 'home': 'homeScreen', 'combat': 'combatScreen', 'shop': 'shopScreen', 'powers': 'powersScreen', 'resumo': 'resumoScreen' };
-        const target = $(map[screenId]);
-        if (target) target.classList.add('active');
-        if (btn) btn.classList.add('active');
-        if (screenId === 'shop') switchShop('characters', document.querySelector('.shop-tab'));
-        if (screenId === 'powers') renderPowers();
-        if (screenId === 'resumo') updateResumo();
-        if (screenId === 'home') updateHome();
-    };
-
-    window.switchShop = (tab, btn) => {
-        document.querySelectorAll('.shop-tab').forEach(t => t.classList.remove('active'));
-        if (btn) btn.classList.add('active');
-        document.querySelectorAll('.shop-section').forEach(s => s.classList.remove('active'));
-        $('shop-' + tab).classList.add('active');
-        if (tab === 'characters') renderCharacters();
-    };
-
-    window.doLogin = async () => {
-        const email = $('loginEmail').value.trim(), pass = $('loginPass').value;
-        if (!email || !pass) return showToast('Preencha e-mail e senha');
-        try {
-            await signInWithEmailAndPassword(auth, email, pass);
-            showToast('Bem-vindo de volta!');
-        } catch(e) { showToast('Erro: ' + e.message); }
-    };
-
-    window.doRegister = async () => {
-        const nick = $('regNick').value.trim(), email = $('regEmail').value.trim(), pass = $('regPass').value;
-        if (!nick || !email || !pass) return showToast('Preencha todos os campos');
-        if (pass.length < 6) return showToast('Senha mínima: 6 caracteres');
-        try {
-            const cred = await createUserWithEmailAndPassword(auth, email, pass);
-            await setDoc(doc(db, "players", cred.user.uid), {
-                uid: cred.user.uid, nick, email, avatar: '🥷',
-                equippedCharacter: 'warrior', ownedCharacters: ['warrior'],
-                unlockedPowers: ['fire', 'lightning', 'slash'],
-                coins: 1000, gems: 100, crystals: 50, points: 0,
-                level: 1, xp: 0, hp: 100, maxHp: 100, energy: 120,
-                role: "player", vipLevel: 0, banned: false, mutedUntil: 0,
-                wins: 0, losses: 0, battles: 0,
-                dailyStreak: 0, lastDailyClaim: 0,
-                createdAt: serverTimestamp(), lastSeen: serverTimestamp()
-            });
-            showToast('🎉 Bem-vindo, ' + nick + '!');
-        } catch(e) { showToast('Erro: ' + e.message); }
-    };
-
-    window.doLogout = () => {
-        signOut(auth).then(() => { showToast('Desconectado!'); setTimeout(() => location.reload(), 1000); });
-    };
-
-    window.openSettings = () => {
-        if (!currentUserData) return showToast('Carregando...');
-        $('settingsUid').textContent = currentUserId.substring(0, 12) + '...';
-        $('settingsEmail').textContent = currentUserData.email || '---';
-        $('settingsLevel').textContent = currentUserData.level || 1;
-        const rank = getRank(currentUserData.wins || 0);
-        $('settingsRank').textContent = rank.icon + ' ' + rank.name;
-        $('newNickInput').value = currentUserData.nick || '';
-        $('settingsModal').classList.add('active');
-    };
-
-    window.changeNick = async () => {
-        const newNick = $('newNickInput').value.trim();
-        if (!newNick) return showToast('Digite um nome');
-        if (newNick.length < 3) return showToast('Nome muito curto');
-        if (newNick.length > 20) return showToast('Nome muito longo');
-        if (currentUserData.coins < 1000) return showToast('❌ Moedas insuficientes!');
-        if (confirm(`Alterar nome para "${newNick}" por 💰 1.000?`)) {
-            try {
-                await updateDoc(playerRef, { nick: newNick, coins: currentUserData.coins - 1000 });
-                showToast('✅ Nome alterado!');
-                closeModal('settingsModal');
-            } catch(e) { showToast('Erro: ' + e.message); }
-        }
-    };
-
-    window.openAvatarModal = () => {
-        if (!currentUserData) return showToast('Carregando...');
-        const grid = $('avatarGrid'); grid.innerHTML = '';
-        AVATARS.forEach(avatar => {
-            const div = document.createElement('div');
-            div.className = 'avatar-option';
-            if (avatar === currentUserData.avatar) div.classList.add('selected');
-            div.textContent = avatar;
-            div.onclick = () => selectAvatar(avatar, div);
-            grid.appendChild(div);
-        });
-        $('avatarModal').classList.add('active');
-    };
-
-    window.selectAvatar = (avatar, el) => {
-        document.querySelectorAll('.avatar-option').forEach(e => e.classList.remove('selected'));
-        el.classList.add('selected');
-        selectedAvatar = avatar;
-        if (confirm(`Selecionar ${avatar}? Custo: 💰 500`)) changeAvatar(avatar);
-    };
-
-    window.changeAvatar = async (avatar) => {
-        if (currentUserData.coins < 500) return showToast(' Moedas insuficientes!');
-        try {
-            await updateDoc(playerRef, { avatar, coins: currentUserData.coins - 500 });
-            showToast('✅ Avatar alterado!');
-            closeModal('avatarModal');
-        } catch(e) { showToast('Erro: ' + e.message); }
-    };
-
-    function renderCharacters() {
-        if (!currentUserData) return;
-        const owned = currentUserData.ownedCharacters || ['warrior'];
-        const equipped = currentUserData.equippedCharacter || 'warrior';
-        const grid = $('charactersGrid');
-        grid.innerHTML = CHARACTERS.map(ch => {
-            const isOwned = owned.includes(ch.id);
-            const isEquipped = equipped === ch.id;
-            const priceLabel = ch.currency === 'coins' ? `💰 ${ch.price.toLocaleString()}` : ch.currency === 'gems' ? `💎 ${ch.price}` : ` ${ch.price}`;
-            let btn = '';
-            if (isEquipped) btn = `<button class="btn-character btn-equipped">✅ EQUIPADO</button>`;
-            else if (isOwned) btn = `<button class="btn-character btn-equip" onclick="equipChar('${ch.id}')">⚔️ EQUIPAR</button>`;
-            else btn = `<button class="btn-character btn-buy-char" onclick="buyChar('${ch.id}')">🛒 COMPRAR ${priceLabel}</button>`;
-            return `<div class="character-card ${isOwned ? 'owned' : ''} ${isEquipped ? 'equipped' : ''}">
-                <div class="character-emoji">${ch.emoji}</div>
-                <div class="character-name">${ch.name}</div>
-                <div class="character-class">${ch.class}</div>
-                <div class="character-stats">
-                    <div class="character-stat"><div class="character-stat-label">ATK</div><div class="character-stat-value">${ch.atk}</div></div>
-                    <div class="character-stat"><div class="character-stat-label">DEF</div><div class="character-stat-value">${ch.def}</div></div>
-                    <div class="character-stat"><div class="character-stat-label">SPD</div><div class="character-stat-value">${ch.spd}</div></div>
-                </div>${btn}</div>`;
-        }).join('');
-    }
-
-    window.buyChar = async (charId) => {
-        const ch = CHARACTERS.find(c => c.id === charId);
-        if (!ch) return;
-        const current = currentUserData[ch.currency] || 0;
-        if (current < ch.price) {
-            const name = ch.currency === 'coins' ? '💰 Moedas' : ch.currency === 'gems' ? '💎 Gemas' : '🔮 Cristais';
-            return showToast(`❌ ${name} insuficientes!`);
-        }
-        if (confirm(`Comprar ${ch.name}?`)) {
-            try {
-                const owned = currentUserData.ownedCharacters || [];
-                await updateDoc(playerRef, { [ch.currency]: current - ch.price, ownedCharacters: [...owned, ch.id] });
-                showToast(`✅ ${ch.name} comprado!`);
-                renderCharacters();
-            } catch(e) { showToast('Erro: ' + e.message); }
-        }
-    };
-
-    window.equipChar = async (charId) => {
-        try {
-            await updateDoc(playerRef, { equippedCharacter: charId });
-            const ch = CHARACTERS.find(c => c.id === charId);
-            showToast(`✅ ${ch.name} equipado!`);
-            renderCharacters();
-        } catch(e) { showToast('Erro: ' + e.message); }
-    };
-
-    function renderPowers() {
-        if (!currentUserData) return;
-        const unlocked = currentUserData.unlockedPowers || ['fire', 'lightning', 'slash'];
-        const level = currentUserData.level || 1;
-        const grid = $('powersGrid');
-        grid.innerHTML = POWERS.map(p => {
-            const isUnlocked = unlocked.includes(p.id) || level >= p.unlockAt;
-            return `<div class="power-card ${isUnlocked ? 'unlocked' : 'locked'}">
-                <div class="power-emoji">${p.emoji}</div>
-                <div class="power-name">${p.name}</div>
-                <div class="power-desc">${p.desc}</div>
-                <div class="power-stats">
-                    <div class="power-stat"><div class="power-stat-label">Dano</div><div class="power-stat-value">${p.damage}</div></div>
-                    <div class="power-stat"><div class="power-stat-label">MP</div><div class="power-stat-value">${p.mp}</div></div>
-                    <div class="power-stat"><div class="power-stat-label">Recarga</div><div class="power-stat-value">${p.cd}</div></div>
-                </div>
-                ${!isUnlocked ? `<p style="color:#ef4444;text-align:center;font-size:0.85em;margin-top:10px;"> Nível ${p.unlockAt}</p>` : '<p style="color:#22c55e;text-align:center;font-size:0.85em;margin-top:10px;">✅ Desbloqueado</p>'}
-            </div>`;
-        }).join('');
-    }
-
-    window.openDailyReward = () => {
-        if (!currentUserData) return showToast('Carregando...');
-        renderDaily();
-        $('dailyModal').classList.add('active');
-    };
-
-    function renderDaily() {
-        const streak = currentUserData.dailyStreak || 0;
-        const lastClaim = currentUserData.lastDailyClaim || 0;
-        const now = Date.now();
-        const oneDay = 24 * 60 * 60 * 1000;
-        const canClaim = (now - lastClaim) >= oneDay;
-        const currentDay = (streak % 7) + 1;
-
-        $('dailyGrid').innerHTML = DAILY_REWARDS.map((r, i) => {
-            const dayNum = i + 1;
-            const isClaimed = dayNum < currentDay || (dayNum === currentDay && !canClaim && lastClaim > 0);
-            const isToday = dayNum === currentDay && canClaim;
-            return `<div class="daily-day ${isClaimed ? 'claimed' : ''} ${isToday ? 'today' : ''}">
-                <div class="daily-day-num">Dia ${dayNum}</div>
-                <div class="daily-day-reward">${r.reward}</div>
-                <div class="daily-day-label">${r.label}</div>
-            </div>`;
-        }).join('');
-
-        const btn = $('btnClaimDaily');
-        if (canClaim) { btn.style.display = 'block'; btn.textContent = `🎁 RESGATAR DIA ${currentDay}`; }
-        else { btn.style.display = 'none'; }
-    }
-
-    window.claimDaily = async () => {
-        if (!currentUserData) return;
-        const streak = currentUserData.dailyStreak || 0;
-        const lastClaim = currentUserData.lastDailyClaim || 0;
-        const now = Date.now();
-        const oneDay = 24 * 60 * 60 * 1000;
-        if ((now - lastClaim) < oneDay) {
-            const hours = Math.ceil((oneDay - (now - lastClaim)) / (60 * 60 * 1000));
-            return showToast(`⏰ Volte em ${hours} horas!`);
-        }
-        const currentDay = (streak % 7) + 1;
-        const reward = DAILY_REWARDS[currentDay - 1];
-        const updates = { dailyStreak: streak + 1, lastDailyClaim: now };
-        if (reward.reward === '💰') updates.coins = (currentUserData.coins || 0) + reward.amount;
-        else if (reward.reward === '💎') updates.gems = (currentUserData.gems || 0) + reward.amount;
-        else if (reward.reward === '') updates.crystals = (currentUserData.crystals || 0) + reward.amount;
-        try {
-            await updateDoc(playerRef, updates);
-            showToast(`🎁 Dia ${currentDay} resgatado! +${reward.label}`);
-            renderDaily();
-        } catch(e) { showToast('Erro: ' + e.message); }
-    };
-
-    window.buyItem = async (name, price, currency) => {
-        if (!currentUserData) return showToast('Carregando...');
-        const current = currentUserData[currency] || 0;
-        if (current < price) {
-            const name2 = currency === 'coins' ? '💰 Moedas' : currency === 'gems' ? '💎 Gemas' : '🔮 Cristais';
-            return showToast(`❌ ${name2} insuficientes!`);
-        }
-        if (confirm(`Comprar ${name}?`)) {
-            try {
-                await updateDoc(playerRef, { [currency]: current - price });
-                showToast('✅ ' + name + ' comprado!');
-            } catch(e) { showToast('Erro: ' + e.message); }
-        }
-    };
-
-    window.battle = async (bossName, rewardCoins, rewardGems) => {
-        if (!currentUserData) return showToast('Carregando...');
-        const win = Math.random() > 0.3;
-        if (win) {
-            await updateDoc(playerRef, {
-                coins: (currentUserData.coins || 0) + rewardCoins,
-                gems: (currentUserData.gems || 0) + rewardGems,
-                points: (currentUserData.points || 0) + 100,
-                xp: (currentUserData.xp || 0) + 50,
-                wins: (currentUserData.wins || 0) + 1,
-                battles: (currentUserData.battles || 0) + 1
-            });
-            showToast(`⚔️ Vitória! +${rewardCoins}💰 +${rewardGems}💎`);
-        } else {
-            await updateDoc(playerRef, {
-                losses: (currentUserData.losses || 0) + 1,
-                battles: (currentUserData.battles || 0) + 1
-            });
-            showToast(`💀 Derrota contra ${bossName}!`);
-        }
-    };
-
-    window.quickBattle = async () => {
-        if (!currentUserData) return showToast('Carregando...');
-        const win = Math.random() > 0.4;
-        if (win) {
-            await updateDoc(playerRef, {
-                coins: (currentUserData.coins || 0) + 500,
-                points: (currentUserData.points || 0) + 50,
-                xp: (currentUserData.xp || 0) + 25,
-                wins: (currentUserData.wins || 0) + 1,
-                battles: (currentUserData.battles || 0) + 1
-            });
-            showToast('⚔️ Vitória rápida! +500💰');
-        } else {
-            await updateDoc(playerRef, { losses: (currentUserData.losses || 0) + 1, battles: (currentUserData.battles || 0) + 1 });
-            showToast('💀 Derrota!');
-        }
-    };
-
-    function updateHome() {
-        if (!currentUserData) return;
-        $('homeWins').textContent = currentUserData.wins || 0;
-        $('homeLosses').textContent = currentUserData.losses || 0;
-        $('homeLevel').textContent = currentUserData.level || 1;
-        const rank = getRank(currentUserData.wins || 0);
-        $('homeRank').textContent = rank.icon + ' ' + rank.name;
-    }
-
-    function updateResumo() {
-        if (!currentUserData) return;
-        const wins = currentUserData.wins || 0;
-        const losses = currentUserData.losses || 0;
-        const battles = currentUserData.battles || 0;
-        const rank = getRank(wins);
-        $('statWins').textContent = wins;
-        $('statLosses').textContent = losses;
-        $('statBattles').textContent = battles;
-        const total = wins + losses;
-        $('statRate').textContent = (total > 0 ? Math.round((wins / total) * 100) : 0) + '%';
-        $('statLevel').textContent = currentUserData.level || 1;
-        $('statCoins').textContent = Number(currentUserData.coins || 0).toLocaleString('pt-BR');
-        $('statGems').textContent = Number(currentUserData.gems || 0).toLocaleString('pt-BR');
-        $('statCrystals').textContent = Number(currentUserData.crystals || 0).toLocaleString('pt-BR');
-        $('rankIcon').textContent = rank.icon;
-        $('rankName').textContent = rank.name;
-        $('rankName').className = 'rank-name ' + rank.cls;
-        const nextRank = RANKS.find(r => r.min > wins);
-        if (nextRank) {
-            $('rankDesc').textContent = `Próximo: ${nextRank.icon} ${nextRank.name} (${nextRank.min} vitórias)`;
-            const progress = ((wins - rank.min) / (nextRank.min - rank.min)) * 100;
-            $('rankBar').style.width = Math.min(100, progress) + '%';
-            $('rankProgress').textContent = wins;
-            $('rankNext').textContent = nextRank.min;
-        } else {
-            $('rankDesc').textContent = '🏆 Rank máximo alcançado!';
-            $('rankBar').style.width = '100%';
-            $('rankProgress').textContent = wins;
-            $('rankNext').textContent = wins;
-        }
-    }
-
-    window.closeModal = (id) => $(id).classList.remove('active');
-
-    window.toggleChat = () => {
-        chatOpen = !chatOpen;
-        $('chatPanel').classList.toggle('active', chatOpen);
-        if (chatOpen) { unreadMessages = 0; $('chatNotif').classList.add('hidden'); }
-    };
-
-    window.switchChat = (tab, btn) => {
-        document.querySelectorAll('.chat-tab').forEach(t => t.classList.remove('active'));
-        btn.classList.add('active');
-        if (tab === 'global') { $('globalChatView').style.display = 'flex'; $('privateChatView').style.display = 'none'; }
-        else { $('globalChatView').style.display = 'none'; $('privateChatView').style.display = 'flex'; }
-    };
-
-    window.sendChat = async () => {
-        const input = $('globalInput');
-        const text = input.value.trim();
-        if (!text) return;
-        if (currentUserData.mutedUntil && currentUserData.mutedUntil > Date.now()) {
-            const remaining = Math.ceil((currentUserData.mutedUntil - Date.now()) / 60000);
-            return showToast(`🔇 Mutado. Aguarde ${remaining} min.`);
-        }
-        try {
-            await addDoc(collection(db, "chatMessages"), {
-                type: "global", text, authorUid: currentUserId, authorNick: currentUserData.nick,
-                authorAvatar: currentUserData.avatar || '🥷', authorRole: currentUserData.role || "player",
-                authorVip: currentUserData.vipLevel || 0, authorLevel: currentUserData.level || 1,
-                createdAt: serverTimestamp()
-            });
-            input.value = '';
-        } catch(e) { showToast('Erro: ' + e.message); }
-    };
-
-    function loadChat() {
-        const q = query(collection(db, "chatMessages"), where("type", "==", "global"), orderBy("createdAt", "desc"), limit(100));
-        onSnapshot(q, (snap) => {
-            const container = $('globalMessages');
-            if (snap.empty) { container.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:20px;">Nenhuma mensagem.</p>'; return; }
-            const messages = snap.docs.map(d => ({id: d.id, ...d.data()})).reverse();
-            container.innerHTML = messages.map(msg => {
-                const isAdmin = msg.authorRole === "admin";
-                const isOwn = msg.authorUid === currentUserId;
-                const time = msg.createdAt?.toDate ? msg.createdAt.toDate().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'}) : '';
-                let badges = '';
-                if (isAdmin) badges += '<span class="badge-adm">👑 ADM</span>';
-                if (msg.authorVip > 0) badges += `<span class="badge-vip">VIP ${msg.authorVip}</span>`;
-                return `<div class="message ${isOwn ? 'own' : ''}"><div class="message-header"><span style="font-size:1.3em;">${msg.authorAvatar || '🥷'}</span><span class="message-author" style="${isAdmin ? 'color:#c4b5fd;' : ''}">${msg.authorNick}</span><span style="font-size:0.6em;padding:1px 5px;background:#334155;border-radius:4px;">Lv.${msg.authorLevel || 1}</span>${badges}<span class="message-time">${time}</span></div><div class="message-text">${escapeHtml(msg.text)}</div></div>`;
-            }).join('');
-            container.scrollTop = container.scrollHeight;
-            if (!chatOpen && messages.length > 0) {
-                const last = messages[messages.length - 1];
-                if (last.authorUid !== currentUserId) { unreadMessages++; $('chatNotif').textContent = unreadMessages > 99 ? '99+' : unreadMessages; $('chatNotif').classList.remove('hidden'); }
-            }
-        });
-    }
-
-    function escapeHtml(text) { const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
-
-    onAuthStateChanged(auth, async (user) => {
-        try {
-            if (!user) {
-                $('loading').classList.add('hidden');
-                $('authView').classList.remove('hidden');
-                $('gameView').classList.add('hidden');
-                return;
-            }
-            currentUserId = user.uid;
-            $('authView').classList.add('hidden');
-            $('loading').classList.add('hidden');
-            $('gameView').classList.remove('hidden');
-            playerRef = doc(db, "players", user.uid);
-
-            onSnapshot(playerRef, async (snap) => {
-                if (!snap.exists()) return;
-                const data = snap.data();
-                currentUserData = data;
-
-                if (data.banned && data.banUntil && data.banUntil < Date.now()) {
-                    await updateDoc(playerRef, { banned: false, banUntil: null });
-                } else if (data.banned) {
-                    alert('⛔ CONTA BANIDA');
-                    signOut(auth);
-                    return;
-                }
-
-                isUserAdmin = data.role === "admin";
-                const avatar = data.avatar || '';
-                $('playerAvatar').textContent = avatar;
-                const rank = getRank(data.wins || 0);
-                let nameHtml = `<span class="${isUserAdmin ? 'text-admin' : ''}">${data.nick || 'Jogador'}</span><span class="player-rank-badge ${rank.cls}">${rank.icon} ${rank.name}</span>`;
-                if (isUserAdmin) nameHtml += ` <span class="badge-adm"> ADM</span><span class="badge-vip">VIP 10</span>`;
-                if (data.vipLevel > 0) nameHtml += ` <span class="badge-vip">VIP ${data.vipLevel}</span>`;
-                $('playerNameDisplay').innerHTML = nameHtml;
-                $('playerLevel').textContent = data.level || 1;
-                $('resCoins').textContent = Number(data.coins || 0).toLocaleString('pt-BR');
-                $('resGems').textContent = Number(data.gems || 0).toLocaleString('pt-BR');
-                $('resCrystals').textContent = Number(data.crystals || 0).toLocaleString('pt-BR');
-                $('resPoints').textContent = Number(data.points || 0).toLocaleString('pt-BR');
-
-                try { await updateDoc(playerRef, { lastSeen: serverTimestamp() }); } catch(e){}
-            });
-
-            loadChat();
-        } catch(e) {
-            console.error('Erro:', e);
-            showToast('Erro: ' + e.message);
-        }
-    });
-
-    $('globalInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChat(); });
-
-} catch(e) {
-    console.error('ERRO CRÍTICO:', e);
-    document.getElementById('loading').innerHTML = `
-        <div style="background:#7f1d1d;border:2px solid #ef4444;padding:30px;border-radius:15px;max-width:500px;text-align:center;">
-            <h2 style="color:#fca5a5;margin-bottom:15px;">⚠️ Erro ao carregar</h2>
-            <p style="color:#fca5a5;margin:15px 0;">${e.message}</p>
-            <button onclick="location.reload()" style="margin-top:15px;background:#ef4444;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;">🔄 Recarregar</button>
-        </div>
-    `;
-}
+try{const{initializeApp}=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");const{getAuth,signInWithEmailAndPassword,createUserWithEmailAndPassword,onAuthStateChanged,signOut}=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");const{getFirestore,doc,setDoc,updateDoc,onSnapshot,serverTimestamp,collection,query,orderBy,limit,addDoc,where}=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");const firebaseConfig={apiKey:"AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",authDomain:"dragon-war-rise-of-power-2a9f1.firebaseapp.com",projectId:"dragon-war-rise-of-power-2a9f1",storageBucket:"dragon-war-rise-of-power-2a9f1.firebasestorage.app",messagingSenderId:"115455691167",appId:"1:115455691167:web:ff3638f67b66c17c5515aa"};const app=initializeApp(firebaseConfig);const auth=getAuth(app);const db=getFirestore(app);const CHARACTERS=[{id:'warrior',name:'Guerreiro',emoji:'⚔️',class:'Guerreiro',atk:100,def:80,spd:60,price:2000,currency:'coins'},{id:'mage',name:'Mago',emoji:'🧙',class:'Mago',atk:120,def:50,spd:70,price:2500,currency:'coins'},{id:'archer',name:'Arqueiro',emoji:'🏹',class:'Arqueiro',atk:90,def:60,spd:100,price:3000,currency:'coins'},{id:'assassin',name:'Assassino',emoji:'🥷',class:'Assassino',atk:130,def:40,spd:120,price:500,currency:'gems'},{id:'paladin',name:'Paladino',emoji:'🛡️',class:'Paladino',atk:80,def:120,spd:50,price:800,currency:'gems'},{id:'necromancer',name:'Necromante',emoji:'💀',class:'Necromante',atk:140,def:55,spd:75,price:150,currency:'crystals'},{id:'dragonknight',name:'Cavaleiro Dragão',emoji:'🐉',class:'Cavaleiro Dragão',atk:150,def:100,spd:80,price:300,currency:'crystals'},{id:'angel',name:'Anjo',emoji:'👼',class:'Anjo',atk:110,def:110,spd:90,price:500,currency:'crystals'}];const POWERS=[{id:'fire',name:'Fôlego de Fogo',emoji:'🔥',damage:'680%',mp:120,cd:'18s',desc:'Onda de fogo em área.',unlockAt:1},{id:'lightning',name:'Raio Espiritual',emoji:'⚡',damage:'520%',mp:90,cd:'12s',desc:'Raio em linha reta.',unlockAt:1},{id:'slash',name:'Mestre da Espada',emoji:'⚔️',damage:'300%',mp:50,cd:'8s',desc:'Ataque rápido físico.',unlockAt:1},{id:'ice',name:'Nova Glacial',emoji:'❄️',damage:'450%',mp:75,cd:'15s',desc:'Congela inimigos.',unlockAt:10},{id:'serpent',name:'Golpe da Serpente',emoji:'🐍',damage:'400%',mp:65,cd:'10s',desc:'Dano venenoso.',unlockAt:20},{id:'void',name:'Torrente do Vazio',emoji:'🌌',damage:'800%',mp:150,cd:'25s',desc:'Dano enorme do vazio.',unlockAt:50}];const AVATARS=['🥷','🧙','🧝','🧛','🧟','🦸','🦹','🧞','🧜','🧚','👨‍🚀','👨‍✈️','👨‍🎨','👨‍','👨‍💻','‍🏫','👨🍳','👨‍','👨‍🏭','‍💼','🦊','','🐻','🐨','','🐸','🦄','','🐍','👺','','👽','','⚔️','🛡️','🏹','🌟','💀','🔥','🦅'];const DAILY_REWARDS=[{day:1,reward:'💰',amount:500,label:'500 Moedas'},{day:2,reward:'💰',amount:750,label:'750 Moedas'},{day:3,reward:'💎',amount:50,label:'50 Gemas'},{day:4,reward:'💰',amount:1000,label:'1000 Moedas'},{day:5,reward:'🔮',amount:30,label:'30 Cristais'},{day:6,reward:'💎',amount:100,label:'100 Gemas'},{day:7,reward:'👑',amount:1,label:'Baú Lendário'}];const RANKS=[{name:'Iniciante',icon:'',min:0,max:9,cls:'rank-iniciante'},{name:'Bronze',icon:'🥉',min:10,max:24,cls:'rank-bronze'},{name:'Prata',icon:'🥈',min:25,max:49,cls:'rank-prata'},{name:'Ouro',icon:'🥇',min:50,max:99,cls:'rank-ouro'},{name:'Platina',icon:'💠',min:100,max:199,cls:'rank-platina'},{name:'Diamante',icon:'💎',min:200,max:499,cls:'rank-diamante'},{name:'Mestre',icon:'👑',min:500,max:999,cls:'rank-mestre'},{name:'Lendário',icon:'🐉',min:1000,max:999999,cls:'rank-lendario'}];function getRank(wins){for(let i=RANKS.length-1;i>=0;i--){if(wins>=RANKS[i].min)return RANKS[i]}return RANKS[0]}let currentUserData=null,currentUserId=null,isUserAdmin=false;let playerRef=null,chatOpen=false,unreadMessages=0;let selectedAvatar=null,musicEnabled=false,audioCtx=null;const $=(id)=>document.getElementById(id);setTimeout(()=>{$('loading').classList.add('hidden')},3000);window.showToast=(msg)=>{const t=$('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',3000)};function initAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)()}function playMusic(){if(!musicEnabled||!audioCtx)return;const notes=[261.63,329.63,392,523.25,392,329.63];let i=0;function play(){if(!musicEnabled)return;const osc=audioCtx.createOscillator();const gain=audioCtx.createGain();osc.connect(gain);gain.connect(audioCtx.destination);osc.frequency.value=notes[i];osc.type='sine';gain.gain.setValueAtTime(.08,audioCtx.currentTime);gain.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.5);osc.start();osc.stop(audioCtx.currentTime+.5);i=(i+1)%notes.length;setTimeout(play,600)}play()}window.toggleMusic=()=>{musicEnabled=$('musicToggle').checked;if(musicEnabled){initAudio();playMusic();showToast('🎵 Música ativada!')}else showToast('🔇 Música desativada!')};window.showTab=(tab)=>{document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.auth-form').forEach(f=>f.classList.remove('active'));if(tab==='login'){document.querySelectorAll('.auth-tab')[0].classList.add('active');$('loginForm').classList.add('active')}else{document.querySelectorAll('.auth-tab')[1].classList.add('active');$('registerForm').classList.add('active')}};window.showScreen=(screenId,btn)=>{document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));const map={'home':'homeScreen','combat':'combatScreen','shop':'shopScreen','powers':'powersScreen','resumo':'resumoScreen'};const target=$(map[screenId]);if(target)target.classList.add('active');if(btn)btn.classList.add('active');if(screenId==='shop')switchShop('characters',document.querySelector('.shop-tab'));if(screenId==='powers')renderPowers();if(screenId==='resumo')updateResumo();if(screenId==='home')updateHome()};window.switchShop=(tab,btn)=>{document.querySelectorAll('.shop-tab').forEach(t=>t.classList.remove('active'));if(btn)btn.classList.add('active');document.querySelectorAll('.shop-section').forEach(s=>s.classList.remove('active'));$('shop-'+tab).classList.add('active');if(tab==='characters')renderCharacters()};window.doLogin=async()=>{const email=$('loginEmail').value.trim(),pass=$('loginPass').value;if(!email||!pass)return showToast('Preencha e-mail e senha');try{await signInWithEmailAndPassword(auth,email,pass);showToast('Bem-vindo de volta!')}catch(e){showToast('Erro: '+e.message)}};window.doRegister=async()=>{const nick=$('regNick').value.trim(),email=$('regEmail').value.trim(),pass=$('regPass').value;if(!nick||!email||!pass)return showToast('Preencha todos os campos');if(pass.length<6)return showToast('Senha mínima: 6 caracteres');try{const cred=await createUserWithEmailAndPassword(auth,email,pass);await setDoc(doc(db,"players",cred.user.uid),{uid:cred.user.uid,nick,email,avatar:'🥷',equippedCharacter:'warrior',ownedCharacters:['warrior'],unlockedPowers:['fire','lightning','slash'],coins:1000,gems:100,crystals:50,points:0,level:1,xp:0,hp:100,maxHp:100,energy:120,role:"player",vipLevel:0,banned:false,mutedUntil:0,wins:0,losses:0,battles:0,dailyStreak:0,lastDailyClaim:0,createdAt:serverTimestamp(),lastSeen:serverTimestamp()});showToast('🎉 Bem-vindo, '+nick+'!')}catch(e){showToast('Erro: '+e.message)}};window.doLogout=()=>{signOut(auth).then(()=>{showToast('Desconectado!');setTimeout(()=>location.reload(),1000)})};window.openSettings=()=>{if(!currentUserData)return showToast('Carregando...');$('settingsUid').textContent=currentUserId.substring(0,12)+'...';$('settingsEmail').textContent=currentUserData.email||'---';$('settingsLevel').textContent=currentUserData.level||1;const rank=getRank(currentUserData.wins||0);$('settingsRank').textContent=rank.icon+' '+rank.name;$('newNickInput').value=currentUserData.nick||'';$('settingsModal').classList.add('active')};window.changeNick=async()=>{const newNick=$('newNickInput').value.trim();if(!newNick)return showToast('Digite um nome');if(newNick.length<3)return showToast('Nome muito curto');if(newNick.length>20)return showToast('Nome muito longo');if(currentUserData.coins<1000)return showToast('❌ Moedas insuficientes!');if(confirm(`Alterar nome para "${newNick}" por 💰 1.000?`)){try{await updateDoc(playerRef,{nick:newNick,coins:currentUserData.coins-1000});showToast('✅ Nome alterado!');closeModal('settingsModal')}catch(e){showToast('Erro: '+e.message)}}};window.openAvatarModal=()=>{if(!currentUserData)return showToast('Carregando...');const grid=$('avatarGrid');grid.innerHTML='';AVATARS.forEach(avatar=>{const div=document.createElement('div');div.className='avatar-option';if(avatar===currentUserData.avatar)div.classList.add('selected');div.textContent=avatar;div.onclick=()=>selectAvatar(avatar,div);grid.appendChild(div)});$('avatarModal').classList.add('active')};window.selectAvatar=(avatar,el)=>{document.querySelectorAll('.avatar-option').forEach(e=>e.classList.remove('selected'));el.classList.add('selected');selectedAvatar=avatar;if(confirm(`Selecionar ${avatar}? Custo: 💰 500`))changeAvatar(avatar)};window.changeAvatar=async(avatar)=>{if(currentUserData.coins<500)return showToast('❌ Moedas insuficientes!');try{await updateDoc(playerRef,{avatar,coins:currentUserData.coins-500});showToast('✅ Avatar alterado!');closeModal('avatarModal')}catch(e){showToast('Erro: '+e.message)}};function renderCharacters(){if(!currentUserData)return;const owned=currentUserData.ownedCharacters||['warrior'];const equipped=currentUserData.equippedCharacter||'warrior';const grid=$('charactersGrid');grid.innerHTML=CHARACTERS.map(ch=>{const isOwned=owned.includes(ch.id);const isEquipped=equipped===ch.id;const priceLabel=ch.currency==='coins'?`💰 ${ch.price.toLocaleString()}`:ch.currency==='gems'?`💎 ${ch.price}`:`🔮 ${ch.price}`;let btn='';if(isEquipped)btn=`<button class="btn-character btn-equipped">✅ EQUIPADO</button>`;else if(isOwned)btn=`<button class="btn-character btn-equip" onclick="equipChar('${ch.id}')">⚔️ EQUIPAR</button>`;else btn=`<button class="btn-character btn-buy-char" onclick="buyChar('${ch.id}')"> COMPRAR ${priceLabel}</button>`;return`<div class="character-card ${isOwned?'owned':''} ${isEquipped?'equipped':''}"><div class="character-emoji">${ch.emoji}</div><div class="character-name">${ch.name}</div><div class="character-class">${ch.class}</div><div class="character-stats"><div class="character-stat"><div class="character-stat-label">ATK</div><div class="character-stat-value">${ch.atk}</div></div><div class="character-stat"><div class="character-stat-label">DEF</div><div class="character-stat-value">${ch.def}</div></div><div class="character-stat"><div class="character-stat-label">SPD</div><div class="character-stat-value">${ch.spd}</div></div></div>${btn}</div>`}).join('')}window.buyChar=async(charId)=>{const ch=CHARACTERS.find(c=>c.id===charId);if(!ch)return;const current=currentUserData[ch.currency]||0;if(current<ch.price){const name=ch.currency==='coins'?'💰 Moedas':ch.currency==='gems'?'💎 Gemas':'🔮 Cristais';return showToast(`❌ ${name} insuficientes!`)}if(confirm(`Comprar ${ch.name}?`)){try{const owned=currentUserData.ownedCharacters||[];await updateDoc(playerRef,{[ch.currency]:current-ch.price,ownedCharacters:[...owned,ch.id]});showToast(`✅ ${ch.name} comprado!`);renderCharacters()}catch(e){showToast('Erro: '+e.message)}}};window.equipChar=async(charId)=>{try{await updateDoc(playerRef,{equippedCharacter:charId});const ch=CHARACTERS.find(c=>c.id===charId);showToast(`✅ ${ch.name} equipado!`);renderCharacters()}catch(e){showToast('Erro: '+e.message)}};function renderPowers(){if(!currentUserData)return;const unlocked=currentUserData.unlockedPowers||['fire','lightning','slash'];const level=currentUserData.level||1;const grid=$('powersGrid');grid.innerHTML=POWERS.map(p=>{const isUnlocked=unlocked.includes(p.id)||level>=p.unlockAt;return`<div class="power-card ${isUnlocked?'unlocked':'locked'}"><div class="power-emoji">${p.emoji}</div><div class="power-name">${p.name}</div><div class="power-desc">${p.desc}</div><div class="power-stats"><div class="power-stat"><div class="power-stat-label">Dano</div><div class="power-stat-value">${p.damage}</div></div><div class="power-stat"><div class="power-stat-label">MP</div><div class="power-stat-value">${p.mp}</div></div><div class="power-stat"><div class="power-stat-label">Recarga</div><div class="power-stat-value">${p.cd}</div></div></div>${!isUnlocked?`<p style="color:#ef4444;text-align:center;font-size:.85em;margin-top:10px">🔒 Nível ${p.unlockAt}</p>`:'<p style="color:#22c55e;text-align:center;font-size:.85em;margin-top:10px">✅ Desbloqueado</p>'}</div>`}).join('')}window.openDailyReward=()=>{if(!currentUserData)return showToast('Carregando...');renderDaily();$('dailyModal').classList.add('active')};function renderDaily(){const streak=currentUserData.dailyStreak||0;const lastClaim=currentUserData.lastDailyClaim||0;const now=Date.now();const oneDay=24*60*60*1000;const canClaim=(now-lastClaim)>=oneDay;const currentDay=(streak%7)+1;$('dailyGrid').innerHTML=DAILY_REWARDS.map((r,i)=>{const dayNum=i+1;const isClaimed=dayNum<currentDay||(dayNum===currentDay&&!canClaim&&lastClaim>0);const isToday=dayNum===currentDay&&canClaim;return`<div class="daily-day ${isClaimed?'claimed':''} ${isToday?'today':''}"><div class="daily-day-num">Dia ${dayNum}</div><div class="daily-day-reward">${r.reward}</div><div class="daily-day-label">${r.label}</div></div>`}).join('');const btn=$('btnClaimDaily');if(canClaim){btn.style.display='block';btn.textContent=`🎁 RESGATAR DIA ${currentDay}`}else btn.style.display='none'}window.claimDaily=async()=>{if(!currentUserData)return;const streak=currentUserData.dailyStreak||0;const lastClaim=currentUserData.lastDailyClaim||0;const now=Date.now();const oneDay=24*60*60*1000;if((now-lastClaim)<oneDay){const hours=Math.ceil((oneDay-(now-lastClaim))/(60*60*1000));return showToast(`⏰ Volte em ${hours} horas!`)}const currentDay=(streak%7)+1;const reward=DAILY_REWARDS[currentDay-1];const updates={dailyStreak:streak+1,lastDailyClaim:now};if(reward.reward==='💰')updates.coins=(currentUserData.coins||0)+reward.amount;else if(reward.reward==='💎')updates.gems=(currentUserData.gems||0)+reward.amount;else if(reward.reward==='🔮')updates.crystals=(currentUserData.crystals||0)+reward.amount;try{await updateDoc(playerRef,updates);showToast(`🎁 Dia ${currentDay} resgatado! +${reward.label}`);renderDaily()}catch(e){showToast('Erro: '+e.message)}};window.buyItem=async(name,price,currency)=>{if(!currentUserData)return showToast('Carregando...');const current=currentUserData[currency]||0;if(current<price){const name2=currency==='coins'?'💰 Moedas':currency==='gems'?'💎 Gemas':'🔮 Cristais';return showToast(`❌ ${name2} insuficientes!`)}if(confirm(`Comprar ${name}?`)){try{await updateDoc(playerRef,{[currency]:current-price});showToast('✅ '+name+' comprado!')}catch(e){showToast('Erro: '+e.message)}}};window.battle=async(bossName,rewardCoins,rewardGems)=>{if(!currentUserData)return showToast('Carregando...');const win=Math.random()>.3;if(win){await updateDoc(playerRef,{coins:(currentUserData.coins||0)+rewardCoins,gems:(currentUserData.gems||0)+rewardGems,points:(currentUserData.points||0)+100,xp:(currentUserData.xp||0)+50,wins:(currentUserData.wins||0)+1,battles:(currentUserData.battles||0)+1});showToast(`️ Vitória! +${rewardCoins}💰 +${rewardGems}💎`)}else{await updateDoc(playerRef,{losses:(currentUserData.losses||0)+1,battles:(currentUserData.battles||0)+1});showToast(`💀 Derrota contra ${bossName}!`)}};window.quickBattle=async()=>{if(!currentUserData)return showToast('Carregando...');const win=Math.random()>.4;if(win){await updateDoc(playerRef,{coins:(currentUserData.coins||0)+500,points:(currentUserData.points||0)+50,xp:(currentUserData.xp||0)+25,wins:(currentUserData.wins||0)+1,battles:(currentUserData.battles||0)+1});showToast('⚔️ Vitória rápida! +500💰')}else{await updateDoc(playerRef,{losses:(currentUserData.losses||0)+1,battles:(currentUserData.battles||0)+1});showToast('💀 Derrota!')}};function updateHome(){if(!currentUserData)return;$('homeWins').textContent=currentUserData.wins||0;$('homeLosses').textContent=currentUserData.losses||0;$('homeLevel').textContent=currentUserData.level||1;const rank=getRank(currentUserData.wins||0);$('homeRank').textContent=rank.icon+' '+rank.name}function updateResumo(){if(!currentUserData)return;const wins=currentUserData.wins||0;const losses=currentUserData.losses||0;const battles=currentUserData.battles||0;const rank=getRank(wins);$('statWins').textContent=wins;$('statLosses').textContent=losses;$('statBattles').textContent=battles;const total=wins+losses;$('statRate').textContent=(total>0?Math.round((wins/total)*100):0)+'%';$('statLevel').textContent=currentUserData.level||1;$('statCoins').textContent=Number(currentUserData.coins||0).toLocaleString('pt-BR');$('statGems').textContent=Number(currentUserData.gems||0).toLocaleString('pt-BR');$('statCrystals').textContent=Number(currentUserData.crystals||0).toLocaleString('pt-BR');$('rankIcon').textContent=rank.icon;$('rankName').textContent=rank.name;$('rankName').className='rank-name '+rank.cls;const nextRank=RANKS.find(r=>r.min>wins);if(nextRank){$('rankDesc').textContent=`Próximo: ${nextRank.icon} ${nextRank.name} (${nextRank.min} vitórias)`;const progress=((wins-rank.min)/(nextRank.min-rank.min))*100;$('rankBar').style.width=Math.min(100,progress)+'%';$('rankProgress').textContent=wins;$('rankNext').textContent=nextRank.min}else{$('rankDesc').textContent='🏆 Rank máximo alcançado!';$('rankBar').style.width='100%';$('rankProgress').textContent=wins;$('rankNext').textContent=wins}}window.closeModal=(id)=>$(id).classList.remove('active');window.toggleChat=()=>{chatOpen=!chatOpen;$('chatPanel').classList.toggle('active',chatOpen);if(chatOpen){unreadMessages=0;$('chatNotif').classList.add('hidden')}};window.switchChat=(tab,btn)=>{document.querySelectorAll('.chat-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');if(tab==='global'){$('globalChatView').style.display='flex';$('privateChatView').style.display='none'}else{$('globalChatView').style.display='none';$('privateChatView').style.display='flex'}};window.sendChat=async()=>{const input=$('globalInput');const text=input.value.trim();if(!text)return;if(currentUserData.mutedUntil&&currentUserData.mutedUntil>Date.now()){const remaining=Math.ceil((currentUserData.mutedUntil-Date.now())/60000);return showToast(`🔇 Mutado. Aguarde ${remaining} min.`)}try{await addDoc(collection(db,"chatMessages"),{type:"global",text,authorUid:currentUserId,authorNick:currentUserData.nick,authorAvatar:currentUserData.avatar||'🥷',authorRole:currentUserData.role||"player",authorVip:currentUserData.vipLevel||0,authorLevel:currentUserData.level||1,createdAt:serverTimestamp()});input.value=''}catch(e){showToast('Erro: '+e.message)}};function loadChat(){const q=query(collection(db,"chatMessages"),where("type","==","global"),orderBy("createdAt","desc"),limit(100));onSnapshot(q,(snap)=>{const container=$('globalMessages');if(snap.empty){container.innerHTML='<p style="text-align:center;color:#94a3b8;padding:20px">Nenhuma mensagem.</p>';return}const messages=snap.docs.map(d=>({id:d.id,...d.data()})).reverse();container.innerHTML=messages.map(msg=>{const isAdmin=msg.authorRole==="admin";const isOwn=msg.authorUid===currentUserId;const time=msg.createdAt?.toDate?msg.createdAt.toDate().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'';let badges='';if(isAdmin)badges+='<span class="badge-adm"> ADM</span>';if(msg.authorVip>0)badges+=`<span class="badge-vip">VIP ${msg.authorVip}</span>`;return`<div class="message ${isOwn?'own':''}"><div class="message-header"><span style="font-size:1.3em">${msg.authorAvatar||'🥷'}</span><span class="message-author" style="${isAdmin?'color:#c4b5fd':''}">${msg.authorNick}</span><span style="font-size:.6em;padding:1px 5px;background:#334155;border-radius:4px">Lv.${msg.authorLevel||1}</span>${badges}<span class="message-time">${time}</span></div><div class="message-text">${escapeHtml(msg.text)}</div></div>`}).join('');container.scrollTop=container.scrollHeight;if(!chatOpen&&messages.length>0){const last=messages[messages.length-1];if(last.authorUid!==currentUserId){unreadMessages++;$('chatNotif').textContent=unreadMessages>99?'99+':unreadMessages;$('chatNotif').classList.remove('hidden')}}})}function escapeHtml(text){const div=document.createElement('div');div.textContent=text;return div.innerHTML}onAuthStateChanged(auth,async(user)=>{try{if(!user){$('loading').classList.add('hidden');$('authView').classList.remove('hidden');$('gameView').classList.add('hidden');return}currentUserId=user.uid;$('authView').classList.add('hidden');$('loading').classList.add('hidden');$('gameView').classList.remove('hidden');playerRef=doc(db,"players",user.uid);onSnapshot(playerRef,async(snap)=>{if(!snap.exists())return;const data=snap.data();currentUserData=data;if(data.banned&&data.banUntil&&data.banUntil<Date.now()){await updateDoc(playerRef,{banned:false,banUntil:null})}else if(data.banned){alert('⛔ CONTA BANIDA');signOut(auth);return}isUserAdmin=data.role==="admin";const avatar=data.avatar||'';$('playerAvatar').textContent=avatar;const rank=getRank(data.wins||0);let nameHtml=`<span class="${isUserAdmin?'text-admin':''}">${data.nick||'Jogador'}</span><span class="player-rank-badge ${rank.cls}">${rank.icon} ${rank.name}</span>`;if(isUserAdmin)nameHtml+=` <span class="badge-adm">👑 ADM</span><span class="badge-vip">VIP 10</span>`;if(data.vipLevel>0)nameHtml+=` <span class="badge-vip">VIP ${data.vipLevel}</span>`;$('playerNameDisplay').innerHTML=nameHtml;$('playerLevel').textContent=data.level||1;$('resCoins').textContent=Number(data.coins||0).toLocaleString('pt-BR');$('resGems').textContent=Number(data.gems||0).toLocaleString('pt-BR');$('resCrystals').textContent=Number(data.crystals||0).toLocaleString('pt-BR');$('resPoints').textContent=Number(data.points||0).toLocaleString('pt-BR');try{await updateDoc(playerRef,{lastSeen:serverTimestamp()})}catch(e){}});loadChat()}catch(e){console.error('Erro:',e);showToast('Erro: '+e.message)}});$('globalInput').addEventListener('keypress',(e)=>{if(e.key==='Enter')sendChat()})}catch(e){console.error('ERRO CRÍTICO:',e);document.getElementById('loading').innerHTML=`<div style="background:#7f1d1d;border:2px solid #ef4444;padding:30px;border-radius:15px;max-width:500px;text-align:center"><h2 style="color:#fca5a5;margin-bottom:15px">⚠️ Erro ao carregar</h2><p style="color:#fca5a5;margin:15px 0">${e.message}</p><button onclick="location.reload()" style="margin-top:15px;background:#ef4444;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer">🔄 Recarregar</button></div>`}
 </script>
-
 </body>
 </html>
