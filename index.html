@@ -10,14 +10,17 @@
         .screen { display: none; width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
         .active { display: flex; }
 
-        /* TELA DE LOGIN / BOAS-VINDAS */
+        /* TELA DE LOGIN / CADASTRO */
         #login-screen { justify-content: center; align-items: center; background: radial-gradient(circle, #1e293b 0%, #0f172a 100%); }
         .login-card { background: rgba(30, 41, 59, 0.85); border: 1px solid #334155; padding: 40px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; backdrop-filter: blur(10px); }
         .login-card h2 { color: #f87171; margin-bottom: 10px; font-size: 28px; letter-spacing: 1px; }
         .welcome-msg { color: #94a3b8; font-size: 14px; margin-bottom: 25px; line-height: 1.5; }
         .form-control { width: 100%; padding: 12px 15px; margin-bottom: 15px; background: #0f172a; border: 1px solid #475569; color: #fff; border-radius: 6px; font-size: 14px; }
-        .btn-main { width: 100%; padding: 12px; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+        .btn-main { width: 100%; padding: 12px; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.2s; margin-top: 5px; }
         .btn-main:hover { background: #1d4ed8; box-shadow: 0 0 15px rgba(37,99,235,0.5); }
+        .toggle-link { margin-top: 20px; font-size: 13px; color: #94a3b8; cursor: pointer; }
+        .toggle-link span { color: #3b82f6; font-weight: bold; }
+        .toggle-link span:hover { text-decoration: underline; }
 
         /* DASHBOARD PRINCIPAL DO JOGADOR */
         #game-screen { background: #0f172a; flex-direction: row; }
@@ -59,16 +62,22 @@
 </head>
 <body>
 
-    <!-- TELA 1: LOGIN / BOAS-VINDAS -->
+    <!-- TELA 1: LOGIN / CADASTRO -->
     <div id="login-screen" class="screen active">
         <div class="login-card">
-            <h2>DRAGON WAR</h2>
-            <p class="welcome-msg">Bem-vindo ao mundo de batalhas e conquistas! Faça login para entrar na sua jornada épica.</p>
-            <form id="form-login" onsubmit="fazerLogin(event)">
-                <input type="email" id="login-email" class="form-control" placeholder="Seu E-mail" required>
-                <input type="password" id="login-senha" class="form-control" placeholder="Sua Senha" required>
-                <button type="submit" class="btn-main">ENTRAR NO JOGO</button>
+            <h2 id="auth-titulo">DRAGON WAR</h2>
+            <p class="welcome-msg" id="auth-subtitulo">Bem-vindo ao mundo de batalhas e conquistas! Faça login para entrar na sua jornada épica.</p>
+            
+            <form id="form-auth" onsubmit="processarAutenticacao(event)">
+                <input type="text" id="auth-nome" class="form-control" placeholder="Seu Nome de Jogador" style="display: none;">
+                <input type="email" id="auth-email" class="form-control" placeholder="Seu E-mail" required>
+                <input type="password" id="auth-senha" class="form-control" placeholder="Sua Senha" required>
+                <button type="submit" id="btn-submit-auth" class="btn-main">ENTRAR NO JOGO</button>
             </form>
+
+            <div class="toggle-link" id="link-alternar" onclick="alternarModoAuth()">
+                Não tem uma conta? <span id="texto-alternar">Criar Conta Agora</span>
+            </div>
         </div>
     </div>
 
@@ -228,22 +237,83 @@
 
         let usuarioAtualId = null;
         let dadosJogadorLocal = { nome: "", dinheiro: 0, nivel: 1, skinSeed: "Default" };
+        let modoCriarConta = false;
 
-        function fazerLogin(event) {
+        function alternarModoAuth() {
+            modoCriarConta = !modoCriarConta;
+            let inputNome = document.getElementById('auth-nome');
+            let btnSubmit = document.getElementById('btn-submit-auth');
+            let textoAlternar = document.getElementById('texto-alternar');
+            let linkAlternar = document.getElementById('link-alternar');
+            let titulo = document.getElementById('auth-titulo');
+            let subtitulo = document.getElementById('auth-subtitulo');
+
+            if (modoCriarConta) {
+                inputNome.style.display = 'block';
+                inputNome.required = true;
+                btnSubmit.innerText = 'CADASTRAR E ENTRAR';
+                btnSubmit.style.background = '#16a34a';
+                titulo.innerText = 'CRIAR CONTA';
+                subtitulo.innerText = 'Cadastre-se agora para iniciar sua jornada épica no Dragon War!';
+                linkAlternar.innerHTML = 'Já tem uma conta? <span id="texto-alternar">Fazer Login</span>';
+            } else {
+                inputNome.style.display = 'none';
+                inputNome.required = false;
+                btnSubmit.innerText = 'ENTRAR NO JOGO';
+                btnSubmit.style.background = '#2563eb';
+                titulo.innerText = 'DRAGON WAR';
+                subtitulo.innerText = 'Bem-vindo ao mundo de batalhas e conquistas! Faça login para entrar na sua jornada épica.';
+                linkAlternar.innerHTML = 'Não tem uma conta? <span id="texto-alternar">Criar Conta Agora</span>';
+            }
+        }
+
+        function processarAutenticacao(event) {
             event.preventDefault();
-            let email = document.getElementById('login-email').value.trim();
-            let senha = document.getElementById('login-senha').value.trim();
+            let email = document.getElementById('auth-email').value.trim();
+            let senha = document.getElementById('auth-senha').value.trim();
 
-            auth.signInWithEmailAndPassword(email, senha)
-                .then((userCredential) => {
-                    let user = userCredential.user;
-                    usuarioAtualId = user.uid;
-                    carregarDadosJogadorDoBanco(user.uid, user.email);
-                    mudarTela('game-screen');
-                })
-                .catch((error) => {
-                    alert("Erro ao entrar: Verifique seu e-mail e senha.");
-                });
+            if (modoCriarConta) {
+                let nomeJogador = document.getElementById('auth-nome').value.trim();
+                
+                // Criar conta no Firebase Auth
+                auth.createUserWithEmailAndPassword(email, senha)
+                    .then((userCredential) => {
+                        let user = userCredential.user;
+                        usuarioAtualId = user.uid;
+                        
+                        // Criar o documento inicial do jogador no Firestore
+                        let novoPerfil = {
+                            nome: nomeJogador,
+                            uid: user.uid,
+                            email: email,
+                            nivel: 1,
+                            dinheiro: 1000,
+                            skinSeed: email
+                        };
+
+                        db.collection("jogadores").doc(user.uid).set(novoPerfil)
+                            .then(() => {
+                                dadosJogadorLocal = novoPerfil;
+                                sincronizarInterface();
+                                mudarTela('game-screen');
+                            });
+                    })
+                    .catch((error) => {
+                        alert("Erro ao criar conta: " + error.message);
+                    });
+            } else {
+                // Fazer Login normal
+                auth.signInWithEmailAndPassword(email, senha)
+                    .then((userCredential) => {
+                        let user = userCredential.user;
+                        usuarioAtualId = user.uid;
+                        carregarDadosJogadorDoBanco(user.uid, user.email);
+                        mudarTela('game-screen');
+                    })
+                    .catch((error) => {
+                        alert("Erro ao entrar: Verifique seu e-mail e senha ou crie uma nova conta.");
+                    });
+            }
         }
 
         function carregarDadosJogadorDoBanco(uid, email) {
@@ -288,15 +358,10 @@
                 nivel: dadosJogadorLocal.nivel,
                 skinSeed: dadosJogadorLocal.skinSeed
             }).then(() => {
-                sincroniseInterface();
+                sincronizarInterface();
             }).catch(err => {
                 console.error("Erro ao salvar:", err);
             });
-        }
-
-        // Correção rápida da função de sincronização de interface
-        function sincroniseInterface() {
-            sincronizarInterface();
         }
 
         function salvarConfiguracoes() {
@@ -305,7 +370,7 @@
                 dadosJogadorLocal.nome = novoNome;
             }
             salvarDadosNoBanco();
-            alert("Configurações e alterações salvas com sucesso no Firebase!");
+            alert("Configurações salvas com sucesso no Firebase!");
         }
 
         function atacarMonstro() {
