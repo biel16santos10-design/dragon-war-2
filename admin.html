@@ -1,457 +1,167 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dragon War: Rise of Power - Jogo & Painel DM</title>
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #0b0f19; color: #f8fafc; height: 100vh; overflow: hidden; }
-        
-        /* Layout */
-        .game-container { display: flex; height: 100vh; }
-        .sidebar { width: 260px; background: #0f172a; border-right: 1px solid #1e293b; display: flex; flex-direction: column; }
-        .sidebar-header { padding: 20px; font-size: 16px; font-weight: bold; color: #38bdf8; border-bottom: 1px solid #1e293b; }
-        .nav-menu { list-style: none; padding: 15px; display: flex; flex-direction: column; gap: 8px; }
-        .nav-menu li { padding: 10px 15px; cursor: pointer; border-radius: 6px; color: #94a3b8; transition: all 0.2s; font-size: 14px; }
-        .nav-menu li:hover, .nav-menu li.active { background: #1e293b; color: #f8fafc; }
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Dragon War — Jogador</title><style>
+:root{--bg:#050814;--panel:#090f21;--line:#344875;--text:#f7f8ff;--muted:#aeb9d8;--gold:#ffbd19;--blue:#25b9ff;--red:#ff3856;--purple:#b84cff;--green:#21e69a;--cyan:#25e8ff}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Arial,sans-serif;color:var(--text);background:radial-gradient(circle at 50% 10%,#183b75,#081128 40%,#03050b 82%);overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.35;background:radial-gradient(circle at 15% 35%,#124d87,transparent 30%),radial-gradient(circle at 85% 55%,#3c135f,transparent 30%)}
+button,input,select{font:inherit}button{cursor:pointer}.app{max-width:1500px;margin:auto;min-height:100vh;padding:10px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;border:1px solid #28416e;border-radius:20px;background:#050a19e8;position:sticky;top:7px;z-index:20}
+.profile{display:flex;align-items:center;gap:10px}.avatar{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-size:31px;background:linear-gradient(135deg,#0a1938,#1d68bb);border:3px solid #2ecaff;box-shadow:0 0 24px #1599ff66}
+.name{font-size:clamp(20px,4vw,34px);font-weight:900;background:linear-gradient(90deg,#ff35d7,#4cf4ff,#ffd02f);-webkit-background-clip:text;color:transparent}.player-name{color:#fff;background:none}.uid{color:#9fb2d9;font-size:12px;margin-top:4px}.crown{font-size:24px}.top-actions{display:flex;gap:7px}.icon-btn{border:1px solid #3b4d79;background:#101936;color:#fff;border-radius:12px;padding:8px}
+.hero{min-height:330px;margin-top:12px;border:1px solid #355183;border-radius:28px;overflow:hidden;position:relative;background:linear-gradient(135deg,#07152e,#17275d 45%,#160d2b)}
+.hero:after{content:"🐉";position:absolute;right:4%;bottom:-50px;font-size:220px;opacity:.38;filter:drop-shadow(0 0 28px #26c8ff)}.hero-content{position:relative;z-index:2;padding:30px 18px;text-align:center}
+.logo{font-weight:1000;font-size:clamp(45px,8vw,88px);line-height:.8;text-shadow:0 0 20px #ff3d00,0 0 45px #24cfff;color:#ff7a18}.logo span{display:block;color:#39d9ff;font-size:.62em;margin-top:12px}.tag{font-size:18px;color:#d6e7ff;margin:18px 0}
+.menu{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.btn{border:2px solid #3a5a8d;border-radius:16px;padding:13px;background:#0c1530;color:#fff;font-weight:900;min-height:54px}.gold{border-color:#ffc51e;background:linear-gradient(135deg,#5e2c05,#1b1207)}.blue{border-color:#27baff;background:linear-gradient(135deg,#092b59,#0c1530)}.red{border-color:#ff3454;background:linear-gradient(135deg,#5b0d1b,#160b13)}.purple{border-color:#bb46ff;background:linear-gradient(135deg,#43105f,#150c25)}.green{border-color:#19e79c;background:linear-gradient(135deg,#074d37,#071b1a)}.cyan{border-color:#28eaff;background:linear-gradient(135deg,#074a59,#081629)}.gray{border-color:#aebbd0;background:#141b2b}
+.panel{margin-top:14px;padding:16px;border:1px solid #30456f;border-radius:23px;background:#070c1ce8;box-shadow:0 15px 50px #0005}.panel h2{margin:0 0 13px}.hidden{display:none!important}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.stat{padding:16px;border:1px solid #32456e;border-radius:17px;background:#0a1125;text-align:center}.stat b{display:block;font-size:28px;margin-top:6px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{padding:15px;border:1px solid #354a77;border-radius:19px;background:linear-gradient(145deg,#101a38,#080e20)}.card .emoji,.enemy .emoji{font-size:54px;text-align:center}.price{font-weight:900;color:#ffd34a}.small{color:var(--muted);font-size:13px}
+.enemy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.enemy{border:2px solid #3c4d70;border-radius:21px;padding:15px;background:linear-gradient(145deg,#160d1a,#0a0e1d);cursor:pointer}.enemy.selected{border-color:#ffbd19;box-shadow:0 0 25px #ffbd1938}.hp{height:13px;background:#202b48;border-radius:99px;overflow:hidden}.hp i{display:block;height:100%;background:linear-gradient(90deg,#18e0ff,#8a3cff)}
+.row{display:flex;gap:8px;flex-wrap:wrap}input,select{width:100%;padding:11px;border-radius:11px;border:1px solid #40547d;background:#070c1b;color:#fff}.form{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.full{grid-column:1/-1}
+.rank-row{display:grid;grid-template-columns:52px 1fr auto;gap:9px;align-items:center;padding:11px;border:1px solid #2d416b;border-radius:13px;background:#0a1227;margin:7px 0}.rank-points{color:#ffd34a;font-weight:900}.badge{display:inline-block;padding:4px 8px;border-radius:99px;background:#19264a;border:1px solid #486197;font-size:12px;font-weight:900}
+.toast{position:fixed;right:14px;bottom:14px;z-index:100;padding:12px 15px;border-radius:12px;background:#111b33;border:1px solid #4a6396;box-shadow:0 15px 35px #0008}.admin-banner{text-align:center;margin:8px auto;padding:9px;border-radius:11px;background:#063c46;border:1px solid #27eaff;color:#71f5ff;font-weight:900}.admin-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:12px}.player-list{max-height:560px;overflow:auto}.player-btn{width:100%;text-align:left;border:1px solid #2f426c;background:#0a1226;color:#fff;border-radius:12px;padding:11px;margin:5px 0}.footer{text-align:center;color:#7181a4;padding:20px}.admin-banner{margin:10px 0;padding:12px;border:1px solid #28eaff;border-radius:14px;background:#063844;color:#8ff7ff;font-weight:900;text-align:center}.event-live{border-color:#21e69a!important;box-shadow:0 0 22px #21e69a22}.event-ended{opacity:.55}
+@media(max-width:900px){.menu{grid-template-columns:repeat(2,1fr)}.stats{grid-template-columns:repeat(2,1fr)}.grid,.enemy-grid,.admin-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.top{position:static}.top-actions{display:none}.avatar{width:50px;height:50px}.menu{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr}.form{grid-template-columns:1fr}.logo{font-size:45px}.hero{min-height:350px}}
+</style></head><body><div class="app">
+<header class="top"><div class="profile"><div class="avatar">⚔️</div><div><div id="playerName" class="name player-name">Jogador</div><div class="uid">UID: <span id="uid">...</span></div></div></div><div class="top-actions"><button class="icon-btn" onclick="mostrar('config')">⚙️</button><button class="icon-btn" onclick="mostrar('ranking')">🏆</button><button class="icon-btn" onclick="mostrar('recompensas')">🎁</button></div></header>
+<section class="hero"><div class="hero-content"><div class="logo">DRAGON <span>WAR</span></div><div class="tag">RISE OF POWER • Jogue, evolua, domine!</div><div id="mensagemGlobal" class="admin-banner hidden"></div><div class="menu">
+<button class="btn gold" onclick="mostrar('jogar')">⚔️ JOGAR</button><button class="btn blue" onclick="mostrar('loja')">🛒 LOJA</button><button class="btn red" onclick="mostrar('combate')">⚔️ COMBATE</button><button class="btn purple" onclick="mostrar('poderes')">🔥 PODER</button><button class="btn green" onclick="salvar()">💾 SALVAR</button><button class="btn cyan" onclick="carregar()">📂 CARREGAR</button><button class="btn gray" onclick="novoJogo()">➕ NOVO JOGO</button><button class="btn blue" onclick="mostrar('ranking')">🏆 RANKING</button><button class="btn cyan" onclick="mostrar('eventos')">🎉 EVENTOS</button>
+</div></div></section>
+<div id="jogar" class="panel"><h2>🎮 Seu progresso</h2><div class="stats"><div class="stat">❤️ Vida<b id="vida">100</b></div><div class="stat">💧 Mana<b id="mana">100</b></div><div class="stat">⭐ Pontos<b id="pontos">0</b></div><div class="stat">🪙 Moedas<b id="moedas">500</b></div><div class="stat">💎 Gemas<b id="gemas">0</b></div><div class="stat">🏅 Patente<b id="patente">Iniciante</b></div></div><div class="panel"><h2>👤 Seu nome</h2><div class="form"><div class="full"><input id="nomeInput" maxlength="18" placeholder="Digite seu nome"></div><button class="btn gold" onclick="salvarNome()">💾 SALVAR NOME</button><button class="btn blue" onclick="mostrar('ranking')">🏆 RANKING</button></div><p class="small">Não são permitidos ADM/ADMIN, palavrões, xingamentos ou nomes ofensivos.</p></div></div>
+<div id="loja" class="panel hidden"><h2>🛒 Loja</h2><div id="lojaGrid" class="grid"></div></div>
+<div id="poderes" class="panel hidden"><h2>🔥 Poderes</h2><div id="poderGrid" class="grid"></div></div>
+<div id="combate" class="panel hidden"><h2>⚔️ COMBATE — 3 INIMIGOS</h2><p class="small">Os três ficam disponíveis ao mesmo tempo. Toque em um para escolher o alvo.</p><div id="enemyGrid" class="enemy-grid"></div><div class="row"><button class="btn red" onclick="atacar()">⚔️ ATACAR</button><button class="btn purple" onclick="usarPoder()">🔥 USAR PODER</button></div><p id="combatLog" class="small">Prepare-se para lutar!</p></div>
+<div id="eventos" class="panel hidden"><h2>🎉 EVENTOS</h2><div id="eventosGrid" class="grid"><p class="small">Carregando eventos...</p></div></div>
+<div id="ranking" class="panel hidden"><h2>🏆 RANKING GLOBAL</h2><button class="btn blue" onclick="ranking()">🔄 ATUALIZAR</button><div id="rankingList" style="margin-top:10px"></div></div>
+<div id="recompensas" class="panel hidden"><h2>🎁 RECOMPENSAS</h2><div class="card"><h3>⭐ Recompensa diária</h3><p>100 moedas + 25 pontos.</p><button class="btn gold" onclick="recompensa()">🎁 RESGATAR</button></div></div>
+<div id="config" class="panel hidden"><h2>⚙️ CONFIGURAÇÕES</h2><button class="btn gray" onclick="location.reload()">🔄 RECARREGAR</button></div>
+<div class="footer">Dragon War: Rise of Power</div>
+<div id="toast" class="toast hidden"></div></div><script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInAnonymously} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {getDatabase,ref,get,set,update,remove} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
 
-        .content-area { flex: 1; padding: 25px; overflow-y: auto; background: radial-gradient(circle at center, #111827 0%, #030712 100%); }
-        .tab-panel { display: none; }
-        .tab-panel.active { display: block; }
+const firebaseConfig={
+apiKey:"AIzaSyDA_kn3eNRD9P2D6WDCNbUxBKld0i9Sys",
+authDomain:"dragon-war-rise-of-power.firebaseapp.com",
+databaseURL:"https://dragon-war-rise-of-power-default-rtdb.firebaseio.com",
+projectId:"dragon-war-rise-of-power",
+storageBucket:"dragon-war-rise-of-power.firebasestorage.app",
+messagingSenderId:"1002858781019",
+appId:"1:1002858781019:web:6cd6d1b0173ab37c7fe27e",
+measurementId:"G-PY4TRBXZ8N"
+};
+const ADMIN_UID="w2aAcmul8vYJOR05lGLQThAsiTg2";
 
-        .card-box { background: #0f172a; border: 1px solid #1e293b; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
-        .card-box h3 { font-size: 16px; color: #38bdf8; margin-bottom: 15px; }
-        
-        .ranking-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        .ranking-table th, .ranking-table td { padding: 12px; text-align: left; border-bottom: 1px solid #1e293b; }
-        .ranking-table th { color: #94a3b8; font-weight: 600; }
-        .ranking-table tr:hover { background: rgba(30, 41, 59, 0.5); }
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getDatabase(app);
+let usuario=null,jogador=null,alvo=0;
+const inimigos=[
+{id:"goblin",nome:"Goblin",emoji:"👹",vida:100,dano:8,pontos:50,moedas:80},
+{id:"demonio",nome:"Demônio",emoji:"😈",vida:250,dano:18,pontos:120,moedas:200},
+{id:"dragao",nome:"Dragão Sombrio",emoji:"🐉",vida:500,dano:30,pontos:300,moedas:500}];
+const personagens=[
+{id:"guerreiro",nome:"Guerreiro",emoji:"🧙",preco:0,bonus:0,desc:"Equilibrado"},
+{id:"ninja",nome:"Ninja",emoji:"🥷",preco:800,bonus:5,desc:"+5 dano"},
+{id:"cavaleiro",nome:"Cavaleiro",emoji:"🛡️",preco:1200,bonus:8,desc:"+8 dano"},
+{id:"mago",nome:"Mago",emoji:"🧝",preco:1800,bonus:12,desc:"+12 dano"}];
+const armas=[
+{id:"espada",nome:"Espada de Ferro",emoji:"⚔️",preco:0,dano:10},
+{id:"katana",nome:"Katana Lunar",emoji:"🗡️",preco:900,dano:18},
+{id:"machado",nome:"Machado Flamejante",emoji:"🪓",preco:1500,dano:28}];
+const poderesBaseLista=[
+{id:"fogo",nome:"🔥 Fogo",preco:400,dano:35},
+{id:"gelo",nome:"❄️ Gelo",preco:700,dano:50},
+{id:"raio",nome:"⚡ Raio",preco:1100,dano:75}];
+const proibidos=["adm","admin","administrador","moderador","mod","merda","caralho","porra","puta","puto","viado","vadia","bosta","fdp","foda-se","fodase","cuzão","otário","otario","idiota","imbecil"];
+const $=id=>document.getElementById(id),esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+function toast(m){$("toast").textContent=m;$("toast").classList.remove("hidden");setTimeout(()=>$("toast").classList.add("hidden"),2500)}
+function patente(p,n){if(p>=10000||n>=30)return"Lendário";if(p>=6000||n>=20)return"Elite";if(p>=3500||n>=15)return"Mestre";if(p>=2000||n>=10)return"Profissional";if(p>=900||n>=6)return"Avançado";if(p>=300||n>=3)return"Intermediário";return"Iniciante"}
+function base(){return{nome:"Jogador",vida:100,mana:100,pontos:0,moedas:500,gemas:0,nivel:1,patente:"Iniciante",personagem:"Guerreiro",arma:"Espada de Ferro",poder:"🔥 Fogo",inventario:{},atualizadoEm:Date.now()}}
+function mostrar(id){document.querySelectorAll(".panel").forEach(x=>x.classList.add("hidden"));$(id)?.classList.remove("hidden");if(id==="ranking")ranking();if(id==="loja")loja();if(id==="poderes")renderPoderes();if(id==="combate")combate();if(id==="eventos")carregarEventos();scrollTo({top:$(id)?.offsetTop-70||0,behavior:"smooth"})}
+window.mostrar=mostrar;
+function ui(){$("playerName").textContent=jogador.nome;$("uid").textContent=usuario.uid;$("vida").textContent=jogador.vida;$("mana").textContent=jogador.mana;$("pontos").textContent=jogador.pontos;$("moedas").textContent=jogador.moedas;$("gemas").textContent=Number(jogador.gemas||0);jogador.patente=patente(jogador.pontos,jogador.nivel);$("patente").textContent=jogador.patente;$("nomeInput").value=jogador.nome}
+async function save(silent=false){jogador.patente=patente(jogador.pontos,jogador.nivel);const u={};u["jogadores/"+usuario.uid]=jogador;u["ranking/"+usuario.uid]={uid:usuario.uid,nome:jogador.nome,pontos:jogador.pontos,nivel:jogador.nivel,patente:jogador.patente,personagem:jogador.personagem,atualizadoEm:Date.now()};try{await update(ref(db),u);ui();if(!silent)toast("✅ Salvo!")}catch(e){toast("❌ Erro ao salvar.")}}
+window.salvar=()=>save();window.carregar=async()=>{await carregar();toast("📂 Carregado!")};
+async function carregar(){
+ const s=await get(ref(db,"jogadores/"+usuario.uid));
+ if(s.exists() && (s.val()?.bloqueado===true || s.val()?.banido===true)){
+   document.body.innerHTML='<div style="min-height:100vh;display:grid;place-items:center;padding:25px;background:#050814;color:white;font-family:Arial"><div style="max-width:520px;text-align:center;border:1px solid #ff3856;border-radius:24px;padding:30px;background:#101327"><div style="font-size:60px">🚫</div><h1>Acesso bloqueado</h1><p>Seu acesso ao Dragon War foi bloqueado pelo administrador.</p></div></div>';
+   throw new Error("PLAYER_BLOCKED");
+ }
+ jogador=s.exists()?{...base(),...s.val()}:base();
+ ui();combate();await carregarCatalogo();await carregarEventos();await carregarMensagemGlobal();
+}
+window.novoJogo=async()=>{if(confirm("Começar um novo jogo?")){jogador=base();await save()}};
+window.salvarNome=async()=>{const n=$("nomeInput").value.trim(),s=n.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");if(n.length<3||n.length>18)return toast("❌ Nome deve ter 3-18 caracteres.");if(!/^[\p{L}\p{N}_ -]+$/u.test(n))return toast("❌ Caracteres não permitidos.");if(proibidos.some(x=>s.includes(x)))return toast("🚫 Nome proibido.");jogador.nome=n;await save()};
+function loja(){const arr=[...personagens.map(x=>[x,"personagem"]),...(window.personagensExtra||[]).map(x=>[x,"personagem"]),...armas.map(x=>[x,"arma"]),...(window.armasExtra||[]).map(x=>[x,"arma"])];$("lojaGrid").innerHTML=arr.map(([x,t])=>card(x,t)).join("")}
+function renderPoderes(){ $("poderGrid").innerHTML=[...poderesBase(),...(window.poderesExtra||[])].map(x=>card(x,"poder")).join("")}
+function poderesBase(){return poderesBaseLista}
+function card(x,t){const owned=(t==="personagem"&&jogador.personagem===x.nome)||(t==="arma"&&jogador.arma===x.nome)||(t==="poder"&&jogador.poder===x.nome);return`<div class="card"><div class="emoji">${x.emoji}</div><h3>${esc(x.nome)}</h3><p>${esc(x.desc||"Melhore seu poder.")}</p>${x.dano?`<p>⚔️ Dano: ${x.dano}</p>`:""}<p class="price">🪙 ${x.preco||0}</p><button class="btn ${owned?"green":"gold"}" onclick='comprar(${JSON.stringify(x)},"${t}")'>${owned?"✅ EQUIPADO":"🛒 COMPRAR"}</button></div>`}
+window.comprar=async(x,t)=>{if((t==="personagem"&&jogador.personagem===x.nome)||(t==="arma"&&jogador.arma===x.nome)||(t==="poder"&&jogador.poder===x.nome))return toast("Já equipado.");if(jogador.moedas<x.preco)return toast("❌ Moedas insuficientes.");jogador.moedas-=x.preco;if(t==="personagem")jogador.personagem=x.nome;if(t==="arma")jogador.arma=x.nome;if(t==="poder")jogador.poder=x.nome;await save(true);toast("🛒 Equipado!");loja();renderPoderes();ui()}
+function combate(){ $("enemyGrid").innerHTML=inimigos.map((e,i)=>{const hp=Number(sessionStorage.getItem("hp_"+e.id)??e.vida);return`<div class="enemy ${alvo===i?"selected":""}" onclick="selecionar(${i})"><div class="emoji">${e.emoji}</div><h3>${e.nome}</h3><p>❤️ ${hp}/${e.vida}</p><div class="hp"><i style="width:${hp/e.vida*100}%"></i></div><p>⚔️ ${e.dano} • ⭐ ${e.pontos} • 🪙 ${e.moedas}</p></div>`}).join("")}
+window.selecionar=i=>{alvo=i;combate();toast("🎯 "+inimigos[i].nome)}
+function dano(){
+ const arma=[...armas,...(window.armasExtra||[])].find(x=>x.nome===jogador.arma)?.dano||10;
+ const pers=[...personagens,...(window.personagensExtra||[])].find(x=>x.nome===jogador.personagem)?.bonus||0;
+ return arma+pers+jogador.nivel;
+}
+window.atacar=async()=>{const e=inimigos[alvo],k="hp_"+e.id;let hp=Math.max(0,Number(sessionStorage.getItem(k)??e.vida)-dano());sessionStorage.setItem(k,hp);if(hp===0){jogador.pontos+=e.pontos;jogador.moedas+=e.moedas;sessionStorage.removeItem(k);$("combatLog").textContent=`🏆 ${e.nome} derrotado! +${e.pontos} pontos e +${e.moedas} moedas.`}else{jogador.vida-=e.dano;if(jogador.vida<=0)jogador.vida=100;$("combatLog").textContent=`⚔️ Ataque realizado!`;}jogador.nivel=Math.max(1,1+Math.floor(jogador.pontos/300));await save(true);ui();combate()}
+window.usarPoder=async()=>{const p=poderesBaseLista.find(x=>x.nome===jogador.poder)||poderesBaseLista[0],e=inimigos[alvo],k="hp_"+e.id;let hp=Math.max(0,Number(sessionStorage.getItem(k)??e.vida)-p.dano);sessionStorage.setItem(k,hp);jogador.mana=Math.max(0,jogador.mana-15);if(hp===0){jogador.pontos+=e.pontos;jogador.moedas+=e.moedas;sessionStorage.removeItem(k)}$("combatLog").textContent=`🔥 Poder causou ${p.dano} de dano.`;await save(true);ui();combate()}
+async function ranking(){const s=await get(ref(db,"ranking"));if(!s.exists())return $("rankingList").innerHTML="<p>Nenhum jogador.</p>";let a=[];s.forEach(c=>a.push(c.val()));a.sort((x,y)=>(y.pontos||0)-(x.pontos||0));$("rankingList").innerHTML=a.map((p,i)=>`<div class="rank-row"><div>${i<3?["🥇","🥈","🥉"][i]:"#"+(i+1)}</div><div><b>${esc(p.nome)}</b><br><span class="badge">${esc(p.patente||"Iniciante")}</span> Nível ${p.nivel||1}</div><div class="rank-points">⭐ ${p.pontos||0}</div></div>`).join("")}
+window.ranking=ranking;
+let catalogo=[];
+async function carregarCatalogo(){
+ try{
+   const s=await get(ref(db,"catalogo"));
+   catalogo=[];
+   if(s.exists())s.forEach(c=>{const v=c.val()||{};if(v.ativo!==false)catalogo.push({id:c.key,...v})});
+   const personagensExtra=catalogo.filter(x=>x.tipo==="personagem").map(x=>({...x,bonus:Number(x.dano||x.bonus||0),preco:Number(x.preco||0)}));
+   const armasExtra=catalogo.filter(x=>x.tipo==="arma").map(x=>({...x,dano:Number(x.dano||0),preco:Number(x.preco||0)}));
+   const poderesExtra=catalogo.filter(x=>x.tipo==="poder").map(x=>({...x,dano:Number(x.dano||0),preco:Number(x.preco||0)}));
+   window.personagensExtra=personagensExtra;window.armasExtra=armasExtra;window.poderesExtra=poderesExtra;
+   loja();renderPoderes();
+ }catch(e){catalogo=[];window.personagensExtra=[];window.armasExtra=[];window.poderesExtra=[]}
+}
 
-        .btn-action { background: #0284c7; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; text-align: left; }
-        .btn-action:hover { opacity: 0.9; }
+async function carregarEventos(){
+ const box=$("eventosGrid");
+ try{
+   const s=await get(ref(db,"eventos"));
+   const agora=Date.now();
+   const lista=[];
+   if(s.exists())s.forEach(c=>{const v=c.val()||{};if(v.ativo!==false)lista.push({id:c.key,...v})});
+   lista.sort((a,b)=>Number(a.fim||0)-Number(b.fim||0));
+   if(!lista.length){box.innerHTML='<p class="small">Nenhum evento disponível no momento.</p>';return}
+   box.innerHTML=lista.map(e=>{
+     const ini=Number(e.inicio||0),fim=Number(e.fim||0),ativo=(!ini||agora>=ini)&&(!fim||agora<=fim);
+     const classe=ativo?'event-live':'event-ended';
+     const inicio=ini?new Date(ini).toLocaleString('pt-BR'):'';
+     const termino=fim?new Date(fim).toLocaleString('pt-BR'):'';
+     const r=e.recompensa||{};
+     return `<div class="card ${classe}"><div class="emoji">🎉</div><h3>${esc(e.nome||'Evento')}</h3><p>${esc(e.descricao||'Evento especial do Dragon War.')}</p><p class="small">${ativo?'🟢 ATIVO':'⚫ ENCERRADO'}${inicio?' • Início: '+esc(inicio):''}${termino?' • Fim: '+esc(termino):''}</p><p>🎁 Recompensa: 🪙 ${Number(r.ouro||0)} • 💎 ${Number(r.gemas||0)} • ⭐ ${Number(r.pontos||0)}</p>${ativo?`<button class="btn gold" onclick="resgatarEvento('${e.id}')">🎁 RESGATAR</button>`:''}</div>`;
+   }).join('');
+ }catch(e){box.innerHTML='<p class="small">Não foi possível carregar os eventos.</p>'}
+}
+window.resgatarEvento=async id=>{
+ const s=await get(ref(db,`eventos/${id}`));
+ if(!s.exists())return toast('❌ Evento não encontrado.');
+ const e=s.val()||{},agora=Date.now(),ini=Number(e.inicio||0),fim=Number(e.fim||0);
+ if((ini&&agora<ini)||(fim&&agora>fim)||e.ativo===false)return toast('⏳ Evento não está ativo.');
+ jogador.eventosResgatados=jogador.eventosResgatados||{};
+ if(jogador.eventosResgatados[id])return toast('🎁 Você já resgatou este evento.');
+ const r=e.recompensa||{};
+ jogador.moedas+=Number(r.ouro||0);jogador.gemas=(Number(jogador.gemas)||0)+Number(r.gemas||0);jogador.pontos+=Number(r.pontos||0);
+ jogador.eventosResgatados[id]=true;await save(true);toast('🎉 Recompensa do evento recebida!');carregarEventos();
+};
 
-        .status-bar { position: fixed; bottom: 0; left: 260px; right: 0; background: #0f172a; border-top: 1px solid #1e293b; padding: 10px 25px; display: flex; justify-content: space-between; font-size: 13px; color: #94a3b8; }
-        
-        /* Classe para ocultar abas de DM para jogadores comuns */
-        .dm-only { display: none !important; }
-    </style>
-</head>
-<body>
+async function carregarMensagemGlobal(){
+ try{
+   const s=await get(ref(db,"mensagemGlobal"));
+   const box=$("mensagemGlobal");
+   if(!s.exists()){box.classList.add('hidden');return}
+   const m=s.val()||{};
+   if(m.ativo===false||!m.texto){box.classList.add('hidden');return}
+   box.textContent='📢 '+m.texto;box.classList.remove('hidden');
+ }catch(e){}
+}
 
-    <div class="game-container">
-        <!-- Menu Lateral -->
-        <div class="sidebar">
-            <div class="sidebar-header">DRAGON WAR: OP</div>
-            <ul class="nav-menu" id="menu-lateral">
-                <!-- Comum a todos -->
-                <li onclick="trocarTab('jogo', this)" class="active">⚔️ Jogar (Game View)</li>
-                
-                <!-- Apenas visível para DM / Admin -->
-                <li onclick="trocarTab('geral', this)" class="dm-only menu-dm">🛡 Visão Geral DM</li>
-                <li onclick="trocarTab('admin', this)" class="dm-only menu-dm">👥 Gestão de Jogadores</li>
-                <li onclick="trocarTab('banidos', this)" class="dm-only menu-dm">🛑 Jogadores Banidos</li>
-                <li onclick="trocarTab('logs', this)" class="dm-only menu-dm">📜 Logs de Auditoria</li>
-            </ul>
-        </div>
-
-        <!-- Conteúdo Principal -->
-        <div class="content-area">
-            
-            <!-- TELA DO JOGO (Visão padrão do Jogador + Perfil) -->
-            <div id="tab-jogo" class="tab-panel active">
-                <h1 style="font-size: 24px; margin-bottom: 5px;">DRAGON WAR: RISE OF POWER</h1>
-                <p style="color: #94a3b8; margin-bottom: 25px;">Sua jornada épica começa aqui.</p>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <!-- Perfil do Jogador -->
-                    <div class="card-box">
-                        <h3>PERFIL DO PERSONAGEM</h3>
-                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                            <div style="width: 60px; height: 60px; background: #1e293b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; border: 2px solid #38bdf8;">👑</div>
-                            <div style="display: flex; flex-direction: column; gap: 4px; font-size: 14px;">
-                                <p><strong>Nome:</strong> <span id="lbl-nome-player" style="color: #38bdf8;">Gabriel</span></p>
-                                <p><strong>Nick:</strong> <span style="color: #94a3b8;">SrCabral / Sweett</span></p>
-                                <p style="font-size: 12px; color: #64748b;">Cabelo Cacheado | Olhos Castanhos Claros</p>
-                            </div>
-                        </div>
-                        <div style="background: #1e293b; padding: 12px; border-radius: 6px; font-size: 14px;">
-                            <p><strong>Nível:</strong> <span id="lbl-nivel-player">1</span></p>
-                            <p><strong>Dinheiro:</strong> 🪙 <span id="lbl-dinheiro-player">0</span></p>
-                        </div>
-                    </div>
-
-                    <!-- Área de Aventura -->
-                    <div class="card-box">
-                        <h3>ÁREA DE AVENTURA</h3>
-                        <p style="color: #94a3b8; margin-bottom: 15px; font-size: 14px;">Explore dungeons e lute contra monstros para evoluir.</p>
-                        <button onclick="realizarAcaoAventura()" style="background: #16a34a; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%;">Explorar Dungeon</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ABA: VISÃO GERAL DM -->
-            <div id="tab-geral" class="tab-panel">
-                <h1 style="font-size: 24px; margin-bottom: 5px;">PAINEL DO DUNGEON MASTER (DM)</h1>
-                <p style="color: #94a3b8; margin-bottom: 25px;">Controle global do servidor.</p>
-                
-                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
-                    <div class="card-box">
-                        <h3>ESTATÍSTICAS DO SERVIDOR</h3>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 14px; color: #94a3b8;">
-                            <div>👥 Jogadores Online: <span id="stat-online">Carregando...</span></div>
-                            <div>⏱️ Uptime: Ativo</div>
-                            <div>📶 Status DB: Conectado</div>
-                            <div>⚡ Modo: DM / Master</div>
-                        </div>
-                    </div>
-                    <div class="card-box">
-                        <h3>AÇÕES RÁPIDAS</h3>
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <button class="btn-action" onclick="adminSpawnBoss()">🐲 SPAWN DE BOSS</button>
-                            <button class="btn-action" style="background: #16a34a;" onclick="adminDarDinheiro()">🪙 DAR DINHEIRO</button>
-                            <button class="btn-action" style="background: #3b82f6;" onclick="adminModoDeus()">🛡️ MODO DEUS</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ABA: JOGADORES ONLINE -->
-            <div id="tab-admin" class="tab-panel">
-                <h2 style="font-size: 20px; margin-bottom: 5px;">GESTÃO DE JOGADORES</h2>
-                <p style="color: #94a3b8; margin-bottom: 20px;">Lista em tempo real sincronizada com o Firestore.</p>
-                
-                <div class="card-box">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <h3 style="margin: 0;">LISTA DE JOGADORES</h3>
-                        <input type="text" id="filtro-jogador" placeholder="Pesquisar por nome..." onkeyup="filtrarJogadoresAdmin()" style="padding: 6px 12px; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 4px; width: 220px;">
-                    </div>
-                    
-                    <table class="ranking-table" id="tabela-jogadores-admin">
-                        <thead>
-                            <tr>
-                                <th>NOME</th>
-                                <th>NÍVEL</th>
-                                <th>DINHEIRO</th>
-                                <th>ESTADO</th>
-                                <th>AÇÕES</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- ABA: JOGADORES BANIDOS -->
-            <div id="tab-banidos" class="tab-panel">
-                <h2 style="font-size: 20px; margin-bottom: 5px;">REGISTRO DE BANIMENTOS</h2>
-                <p style="color: #94a3b8; margin-bottom: 20px;">Usuários penalizados.</p>
-                <div class="card-box">
-                    <table class="ranking-table" id="tabela-banidos">
-                        <thead>
-                            <tr>
-                                <th>NOME</th>
-                                <th>MOTIVO</th>
-                                <th>DATA</th>
-                                <th>AÇÕES</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- ABA: LOGS -->
-            <div id="tab-logs" class="tab-panel">
-                <h2 style="font-size: 20px; margin-bottom: 5px;">AUDITORIA DE LOGS</h2>
-                <p style="color: #94a3b8; margin-bottom: 20px;">Histórico de ações de DM.</p>
-                <div class="card-box">
-                    <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
-                        <button onclick="exportarLogsCSV()" style="background: #16a34a; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold;">📥 Exportar CSV</button>
-                    </div>
-                    <table class="ranking-table" id="tabela-logs">
-                        <thead>
-                            <tr>
-                                <th>DATA / HORA</th>
-                                <th>ADMIN</th>
-                                <th>AÇÃO</th>
-                                <th>DETALHES</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- Barra de Status Fixa -->
-    <div class="status-bar">
-        <span id="status-usuario-logado">Sessão: Carregando...</span>
-        <span>Server: [BR-1] DRAGEN'S PEAK</span>
-    </div>
-
-    <!-- Script de Integração Firebase e Segurança por UID -->
-    <script>
-        const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_AUTH_DOMAIN",
-            projectId: "SEU_PROJECT_ID",
-            storageBucket: "SEU_STORAGE_BUCKET",
-            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-            appId: "SEU_APP_ID"
-        };
-
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const db = firebase.firestore();
-        const auth = firebase.auth();
-
-        let usuarioAtualId = null;
-        let isDM = false;
-        const DM_UID_FIXO = "DJ0865XZ51V7G5neeqVP2mr1h8T2";
-
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                usuarioAtualId = user.uid;
-                
-                // Validação de Super Admin por UID fixo ou e-mail
-                if (user.uid === DM_UID_FIXO || user.email === "groupsacabraldigital@gmail.com") {
-                    isDM = true;
-                    document.querySelectorAll('.menu-dm').forEach(el => el.classList.remove('dm-only'));
-                    document.getElementById('status-usuario-logado').innerText = `Sessão: Gabriel (DM / Super Admin)`;
-                } else {
-                    isDM = false;
-                    document.getElementById('status-usuario-logado').innerText = `Sessão: ${user.email || 'Jogador'}`;
-                }
-
-                carregarDadosJogadorComum(user.uid);
-            } else {
-                auth.signInAnonymously().catch(err => console.error("Erro auth:", err));
-            }
-        });
-
-        function trocarTab(tabId, elemento) {
-            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-menu li').forEach(l => l.classList.remove('active'));
-            
-            document.getElementById('tab-' + tabId).classList.add('active');
-            if (elemento) elemento.classList.add('active');
-
-            if (tabId === 'admin' && isDM) carregarJogadoresOnlineAdmin();
-            if (tabId === 'banidos' && isDM) carregarJogadoresBanidos();
-            if (tabId === 'logs' && isDM) carregarLogsAdmin();
-        }
-
-        function carregarDadosJogadorComum(uid) {
-            db.collection("jogadores").doc(uid).onSnapshot(doc => {
-                if (doc.exists) {
-                    let data = doc.data();
-                    document.getElementById('lbl-nome-player').innerText = data.nome || "Gabriel";
-                    document.getElementById('lbl-nivel-player').innerText = data.nivel || 1;
-                    document.getElementById('lbl-dinheiro-player').innerText = data.dinheiro || 0;
-
-                    if ((data.cargo === "SUPER_ADMIN" || uid === DM_UID_FIXO) && !isDM) {
-                        isDM = true;
-                        document.querySelectorAll('.menu-dm').forEach(el => el.classList.remove('dm-only'));
-                        document.getElementById('status-usuario-logado').innerText = `Sessão: Gabriel (DM / Super Admin)`;
-                    }
-                } else {
-                    db.collection("jogadores").doc(uid).set({
-                        nome: "Gabriel",
-                        nivel: 1,
-                        dinheiro: 1500,
-                        cargo: uid === DM_UID_FIXO ? "SUPER_ADMIN" : "JOGADOR",
-                        banido: false,
-                        criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                }
-            });
-        }
-
-        function realizarAcaoAventura() {
-            if (!usuarioAtualId) return;
-            let ref = db.collection("jogadores").doc(usuarioAtualId);
-            db.runTransaction(transaction => {
-                return transaction.get(ref).then(doc => {
-                    let dinheiroAtual = doc.data().dinheiro || 0;
-                    transaction.update(ref, { dinheiro: dinheiroAtual + 50 });
-                });
-            }).then(() => {
-                alert("Você explorou a dungeon e encontrou 🪙 50 de dinheiro!");
-            }).catch(err => console.error(err));
-        }
-
-        function adminSpawnBoss() {
-            if (!isDM) return;
-            db.collection("servidor").doc("estadoGlobal").set({
-                bossAtivo: true,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            }, { merge: true }).then(() => {
-                registrarLogAdmin("SPAWN_BOSS", "Invocou Boss mundial.");
-                alert("Boss invocado com sucesso!");
-            });
-        }
-
-        function adminDarDinheiro() {
-            if (!isDM || !usuarioAtualId) return;
-            let qtd = Number(prompt("Quantidade de dinheiro para adicionar:", "1000"));
-            if (!qtd) return;
-            db.collection("jogadores").doc(usuarioAtualId).update({
-                dinheiro: firebase.firestore.FieldValue.increment(qtd)
-            }).then(() => {
-                registrarLogAdmin("DAR_DINHEIRO", `Adicionou ${qtd} de dinheiro.`);
-                alert("Dinheiro adicionado!");
-            });
-        }
-
-        function adminModoDeus() {
-            if (!isDM || !usuarioAtualId) return;
-            db.collection("jogadores").doc(usuarioAtualId).update({
-                modoDeus: true
-            }).then(() => {
-                registrarLogAdmin("MODO_DEUS", "Ativou Modo Deus.");
-                alert("Modo Deus ativado!");
-            });
-        }
-
-        function banirJogador(id) {
-            if (!isDM) return;
-            let motivo = prompt("Motivo do banimento:");
-            if (!motivo) return;
-            db.collection("jogadores").doc(id).update({
-                banido: true,
-                motivoBanimento: motivo,
-                dataBanimento: firebase.firestore.FieldValue.serverTimestamp()
-            }).then(() => {
-                registrarLogAdmin("BANIR", `ID: ${id} | Motivo: ${motivo}`);
-                alert("Jogador banido.");
-            });
-        }
-
-        function reverterBanimento(id) {
-            if (!isDM) return;
-            db.collection("jogadores").doc(id).update({
-                banido: false,
-                motivoBanimento: firebase.firestore.FieldValue.delete(),
-                dataBanimento: firebase.firestore.FieldValue.delete()
-            }).then(() => {
-                registrarLogAdmin("DESBANIR", `ID: ${id}`);
-                alert("Banimento removido.");
-            });
-        }
-
-        function carregarJogadoresOnlineAdmin() {
-            db.collection("jogadores").onSnapshot(snapshot => {
-                let tbody = document.querySelector('#tabela-jogadores-admin tbody');
-                if (!tbody) return;
-                tbody.innerHTML = "";
-                document.getElementById('stat-online').innerText = snapshot.size;
-
-                snapshot.forEach(doc => {
-                    let data = doc.data();
-                    if (data.banido) return;
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${data.nome || "Herói"}</td>
-                            <td>${data.nivel || 1}</td>
-                            <td>🪙 ${data.dinheiro || 0}</td>
-                            <td style="color: #16a34a; font-weight: bold;">ONLINE</td>
-                            <td>
-                                <button onclick="banirJogador('${doc.id}')" style="background: #dc2626; color: white; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px;">Banir</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-            });
-        }
-
-        function carregarJogadoresBanidos() {
-            db.collection("jogadores").where("banido", "==", true).onSnapshot(snapshot => {
-                let tbody = document.querySelector('#tabela-banidos tbody');
-                if (!tbody) return;
-                tbody.innerHTML = "";
-                snapshot.forEach(doc => {
-                    let data = doc.data();
-                    let dataBan = data.dataBanimento ? data.dataBanimento.toDate().toLocaleDateString('pt-BR') : "-";
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${data.nome || "Herói"}</td>
-                            <td style="color: #dc2626;">${data.motivoBanimento || "N/A"}</td>
-                            <td>${dataBan}</td>
-                            <td>
-                                <button onclick="reverterBanimento('${doc.id}')" style="background: #16a34a; color: white; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px;">Desbanir</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-            });
-        }
-
-        function registrarLogAdmin(acao, detalhes) {
-            db.collection("logs_admin").add({
-                admin: "Gabriel (DM)",
-                acao: acao,
-                detalhes: detalhes,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-        }
-
-        function carregarLogsAdmin() {
-            db.collection("logs_admin").orderBy("timestamp", "desc").limit(50).onSnapshot(snapshot => {
-                let tbody = document.querySelector('#tabela-logs tbody');
-                if (!tbody) return;
-                tbody.innerHTML = "";
-                snapshot.forEach(doc => {
-                    let data = doc.data();
-                    let dataHora = data.timestamp ? data.timestamp.toDate().toLocaleString('pt-BR') : "Agora";
-                    tbody.innerHTML += `
-                        <tr>
-                            <td style="color: #94a3b8; font-size: 13px;">${dataHora}</td>
-                            <td style="color: #3b82f6; font-weight: bold;">${data.admin}</td>
-                            <td>${data.acao}</td>
-                            <td>${data.detalhes}</td>
-                        </tr>
-                    `;
-                });
-            });
-        }
-
-        function exportarLogsCSV() {
-            db.collection("logs_admin").orderBy("timestamp", "desc").get().then(snapshot => {
-                let csvContent = "data:text/csv;charset=utf-8,\uFEFFData/Hora,Admin,Acao,Detalhes\r\n";
-                snapshot.forEach(doc => {
-                    let d = doc.data();
-                    let dataHora = d.timestamp ? d.timestamp.toDate().toLocaleString('pt-BR') : "";
-                    csvContent += `${dataHora},"${d.admin}","${d.acao}","${d.detalhes}"\r\n`;
-                });
-                let encodedUri = encodeURI(csvContent);
-                let link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", `logs_dm_${Date.now()}.csv`);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            });
-        }
-
-        function filtrarJogadoresAdmin() {
-            let filtro = document.getElementById('filtro-jogador').value.toLowerCase();
-            let linhas = document.getElementById('tabela-jogadores-admin').getElementsByTagName('tr');
-            for (let i = 1; i < linhas.length; i++) {
-                let coluna = linhas[i].getElementsByTagName('td')[0];
-                if (coluna) {
-                    let texto = coluna.textContent || coluna.innerText;
-                    linhas[i].style.display = texto.toLowerCase().indexOf(filtro) > -1 ? "" : "none";
-                }
-            }
-        }
-    </script>
-</body>
-</html>
+window.recompensa=async()=>{const d=new Date().toISOString().slice(0,10);if(jogador.recompensa===d)return toast("🎁 Já resgatada hoje.");jogador.recompensa=d;jogador.moedas+=100;jogador.pontos+=25;await save(true);toast("🎁 +100 moedas e +25 pontos!")};
+onAuthStateChanged(auth,async u=>{if(u){usuario=u;await carregar()}});signInAnonymously(auth).catch(()=>toast("❌ Ative o login anônimo no Firebase."));
+</script></body></html>
