@@ -15,6 +15,11 @@
         #login-screen { justify-content: center; align-items: center; background: radial-gradient(circle, #1e293b 0%, #0f172a 100%); z-index: 100; }
         .login-card { background: rgba(30, 41, 59, 0.9); border: 1px solid #3b82f6; padding: 40px; border-radius: 12px; width: 100%; max-width: 450px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); text-align: center; backdrop-filter: blur(10px); }
         .login-card h2 { color: #f97316; margin-bottom: 10px; font-size: 28px; }
+        
+        .auth-tabs { display: flex; gap: 10px; margin-bottom: 20px; background: #0f172a; padding: 5px; border-radius: 8px; border: 1px solid #334155; }
+        .auth-tab-btn { flex: 1; padding: 10px; background: transparent; border: none; color: #94a3b8; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; font-size: 14px; }
+        .auth-tab-btn.active-auth { background: #f97316; color: #fff; }
+
         .form-control { width: 100%; padding: 12px 15px; margin-bottom: 15px; background: #0f172a; border: 1px solid #475569; color: #fff; border-radius: 6px; font-size: 14px; }
         .btn-main { width: 100%; padding: 12px; background: linear-gradient(135deg, #f97316, #ea580c); color: #fff; border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.2s; margin-top: 5px; box-shadow: 0 4px 12px rgba(249,115,22,0.4); }
         .btn-main:hover { opacity: 0.9; }
@@ -88,16 +93,24 @@
 </head>
 <body>
 
-    <!-- TELA DE LOGIN -->
+    <!-- TELA DE LOGIN / CADASTRO -->
     <div id="login-screen" class="screen active">
         <div class="login-card">
             <h2>🔥 DRAGON WAR 🔥</h2>
-            <p style="color: #94a3b8; font-size: 14px; margin-bottom: 25px;">Rise of Power — Entre para iniciar sua jornada</p>
-            <form onsubmit="realizarLogin(event)">
-                <input type="text" id="auth-nome" class="form-control" placeholder="Seu Nome de Jogador" required>
+            <p style="color: #94a3b8; font-size: 14px; margin-bottom: 20px;">Rise of Power</p>
+            
+            <div class="auth-tabs">
+                <button type="button" class="auth-tab-btn active-auth" id="btn-tab-entrar" onclick="alternarModoAuth('entrar')">Entrar</button>
+                <button type="button" class="auth-tab-btn" id="btn-tab-cadastrar" onclick="alternarModoAuth('cadastrar')">Criar Conta</button>
+            </div>
+
+            <form onsubmit="realizarAutenticacao(event)">
+                <div id="campo-nome-wrapper" style="display: none;">
+                    <input type="text" id="auth-nome" class="form-control" placeholder="Seu Nome de Jogador">
+                </div>
                 <input type="email" id="auth-email" class="form-control" placeholder="Seu E-mail" required>
                 <input type="password" id="auth-senha" class="form-control" placeholder="Sua Senha" required>
-                <button type="submit" class="btn-main">ENTRAR NO JOGO</button>
+                <button type="submit" id="btn-submit-auth" class="btn-main">ENTRAR NO JOGO</button>
             </form>
         </div>
     </div>
@@ -116,8 +129,8 @@
                 <li onclick="trocarTab('inicio', this)" class="active-tab">🏠 Início</li>
                 <li onclick="trocarTab('jogar', this)">🎮 Jogar</li>
                 <li onclick="trocarTab('loja', this)">🛒 Loja</li>
-                <li onclick="trocarTab('poderes', this)">⚡ Poderes</li>
-                <li onclick="trocarTab('combate', this)">⚔️ Combate</li>
+                <li onclick="trocarTab('poderes', this)">⚡ Poderes <span id="badge-nav-sp" style="background:#f97316; padding: 2px 6px; border-radius: 10px; font-size: 11px; margin-left: 5px; display:none;">0</span></li>
+                <li onclick="trocarTab('combate', this)">⚔️️ Combate</li>
                 <li onclick="trocarTab('inventario', this)">🎒 Inventário</li>
                 <li onclick="trocarTab('ranking', this)">🏆 Ranking</li>
                 <li onclick="trocarTab('eventos', this)">🎁 Eventos</li>
@@ -130,8 +143,9 @@
             <div class="top-bar">
                 <div class="top-bar-title">DRAGON WAR: RISE OF POWER</div>
                 <div class="resources-container">
-                    <div class="resource-badge">🪙 Ouro: <span id="badge-ouro" style="color: #facc15;">1.000</span></div>
-                    <div class="resource-badge">💎 Gemas: <span id="badge-gemas" style="color: #38bdf8;">20</span></div>
+                    <div class="resource-badge">🪙 Ouro: <span id="badge-ouro" style="color: #facc15;">0</span></div>
+                    <div class="resource-badge">💎 Gemas: <span id="badge-gemas" style="color: #38bdf8;">0</span></div>
+                    <div class="resource-badge">⚡ Pts Poder: <span id="badge-pontos-poder" style="color: #f97316;">0</span></div>
                     <div class="resource-badge">❤️ Vida: <span id="badge-vida" style="color: #ef4444;">100/100</span></div>
                 </div>
             </div>
@@ -142,7 +156,7 @@
                 <div id="tab-inicio" class="tab-panel active">
                     <div class="card-box" style="text-align: center; padding: 40px;">
                         <h2 style="color: #f97316; font-size: 32px; margin-bottom: 15px;">Bem-vindo ao Dragon War!</h2>
-                        <p style="color: #94a3b8; max-width: 600px; margin: 0 auto 25px auto; line-height: 1.6;">Prepare seu guerreiro, colete as 16 armas lendárias e skins na loja mercadora, domine magias elementais e conquiste o topo do ranking global!</p>
+                        <p style="color: #94a3b8; max-width: 600px; margin: 0 auto 25px auto; line-height: 1.6;">Prepare seu guerreiro, colete as 16 armas lendárias e skins na loja mercadora, domine magias elementais com seus pontos de poder e conquiste o topo do ranking global!</p>
                         <button class="btn-action" style="max-width: 250px; margin: 0 auto; font-size: 16px; padding: 14px;" onclick="trocarTab('jogar', document.querySelectorAll('.nav-menu li')[1])">COMEÇAR A JOGAR</button>
                     </div>
                 </div>
@@ -155,22 +169,22 @@
                         <div class="item-card" style="cursor: pointer;" onclick="trocarTab('combate', document.querySelectorAll('.nav-menu li')[4])">
                             <span style="font-size: 40px; margin-bottom: 10px;">⚔️</span>
                             <h3>Arena de Combate</h3>
-                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Batalhas do Fácil ao Hard com turnos.</p>
+                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Batalhas do Fácil ao Hard com turnos e ganho de Pontos de Poder.</p>
                         </div>
                         <div class="item-card" style="cursor: pointer;" onclick="trocarTab('loja', document.querySelectorAll('.nav-menu li')[2])">
                             <span style="font-size: 40px; margin-bottom: 10px;">🛒</span>
                             <h3>Loja da Mercadora</h3>
-                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">16 armas, skins e suprimentos.</p>
+                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">16 armas, skins e suprimentos com seu ouro real.</p>
                         </div>
                         <div class="item-card" style="cursor: pointer;" onclick="trocarTab('poderes', document.querySelectorAll('.nav-menu li')[3])">
                             <span style="font-size: 40px; margin-bottom: 10px;">⚡</span>
                             <h3>Árvore de Poderes</h3>
-                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Evolua suas magias e habilidades.</p>
+                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Evolua suas magias utilizando Pontos de Poder.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- ABA: LOJA (16 ARMAS, SKINS E SUPRIMENTOS) -->
+                <!-- ABA: LOJA -->
                 <div id="tab-loja" class="tab-panel">
                     <h2>Mercadora de Itens</h2>
                     <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Equipamentos e customizações completas.</p>
@@ -182,28 +196,22 @@
                     </div>
 
                     <div id="subloja-armas" class="sub-panel active-sub-panel">
-                        <div class="grid-cards" id="container-16-armas">
-                            <!-- Gerado dinamicamente via script -->
-                        </div>
+                        <div class="grid-cards" id="container-16-armas"></div>
                     </div>
 
                     <div id="subloja-skins" class="sub-panel">
-                        <div class="grid-cards" id="container-skins">
-                            <!-- Gerado dinamicamente via script -->
-                        </div>
+                        <div class="grid-cards" id="container-skins"></div>
                     </div>
 
                     <div id="subloja-suprimentos" class="sub-panel">
-                        <div class="grid-cards" id="container-suprimentos">
-                            <!-- Gerado dinamicamente via script -->
-                        </div>
+                        <div class="grid-cards" id="container-suprimentos"></div>
                     </div>
                 </div>
 
                 <!-- ABA: PODERES -->
                 <div id="tab-poderes" class="tab-panel">
                     <h2>Árvore de Poderes Elementais</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Melhore suas habilidades para causar mais dano nos combates.</p>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Melhore suas habilidades para causar mais dano nos combates (gasta 1 Ponto de Poder por melhoria).</p>
                     
                     <div class="card-box" style="text-align: center;">
                         <div class="powers-wheel">
@@ -214,15 +222,15 @@
                         </div>
                         <h3 id="poder-selecionado-titulo" style="margin-top: 15px;">Selecione um poder acima</h3>
                         <p id="poder-selecionado-desc" style="color: #94a3b8; font-size: 14px; margin-bottom: 15px;">Clique em um ícone circular para ver os detalhes e evoluir.</p>
-                        <button class="btn-action" style="max-width: 250px; margin: 0 auto; display:none;" id="btn-melhorar-poder" onclick="melhorarPoderSelecionado()">MELHORAR PODER</button>
+                        <button class="btn-action" style="max-width: 250px; margin: 0 auto; display:none;" id="btn-melhorar-poder" onclick="melhorarPoderSelecionado()">MELHORAR PODER (-1 Ponto)</button>
                     </div>
                 </div>
 
-                <!-- ABA: COMBATE (COM PAINEL INTERATIVO) -->
+                <!-- ABA: COMBATE -->
                 <div id="tab-combate" class="tab-panel">
                     <div id="seletor-mobs-container">
                         <h2>Arena de Combate — Selecione o Inimigo</h2>
-                        <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Escolha o nível de dificuldade ideal para o seu nível de poder atual.</p>
+                        <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Escolha o nível de dificuldade ideal. Vencer garante Ouro, Nível e 1 Ponto de Poder!</p>
                         
                         <div class="grid-cards">
                             <div class="item-card" style="border-color: #16a34a;">
@@ -299,7 +307,7 @@
                 <!-- ABA: RANKING -->
                 <div id="tab-ranking" class="tab-panel">
                     <h2>Ranking Global</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Os melhores guerreiros do servidor.</p>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Os melhores guerreiros reais do servidor.</p>
                     <div class="card-box" style="padding: 10px;">
                         <table class="ranking-table">
                             <thead>
@@ -310,9 +318,7 @@
                                     <th>Pontuação</th>
                                 </tr>
                             </thead>
-                            <tbody id="ranking-tabela-corpo">
-                                <!-- Preenchido via Firebase -->
-                            </tbody>
+                            <tbody id="ranking-tabela-corpo"></tbody>
                         </table>
                     </div>
                 </div>
@@ -324,12 +330,12 @@
                     <div class="grid-cards">
                         <div class="item-card">
                             <h3>Caixa Diária</h3>
-                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Abra uma vez por dia para receber moedas ou gemas.</p>
+                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Abra uma vez por dia para receber moedas ou gemas reais.</p>
                             <button class="btn-action" onclick="reclamarCaixaDiaria()">ABRIR CAIXA</button>
                         </div>
                         <div class="item-card">
                             <h3>Tesouro Raro</h3>
-                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Gemas podem ser usadas para itens especiais na loja.</p>
+                            <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Gemas acumuladas podem ser usadas para itens especiais na loja.</p>
                             <button class="btn-action" onclick="trocarTab('loja', document.querySelectorAll('.nav-menu li')[2])">IR PARA LOJA</button>
                         </div>
                     </div>
@@ -370,7 +376,7 @@
                     </div>
                 </div>
 
-                <!-- ABA: CONFIGURAÇÕES E PERFIL (COM SELEÇÃO DE AVATAR COM BLOQUEIO) -->
+                <!-- ABA: CONFIGURAÇÕES E PERFIL -->
                 <div id="tab-config" class="tab-panel">
                     <h2>Configurações e Perfil do Jogador</h2>
                     <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Altere seu nome e escolha seu avatar de guerreiro.</p>
@@ -379,9 +385,7 @@
                         <h3>Escolha seu Avatar</h3>
                         <p style="color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Alguns avatares exigem nível superior para serem desbloqueados.</p>
                         
-                        <div class="avatar-grid" id="lista-avatares-perfil">
-                            <!-- Gerado dinamicamente via script -->
-                        </div>
+                        <div class="avatar-grid" id="lista-avatares-perfil"></div>
 
                         <label style="display:block; font-size:13px; color:#94a3b8; margin: 15px 0 5px 0;">Nome do jogador:</label>
                         <input type="text" id="input-novo-nome" class="form-control" style="max-width:350px;">
@@ -415,10 +419,13 @@
         const db = firebase.firestore();
 
         let usuarioAtualId = null;
+        let modoAutenticacaoAtual = 'entrar';
+
         let dadosJogador = { 
             nome: "Jogador", 
-            ouro: 2000, 
-            gemas: 30, 
+            ouro: 500, 
+            gemas: 10, 
+            pontosPoder: 0,
             vida: 100, 
             nivel: 1, 
             pontos: 1250,
@@ -429,46 +436,47 @@
 
         let chatCanalAtual = 'global';
         let combateAtual = { ativo: false, dificuldade: '', mobNome: '', mobHp: 0, mobMaxHp: 0, mobDano: 0, defendendo: false };
+        let poderSelecionadoNome = null;
 
         // 16 ARMAS DA LOJA
         const listaArmasLoja = [
-            { id: 1, nome: "Adaga de Cobre", preco: 250, tipo: "arma" },
-            { id: 2, nome: "Espada Curta do Novato", preco: 450, tipo: "arma" },
-            { id: 3, nome: "Lâmina de Ferro Sombrio", preco: 800, tipo: "arma" },
-            { id: 4, nome: "Machado de Batalha Orc", preco: 1200, tipo: "arma" },
-            { id: 5, nome: "Espada Longa Real", preco: 1800, tipo: "arma" },
-            { id: 6, nome: "Foice da Névoa", preco: 2400, tipo: "arma" },
-            { id: 7, nome: "Martelo de Guerra Titã", preco: 3200, tipo: "arma" },
-            { id: 8, nome: "Lança do Relâmpago", preco: 4100, tipo: "arma" },
-            { id: 9, nome: "Katana da Lua Sangrenta", preco: 5500, tipo: "arma" },
-            { id: 10, nome: "Cajado do Mago Supremo", preco: 7000, tipo: "arma" },
-            { id: 11, nome: "Espada de Plasma Estelar", preco: 9500, tipo: "arma" },
-            { id: 12, nome: "Lâmina do Fênix Ardente", preco: 12000, tipo: "arma" },
-            { id: 13, nome: "Machado Glacial Ancestral", preco: 15500, tipo: "arma" },
-            { id: 14, nome: "Foice do Submundo", preco: 20000, tipo: "arma" },
-            { id: 15, nome: "Espada Divina do Sol", preco: 28000, tipo: "arma" },
-            { id: 16, nome: "Lâmina do Dragão Celestial", preco: 40000, tipo: "arma" }
+            { id: 1, nome: "Adaga de Cobre", preco: 250 },
+            { id: 2, nome: "Espada Curta do Novato", preco: 450 },
+            { id: 3, nome: "Lâmina de Ferro Sombrio", preco: 800 },
+            { id: 4, nome: "Machado de Batalha Orc", preco: 1200 },
+            { id: 5, nome: "Espada Longa Real", preco: 1800 },
+            { id: 6, nome: "Foice da Névoa", preco: 2400 },
+            { id: 7, nome: "Martelo de Guerra Titã", preco: 3200 },
+            { id: 8, nome: "Lança do Relâmpago", preco: 4100 },
+            { id: 9, nome: "Katana da Lua Sangrenta", preco: 5500 },
+            { id: 10, nome: "Cajado do Mago Supremo", preco: 7000 },
+            { id: 11, nome: "Espada de Plasma Estelar", preco: 9500 },
+            { id: 12, nome: "Lâmina do Fênix Ardente", preco: 12000 },
+            { id: 13, nome: "Machado Glacial Ancestral", preco: 15500 },
+            { id: 14, nome: "Foice do Submundo", preco: 20000 },
+            { id: 15, nome: "Espada Divina do Sol", preco: 28000 },
+            { id: 16, nome: "Lâmina do Dragão Celestial", preco: 40000 }
         ];
 
         // 6 SKINS DA LOJA
         const listaSkinsLoja = [
-            { id: 101, nome: "Skin Guerreiro Iniciante", preco: 500, tipo: "skin" },
-            { id: 102, nome: "Skin Cavaleiro de Prata", preco: 1500, tipo: "skin" },
-            { id: 103, nome: "Skin Mago Sombrio", preco: 3000, tipo: "skin" },
-            { id: 104, nome: "Skin Guardião de Magma", preco: 6000, tipo: "skin" },
-            { id: 105, nome: "Skin Paladino Dourado", preco: 10000, tipo: "skin" },
-            { id: 106, nome: "Skin Senhor do Dragão", preco: 25000, tipo: "skin" }
+            { id: 101, nome: "Skin Guerreiro Iniciante", preco: 500 },
+            { id: 102, nome: "Skin Cavaleiro de Prata", preco: 1500 },
+            { id: 103, nome: "Skin Mago Sombrio", preco: 3000 },
+            { id: 104, nome: "Skin Guardião de Magma", preco: 6000 },
+            { id: 105, nome: "Skin Paladino Dourado", preco: 10000 },
+            { id: 106, nome: "Skin Senhor do Dragão", preco: 25000 }
         ];
 
         // SUPRIMENTOS
         const listaSuprimentosLoja = [
-            { id: 201, nome: "Poção de Cura Pequena (+30 HP)", preco: 100, tipo: "suprimento", cura: 30 },
-            { id: 202, nome: "Poção de Cura Média (+60 HP)", preco: 250, tipo: "suprimento", cura: 60 },
-            { id: 203, nome: "Poção de Cura Superior (Cura Total)", preco: 600, tipo: "suprimento", cura: 100 },
-            { id: 204, nome: "Elixir de Força Ancestral", preco: 1500, tipo: "suprimento", cura: 0 }
+            { id: 201, nome: "Poção de Cura Pequena (+30 HP)", preco: 100 },
+            { id: 202, nome: "Poção de Cura Média (+60 HP)", preco: 250 },
+            { id: 203, nome: "Poção de Cura Superior (Cura Total)", preco: 600 },
+            { id: 204, nome: "Elixir de Força Ancestral", preco: 1500 }
         ];
 
-        // AVATARES (Com restrição de nível)
+        // AVATARES
         const avataresDisponiveis = [
             { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Warrior1", nivelMinimo: 1 },
             { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Knight2", nivelMinimo: 1 },
@@ -477,29 +485,54 @@
             { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Titan5", nivelMinimo: 10 }
         ];
 
-        function realizarLogin(event) {
+        function alternarModoAuth(modo) {
+            modoAutenticacaoAtual = modo;
+            let btnEntrar = document.getElementById('btn-tab-entrar');
+            let btnCadastrar = document.getElementById('btn-tab-cadastrar');
+            let campoNome = document.getElementById('campo-nome-wrapper');
+            let btnSubmit = document.getElementById('btn-submit-auth');
+
+            if(modo === 'entrar') {
+                btnEntrar.classList.add('active-auth');
+                btnCadastrar.classList.remove('active-auth');
+                campoNome.style.display = 'none';
+                document.getElementById('auth-nome').required = false;
+                btnSubmit.innerText = "ENTRAR NO JOGO";
+            } else {
+                btnCadastrar.classList.add('active-auth');
+                btnEntrar.classList.remove('active-auth');
+                campoNome.style.display = 'block';
+                document.getElementById('auth-nome').required = true;
+                btnSubmit.innerText = "CRIAR CONTA";
+            }
+        }
+
+        function realizarAutenticacao(event) {
             event.preventDefault();
-            let nome = document.getElementById('auth-nome').value.trim();
             let email = document.getElementById('auth-email').value.trim();
             let senha = document.getElementById('auth-senha').value.trim();
 
-            auth.signInWithEmailAndPassword(email, senha).then(cred => {
-                usuarioAtualId = cred.user.uid;
-                carregarDadosDoBanco(usuarioAtualId, nome);
-            }).catch(() => {
+            if(modoAutenticacaoAtual === 'entrar') {
+                auth.signInWithEmailAndPassword(email, senha).then(cred => {
+                    usuarioAtualId = cred.user.uid;
+                    carregarDadosDoBanco(usuarioAtualId, "Guerreiro");
+                }).catch(err => alert("Erro ao entrar: " + err.message));
+            } else {
+                let nome = document.getElementById('auth-nome').value.trim();
                 auth.createUserWithEmailAndPassword(email, senha).then(cred => {
                     usuarioAtualId = cred.user.uid;
-                    dadosJogador.nome = nome;
+                    dadosJogador.nome = nome || "Guerreiro";
                     salvarDadosNoBanco();
-                    carregarDadosDoBanco(usuarioAtualId, nome);
-                }).catch(err => alert("Erro na autenticação: " + err.message));
-            });
+                    carregarDadosDoBanco(usuarioAtualId, dadosJogador.nome);
+                }).catch(err => alert("Erro ao criar conta: " + err.message));
+            }
         }
 
         function carregarDadosDoBanco(uid, nomePadrao) {
             db.collection("jogadores").doc(uid).get().then(doc => {
                 if(doc.exists) {
                     dadosJogador = doc.data();
+                    if(dadosJogador.pontosPoder === undefined) dadosJogador.pontosPoder = 0;
                 } else {
                     dadosJogador.nome = nomePadrao;
                     salvarDadosNoBanco();
@@ -513,7 +546,7 @@
 
         function salvarDadosNoBanco() {
             if(!usuarioAtualId) return;
-            dadosJogador.pontos = dadosJogador.nivel * 1250 + dadosJogador.ouro;
+            dadosJogador.pontos = (dadosJogador.nivel * 1250) + dadosJogador.ouro;
             db.collection("jogadores").doc(usuarioAtualId).set(dadosJogador, { merge: true });
         }
 
@@ -523,15 +556,22 @@
             document.getElementById('sidebar-avatar').src = dadosJogador.avatar;
             document.getElementById('badge-ouro').innerText = dadosJogador.ouro;
             document.getElementById('badge-gemas').innerText = dadosJogador.gemas;
+            document.getElementById('badge-pontos-poder').innerText = dadosJogador.pontosPoder;
+            
+            let badgeNavSp = document.getElementById('badge-nav-sp');
+            if(dadosJogador.pontosPoder > 0) {
+                badgeNavSp.style.display = 'inline-block';
+                badgeNavSp.innerText = dadosJogador.pontosPoder;
+            } else {
+                badgeNavSp.style.display = 'none';
+            }
+
             document.getElementById('badge-vida').innerText = `${dadosJogador.vida}/100`;
             document.getElementById('input-novo-nome').value = dadosJogador.nome;
 
-            // Renderizar Loja
             renderizarLoja();
-            // Renderizar Avatares Perfil
             renderizarAvataresPerfil();
 
-            // Inventário
             let invContainer = document.getElementById('lista-inventario');
             invContainer.innerHTML = "";
             if(!dadosJogador.inventario || dadosJogador.inventario.length === 0) {
@@ -544,7 +584,6 @@
         }
 
         function renderizarLoja() {
-            // 16 Armas
             let cArmas = document.getElementById('container-16-armas');
             cArmas.innerHTML = "";
             listaArmasLoja.forEach(item => {
@@ -556,7 +595,6 @@
                     </div>`;
             });
 
-            // Skins
             let cSkins = document.getElementById('container-skins');
             cSkins.innerHTML = "";
             listaSkinsLoja.forEach(item => {
@@ -568,7 +606,6 @@
                     </div>`;
             });
 
-            // Suprimentos
             let cSupr = document.getElementById('container-suprimentos');
             cSupr.innerHTML = "";
             listaSuprimentosLoja.forEach(item => {
@@ -576,7 +613,7 @@
                     <div class="item-card">
                         <h4 style="font-size: 14px; color: #ef4444; margin-bottom: 5px;">${item.nome}</h4>
                         <p style="color: #facc15; font-size: 13px; margin: 8px 0;">🪙 ${item.preco}</p>
-                        <button class="btn-action" onclick="comprarItemLoja('${item.nome}', ${item.preco}, 'suprimento', ${item.cura})">COMPRAR</button>
+                        <button class="btn-action" onclick="comprarItemLoja('${item.nome}', ${item.preco}, 'suprimento')">COMPRAR</button>
                     </div>`;
             });
         }
@@ -601,12 +638,12 @@
             sincronizarInterface();
         }
 
-        /* NAVEGAÇÃO */
         function trocarTab(tabId, element) {
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-menu li').forEach(l => l.classList.remove('active-tab'));
             document.getElementById('tab-' + tabId).classList.add('active');
             if(element) element.classList.add('active-tab');
+            if(tabId === 'ranking') carregarRankingGlobal();
         }
 
         function trocarSubLoja(subId, element) {
@@ -623,33 +660,38 @@
             document.getElementById('chat-mensagens').innerHTML = `<div><strong>[Sistema - Canal ${canal.toUpperCase()}]:</strong> Conectado com sucesso.</div>`;
         }
 
-        /* LOJA COMPRA */
-        function comprarItemLoja(nome, custo, tipo, valorExtra = 0) {
+        function comprarItemLoja(nome, custo, tipo) {
             if(dadosJogador.ouro < custo) {
-                alert("Ouro insuficiente!");
+                alert("Ouro insuficiente! Participe de combates ou abra caixas diárias para conseguir mais.");
                 return;
             }
             dadosJogador.ouro -= custo;
             if(!dadosJogador.inventario) dadosJogador.inventario = [];
-            dadosJogador.inventario.push({ nome, tipo, valorExtra });
+            dadosJogador.inventario.push({ nome, tipo });
             salvarDadosNoBanco();
             sincronizarInterface();
             alert(`Parabéns! ${nome} foi adquirido com sucesso.`);
         }
 
-        /* PODERES */
         function selecionarPoder(nome, dano) {
             poderSelecionadoNome = nome;
             document.getElementById('poder-selecionado-titulo').innerText = nome;
-            document.getElementById('poder-selecionado-desc').innerText = `Dano base: ${dano} • Requer Energia Mágica`;
+            document.getElementById('poder-selecionado-desc').innerText = `Dano base: ${dano} • Custo: 1 Ponto de Poder`;
             document.getElementById('btn-melhorar-poder').style.display = 'block';
         }
 
         function melhorarPoderSelecionado() {
-            alert(`O poder foi aprimorado com sucesso!`);
+            if(!poderSelecionadoNome) return;
+            if(dadosJogador.pontosPoder <= 0) {
+                alert("Você não possui Pontos de Poder! Venca batalhas na Arena para ganhar Pontos de Poder.");
+                return;
+            }
+            dadosJogador.pontosPoder -= 1;
+            salvarDadosNoBanco();
+            sincronizarInterface();
+            alert(`Magia "${poderSelecionadoNome}" aprimorada com sucesso!`);
         }
 
-        /* COMBATE INTERATIVO */
         function iniciarCombate(dificuldade) {
             combateAtual.dificuldade = dificuldade;
             combateAtual.ativo = true;
@@ -703,7 +745,7 @@
                 adicionarLogCombate(`Você atacou o ${combateAtual.mobNome} e causou ${danoCausado} de dano!`);
             } else if(tipoAcao === 'defender') {
                 combateAtual.defendendo = true;
-                adicionarLogCombate(`Você adotou uma postura defensiva, reduzindo o próximo dano.`);
+                adicionarLogCombate(`Você adotou uma postura defensiva.`);
             } else if(tipoAcao === 'poder') {
                 danoCausado = Math.floor(Math.random() * 35) + 25;
                 combateAtual.mobHp -= danoCausado;
@@ -715,13 +757,11 @@
 
             atualizarBarrasBatalha();
 
-            // Verificar se o mob morreu
             if(combateAtual.mobHp <= 0) {
                 finalizarVitoriaCombate();
                 return;
             }
 
-            // Turno do Inimigo
             setTimeout(() => {
                 if(!combateAtual.ativo) return;
                 let danoRecebido = Math.floor(Math.random() * combateAtual.mobDano) + 5;
@@ -741,19 +781,20 @@
             let ouroPremio = combateAtual.dificuldade === 'facil' ? 150 : (combateAtual.dificuldade === 'medio' ? 400 : (combateAtual.dificuldade === 'dificil' ? 900 : 2000));
             dadosJogador.ouro += ouroPremio;
             dadosJogador.nivel += 1;
+            dadosJogador.pontosPoder += 1; // Ganha 1 Ponto de Poder por vitória
             salvarDadosNoBanco();
             sincronizarInterface();
             
-            adicionarLogCombate(`🎉 VITÓRIA! Você derrotou o monstro e ganhou 🪙 +${ouroPremio} de ouro e subiu para o Nível ${dadosJogador.nivel}!`);
+            adicionarLogCombate(`🎉 VITÓRIA! +🪙 ${ouroPremio} Ouro, Nível ${dadosJogador.nivel} e +1 ⚡ Ponto de Poder!`);
             document.getElementById('btn-fugir-arena').style.display = 'block';
             combateAtual.ativo = false;
         }
 
         function finalizarDerrotaCombate() {
-            dadosJogador.vida = 20; // Revive com HP baixo
+            dadosJogador.vida = 20;
             salvarDadosNoBanco();
             sincronizarInterface();
-            adicionarLogCombate(`💀 DERROTA! Você foi vencido pelo monstro e precisou recuar.`);
+            adicionarLogCombate(`💀 DERROTA! Você foi vencido pelo monstro.`);
             document.getElementById('btn-fugir-arena').style.display = 'block';
             combateAtual.ativo = false;
         }
@@ -764,7 +805,6 @@
             document.getElementById('btn-fugir-arena').style.display = 'none';
         }
 
-        /* RANKING GLOBAL COM FIREBASE */
         function carregarRankingGlobal() {
             db.collection("jogadores").orderBy("pontos", "desc").limit(10).get().then(snapshot => {
                 let tbody = document.getElementById('ranking-tabela-corpo');
@@ -782,16 +822,17 @@
                         </tr>`;
                     posicao++;
                 });
+            }).catch(err => {
+                console.error("Erro ao carregar ranking real:", err);
             });
         }
 
-        /* EVENTOS E CHAT */
         function reclamarCaixaDiaria() {
             dadosJogador.ouro += 500;
             dadosJogador.gemas += 5;
             salvarDadosNoBanco();
             sincronizarInterface();
-            alert("Você abriu a Caixa Diária e ganhou 🪙 500 Ouro e 💎 5 Gemas!");
+            alert("Você abriu a Caixa Diária e ganhou 🪙 500 Ouro e 💎 5 Gemas reais!");
         }
 
         function criarGuilda() {
@@ -827,6 +868,7 @@
             if(novoNome) {
                 dadosJogador.nome = novoNome;
                 salvarDadosNoBanco();
+                carregarRankingGlobal();
                 sincronizarInterface();
                 alert("Perfil alterado e salvo com sucesso!");
             }
