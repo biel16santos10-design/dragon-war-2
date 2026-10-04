@@ -97,7 +97,7 @@
                 <li onclick="trocarTab('skins', this)">🎨 Skins Personalizadas</li>
                 <li onclick="trocarTab('chat', this)">💬 Chat Global</li>
                 <li onclick="trocarTab('guilda', this)">🛡 Guilda</li>
-                <li onclick="trocarTab('config', this)">⚙️ Configurações</li>
+                <li onclick="trocarTab('config', this)">⚙ Configurações</li>
                 <li onclick="fazerLogout()" style="margin-top: 25px; background: rgba(220,38,38,0.2); color: #f87171;">🚪 Sair da Conta</li>
             </ul>
         </div>
@@ -220,13 +220,13 @@
 
     <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyDgooL-9qYU",
+            apiKey: "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
             authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
             projectId: "dragon-war-rise-of-power-2a9f1",
-            storageBucket: "dragon-war-rise-of-power-2a9f1.appspot.com",
+            storageBucket: "dragon-war-rise-of-power-2a9f1.firebasestorage.app",
             messagingSenderId: "115455691167",
             appId: "1:115455691167:web:ff3638f67b66c17c5515aa",
-            measurementId: "G-S7XE2EN"
+            measurementId: "G-S7XE2EN9CL"
         };
 
         if (!firebase.apps.length) {
@@ -243,7 +243,6 @@
             modoCriarConta = !modoCriarConta;
             let inputNome = document.getElementById('auth-nome');
             let btnSubmit = document.getElementById('btn-submit-auth');
-            let textoAlternar = document.getElementById('texto-alternar');
             let linkAlternar = document.getElementById('link-alternar');
             let titulo = document.getElementById('auth-titulo');
             let subtitulo = document.getElementById('auth-subtitulo');
@@ -275,13 +274,11 @@
             if (modoCriarConta) {
                 let nomeJogador = document.getElementById('auth-nome').value.trim();
                 
-                // Criar conta no Firebase Auth
                 auth.createUserWithEmailAndPassword(email, senha)
                     .then((userCredential) => {
                         let user = userCredential.user;
                         usuarioAtualId = user.uid;
                         
-                        // Criar o documento inicial do jogador no Firestore
                         let novoPerfil = {
                             nome: nomeJogador,
                             uid: user.uid,
@@ -302,7 +299,6 @@
                         alert("Erro ao criar conta: " + error.message);
                     });
             } else {
-                // Fazer Login normal
                 auth.signInWithEmailAndPassword(email, senha)
                     .then((userCredential) => {
                         let user = userCredential.user;
