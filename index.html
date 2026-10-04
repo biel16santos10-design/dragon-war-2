@@ -281,7 +281,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     box-shadow: 0 0 20px rgba(100, 116, 139, 0.5);
 }
 
-/* CENTER CHARACTER */
+/* CENTER CHARACTER - FUNDO TRANSPARENTE */
 .center-character {
     position: absolute;
     left: 50%;
@@ -294,6 +294,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     font-size: 200px;
     filter: drop-shadow(0 0 40px rgba(59, 130, 246, 0.8));
     animation: glow 2s ease-in-out infinite;
+    background: transparent;
 }
 @keyframes glow {
     0%, 100% { filter: drop-shadow(0 0 40px rgba(59, 130, 246, 0.8)); }
@@ -448,13 +449,13 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 
             <!-- LOGO -->
             <div class="game-logo">
-                <div class="logo-dragon">🐉</div>
+                <div class="logo-dragon"></div>
                 <div class="logo-text">DRAGON WAR</div>
                 <div class="logo-subtitle">RISE OF POWER</div>
             </div>
 
             <!-- CONFIG -->
-            <button class="config-btn" onclick="showToast('⚙️ Configurações em desenvolvimento!')">
+            <button class="config-btn" onclick="showToast('⚙️ Configurações')">
                 <span style="font-size: 1.5em;">⚙️</span>
                 <span>Config.</span>
             </button>
@@ -483,28 +484,28 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
         <div class="main-content">
             <!-- LEFT BUTTONS -->
             <div class="left-buttons">
-                <button class="btn-play" onclick="showToast('️ Iniciando jogo...')">
+                <button class="btn-play" onclick="showScreen('combatScreen')">
                     <span style="font-size: 1.5em;">⚔️</span>
                     JOGAR
                 </button>
-                <button class="btn-save" onclick="showToast('💾 Jogo salvo!')">
+                <button class="btn-save" onclick="saveGame()">
                     <span style="font-size: 1.3em;">💾</span>
                     SALVAR
                 </button>
-                <button class="btn-load" onclick="showToast(' Jogo carregado!')">
+                <button class="btn-load" onclick="loadGame()">
                     <span style="font-size: 1.3em;">📂</span>
                     CARREGAR
                 </button>
-                <button class="btn-new" onclick="if(confirm('Iniciar novo jogo?'))showToast('🔄 Novo jogo iniciado!')">
+                <button class="btn-new" onclick="if(confirm('Iniciar novo jogo? Todos os dados serão perdidos!'))newGame()">
                     <span style="font-size: 1.3em;">➕</span>
                     NOVO JOGO
                 </button>
             </div>
 
-            <!-- CENTER CHARACTER -->
+            <!-- CENTER CHARACTER - FUNDO TRANSPARENTE -->
             <div class="center-character">
                 <div style="position: relative; display: inline-block;">
-                    <div class="character-silhouette"></div>
+                    <div class="character-silhouette">🥷</div>
                     <div class="character-dw">DW</div>
                 </div>
             </div>
@@ -516,6 +517,54 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
         <!-- LOGOUT -->
         <button class="btn-logout" id="logoutBtn">Sair</button>
 
+    </div>
+</div>
+
+<!-- COMBAT SCREEN -->
+<div id="combatScreen" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); z-index: 100; overflow-y: auto;">
+    <div style="padding: 40px 20px; max-width: 1400px; margin: 0 auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+            <h1 style="font-size: 3em; color: #ef4444; text-shadow: 0 0 20px rgba(239, 68, 68, 0.6);">️ SELEÇÃO DE BOSS</h1>
+            <button onclick="showScreen('gameView')" style="width: auto; padding: 12px 24px; background: #ef4444; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">← Voltar</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;">
+            <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 20px; padding: 25px; border: 2px solid #334155; position: relative;">
+                <div style="position: absolute; top: 15px; right: 15px; font-size: 2.5em; font-weight: bold; color: #fbbf24;">SSS</div>
+                <div style="font-size: 120px; text-align: center; margin: 20px 0;">🐉</div>
+                <div style="font-size: 2em; font-weight: bold; text-align: center;">KHALDRON</div>
+                <div style="text-align: center; color: #94a3b8; margin-bottom: 20px;">The Nightmare Dragon</div>
+                <div style="display: flex; justify-content: space-around; margin-bottom: 20px;">
+                    <div style="text-align: center;"><div style="font-size: 0.85em; color: #94a3b8;">Nível</div><div style="font-size: 1.5em; font-weight: bold; color: #fbbf24;">80</div></div>
+                    <div style="text-align: center;"><div style="font-size: 0.85em; color: #94a3b8;">Poder</div><div style="font-size: 1.5em; font-weight: bold; color: #fbbf24;">2.5M</div></div>
+                </div>
+                <button onclick="startBattle('Khaldrón', 5000, 500)" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #ff8c00, #ff4500); color: #fff; border: none; border-radius: 12px; font-size: 1.2em; font-weight: bold; cursor: pointer;">⚔️ ENTRAR NA BATALHA</button>
+            </div>
+
+            <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 20px; padding: 25px; border: 2px solid #334155; position: relative;">
+                <div style="position: absolute; top: 15px; right: 15px; font-size: 2.5em; font-weight: bold; color: #fbbf24;">SS</div>
+                <div style="font-size: 120px; text-align: center; margin: 20px 0;">👹</div>
+                <div style="font-size: 2em; font-weight: bold; text-align: center;">IGNEOUS</div>
+                <div style="text-align: center; color: #94a3b8; margin-bottom: 20px;">The Fire Demon</div>
+                <div style="display: flex; justify-content: space-around; margin-bottom: 20px;">
+                    <div style="text-align: center;"><div style="font-size: 0.85em; color: #94a3b8;">Nível</div><div style="font-size: 1.5em; font-weight: bold; color: #fbbf24;">70</div></div>
+                    <div style="text-align: center;"><div style="font-size: 0.85em; color: #94a3b8;">Poder</div><div style="font-size: 1.5em; font-weight: bold; color: #fbbf24;">1.8M</div></div>
+                </div>
+                <button onclick="startBattle('Igneous', 3000, 300)" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #ff8c00, #ff4500); color: #fff; border: none; border-radius: 12px; font-size: 1.2em; font-weight: bold; cursor: pointer;">️ ENTRAR NA BATALHA</button>
+            </div>
+
+            <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 20px; padding: 25px; border: 2px solid #334155; position: relative;">
+                <div style="position: absolute; top: 15px; right: 15px; font-size: 2.5em; font-weight: bold; color: #fbbf24;">S</div>
+                <div style="font-size: 120px; text-align: center; margin: 20px 0;">⚔️</div>
+                <div style="font-size: 2em; font-weight: bold; text-align: center;">MALAKAI</div>
+                <div style="text-align: center; color: #94a3b8; margin-bottom: 20px;">The Shadow Warrior</div>
+                <div style="display: flex; justify-content: space-around; margin-bottom: 20px;">
+                    <div style="text-align: center;"><div style="font-size: 0.85em; color: #94a3b8;">Nível</div><div style="font-size: 1.5em; font-weight: bold; color: #fbbf24;">60</div></div>
+                    <div style="text-align: center;"><div style="font-size: 0.85em; color: #94a3b8;">Poder</div><div style="font-size: 1.5em; font-weight: bold; color: #fbbf24;">1.2M</div></div>
+                </div>
+                <button onclick="startBattle('Malakai', 2000, 200)" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #ff8c00, #ff4500); color: #fff; border: none; border-radius: 12px; font-size: 1.2em; font-weight: bold; cursor: pointer;">⚔️ ENTRAR NA BATALHA</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -556,6 +605,16 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
         t.textContent = msg;
         t.style.display = 'block';
         setTimeout(() => t.style.display = 'none', 3000);
+    };
+
+    window.showScreen = (screenId) => {
+        if (screenId === 'gameView') {
+            $('combatScreen').classList.add('hidden');
+            $('gameView').classList.remove('hidden');
+        } else if (screenId === 'combatScreen') {
+            $('gameView').classList.add('hidden');
+            $('combatScreen').classList.remove('hidden');
+        }
     };
 
     window.switchAuthTab = (tab) => {
@@ -608,9 +667,90 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
                 createdAt: serverTimestamp(),
                 lastSeen: serverTimestamp()
             });
-            showToast(' Conta criada! Bem-vindo ao Dragon War!');
+            showToast('🎉 Conta criada! Bem-vindo ao Dragon War!');
         } catch(e) {
             showToast('Erro: ' + e.message);
+        }
+    };
+
+    // SALVAR JOGO
+    window.saveGame = async () => {
+        if (!playerRef || !currentUserData) return showToast('Carregando dados...');
+        try {
+            await updateDoc(playerRef, {
+                lastSave: serverTimestamp(),
+                savedCoins: currentUserData.coins,
+                savedGems: currentUserData.gems,
+                savedLevel: currentUserData.level,
+                savedPoints: currentUserData.points
+            });
+            showToast('💾 Jogo salvo com sucesso!');
+        } catch(e) {
+            showToast('Erro ao salvar: ' + e.message);
+        }
+    };
+
+    // CARREGAR JOGO
+    window.loadGame = async () => {
+        if (!playerRef || !currentUserData) return showToast('Carregando dados...');
+        try {
+            if (currentUserData.savedCoins !== undefined) {
+                await updateDoc(playerRef, {
+                    coins: currentUserData.savedCoins || 0,
+                    gems: currentUserData.savedGems || 0,
+                    level: currentUserData.savedLevel || 1,
+                    points: currentUserData.savedPoints || 0
+                });
+                showToast('📂 Jogo carregado com sucesso!');
+            } else {
+                showToast('Nenhum jogo salvo encontrado.');
+            }
+        } catch(e) {
+            showToast('Erro ao carregar: ' + e.message);
+        }
+    };
+
+    // NOVO JOGO
+    window.newGame = async () => {
+        if (!playerRef) return showToast('Carregando dados...');
+        try {
+            await updateDoc(playerRef, {
+                coins: 0,
+                gems: 0,
+                points: 0,
+                level: 1,
+                xp: 0
+            });
+            showToast('🔄 Novo jogo iniciado!');
+        } catch(e) {
+            showToast('Erro: ' + e.message);
+        }
+    };
+
+    // BATALHA
+    window.startBattle = async (bossName, rewardCoins, rewardGems) => {
+        if (!playerRef || !currentUserData) return showToast('Carregando dados...');
+        
+        const win = Math.random() > 0.3; // 70% de chance de ganhar
+        
+        if (win) {
+            const newCoins = (currentUserData.coins || 0) + rewardCoins;
+            const newGems = (currentUserData.gems || 0) + rewardGems;
+            const newPoints = (currentUserData.points || 0) + 100;
+            
+            try {
+                await updateDoc(playerRef, {
+                    coins: newCoins,
+                    gems: newGems,
+                    points: newPoints,
+                    xp: (currentUserData.xp || 0) + 50
+                });
+                showToast(`⚔️ Vitória contra ${bossName}! +${rewardCoins} moedas, +${rewardGems} gemas!`);
+            } catch(e) {
+                showToast('Erro: ' + e.message);
+            }
+        } else {
+            showToast(`💀 Derrota contra ${bossName}! Tente novamente.`);
         }
     };
 
