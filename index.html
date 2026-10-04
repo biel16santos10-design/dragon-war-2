@@ -176,7 +176,7 @@
 
         <!-- MÓDULO ÁRVORE DE PODERES -->
         <div id="viewPowers" class="section-card hidden">
-            <button class="btn back-btn" onclick="switchView('hub')">⬅ Voltar ao Hub</button>
+            <button class="btn back-btn" onclick="switchView('hub')">⬅ Voltar al Hub</button>
             <h2 style="color: var(--accent); margin-bottom: 15px; text-align: center;">Árvore de Poderes Elementais</h2>
             <p style="color: var(--text-muted); text-align: center; margin-bottom: 15px;">Evolua seus talentos elementais.</p>
             <button class="btn" onclick="alert('Raio de Fogo desbloqueado com sucesso!')">Desbloquear Raio de Fogo</button>
@@ -198,17 +198,18 @@
     </div>
 
     <script>
-        // CONFIGURAÇÃO DO FIREBASE (Com suas credenciais exatas)
+        // Configuração do Firebase integrando suas chaves exatas
         const firebaseConfig = {
-            apiKey: "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
-            authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
-            projectId: "dragon-war-rise-of-power-2a9f1",
-            storageBucket: "dragon-war-rise-of-power-2a9f1.firebasestorage.app",
-            messagingSenderId: "115455691167",
-            appId: "1:115455691167:web:ff3638f67b66c17c5515aa",
-            measurementId: "G-S7XE2EN9CL"
+          apiKey: "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
+          authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
+          projectId: "dragon-war-rise-of-power-2a9f1",
+          storageBucket: "dragon-war-rise-of-power-2a9f1.firebasestorage.app",
+          messagingSenderId: "115455691167",
+          appId: "1:115455691167:web:ff3638f67b66c17c5515aa",
+          measurementId: "G-S7XE2EN9CL"
         };
 
+        // Inicialização adaptada para o padrão compatível do HTML único
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
