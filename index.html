@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dragon War - Rise of Power</title>
-    <!-- Importação do Firebase (SDK Modular v9/v10) -->
+    <!-- Importação do Firebase (SDK Modular v10) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // Configuração do Firebase do seu projeto
         const firebaseConfig = {
             apiKey: "SUA_API_KEY_AQUI",
             authDomain: "seu-projeto.firebaseapp.com",
@@ -19,20 +19,24 @@
             appId: "SEU_APP_ID"
         };
 
-        // Inicializar Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
 
-        // Definindo o ID do Administrador (Você)
-        const ADMIN_ID = "GABRIEL_ADMIN_999"; 
+        // O seu e-mail ou UID de Administrador Mestre
+        const ADMIN_EMAIL = "markivus25@gmail.com"; 
 
-        // Disponibilizando funções globais para o jogo
         window.fbDb = db;
+        window.fbAuth = auth;
         window.fbDoc = doc;
         window.fbSetDoc = setDoc;
         window.fbGetDoc = getDoc;
         window.fbUpdateDoc = updateDoc;
-        window.ADMIN_ID = ADMIN_ID;
+        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+        window.signOut = signOut;
+        window.onAuthStateChanged = onAuthStateChanged;
+        window.ADMIN_EMAIL = ADMIN_EMAIL;
     </script>
 
     <style>
@@ -59,7 +63,73 @@
         .screen.active {
             display: flex;
         }
-        /* Tela Inicial / Login do Jogador */
+
+        /* Telas de Autenticação / Entrada */
+        .auth-screen {
+            background: linear-gradient(135deg, rgba(11,15,25,0.9), rgba(15,23,42,0.95)), url('fundo-dragon.jpg') no-repeat center center/cover;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .auth-container {
+            background: rgba(30, 41, 59, 0.85);
+            border: 1px solid #3b82f6;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .auth-container h2 {
+            text-align: center;
+            color: #f5af19;
+            margin-bottom: 5px;
+        }
+        .auth-container input, .auth-container select {
+            width: 100%;
+            padding: 12px;
+            background: #0b0f19;
+            border: 1px solid #334155;
+            color: white;
+            border-radius: 6px;
+            outline: none;
+            font-size: 14px;
+        }
+        .auth-container input:focus, .auth-container select:focus {
+            border-color: #3b82f6;
+        }
+        .btn-auth {
+            background: linear-gradient(135deg, #f5af19, #f12711);
+            color: white;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 5px;
+        }
+        .btn-auth:hover {
+            filter: brightness(1.1);
+        }
+        .switch-auth {
+            text-align: center;
+            font-size: 13px;
+            color: #94a3b8;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        .switch-auth:hover {
+            color: #38bdf8;
+            text-decoration: underline;
+        }
+
+        /* Tela Principal / Menu do Jogador */
         #home-screen {
             background: linear-gradient(135deg, rgba(11,15,25,0.85), rgba(15,23,42,0.95)), url('fundo-dragon.jpg') no-repeat center center/cover;
             justify-content: center;
@@ -134,7 +204,7 @@
             color: #fff;
         }
 
-        /* Tela Principal do Jogo */
+        /* Tela do Jogo / Dashboard */
         #game-screen {
             background: #0f172a;
             display: grid;
@@ -188,10 +258,6 @@
             padding: 20px;
             text-align: center;
             transition: 0.2s;
-        }
-        .item-card:hover {
-            border-color: #3b82f6;
-            transform: translateY(-3px);
         }
         .item-card h4 {
             color: #38bdf8;
@@ -280,32 +346,74 @@
             border-radius: 6px;
             outline: none;
         }
-        .chat-input-area input:focus {
-            border-color: #3b82f6;
+        /* Galeria de Seleção de Avatar */
+        .avatar-selection-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .avatar-option {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            border: 2px solid #334155;
+            cursor: pointer;
+            object-fit: cover;
+            transition: 0.2s;
+        }
+        .avatar-option:hover, .avatar-option.selected {
+            border-color: #f5af19;
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(245, 175, 25, 0.5);
         }
     </style>
 </head>
 <body>
 
-    <!-- TELA 1: MENU INICIAL / LOGIN DO JOGADOR -->
-    <div id="home-screen" class="screen active">
+    <!-- TELA DE LOGIN -->
+    <div id="login-screen" class="screen active auth-screen">
+        <div class="auth-container">
+            <h2>DRAGON WAR</h2>
+            <p style="text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Entre com sua conta de e-mail real</p>
+            <input type="email" id="login-email" placeholder="Seu e-mail real">
+            <input type="password" id="login-senha" placeholder="Sua senha">
+            <button class="btn-auth" onclick="fazerLogin()">ENTRAR NO SERVIDOR</button>
+            <div class="switch-auth" onclick="mostrarTelaRegistro()">Não tem uma conta? Registrar-se</div>
+        </div>
+    </div>
+
+    <!-- TELA DE REGISTRO -->
+    <div id="register-screen" class="screen auth-screen">
+        <div class="auth-container">
+            <h2>REGISTRAR JOGADOR</h2>
+            <p style="text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Crie sua conta para jogar</p>
+            <input type="text" id="reg-nome" placeholder="Nome de Usuário (Padrão)">
+            <input type="email" id="reg-email" placeholder="E-mail real válido">
+            <input type="password" id="reg-senha" placeholder="Senha (mínimo 6 dígitos)">
+            <button class="btn-auth" onclick="fazerRegistro()">CRIAR CONTA NA NUVEM</button>
+            <div class="switch-auth" onclick="mostrarTelaLogin()">Já tem uma conta? Fazer Login</div>
+        </div>
+    </div>
+
+    <!-- TELA 1: MENU PRINCIPAL / HUB -->
+    <div id="home-screen" class="screen">
         <div class="home-container">
             <h1 style="text-align: center; color: #f5af19; font-size: 24px; letter-spacing: 1px;">DRAGON WAR</h1>
             
             <div class="home-header">
-                <img id="home-avatar-img" src="https://via.placeholder.com/90" class="avatar-preview" alt="Avatar">
+                <img id="home-avatar-img" src="https://api.dicebear.com/7.x/bottts/svg?seed=default" class="avatar-preview" alt="Avatar">
                 <div style="overflow: hidden;">
-                    <h3 id="display-name" style="font-size: 16px; color: #fff;">Gabriel Cabral</h3>
-                    <small style="color: #94a3b8;">UID: <span id="display-uid">GABRIEL_ADMIN_999</span></small><br>
-                    <small id="cargo-status" style="color: #f5af19; font-weight: bold;">Status: Administrador Mestre</small>
+                    <h3 id="display-name" style="font-size: 16px; color: #fff;">Guerreiro</h3>
+                    <small style="color: #94a3b8;">Email: <span id="display-email" style="font-size: 11px;">usuario@email.com</span></small><br>
+                    <small id="cargo-status" style="color: #38bdf8; font-weight: bold;">Status: Jogador Ativo</small>
                 </div>
             </div>
             
             <button class="btn-play" onclick="entrarNoJogo()">⚔️ JOGAR / CONTINUAR</button>
-            <button class="menu-btn" onclick="abrirNovoJogo()">➕ NOVO JOGO / REGISTRAR <span>📝</span></button>
-            <button class="menu-btn" onclick="carregarContaFirebase()">📂 CARREGAR CONTA (NUVEM) <span>☁️</span></button>
             <button class="menu-btn" onclick="salvarProgressoFirebase()">💾 SALVAR NA NUVEM (FIREBASE) <span>🔄</span></button>
             <button class="menu-btn" onclick="irParaConfig()">⚙️ CONFIGURAÇÕES DE PERFIL <span>🛠️</span></button>
+            <button class="menu-btn" onclick="sairParaMenuLogin()" style="color: #f87171; border-color: #7f1d1d;">⬅ VOLTAR AO MENU (SAIR) <span>🚪</span></button>
         </div>
     </div>
 
@@ -315,13 +423,14 @@
             <h2 style="color: #f5af19; margin-bottom: 20px; font-size: 18px; text-align: center;">DRAGON WAR</h2>
             <button onclick="mudarAba('resumo', this)" class="active">🛡️ Resumo do Herói</button>
             <button onclick="mudarAba('campanha', this)">🗺️ Campanha (Batalhas)</button>
-            <button onclick="mudarAba('loja', this)">🛒 Loja (Armas/Skins/Poções)</button>
+            <button onclick="mudarAba('loja', this)">🛒 Loja (Armas/Skins)</button>
             <button onclick="mudarAba('poderes', this)">🔮 Poderes & Habilidades</button>
             <button onclick="mudarAba('inventario', this)">🎒 Inventário / Mochila</button>
+            <button onclick="mudarAba('corporacao', this)">🛡️ Corporação</button>
             <button onclick="mudarAba('chat', this)">💬 Chat Geral</button>
             <button onclick="mudarAba('ranking', this)">🏆 Ranking Global</button>
             <button onclick="mudarAba('config', this)">⚙️ Configurações</button>
-            <button onclick="voltarHome()" style="margin-top: 25px; color: #f87171; border-top: 1px solid #334155; padding-top: 15px;">⬅ Voltar ao Menu</button>
+            <button onclick="voltarHome()" style="margin-top: 25px; color: #38bdf8; border-top: 1px solid #334155; padding-top: 15px;">⬅ Voltar ao Hub</button>
         </div>
         <div class="content-area">
             
@@ -329,13 +438,13 @@
             <div id="resumo" class="tab-content active">
                 <h2 style="margin-bottom: 20px;">Resumo do Herói</h2>
                 <div class="status-box">
-                    <img id="resumo-avatar-img" src="https://via.placeholder.com/90" class="avatar-preview" style="width: 90px; height: 90px;" alt="Avatar">
+                    <img id="resumo-avatar-img" src="https://api.dicebear.com/7.x/bottts/svg?seed=default" class="avatar-preview" style="width: 90px; height: 90px;" alt="Avatar">
                     <div class="status-info">
-                        <p><strong>Nome do Jogador:</strong> <span id="resumo-nome">Gabriel Cabral</span></p>
-                        <p><strong>UID de Controle:</strong> <span id="resumo-uid-txt">GABRIEL_ADMIN_999</span></p>
-                        <p><strong>Cargo:</strong> <span id="resumo-cargo-txt" style="color: #f5af19;">Administrador Mestre</span></p>
-                        <p><strong>Moedas:</strong> <span id="resumo-moedas">356.760</span> 🟡</p>
-                        <p><strong>Diamantes:</strong> <span id="resumo-diamantes">2.540</span> 💎</p>
+                        <p><strong>Nome do Jogador:</strong> <span id="resumo-nome">Guerreiro</span></p>
+                        <p><strong>E-mail:</strong> <span id="resumo-email-txt">usuario@email.com</span></p>
+                        <p><strong>Cargo:</strong> <span id="resumo-cargo-txt" style="color: #38bdf8;">Jogador Ativo</span></p>
+                        <p><strong>Corporação:</strong> <span id="resumo-corporacao" style="color: #38bdf8;">Aliança Sul (Oficial)</span></p>
+                        <p><strong>Moedas:</strong> <span id="resumo-moedas">15.000</span> 🟡</p>
                     </div>
                 </div>
             </div>
@@ -343,7 +452,7 @@
             <!-- ABA CAMPANHA -->
             <div id="campanha" class="tab-content">
                 <h2 style="margin-bottom: 10px;">Modos de Batalha (Campanha)</h2>
-                <p style="color: #94a3b8; margin-bottom: 20px;">Selecione a dificuldade e lute para ganhar recompensas exclusivas!</p>
+                <p style="color: #94a3b8; margin-bottom: 20px;">Selecione a dificuldade e lute para ganhar recompensas!</p>
                 <div class="card-grid">
                     <div class="item-card" style="border-color: #22c55e;">
                         <h4>Modo Fácil</h4>
@@ -371,47 +480,16 @@
             <!-- ABA LOJA -->
             <div id="loja" class="tab-content">
                 <h2 style="margin-bottom: 10px;">Loja do Servidor</h2>
-                <p style="color: #94a3b8; margin-bottom: 20px;">Adquira novas armas, skins exclusivas e poções de vida.</p>
-                
-                <h3 style="color: #38bdf8; margin-bottom: 15px;">⚔️ Armas</h3>
                 <div class="card-grid">
-                    <div class="item-card">
-                        <h4>Espada Longa de Ferro</h4>
-                        <p>1.500 Moedas 🟡</p>
-                        <button class="btn-acao" onclick="comprarItem('Espada Longa de Ferro', 1500)">COMPRAR</button>
-                    </div>
                     <div class="item-card">
                         <h4>Lâmina do Dragão</h4>
                         <p>5.000 Moedas 🟡</p>
                         <button class="btn-acao" onclick="comprarItem('Lâmina do Dragão', 5000)">COMPRAR</button>
                     </div>
-                </div>
-
-                <h3 style="color: #a855f7; margin-top: 30px; margin-bottom: 15px;">👕 Skins e Visuais</h3>
-                <div class="card-grid">
-                    <div class="item-card" style="border-color: #a855f7;">
-                        <h4>Skin: Cavaleiro das Sombras</h4>
-                        <p style="color: #a855f7;">2.500 Moedas 🟡</p>
-                        <button class="btn-acao" style="background: #a855f7;" onclick="comprarItem('Skin: Cavaleiro das Sombras', 2500)">COMPRAR</button>
-                    </div>
-                    <div class="item-card" style="border-color: #a855f7;">
-                        <h4>Skin: Mago Estelar</h4>
-                        <p style="color: #a855f7;">3.000 Moedas 🟡</p>
-                        <button class="btn-acao" style="background: #a855f7;" onclick="comprarItem('Skin: Mago Estelar', 3000)">COMPRAR</button>
-                    </div>
-                </div>
-
-                <h3 style="color: #22c55e; margin-top: 30px; margin-bottom: 15px;">🧪 Poções e Recursos</h3>
-                <div class="card-grid">
                     <div class="item-card" style="border-color: #22c55e;">
-                        <h4>Poção de Vida (HP)</h4>
+                        <h4>Poção de Vida</h4>
                         <p style="color: #22c55e;">200 Moedas 🟡</p>
                         <button class="btn-acao" style="background: #22c55e;" onclick="comprarItem('Poção de Vida', 200)">COMPRAR</button>
-                    </div>
-                    <div class="item-card" style="border-color: #22c55e;">
-                        <h4>Poção de Mana / Energia</h4>
-                        <p style="color: #22c55e;">150 Moedas 🟡</p>
-                        <button class="btn-acao" style="background: #22c55e;" onclick="comprarItem('Poção de Mana', 150)">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -419,17 +497,11 @@
             <!-- ABA PODERES -->
             <div id="poderes" class="tab-content">
                 <h2 style="margin-bottom: 10px;">Árvore de Habilidades</h2>
-                <p style="color: #94a3b8; margin-bottom: 20px;">Evolua suas magias usando Moedas de Poder.</p>
                 <div class="card-grid">
                     <div class="item-card">
                         <h4>Raio Espiritual</h4>
-                        <p>Nível 5/5</p>
-                        <button class="btn-acao" style="background: #8b5cf6;" onclick="evoluirPoder('Raio Espiritual')">EVOLUIR (5 🔮)</button>
-                    </div>
-                    <div class="item-card">
-                        <h4>Torrente do Vazio</h4>
-                        <p>Nível 3/5</p>
-                        <button class="btn-acao" style="background: #8b5cf6;" onclick="evoluirPoder('Torrente do Vazio')">EVOLUIR (5 🔮)</button>
+                        <p>Nível 1/5</p>
+                        <button class="btn-acao" style="background: #8b5cf6;" onclick="alert('Habilidade evoluída!')">EVOLUIR</button>
                     </div>
                 </div>
             </div>
@@ -443,11 +515,18 @@
                         <p style="color: #22c55e;">Equipado</p>
                         <button class="btn-acao" style="background: #64748b;">USANDO</button>
                     </div>
-                    <div class="item-card" style="border-color: #38bdf8;">
-                        <h4>Poção de Vida (x3)</h4>
-                        <p style="color: #38bdf8;">Consumível</p>
-                        <button class="btn-acao" style="background: #eab308;" onclick="usarItem('Poção de Vida')">USAR</button>
-                    </div>
+                </div>
+            </div>
+
+            <!-- ABA CORPORAÇÃO (FIXA / NÃO EDITÁVEL) -->
+            <div id="corporacao" class="tab-content">
+                <h2 style="margin-bottom: 10px;">Corporação do Jogador</h2>
+                <p style="color: #94a3b8; margin-bottom: 20px;">Afiliação oficial registrada no sistema do servidor. (Fixo)</p>
+                <div class="status-box" style="flex-direction: column; align-items: flex-start; gap: 10px;">
+                    <h3 style="color: #38bdf8;">Aliança Sul (Claro Fibra / Oficial)</h3>
+                    <p><strong>Status da Facção:</strong> Ativa e Protegida</p>
+                    <p><strong>Bônus de Servidor:</strong> +10% de Moedas em Batalhas e Acesso Prioritário</p>
+                    <p style="color: #f5af19; font-size: 13px; margin-top: 10px;">* Nota: As corporações são definidas pelo Administrador e não podem ser alteradas por usuários comuns.</p>
                 </div>
             </div>
 
@@ -456,8 +535,7 @@
                 <h2 style="margin-bottom: 20px;">Chat Geral da Comunidade</h2>
                 <div class="chat-box">
                     <div class="chat-messages" id="chat-container">
-                        <p><strong style="color: #38bdf8;">Gromnash:</strong> E aí galera, quem vai encarar o Boss hoje?</p>
-                        <p><strong style="color: #f5af19;" id="chat-user-msg-preview">Gabriel Cabral:</strong> Servidor online na nuvem, bora!</p>
+                        <p><strong style="color: #38bdf8;">Gromnash:</strong> Salve galera da Aliança Sul!</p>
                     </div>
                     <div class="chat-input-area">
                         <input type="text" id="chat-msg-input" placeholder="Digite sua mensagem...">
@@ -471,31 +549,29 @@
                 <h2 style="margin-bottom: 20px;">Ranking Global do Servidor</h2>
                 <table>
                     <thead>
-                        <tr>
-                            <th>POS</th>
-                            <th>JOGADOR</th>
-                            <th>CLASSE</th>
-                            <th>NÍVEL</th>
-                            <th>RANK</th>
-                        </tr>
+                        <tr><th>POS</th><th>JOGADOR</th><th>CLASSE</th><th>NÍVEL</th></tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td id="rank-user-1">Gabriel Cabral</td><td>Guerreiro</td><td>150</td><td style="color: #f5af19;">Mestre</td></tr>
-                        <tr><td>2</td><td>Gromnash</td><td>Guerreiro</td><td>150</td><td style="color: #38bdf8;">Avançado</td></tr>
-                        <tr><td>3</td><td>Karansh</td><td>Mago</td><td>142</td><td style="color: #38bdf8;">Avançado</td></tr>
+                        <tr><td>1</td><td style="color: #f5af19; font-weight: bold;">👑 Gabriel (ADM Mestre)</td><td>Administrador</td><td>999</td></tr>
+                        <tr><td>2</td><td>Gromnash</td><td>Guerreiro</td><td>150</td></tr>
                     </tbody>
                 </table>
             </div>
 
-            <!-- ABA CONFIGURAÇÕES -->
+            <!-- ABA CONFIGURAÇÕES (COM AVATARES PRÉ-DEFINIDOS) -->
             <div id="config" class="tab-content">
                 <h2 style="margin-bottom: 20px;">Configurações de Perfil</h2>
                 <div class="status-box" style="display: flex; flex-direction: column; align-items: flex-start; gap: 15px; width: 100%; max-width: 500px;">
                     <label style="width: 100%;">Novo Nome / Nick:
-                        <input type="text" id="input-novo-nome" value="Gabriel Cabral" style="width: 100%; padding: 10px; margin-top: 5px; background: #0b0f19; border: 1px solid #334155; color: white; border-radius: 6px;">
+                        <input type="text" id="input-novo-nome" style="width: 100%; padding: 10px; margin-top: 5px; background: #0b0f19; border: 1px solid #334155; color: white; border-radius: 6px;">
                     </label>
-                    <label style="width: 100%;">URL da Foto de Perfil (Avatar):
-                        <input type="text" id="input-novo-avatar" placeholder="Cole o link da imagem aqui..." style="width: 100%; padding: 10px; margin-top: 5px; background: #0b0f19; border: 1px solid #334155; color: white; border-radius: 6px;">
+                    <label style="width: 100%;">Escolha seu Avatar Oficial do Jogo:
+                        <div class="avatar-selection-grid">
+                            <img src="https://api.dicebear.com/7.x/bottts/svg?seed=hero1" class="avatar-option" onclick="selecionarAvatarPreDefinido(this.src)">
+                            <img src="https://api.dicebear.com/7.x/bottts/svg?seed=hero2" class="avatar-option" onclick="selecionarAvatarPreDefinido(this.src)">
+                            <img src="https://api.dicebear.com/7.x/bottts/svg?seed=hero3" class="avatar-option" onclick="selecionarAvatarPreDefinido(this.src)">
+                            <img src="https://api.dicebear.com/7.x/bottts/svg?seed=hero4" class="avatar-option" onclick="selecionarAvatarPreDefinido(this.src)">
+                        </div>
                     </label>
                     <button class="btn-acao" onclick="salvarConfiguracoesPerfil()">Salvar Alterações</button>
                 </div>
@@ -505,31 +581,128 @@
     </div>
 
     <script>
-        // Objeto do Jogador atual (Inicia com o ID de Admin do Gabriel)
         let jogadorAtual = {
             uid: "",
-            nome: "Gabriel Cabral",
-            moedas: 356760,
-            avatar: "https://via.placeholder.com/90",
+            email: "",
+            nome: "Guerreiro",
+            moedas: 15000,
+            avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=default",
+            corporacao: "Aliança Sul",
             isAdmin: false
         };
 
-        // Ao carregar a página, define o Admin padrão se for o seu primeiro acesso
-        window.addEventListener('DOMContentLoaded', () => {
-            // Verifica se já existe um jogador salvo no navegador, senão define o Admin
-            let uidSalvo = localStorage.getItem("dragon_war_uid_ativo");
-            if (!uidSalvo) {
-                jogadorAtual.uid = window.ADMIN_ID;
-                jogadorAtual.isAdmin = true;
-                localStorage.setItem("dragon_war_uid_ativo", window.ADMIN_ID);
-            } else {
-                jogadorAtual.uid = uidSalvo;
-                if(uidSalvo === window.ADMIN_ID) {
-                    jogadorAtual.isAdmin = true;
-                }
+        let avatarSelecionadoTemp = "";
+
+        function mostrarTelaRegistro() {
+            document.getElementById('login-screen').classList.remove('active');
+            document.getElementById('register-screen').classList.add('active');
+        }
+
+        function mostrarTelaLogin() {
+            document.getElementById('register-screen').classList.remove('active');
+            document.getElementById('login-screen').classList.add('active');
+        }
+
+        // Validação e Registro com Firebase Auth
+        async function fazerRegistro() {
+            let nome = document.getElementById('reg-nome').value.trim();
+            let email = document.getElementById('reg-email').value.trim();
+            let senha = document.getElementById('reg-senha').value.trim();
+
+            if (!nome || !email || !senha) {
+                alert("Preencha todos os campos!");
+                return;
             }
+
+            // Validação de segurança para impedir nome de ADM por usuários comuns
+            let nomeLower = nome.toLowerCase();
+            if (email !== window.ADMIN_EMAIL && (nomeLower.includes("adm") || nomeLower.includes("admin") || nomeLower.includes("administrador"))) {
+                alert("Erro: Jogadores comuns não podem usar termos de ADM no nome!");
+                return;
+            }
+
+            try {
+                const userCredential = await window.createUserWithEmailAndPassword(window.fbAuth, email, senha);
+                const user = userCredential.user;
+
+                let isAdmin = (email === window.ADMIN_EMAIL);
+                
+                jogadorAtual = {
+                    uid: user.uid,
+                    email: email,
+                    nome: isAdmin ? "👑 Gabriel (ADM Mestre)" : nome,
+                    moedas: isAdmin ? 356760 : 15000,
+                    avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=" + nome,
+                    corporacao: "Aliança Sul",
+                    isAdmin: isAdmin
+                };
+
+                const docRef = window.fbDoc(window.fbDb, "jogadores", user.uid);
+                await window.fbSetDoc(docRef, jogadorAtual);
+
+                irParaHub();
+            } catch (erro) {
+                console.error("Erro no registro:", erro);
+                alert("Erro ao registrar: " + erro.message);
+            }
+        }
+
+        // Login com Firebase Auth
+        async function fazerLogin() {
+            let email = document.getElementById('login-email').value.trim();
+            let senha = document.getElementById('login-senha').value.trim();
+
+            if (!email || !senha) {
+                alert("Informe e-mail e senha.");
+                return;
+            }
+
+            try {
+                const userCredential = await window.signInWithEmailAndPassword(window.fbAuth, email, senha);
+                const user = userCredential.user;
+
+                const docRef = window.fbDoc(window.fbDb, "jogadores", user.uid);
+                const docSnap = await window.fbGetDoc(docRef);
+
+                if (docSnap.exists()) {
+                    jogadorAtual = docSnap.data();
+                } else {
+                    let isAdmin = (email === window.ADMIN_EMAIL);
+                    jogadorAtual = {
+                        uid: user.uid,
+                        email: email,
+                        nome: isAdmin ? "👑 Gabriel (ADM Mestre)" : "Guerreiro",
+                        moedas: isAdmin ? 356760 : 15000,
+                        avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=" + email,
+                        corporacao: "Aliança Sul",
+                        isAdmin: isAdmin
+                    };
+                }
+
+                irParaHub();
+            } catch (erro) {
+                console.error("Erro no login:", erro);
+                alert("Erro ao entrar. Verifique suas credenciais.");
+            }
+        }
+
+        function irParaHub() {
+            document.getElementById('login-screen').classList.remove('active');
+            document.getElementById('register-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.remove('active');
+            document.getElementById('home-screen').classList.add('active');
             atualizarInterfacePerfil();
-        });
+        }
+
+        // Sair e voltar inteiramente para a tela de login
+        async function sairParaMenuLogin() {
+            try {
+                await window.signOut(window.fbAuth);
+            } catch(e) {}
+            document.getElementById('home-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.remove('active');
+            document.getElementById('login-screen').classList.add('active');
+        }
 
         function entrarNoJogo() {
             document.getElementById('home-screen').classList.remove('active');
@@ -551,124 +724,71 @@
 
         function irParaConfig() {
             entrarNoJogo();
-            mudarAba('config', document.querySelector('.sidebar button:nth-child(8)'));
+            mudarAba('config', document.querySelector('.sidebar button:nth-child(9)'));
         }
 
-        // Criar Novo Jogo e registrar no Firebase
-        async function abrirNovoJogo() {
-            let nome = prompt("Digite o nome do seu novo personagem:");
-            if(nome && nome.trim() !== "") {
-                let novoUid = 'DRG-' + Math.floor(1000 + Math.random() * 9000);
-                
-                jogadorAtual.nome = nome;
-                jogadorAtual.uid = novoUid;
-                jogadorAtual.moedas = 15000;
-                jogadorAtual.isAdmin = (novoUid === window.ADMIN_ID);
-
-                try {
-                    // Salvando no Firestore (coleção "jogadores")
-                    const docRef = window.fbDoc(window.fbDb, "jogadores", novoUid);
-                    await window.fbSetDoc(docRef, jogadorAtual);
-
-                    localStorage.setItem("dragon_war_uid_ativo", novoUid);
-                    atualizarInterfacePerfil();
-                    alert(`Nova conta criada e salva no Firebase!\nSeu UID exclusivo é: ${novoUid}`);
-                } catch (erro) {
-                    console.error("Erro ao salvar no Firebase: ", erro);
-                    alert("Erro ao conectar com o Firebase. Verifique sua conexão.");
-                }
-            }
+        function selecionarAvatarPreDefinido(urlAvatar) {
+            avatarSelecionadoTemp = urlAvatar;
+            document.querySelectorAll('.avatar-option').forEach(img => img.classList.remove('selected'));
+            event.target.classList.add('selected');
         }
 
-        // Salvar Progresso atual no Firebase
         async function salvarProgressoFirebase() {
             try {
                 const docRef = window.fbDoc(window.fbDb, "jogadores", jogadorAtual.uid);
                 await window.fbSetDoc(docRef, jogadorAtual, { merge: true });
-                alert(`Progresso do usuário [UID: ${jogadorAtual.uid}] salvo com sucesso no Firebase!`);
+                alert("Progresso salvo com sucesso no Firebase!");
             } catch (erro) {
-                console.error("Erro ao salvar: ", erro);
-                alert("Erro ao salvar progresso na nuvem.");
-            }
-        }
-
-        // Carregar Conta do Jogador pelo Firebase
-        async function carregarContaFirebase() {
-            let uidBusca = prompt("Digite o seu UID de Jogador (Ex: DRG-1234 ou seu ID de Admin):");
-            if(uidBusca && uidBusca.trim() !== "") {
-                try {
-                    const docRef = window.fbDoc(window.fbDb, "jogadores", uidBusca);
-                    const docSnap = await window.fbGetDoc(docRef);
-
-                    if (docSnap.exists()) {
-                        jogadorAtual = docSnap.data();
-                        jogadorAtual.isAdmin = (jogadorAtual.uid === window.ADMIN_ID);
-                        
-                        localStorage.setItem("dragon_war_uid_ativo", jogadorAtual.uid);
-                        atualizarInterfacePerfil();
-                        alert(`Conta de ${jogadorAtual.nome} carregada com sucesso do Firebase!`);
-                    } else {
-                        alert("Nenhum jogador encontrado com este UID no banco de dados.");
-                    }
-                } catch (erro) {
-                    console.error("Erro ao buscar: ", erro);
-                    alert("Erro ao consultar o Firebase.");
-                }
+                console.error("Erro ao salvar:", erro);
+                alert("Erro ao salvar dados na nuvem.");
             }
         }
 
         function atualizarInterfacePerfil() {
             document.getElementById('display-name').innerText = jogadorAtual.nome;
-            document.getElementById('display-uid').innerText = jogadorAtual.uid;
+            document.getElementById('display-email').innerText = jogadorAtual.email;
             document.getElementById('resumo-nome').innerText = jogadorAtual.nome;
-            document.getElementById('resumo-uid-txt').innerText = jogadorAtual.uid;
+            document.getElementById('resumo-email-txt').innerText = jogadorAtual.email;
             document.getElementById('resumo-moedas').innerText = jogadorAtual.moedas.toLocaleString();
-            document.getElementById('rank-user-1').innerText = jogadorAtual.nome;
+            document.getElementById('resumo-corporacao').innerText = jogadorAtual.corporacao;
 
-            // Verificação de Admin
-            if(jogadorAtual.uid === window.ADMIN_ID || jogadorAtual.isAdmin) {
+            if (jogadorAtual.email === window.ADMIN_EMAIL || jogadorAtual.isAdmin) {
                 document.getElementById('cargo-status').innerText = "Status: Administrador Mestre";
+                document.getElementById('cargo-status').style.color = "#f5af19";
                 document.getElementById('resumo-cargo-txt').innerText = "Administrador Mestre (Gabriel)";
                 document.getElementById('resumo-cargo-txt').style.color = "#f5af19";
             } else {
                 document.getElementById('cargo-status').innerText = "Status: Jogador Ativo";
+                document.getElementById('cargo-status').style.color = "#38bdf8";
                 document.getElementById('resumo-cargo-txt').innerText = "Guerreiro (Comum)";
                 document.getElementById('resumo-cargo-txt').style.color = "#38bdf8";
             }
-            
-            if(jogadorAtual.avatar) {
+
+            if (jogadorAtual.avatar) {
                 document.getElementById('home-avatar-img').src = jogadorAtual.avatar;
                 document.getElementById('resumo-avatar-img').src = jogadorAtual.avatar;
             }
         }
 
         function comprarItem(nomeItem, preco) {
-            if(jogadorAtual.moedas >= preco) {
+            if (jogadorAtual.moedas >= preco) {
                 jogadorAtual.moedas -= preco;
                 atualizarInterfacePerfil();
-                salvarProgressoFirebase(); // Salva automaticamente na nuvem ao comprar
-                alert(`Compra realizada! Você adquiriu: ${nomeItem}.`);
+                salvarProgressoFirebase();
+                alert(`Compra realizada com sucesso: ${nomeItem}!`);
             } else {
                 alert("Moedas insuficientes!");
             }
         }
 
         function iniciarBatalha(modo) {
-            alert(`Entrando na batalha no [Modo ${modo}]!`);
-        }
-
-        function evoluirPoder(nomePoder) {
-            alert(`Habilidade ${nomePoder} evoluída!`);
-        }
-
-        function usarItem(nomeItem) {
-            alert(`Você usou o item: ${nomeItem}.`);
+            alert(`Iniciando batalha no [Modo ${modo}]!`);
         }
 
         function enviarMensagemChat() {
             let input = document.getElementById('chat-msg-input');
             let msg = input.value;
-            if(msg.trim() !== "") {
+            if (msg.trim() !== "") {
                 let container = document.getElementById('chat-container');
                 container.innerHTML += `<p><strong style="color: #f5af19;">${jogadorAtual.nome}:</strong> ${msg}</p>`;
                 input.value = "";
@@ -677,19 +797,24 @@
         }
 
         function salvarConfiguracoesPerfil() {
-            let novoNome = document.getElementById('input-novo-nome').value;
-            let novoAvatar = document.getElementById('input-novo-avatar').value;
+            let novoNome = document.getElementById('input-novo-nome').value.trim();
 
-            if(novoNome.trim() !== "") {
+            if (novoNome !== "") {
+                let nomeLower = novoNome.toLowerCase();
+                if (jogadorAtual.email !== window.ADMIN_EMAIL && (nomeLower.includes("adm") || nomeLower.includes("admin"))) {
+                    alert("Erro: Jogadores comuns não podem usar termos de ADM no nome!");
+                    return;
+                }
                 jogadorAtual.nome = novoNome;
             }
-            if(novoAvatar.trim() !== "") {
-                jogadorAtual.avatar = novoAvatar;
+
+            if (avatarSelecionadoTemp !== "") {
+                jogadorAtual.avatar = avatarSelecionadoTemp;
             }
 
             atualizarInterfacePerfil();
             salvarProgressoFirebase();
-            alert("Perfil atualizado e sincronizado com o Firebase!");
+            alert("Configurações salvas e sincronizadas!");
         }
     </script>
 </body>
