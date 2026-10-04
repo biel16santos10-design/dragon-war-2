@@ -4,6 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dragon War - Rise of Power</title>
+    <!-- Importação do Firebase (SDK Modular v9/v10) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Configuração do Firebase do seu projeto
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY_AQUI",
+            authDomain: "seu-projeto.firebaseapp.com",
+            projectId: "dragon-war-servidor",
+            storageBucket: "dragon-war-servidor.appspot.com",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Definindo o ID do Administrador (Você)
+        const ADMIN_ID = "GABRIEL_ADMIN_999"; 
+
+        // Disponibilizando funções globais para o jogo
+        window.fbDb = db;
+        window.fbDoc = doc;
+        window.fbSetDoc = setDoc;
+        window.fbGetDoc = getDoc;
+        window.fbUpdateDoc = updateDoc;
+        window.ADMIN_ID = ADMIN_ID;
+    </script>
+
     <style>
         * {
             margin: 0;
@@ -265,15 +296,15 @@
                 <img id="home-avatar-img" src="https://via.placeholder.com/90" class="avatar-preview" alt="Avatar">
                 <div style="overflow: hidden;">
                     <h3 id="display-name" style="font-size: 16px; color: #fff;">Gabriel Cabral</h3>
-                    <small style="color: #94a3b8;">UID: <span id="display-uid">DRG-9482</span></small><br>
-                    <small style="color: #22c55e;">Status: Conta Ativa</small>
+                    <small style="color: #94a3b8;">UID: <span id="display-uid">GABRIEL_ADMIN_999</span></small><br>
+                    <small id="cargo-status" style="color: #f5af19; font-weight: bold;">Status: Administrador Mestre</small>
                 </div>
             </div>
             
             <button class="btn-play" onclick="entrarNoJogo()">⚔️ JOGAR / CONTINUAR</button>
             <button class="menu-btn" onclick="abrirNovoJogo()">➕ NOVO JOGO / REGISTRAR <span>📝</span></button>
-            <button class="menu-btn" onclick="abrirCarregar()">📂 CARREGAR CONTA <span>💾</span></button>
-            <button class="menu-btn" onclick="salvarProgressoLocal()">💾 SALVAR PROGRESSO <span>🔄</span></button>
+            <button class="menu-btn" onclick="carregarContaFirebase()">📂 CARREGAR CONTA (NUVEM) <span>☁️</span></button>
+            <button class="menu-btn" onclick="salvarProgressoFirebase()">💾 SALVAR NA NUVEM (FIREBASE) <span>🔄</span></button>
             <button class="menu-btn" onclick="irParaConfig()">⚙️ CONFIGURAÇÕES DE PERFIL <span>🛠️</span></button>
         </div>
     </div>
@@ -301,9 +332,8 @@
                     <img id="resumo-avatar-img" src="https://via.placeholder.com/90" class="avatar-preview" style="width: 90px; height: 90px;" alt="Avatar">
                     <div class="status-info">
                         <p><strong>Nome do Jogador:</strong> <span id="resumo-nome">Gabriel Cabral</span></p>
-                        <p><strong>UID de Controle:</strong> <span id="resumo-uid-txt">DRG-9482</span></p>
-                        <p><strong>Classe:</strong> Guerreiro</p>
-                        <p><strong>Rank / Nível:</strong> <span id="resumo-rank-nivel">Iniciante (Nível 1)</span></p>
+                        <p><strong>UID de Controle:</strong> <span id="resumo-uid-txt">GABRIEL_ADMIN_999</span></p>
+                        <p><strong>Cargo:</strong> <span id="resumo-cargo-txt" style="color: #f5af19;">Administrador Mestre</span></p>
                         <p><strong>Moedas:</strong> <span id="resumo-moedas">356.760</span> 🟡</p>
                         <p><strong>Diamantes:</strong> <span id="resumo-diamantes">2.540</span> 💎</p>
                     </div>
@@ -427,7 +457,7 @@
                 <div class="chat-box">
                     <div class="chat-messages" id="chat-container">
                         <p><strong style="color: #38bdf8;">Gromnash:</strong> E aí galera, quem vai encarar o Boss hoje?</p>
-                        <p><strong style="color: #f5af19;" id="chat-user-msg-preview">Gabriel Cabral:</strong> Acabei de entrar no servidor, bora!</p>
+                        <p><strong style="color: #f5af19;" id="chat-user-msg-preview">Gabriel Cabral:</strong> Servidor online na nuvem, bora!</p>
                     </div>
                     <div class="chat-input-area">
                         <input type="text" id="chat-msg-input" placeholder="Digite sua mensagem...">
@@ -475,13 +505,31 @@
     </div>
 
     <script>
-        // Dados locais iniciais do jogador
+        // Objeto do Jogador atual (Inicia com o ID de Admin do Gabriel)
         let jogadorAtual = {
+            uid: "",
             nome: "Gabriel Cabral",
-            uid: "DRG-9482",
             moedas: 356760,
-            avatar: "https://via.placeholder.com/90"
+            avatar: "https://via.placeholder.com/90",
+            isAdmin: false
         };
+
+        // Ao carregar a página, define o Admin padrão se for o seu primeiro acesso
+        window.addEventListener('DOMContentLoaded', () => {
+            // Verifica se já existe um jogador salvo no navegador, senão define o Admin
+            let uidSalvo = localStorage.getItem("dragon_war_uid_ativo");
+            if (!uidSalvo) {
+                jogadorAtual.uid = window.ADMIN_ID;
+                jogadorAtual.isAdmin = true;
+                localStorage.setItem("dragon_war_uid_ativo", window.ADMIN_ID);
+            } else {
+                jogadorAtual.uid = uidSalvo;
+                if(uidSalvo === window.ADMIN_ID) {
+                    jogadorAtual.isAdmin = true;
+                }
+            }
+            atualizarInterfacePerfil();
+        });
 
         function entrarNoJogo() {
             document.getElementById('home-screen').classList.remove('active');
@@ -506,40 +554,65 @@
             mudarAba('config', document.querySelector('.sidebar button:nth-child(8)'));
         }
 
-        function abrirNovoJogo() {
+        // Criar Novo Jogo e registrar no Firebase
+        async function abrirNovoJogo() {
             let nome = prompt("Digite o nome do seu novo personagem:");
             if(nome && nome.trim() !== "") {
                 let novoUid = 'DRG-' + Math.floor(1000 + Math.random() * 9000);
+                
                 jogadorAtual.nome = nome;
                 jogadorAtual.uid = novoUid;
-                jogadorAtual.moedas = 10000; // Moedas iniciais para novo jogo
+                jogadorAtual.moedas = 15000;
+                jogadorAtual.isAdmin = (novoUid === window.ADMIN_ID);
 
-                atualizarInterfacePerfil();
-                alert(`Nova conta criada com sucesso para ${nome}!\nSeu UID de controle é: ${novoUid}`);
-                salvarProgressoLocal();
+                try {
+                    // Salvando no Firestore (coleção "jogadores")
+                    const docRef = window.fbDoc(window.fbDb, "jogadores", novoUid);
+                    await window.fbSetDoc(docRef, jogadorAtual);
+
+                    localStorage.setItem("dragon_war_uid_ativo", novoUid);
+                    atualizarInterfacePerfil();
+                    alert(`Nova conta criada e salva no Firebase!\nSeu UID exclusivo é: ${novoUid}`);
+                } catch (erro) {
+                    console.error("Erro ao salvar no Firebase: ", erro);
+                    alert("Erro ao conectar com o Firebase. Verifique sua conexão.");
+                }
             }
         }
 
-        function salvarProgressoLocal() {
-            localStorage.setItem("dragon_war_jogador", JSON.stringify(jogadorAtual));
-            alert(`Progresso salvo com sucesso!\nControlador ativo: [UID: ${jogadorAtual.uid}] - Jogador: ${jogadorAtual.nome}`);
+        // Salvar Progresso atual no Firebase
+        async function salvarProgressoFirebase() {
+            try {
+                const docRef = window.fbDoc(window.fbDb, "jogadores", jogadorAtual.uid);
+                await window.fbSetDoc(docRef, jogadorAtual, { merge: true });
+                alert(`Progresso do usuário [UID: ${jogadorAtual.uid}] salvo com sucesso no Firebase!`);
+            } catch (erro) {
+                console.error("Erro ao salvar: ", erro);
+                alert("Erro ao salvar progresso na nuvem.");
+            }
         }
 
-        function abrirCarregar() {
-            let uidBusca = prompt("Digite o seu UID de Jogador (Ex: DRG-9482):");
-            if(uidBusca) {
-                let dadosSalvos = localStorage.getItem("dragon_war_jogador");
-                if(dadosSalvos) {
-                    let conta = JSON.parse(dadosSalvos);
-                    if(conta.uid === uidBusca) {
-                        jogadorAtual = conta;
+        // Carregar Conta do Jogador pelo Firebase
+        async function carregarContaFirebase() {
+            let uidBusca = prompt("Digite o seu UID de Jogador (Ex: DRG-1234 ou seu ID de Admin):");
+            if(uidBusca && uidBusca.trim() !== "") {
+                try {
+                    const docRef = window.fbDoc(window.fbDb, "jogadores", uidBusca);
+                    const docSnap = await window.fbGetDoc(docRef);
+
+                    if (docSnap.exists()) {
+                        jogadorAtual = docSnap.data();
+                        jogadorAtual.isAdmin = (jogadorAtual.uid === window.ADMIN_ID);
+                        
+                        localStorage.setItem("dragon_war_uid_ativo", jogadorAtual.uid);
                         atualizarInterfacePerfil();
-                        alert(`Conta de ${conta.nome} carregada com sucesso!`);
+                        alert(`Conta de ${jogadorAtual.nome} carregada com sucesso do Firebase!`);
                     } else {
-                        alert("Nenhum registro encontrado com este UID exato neste dispositivo.");
+                        alert("Nenhum jogador encontrado com este UID no banco de dados.");
                     }
-                } else {
-                    alert("Nenhum dado salvo encontrado no sistema.");
+                } catch (erro) {
+                    console.error("Erro ao buscar: ", erro);
+                    alert("Erro ao consultar o Firebase.");
                 }
             }
         }
@@ -551,6 +624,17 @@
             document.getElementById('resumo-uid-txt').innerText = jogadorAtual.uid;
             document.getElementById('resumo-moedas').innerText = jogadorAtual.moedas.toLocaleString();
             document.getElementById('rank-user-1').innerText = jogadorAtual.nome;
+
+            // Verificação de Admin
+            if(jogadorAtual.uid === window.ADMIN_ID || jogadorAtual.isAdmin) {
+                document.getElementById('cargo-status').innerText = "Status: Administrador Mestre";
+                document.getElementById('resumo-cargo-txt').innerText = "Administrador Mestre (Gabriel)";
+                document.getElementById('resumo-cargo-txt').style.color = "#f5af19";
+            } else {
+                document.getElementById('cargo-status').innerText = "Status: Jogador Ativo";
+                document.getElementById('resumo-cargo-txt').innerText = "Guerreiro (Comum)";
+                document.getElementById('resumo-cargo-txt').style.color = "#38bdf8";
+            }
             
             if(jogadorAtual.avatar) {
                 document.getElementById('home-avatar-img').src = jogadorAtual.avatar;
@@ -562,18 +646,19 @@
             if(jogadorAtual.moedas >= preco) {
                 jogadorAtual.moedas -= preco;
                 atualizarInterfacePerfil();
-                alert(`Compra realizada com sucesso! Você adquiriu: ${nomeItem}.`);
+                salvarProgressoFirebase(); // Salva automaticamente na nuvem ao comprar
+                alert(`Compra realizada! Você adquiriu: ${nomeItem}.`);
             } else {
-                alert("Moedas insuficientes para realizar esta compra!");
+                alert("Moedas insuficientes!");
             }
         }
 
         function iniciarBatalha(modo) {
-            alert(`Entrando na batalha no [Modo ${modo}]! Boa sorte, guerreiro.`);
+            alert(`Entrando na batalha no [Modo ${modo}]!`);
         }
 
         function evoluirPoder(nomePoder) {
-            alert(`Habilidade ${nomePoder} evoluída com sucesso!`);
+            alert(`Habilidade ${nomePoder} evoluída!`);
         }
 
         function usarItem(nomeItem) {
@@ -603,8 +688,8 @@
             }
 
             atualizarInterfacePerfil();
-            salvarProgressoLocal();
-            alert("Configurações atualizadas e salvas com sucesso!");
+            salvarProgressoFirebase();
+            alert("Perfil atualizado e sincronizado com o Firebase!");
         }
     </script>
 </body>
