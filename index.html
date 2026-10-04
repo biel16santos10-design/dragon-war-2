@@ -27,15 +27,15 @@
         .sidebar { width: 280px; background: #1e293b; border-right: 1px solid #334155; display: flex; flex-direction: column; padding: 20px; }
         .user-mini-profile { display: flex; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
         .user-mini-profile img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #3b82f6; margin-right: 12px; }
-        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
-        .nav-menu li { padding: 12px 15px; background: rgba(255,255,255,0.03); border-radius: 6px; cursor: pointer; transition: 0.2s; font-weight: 500; font-size: 14px; }
+        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; flex-grow: 1; overflow-y: auto; max-height: calc(100vh - 150px); }
+        .nav-menu li { padding: 10px 14px; background: rgba(255,255,255,0.03); border-radius: 6px; cursor: pointer; transition: 0.2s; font-weight: 500; font-size: 13px; }
         .nav-menu li:hover, .nav-menu li.active-tab { background: #2563eb; color: #fff; box-shadow: 0 0 10px rgba(37,99,235,0.4); }
 
         .main-content { flex-grow: 1; display: flex; flex-direction: column; height: 100vh; overflow-y: auto; }
         .top-bar { height: 70px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; }
         .top-bar-title { color: #3b82f6; font-weight: bold; font-size: 18px; }
-        .resources-container { display: flex; gap: 15px; }
-        .resource-badge { background: #0f172a; padding: 8px 15px; border-radius: 20px; border: 1px solid #475569; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 8px; }
+        .resources-container { display: flex; gap: 12px; }
+        .resource-badge { background: #0f172a; padding: 6px 14px; border-radius: 20px; border: 1px solid #475569; font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 6px; }
 
         .content-area { padding: 30px; flex-grow: 1; }
         .tab-panel { display: none; }
@@ -45,18 +45,27 @@
         .card-box { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
         .card-box h3 { color: #3b82f6; margin-bottom: 15px; font-size: 18px; }
         
-        .btn-action { padding: 10px 20px; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 14px; }
+        .btn-action { padding: 10px 18px; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 13px; }
         .btn-action:hover { background: #1d4ed8; }
         .btn-success { background: #16a34a; }
         .btn-success:hover { background: #15803d; }
+        .btn-danger { background: #dc2626; }
+        .btn-danger:hover { background: #b91c1c; }
 
-        /* GRID PARA LOJA E SKINS */
-        .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-top: 15px; }
-        .item-card { background: #0f172a; border: 1px solid #475569; border-radius: 8px; padding: 15px; text-align: center; }
-        .item-card img { width: 80px; height: 80px; margin-bottom: 10px; object-fit: contain; }
+        /* GRID DE LOJA E COMBATE */
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+        .item-card { background: #0f172a; border: 1px solid #475569; border-radius: 8px; padding: 15px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
+        .item-card img { width: 60px; height: 60px; margin: 0 auto 10px auto; object-fit: contain; }
         
-        /* CHAT E GUILDA */
-        .chat-box { height: 250px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; padding: 15px; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+        /* ABAS INTERNAS DE LOJA E CHAT */
+        .sub-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        .sub-tab-btn { background: #0f172a; border: 1px solid #475569; color: #94a3b8; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; }
+        .sub-tab-btn.active-sub { background: #2563eb; border-color: #2563eb; color: #fff; }
+        .sub-panel { display: none; }
+        .sub-panel.active-sub-panel { display: block; }
+
+        /* CHAT */
+        .chat-box { height: 240px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; padding: 15px; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
         .chat-input-area { display: flex; gap: 10px; }
     </style>
 </head>
@@ -92,13 +101,13 @@
                 </div>
             </div>
             <ul class="nav-menu">
-                <li onclick="trocarTab('combate', this)" class="active-tab">⚔️ Área de Combate</li>
+                <li onclick="trocarTab('combate', this)" class="active-tab">⚔️ Arena de Combate</li>
                 <li onclick="trocarTab('loja', this)">🛒 Loja de Itens</li>
-                <li onclick="trocarTab('skins', this)">🎨 Skins Personalizadas</li>
-                <li onclick="trocarTab('chat', this)">💬 Chat Global</li>
-                <li onclick="trocarTab('guilda', this)">🛡 Guilda</li>
+                <li onclick="trocarTab('inventario', this)">🎒 Inventário</li>
+                <li onclick="trocarTab('chat', this)">💬 Chat & Comunidade</li>
+                <li onclick="trocarTab('guilda', this)">🛡 Sistema de Guildas</li>
                 <li onclick="trocarTab('config', this)">⚙ Configurações</li>
-                <li onclick="fazerLogout()" style="margin-top: 25px; background: rgba(220,38,38,0.2); color: #f87171;">🚪 Sair da Conta</li>
+                <li onclick="fazerLogout()" style="margin-top: 15px; background: rgba(220,38,38,0.2); color: #f87171;">🚪 Sair da Conta</li>
             </ul>
         </div>
 
@@ -106,8 +115,9 @@
             <div class="top-bar">
                 <div class="top-bar-title" id="titulo-topo">Dragon War — Portal do Jogador</div>
                 <div class="resources-container">
-                    <div class="resource-badge">🪙 Dinheiro: <span id="badge-dinheiro" style="color: #facc15;">0</span></div>
-                    <div class="resource-badge">🔔 <span id="badge-notif">0</span> Notificações</div>
+                    <div class="resource-badge">🪙 Ouro: <span id="badge-dinheiro" style="color: #facc15;">0</span></div>
+                    <div class="resource-badge">❤️ Vida: <span id="badge-vida" style="color: #ef4444;">100</span></div>
+                    <div class="resource-badge">⚡ Energia: <span id="badge-energia" style="color: #38bdf8;">100</span></div>
                 </div>
             </div>
 
@@ -115,60 +125,131 @@
                 
                 <!-- ABA 1: COMBATE -->
                 <div id="tab-combate" class="tab-panel active">
-                    <h2>Arena de Batalha</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Enfrente monstros para ganhar experiência e recompensas em dinheiro.</p>
-                    <div class="card-box" style="text-align: center; padding: 40px;">
-                        <h3 style="font-size: 22px; margin-bottom: 10px;">Monstro Selvagem: Goblin de Elite</h3>
-                        <p style="color: #94a3b8; margin-bottom: 25px;">Prepare suas armas e lute para coletar espólios.</p>
-                        <button class="btn-action btn-success" onclick="atacarMonstro()">⚔️ Atacar Monstro</button>
-                        <div id="resultado-combate" style="margin-top: 20px; font-weight: bold; color: #22c55e;"></div>
+                    <h2>Arena de Combate</h2>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Escolha o nível de desafio e enfrente criaturas para testar sua força e coletar espólios.</p>
+                    
+                    <div class="grid-cards" style="margin-bottom: 25px;">
+                        <div class="item-card" style="border-color: #16a34a;">
+                            <h4 style="color: #16a34a;">Fácil</h4>
+                            <p style="font-size: 13px; color: #94a3b8; margin: 10px 0;">Goblin Selvagem / Slime</p>
+                            <button class="btn-action btn-success" onclick="atacarMob('facil')">Lutar (Fácil)</button>
+                        </div>
+                        <div class="item-card" style="border-color: #3b82f6;">
+                            <h4 style="color: #3b82f6;">Médio</h4>
+                            <p style="font-size: 13px; color: #94a3b8; margin: 10px 0;">Orc Guerreiro / Esqueleto</p>
+                            <button class="btn-action" onclick="atacarMob('medio')">Lutar (Médio)</button>
+                        </div>
+                        <div class="item-card" style="border-color: #eab308;">
+                            <h4 style="color: #eab308;">Difícil</h4>
+                            <p style="font-size: 13px; color: #94a3b8; margin: 10px 0;">Golem de Pedra / Mago Sombrio</p>
+                            <button class="btn-action" style="background: #eab308; color: #000;" onclick="atacarMob('dificil')">Lutar (Difícil)</button>
+                        </div>
+                        <div class="item-card" style="border-color: #dc2626;">
+                            <h4 style="color: #dc2626;">Hard</h4>
+                            <p style="font-size: 13px; color: #94a3b8; margin: 10px 0;">Dragão Ancião / Titã Abissal</p>
+                            <button class="btn-action btn-danger" onclick="atacarMob('hard')">Lutar (Hard)</button>
+                        </div>
+                    </div>
+
+                    <div class="card-box" style="text-align: center; padding: 25px;">
+                        <h3 id="titulo-status-batalha">Relatório de Batalha</h3>
+                        <p id="resultado-combate" style="color: #94a3b8; font-size: 15px; margin-top: 10px;">Selecione um nível acima para iniciar o combate.</p>
                     </div>
                 </div>
 
                 <!-- ABA 2: LOJA -->
                 <div id="tab-loja" class="tab-panel">
-                    <h2>Loja de Equipamentos</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Compre melhorias utilizando seus recursos coletados.</p>
-                    <div class="grid-cards">
-                        <div class="item-card">
-                            <img src="https://api.dicebear.com/7.x/identicon/svg?seed=Sword" alt="Espada">
-                            <h4>Espada de Aço</h4>
-                            <p style="color: #facc15; font-size: 13px; margin: 8px 0;">🪙 1.500</p>
-                            <button class="btn-action" style="padding: 6px 12px; font-size: 12px;" onclick="comprarItem('Espada de Aço', 1500)">Comprar</button>
-                        </div>
-                        <div class="item-card">
-                            <img src="https://api.dicebear.com/7.x/identicon/svg?seed=Potion" alt="Poção">
-                            <h4>Poção de Vida</h4>
-                            <p style="color: #facc15; font-size: 13px; margin: 8px 0;">🪙 300</p>
-                            <button class="btn-action" style="padding: 6px 12px; font-size: 12px;" onclick="comprarItem('Poção de Vida', 300)">Comprar</button>
+                    <h2>Loja de Equipamentos e Suprimentos</h2>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Adquira novas armas, visuais de skins e pacotes de energia e vida.</p>
+                    
+                    <div class="sub-tabs">
+                        <button class="sub-tab-btn active-sub" onclick="trocarSubLoja('armas', this)">⚔️ Armas</button>
+                        <button class="sub-tab-btn" onclick="trocarSubLoja('skins', this)">🎨 Skins</button>
+                        <button class="sub-tab-btn" onclick="trocarSubLoja('suprimentos', this)">🧪 Suprimentos</button>
+                    </div>
+
+                    <!-- SUB-ABA: ARMAS -->
+                    <div id="subloja-armas" class="sub-panel active-sub-panel">
+                        <div class="grid-cards">
+                            <div class="item-card">
+                                <img src="https://api.dicebear.com/7.x/identicon/svg?seed=Sword" alt="Espada">
+                                <h4>Espada de Aço</h4>
+                                <p style="color: #facc15; font-size: 13px; margin: 8px 0;">🪙 1.500</p>
+                                <button class="btn-action" onclick="comprarItemLoja('Espada de Aço', 1500, 'arma')">Comprar</button>
+                            </div>
+                            <div class="item-card">
+                                <img src="https://api.dicebear.com/7.x/identicon/svg?seed=Bow" alt="Arco">
+                                <h4>Arco Élfico</h4>
+                                <p style="color: #facc15; font-size: 13px; margin: 8px 0;">🪙 3.200</p>
+                                <button class="btn-action" onclick="comprarItemLoja('Arco Élfico', 3200, 'arma')">Comprar</button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- ABA 3: SKINS -->
-                <div id="tab-skins" class="tab-panel">
-                    <h2>Personalização de Skins</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Altere o visual do seu personagem e avatar no jogo.</p>
-                    <div class="card-box">
-                        <h3>Seu Avatar Atual</h3>
-                        <div style="display: flex; align-items: center; gap: 20px; margin-top: 15px;">
-                            <img id="skin-preview" src="https://api.dicebear.com/7.x/bottts/svg?seed=Default" alt="Skin" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #3b82f6;">
-                            <div>
-                                <p style="margin-bottom: 10px; font-size: 14px;">Personalize a seed visual da sua skin:</p>
-                                <input type="text" id="input-skin-seed" class="form-control" placeholder="Digite um nome/estilo" style="max-width: 250px; display: inline-block; margin-bottom: 0;">
-                                <button class="btn-action" onclick="atualizarSkin()" style="vertical-align: top; margin-left: 10px;">Aplicar Skin</button>
+                    <!-- SUB-ABA: SKINS -->
+                    <div id="subloja-skins" class="sub-panel">
+                        <div class="grid-cards">
+                            <div class="item-card">
+                                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=CyberKnight" alt="Skin">
+                                <h4>Cavaleiro Cyber</h4>
+                                <p style="color: #facc15; font-size: 13px; margin: 8px 0;">🪙 2.000</p>
+                                <button class="btn-action" onclick="comprarItemLoja('Cavaleiro Cyber', 2000, 'skin', 'CyberKnight')">Comprar</button>
+                            </div>
+                            <div class="item-card">
+                                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowMage" alt="Skin">
+                                <h4>Mago Sombrio</h4>
+                                <p style="color: #facc15; font-size: 13px; margin: 8px 0;">🪙 4.500</p>
+                                <button class="btn-action" onclick="comprarItemLoja('Mago Sombrio', 4500, 'skin', 'ShadowMage')">Comprar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUB-ABA: SUPRIMENTOS -->
+                    <div id="subloja-suprimentos" class="sub-panel">
+                        <div class="grid-cards">
+                            <div class="item-card">
+                                <img src="https://api.dicebear.com/7.x/identicon/svg?seed=HealthPotion" alt="Poção Vida">
+                                <h4>Poção de Vida (+50)</h4>
+                                <p style="color: #facc15; font-size: 13px; margin: 8px 0;">🪙 300</p>
+                                <button class="btn-action" onclick="comprarItemLoja('Poção de Vida', 300, 'suprimento', null, 'vida', 50)">Comprar</button>
+                            </div>
+                            <div class="item-card">
+                                <img src="https://api.dicebear.com/7.x/identicon/svg?seed=EnergyPotion" alt="Poção Energia">
+                                <h4>Elixir de Energia (+50)</h4>
+                                <p style="color: #facc15; font-size: 13px; margin: 8px 0;">🪙 250</p>
+                                <button class="btn-action" onclick="comprarItemLoja('Elixir de Energia', 250, 'suprimento', null, 'energia', 50)">Comprar</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- ABA 4: CHAT -->
-                <div id="tab-chat" class="tab-panel">
-                    <h2>Chat Global da Comunidade</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Converse com outros jogadores online.</p>
+                <!-- ABA 3: INVENTÁRIO -->
+                <div id="tab-inventario" class="tab-panel">
+                    <h2>Inventário do Jogador</h2>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Gerencie seus itens adquiridos, armas e skins customizadas.</p>
+                    
                     <div class="card-box">
+                        <h3>Itens Adquiridos</h3>
+                        <div id="lista-inventario" class="grid-cards" style="margin-top: 15px;">
+                            <!-- Preenchido via script -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ABA 4: CHAT E COMUNIDADE -->
+                <div id="tab-chat" class="tab-panel">
+                    <h2>Central de Comunicação</h2>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Converse com a comunidade global, aliados ou membros da sua guilda.</p>
+                    
+                    <div class="sub-tabs">
+                        <button class="sub-tab-btn active-sub" onclick="trocarSubChat('global', this)">💬 Global</button>
+                        <button class="sub-tab-btn" onclick="trocarSubChat('pv', this)">👤 Mensagens PV</button>
+                        <button class="sub-tab-btn" onclick="trocarSubChat('guilda', this)">🛡 Chat da Guilda</button>
+                    </div>
+
+                    <div class="card-box" style="margin-bottom: 0;">
                         <div class="chat-box" id="chat-mensagens">
-                            <div><strong>[Sistema]:</strong> Bem-vindo ao chat global do Dragon War!</div>
+                            <div><strong>[Sistema]:</strong> Bem-vindo ao canal de chat do Dragon War!</div>
                         </div>
                         <div class="chat-input-area">
                             <input type="text" id="input-chat-msg" class="form-control" placeholder="Digite sua mensagem..." style="margin-bottom: 0;" onkeypress="if(event.key === 'Enter') enviarMensagemChat()">
@@ -177,33 +258,66 @@
                     </div>
                 </div>
 
-                <!-- ABA 5: GUILDA -->
+                <!-- ABA 5: SISTEMA DE GUILDAS -->
                 <div id="tab-guilda" class="tab-panel">
                     <h2>Sistema de Guildas</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Junte forças com aliados para dominar o servidor.</p>
-                    <div class="card-box">
-                        <h3>Exército HILLS / Guilda Ativa</h3>
-                        <p style="color: #94a3b8; font-size: 14px; line-height: 1.6;">Você faz parte da elite da guilda. Cooperem em missões diárias para desbloquear bônus exclusivos de experiência e ouro.</p>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Crie sua própria facção ou junte-se a uma guilda existente para dominar o servidor.</p>
+                    
+                    <div id="painel-sem-guilda">
+                        <div class="grid-cards" style="grid-template-columns: 1fr 1fr; margin-bottom: 25px;">
+                            <div class="card-box" style="margin-bottom: 0;">
+                                <h3>Criar Nova Guilda</h3>
+                                <p style="color: #94a3b8; font-size: 13px; margin-bottom: 15px;">Cumpra a taxa de fundação de 🪙 5.000 e personalize sua guilda.</p>
+                                <input type="text" id="guilda-nome-novo" class="form-control" placeholder="Nome da Guilda">
+                                <input type="text" id="guilda-foto-novo" class="form-control" placeholder="URL da Foto ou Seed Visual">
+                                <select id="guilda-tipo-novo" class="form-control">
+                                    <option value="publica">Aberta (Pública)</option>
+                                    <option value="privada">Fechada (Com Senha / Convite)</option>
+                                </select>
+                                <input type="password" id="guilda-senha-novo" class="form-control" placeholder="Senha (Apenas se fechada)" style="display:none;">
+                                <button class="btn-action btn-success" onclick="criarGuilda()">Fundar Guilda (🪙 5.000)</button>
+                            </div>
+
+                            <div class="card-box" style="margin-bottom: 0;">
+                                <h3>Entrar em Guilda Existente</h3>
+                                <p style="color: #94a3b8; font-size: 13px; margin-bottom: 15px;">Entre em uma guilda pública aleatória aberta ou insira os dados específicos.</p>
+                                <button class="btn-action" onclick="entrarGuildaAleatoria()" style="margin-bottom: 15px; width: 100%;">Entrar em Guilda Aleatória</button>
+                                <hr style="border-color: #334155; margin: 15px 0;">
+                                <input type="text" id="guilda-entrar-nome" class="form-control" placeholder="Nome da Guilda Alvo">
+                                <input type="password" id="guilda-entrar-senha" class="form-control" placeholder="Senha de Acesso (Se houver)">
+                                <button class="btn-action" onclick="entrarGuildaEspecifica()" style="width: 100%;">Entrar por Nome</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="painel-com-guilda" style="display: none;">
+                        <div class="card-box">
+                            <div style="display: flex; align-items: center; gap: 20px;">
+                                <img id="guilda-info-foto" src="" alt="Guilda" style="width: 70px; height: 70px; border-radius: 50%; border: 2px solid #eab308;">
+                                <div>
+                                    <h3 id="guilda-info-nome" style="color: #eab308; margin-bottom: 5px;">Nome da Guilda</h3>
+                                    <p id="guilda-info-status" style="color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Tipo: Pública</p>
+                                    <button class="btn-action btn-danger" onclick="sairDaGuilda()" style="padding: 6px 12px; font-size: 12px;">Sair da Guilda</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- ABA 6: CONFIGURAÇÕES -->
                 <div id="tab-config" class="tab-panel">
                     <h2>Configurações do Jogador</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Ajuste preferências da sua conta e do jogo.</p>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Ajuste o seu perfil e personalize seu visual no jogo.</p>
+                    
                     <div class="card-box">
-                        <h3>Preferências Salvas</h3>
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: block; margin-bottom: 10px; font-size: 14px; cursor: pointer;">
-                                <input type="checkbox" id="check-sons" checked> Ativar sons de combate e efeitos
-                            </label>
-                            <label style="display: block; margin-bottom: 10px; font-size: 14px; cursor: pointer;">
-                                <input type="checkbox" id="check-notif" checked> Receber notificações de eventos e bosses
-                            </label>
-                        </div>
-                        <div style="margin-top: 20px; border-top: 1px solid #334155; padding-top: 15px;">
-                            <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #94a3b8;">Alterar Nome de Exibição no Jogo:</label>
+                        <h3>Perfil do Personagem</h3>
+                        <div style="margin-top: 15px;">
+                            <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #94a3b8;">Nome de Exibição:</label>
                             <input type="text" id="input-novo-nome" class="form-control" placeholder="Seu novo nome" style="max-width: 300px; display: inline-block;">
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #94a3b8;">Avatar / Seed Visual:</label>
+                            <input type="text" id="input-nova-seed" class="form-control" placeholder="Seed do Avatar (ex: Player1)" style="max-width: 300px; display: inline-block;">
                             <button class="btn-action" onclick="salvarConfiguracoes()" style="vertical-align: top; margin-left: 10px;">Salvar Alterações</button>
                         </div>
                     </div>
@@ -236,8 +350,18 @@
         const db = firebase.firestore();
 
         let usuarioAtualId = null;
-        let dadosJogadorLocal = { nome: "", dinheiro: 0, nivel: 1, skinSeed: "Default" };
+        let dadosJogadorLocal = { 
+            nome: "", 
+            dinheiro: 1000, 
+            vida: 100, 
+            energia: 100, 
+            nivel: 1, 
+            skinSeed: "Default", 
+            inventario: [], 
+            guildaNome: "" 
+        };
         let modoCriarConta = false;
+        let chatCanalAtual = 'global';
 
         function alternarModoAuth() {
             modoCriarConta = !modoCriarConta;
@@ -284,8 +408,12 @@
                             uid: user.uid,
                             email: email,
                             nivel: 1,
-                            dinheiro: 1000,
-                            skinSeed: email
+                            dinheiro: 1500,
+                            vida: 100,
+                            energia: 100,
+                            skinSeed: email,
+                            inventario: [],
+                            guildaNome: ""
                         };
 
                         db.collection("jogadores").doc(user.uid).set(novoPerfil)
@@ -307,7 +435,7 @@
                         mudarTela('game-screen');
                     })
                     .catch((error) => {
-                        alert("Erro ao entrar: Verifique seu e-mail e senha ou crie uma nova conta.");
+                        alert("Erro ao entrar: Verifique seu e-mail e senha.");
                     });
             }
         }
@@ -317,21 +445,26 @@
             docRef.get().then((doc) => {
                 if (doc.exists) {
                     dadosJogadorLocal = doc.data();
+                    if(!dadosJogadorLocal.inventario) dadosJogadorLocal.inventario = [];
                     sincronizarInterface();
                 } else {
                     dadosJogadorLocal = {
                         nome: email.split('@')[0],
                         uid: uid,
                         nivel: 1,
-                        dinheiro: 1000,
-                        skinSeed: email
+                        dinheiro: 1500,
+                        vida: 100,
+                        energia: 100,
+                        skinSeed: email,
+                        inventario: [],
+                        guildaNome: ""
                     };
                     docRef.set(dadosJogadorLocal).then(() => {
                         sincronizarInterface();
                     });
                 }
             }).catch(err => {
-                console.error("Erro ao carregar dados do jogador:", err);
+                console.error("Erro ao carregar dados:", err);
             });
         }
 
@@ -339,11 +472,19 @@
             document.getElementById('sidebar-nome').innerText = dadosJogadorLocal.nome || 'Jogador';
             document.getElementById('sidebar-nivel').innerText = `Nível ${dadosJogadorLocal.nivel || 1}`;
             document.getElementById('badge-dinheiro').innerText = dadosJogadorLocal.dinheiro || 0;
+            document.getElementById('badge-vida').innerText = dadosJogadorLocal.vida || 100;
+            document.getElementById('badge-energia').innerText = dadosJogadorLocal.energia || 100;
+
             let avatarUrl = `https://api.dicebear.com/7.x/bottts/svg?seed=${dadosJogadorLocal.skinSeed || 'Default'}`;
             document.getElementById('sidebar-avatar').src = avatarUrl;
-            document.getElementById('skin-preview').src = avatarUrl;
+            
             let inputNome = document.getElementById('input-novo-nome');
             if(inputNome) inputNome.value = dadosJogadorLocal.nome || '';
+            let inputSeed = document.getElementById('input-nova-seed');
+            if(inputSeed) inputSeed.value = dadosJogadorLocal.skinSeed || '';
+
+            atualizarInventarioVisual();
+            atualizarPainelGuildaVisual();
         }
 
         function salvarDadosNoBanco() {
@@ -351,60 +492,247 @@
             db.collection("jogadores").doc(usuarioAtualId).update({
                 nome: dadosJogadorLocal.nome,
                 dinheiro: dadosJogadorLocal.dinheiro,
+                vida: dadosJogadorLocal.vida,
+                energia: dadosJogadorLocal.energia,
                 nivel: dadosJogadorLocal.nivel,
-                skinSeed: dadosJogadorLocal.skinSeed
+                skinSeed: dadosJogadorLocal.skinSeed,
+                inventario: dadosJogadorLocal.inventario,
+                guildaNome: dadosJogadorLocal.guildaNome
             }).then(() => {
                 sincronizarInterface();
             }).catch(err => {
-                console.error("Erro ao salvar:", err);
+                console.error("Erro ao salvar dados:", err);
             });
         }
 
         function salvarConfiguracoes() {
             let novoNome = document.getElementById('input-novo-nome').value.trim();
-            if(novoNome) {
-                dadosJogadorLocal.nome = novoNome;
+            let novaSeed = document.getElementById('input-nova-seed').value.trim();
+            if(novoNome) dadosJogadorLocal.nome = novoNome;
+            if(novaSeed) dadosJogadorLocal.skinSeed = novaSeed;
+            salvarDadosNoBanco();
+            alert("Configurações e perfil salvos com sucesso!");
+        }
+
+        /* COMBATE POR DIFICULDADE */
+        function atacarMob(dificuldade) {
+            let recompensaOuro = 0;
+            let custoEnergia = 0;
+            let danoSofrido = 0;
+            let nomeMob = "";
+
+            if(dificuldade === 'facil') {
+                nomeMob = "Slime Selvagem";
+                recompensaOuro = Math.floor(Math.random() * 80) + 30;
+                custoEnergia = 10;
+                danoSofrido = 5;
+            } else if(dificuldade === 'medio') {
+                nomeMob = "Orc Guerreiro";
+                recompensaOuro = Math.floor(Math.random() * 200) + 100;
+                custoEnergia = 25;
+                danoSofrido = 15;
+            } else if(dificuldade === 'dificil') {
+                nomeMob = "Golem de Pedra";
+                recompensaOuro = Math.floor(Math.random() * 500) + 250;
+                custoEnergia = 45;
+                danoSofrido = 35;
+            } else if(dificuldade === 'hard') {
+                nomeMob = "Dragão Ancião";
+                recompensaOuro = Math.floor(Math.random() * 1200) + 600;
+                custoEnergia = 70;
+                danoSofrido = 60;
             }
+
+            if(dadosJogadorLocal.energia < custoEnergia) {
+                alert("Energia insuficiente! Descanse ou compre elixires de energia na loja.");
+                return;
+            }
+
+            dadosJogadorLocal.energia -= custoEnergia;
+            dadosJogadorLocal.vida = Math.max(0, dadosJogadorLocal.vida - danoSofrido);
+            dadosJogadorLocal.dinheiro += recompensaOuro;
+            dadosJogadorLocal.nivel += 1;
+
             salvarDadosNoBanco();
-            alert("Configurações salvas com sucesso no Firebase!");
+            document.getElementById('titulo-status-batalha').innerText = `Vitória sobre o ${nomeMob}!`;
+            document.getElementById('resultado-combate').innerHTML = `Você venceu a batalha no modo <b style="color: #3b82f6;">${dificuldade.toUpperCase()}</b>!<br>Garantiu 🪙 +${recompensaOuro} de Ouro, sofreu -${danoSofrido} de vida e subiu de nível!`;
         }
 
-        function atacarMonstro() {
-            let ganhoDinheiro = Math.floor(Math.random() * 150) + 50;
-            dadosJogadorLocal.dinheiro += ganhoDinheiro;
-            salvarDadosNoBanco();
-            document.getElementById('resultado-combate').innerText = `Vitória! Você derrotou o monstro e ganhou 🪙 ${ganhoDinheiro}!`;
+        /* LOJA */
+        function trocarSubLoja(subId, element) {
+            document.querySelectorAll('#tab-loja .sub-panel').forEach(p => p.classList.remove('active-sub-panel'));
+            document.querySelectorAll('#tab-loja .sub-tab-btn').forEach(b => b.classList.remove('active-sub'));
+            document.getElementById('subloja-' + subId).classList.add('active-sub-panel');
+            element.classList.add('active-sub');
         }
 
-        function comprarItem(nomeItem, custo) {
-            if(dadosJogadorLocal.dinheiro >= custo) {
-                dadosJogadorLocal.dinheiro -= custo;
-                salvarDadosNoBanco();
-                alert(`Você comprou: ${nomeItem} com sucesso!`);
+        function comprarItemLoja(nomeItem, custo, tipo, skinSeedRef = null, atributoAlvo = null, valorAlvo = 0) {
+            if(dadosJogadorLocal.dinheiro < custo) {
+                alert("Ouro insuficiente para realizar esta compra!");
+                return;
+            }
+
+            dadosJogadorLocal.dinheiro -= custo;
+
+            if(tipo === 'suprimento') {
+                if(atributoAlvo === 'vida') dadosJogadorLocal.vida = Math.min(100, dadosJogadorLocal.vida + valorAlvo);
+                if(atributoAlvo === 'energia') dadosJogadorLocal.energia = Math.min(100, dadosJogadorLocal.energia + valorAlvo);
+                alert(`Suprimento adquirido e aplicado: ${nomeItem}!`);
             } else {
-                alert("Dinheiro insuficiente para esta compra!");
+                dadosJogadorLocal.inventario.push({
+                    nome: nomeItem,
+                    tipo: tipo,
+                    skinSeed: skinSeedRef || 'Default',
+                    data: new Date().toLocaleDateString()
+                });
+                alert(`Parabéns! ${nomeItem} foi adicionado ao seu Inventário.`);
             }
+
+            salvarDadosNoBanco();
         }
 
-        function atualizarSkin() {
-            let novaSeed = document.getElementById('input-skin-seed').value.trim();
-            if(novaSeed) {
-                dadosJogadorLocal.skinSeed = novaSeed;
-                salvarDadosNoBanco();
-                alert("Skin atualizada com sucesso!");
+        function atualizarInventarioVisual() {
+            let container = document.getElementById('lista-inventario');
+            if(!container) return;
+            container.innerHTML = "";
+
+            if(dadosJogadorLocal.inventario.length === 0) {
+                container.innerHTML = `<p style="color: #94a3b8; font-size: 13px;">Seu inventário está vazio. Visite a loja para adquirir armas e skins.</p>`;
+                return;
             }
+
+            dadosJogadorLocal.inventario.forEach((item, index) => {
+                let div = document.createElement('div');
+                div.className = "item-card";
+                div.innerHTML = `
+                    <img src="https://api.dicebear.com/7.x/identicon/svg?seed=${item.nome}" alt="Item">
+                    <h4 style="font-size: 14px; margin-bottom: 5px;">${item.nome}</h4>
+                    <small style="color: #94a3b8; display: block; margin-bottom: 10px;">Tipo: ${item.tipo.toUpperCase()}</small>
+                    ${item.tipo === 'skin' ? `<button class="btn-action" style="padding: 5px 10px; font-size: 11px;" onclick="equiparSkinItem('${item.skinSeed}')">Equipar Skin</button>` : ''}
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function equiparSkinItem(seed) {
+            dadosJogadorLocal.skinSeed = seed;
+            salvarDadosNoBanco();
+            alert("Skin equipada com sucesso!");
+        }
+
+        /* CHAT */
+        function trocarSubChat(canal, element) {
+            chatCanalAtual = canal;
+            document.querySelectorAll('#tab-chat .sub-tab-btn').forEach(b => b.classList.remove('active-sub'));
+            element.classList.add('active-sub');
+            let chatBox = document.getElementById('chat-mensagens');
+            chatBox.innerHTML = `<div><strong>[Sistema - Canal ${canal.toUpperCase()}]:</strong> Conectado ao chat.</div>`;
         }
 
         function enviarMensagemChat() {
             let input = document.getElementById('input-chat-msg');
             let msg = input.value.trim();
-            if(msg) {
-                let chatBox = document.getElementById('chat-mensagens');
-                let div = document.createElement('div');
-                div.innerHTML = `<strong>${dadosJogadorLocal.nome || 'Você'}:</strong> ${msg}`;
-                chatBox.appendChild(div);
-                chatBox.scrollTop = chatBox.scrollHeight;
-                input.value = "";
+            if(!msg) return;
+
+            if(chatCanalAtual === 'guilda' && !dadosJogadorLocal.guildaNome) {
+                alert("Você precisa estar em uma guilda para acessar o chat da guilda!");
+                return;
+            }
+
+            let chatBox = document.getElementById('chat-mensagens');
+            let div = document.createElement('div');
+            let prefixoTag = chatCanalAtual === 'guilda' ? '[Guilda]' : (chatCanalAtual === 'pv' ? '[PV]' : '[Global]');
+            div.innerHTML = `<strong>${prefixoTag} ${dadosJogadorLocal.nome || 'Você'}:</strong> ${msg}`;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            input.value = "";
+        }
+
+        /* GUILDAS */
+        function criarGuilda() {
+            let nome = document.getElementById('guilda-nome-novo').value.trim();
+            let foto = document.getElementById('guilda-foto-novo').value.trim() || 'GuildLogo';
+            let tipo = document.getElementById('guilda-tipo-novo').value;
+
+            if(!nome) {
+                alert("Digite um nome válido para a guilda.");
+                return;
+            }
+
+            if(dadosJogadorLocal.dinheiro < 5000) {
+                alert("Você precisa de pelo menos 🪙 5.000 de Ouro para fundar uma guilda!");
+                return;
+            }
+
+            dadosJogadorLocal.dinheiro -= 5000;
+            dadosJogadorLocal.guildaNome = nome;
+
+            db.collection("guildas").doc(nome).set({
+                nome: nome,
+                lider: dadosJogadorLocal.nome,
+                foto: foto,
+                tipo: tipo,
+                membrosCount: 1
+            }).then(() => {
+                salvarDadosNoBanco();
+                alert(`Guilda "${nome}" fundada com sucesso!`);
+            }).catch(err => {
+                alert("Erro ao criar guilda: " + err.message);
+            });
+        }
+
+        function entrarGuildaAleatoria() {
+            db.collection("guildas").where("tipo", "==", "publica").get().then((snapshot) => {
+                if(snapshot.empty) {
+                    alert("Não há guildas públicas abertas no momento.");
+                    return;
+                }
+                let guilds = [];
+                snapshot.forEach(doc => guilds.push(doc.data()));
+                let guildaEscolhida = guilds[Math.floor(Math.random() * guilds.length)];
+                
+                dadosJogadorLocal.guildaNome = guildaEscolhida.nome;
+                salvarDadosNoBanco();
+                alert(`Você entrou para a guilda pública: ${guildaEscolhida.nome}!`);
+            });
+        }
+
+        function entrarGuildaEspecifica() {
+            let nome = document.getElementById('guilda-entrar-nome').value.trim();
+            if(!nome) {
+                alert("Insira o nome da guilda.");
+                return;
+            }
+
+            db.collection("guildas").doc(nome).get().then((doc) => {
+                if(!doc.exists) {
+                    alert("Esta guilda não existe.");
+                    return;
+                }
+                dadosJogadorLocal.guildaNome = nome;
+                salvarDadosNoBanco();
+                alert(`Você entrou na guilda ${nome} com sucesso!`);
+            });
+        }
+
+        function sairDaGuilda() {
+            dadosJogadorLocal.guildaNome = "";
+            salvarDadosNoBanco();
+            alert("Você saiu da guilda.");
+        }
+
+        function atualizarPainelGuildaVisual() {
+            let semGuilda = document.getElementById('painel-sem-guilda');
+            let comGuilda = document.getElementById('painel-com-guilda');
+            
+            if(dadosJogadorLocal.guildaNome) {
+                semGuilda.style.display = 'none';
+                comGuilda.style.display = 'block';
+                document.getElementById('guilda-info-nome').innerText = dadosJogadorLocal.guildaNome;
+                document.getElementById('guilda-info-foto').src = `https://api.dicebear.com/7.x/identicon/svg?seed=${dadosJogadorLocal.guildaNome}`;
+            } else {
+                semGuilda.style.display = 'block';
+                comGuilda.style.display = 'none';
             }
         }
 
