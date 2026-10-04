@@ -85,7 +85,7 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <div><div id="sidebar-name" style="font-weight:bold;font-size:15px">Usuário</div><div style="font-size:11px;color:#94a3b8" id="sidebar-role">Jogador Real</div></div>
 </div>
 <ul class="menu-list" id="menu-list"></ul>
-<button class="btn btn-gray" onclick="sairDaConta()" style="margin-top:12px;width:100%;font-size:12px">🚪 SAIR DA CONTA</button>
+<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--panel-border);flex-shrink:0"><button class="btn btn-gray" onclick="sairDaConta()" style="width:100%;font-size:12px;border:1px solid #64748b">🚪 SAIR DA CONTA</button></div>
 </sidebar>
 
 <main>
@@ -161,7 +161,7 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <label>Nome exibido:</label><input type="text" id="player-edit-name" class="form-control">
 <label>E-mail:</label><input type="text" id="player-edit-email" class="form-control" readonly>
 <label>URL do Avatar:</label><input type="text" id="player-edit-avatar" class="form-control" placeholder="https://...">
-<div id="perfil-recursos" style="margin:10px 0;color:#94a3b8"></div><button class="btn" onclick="salvarPerfilJogador()">Salvar Alterações</button>
+<div id="perfil-recursos" style="margin:10px 0;color:#94a3b8"></div><button class="btn" onclick="salvarPerfilJogador()">Salvar Alterações</button><button class="btn btn-gray" onclick="sairDaConta()" style="margin-top:12px;border:1px solid #64748b">🚪 SAIR DA CONTA</button>
 </div>
 <div style="background:var(--panel-bg);padding:20px;border-radius:8px;border:1px solid var(--panel-border)">
 <h4>🔊 Sistema de Som</h4><label>Volume da Música:</label><input type="range" min="0" max="100" value="60" class="form-control" id="vol-musica" oninput="atualizarVolume()">
@@ -363,7 +363,7 @@ function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":
 window.atualizarVolume=()=>{document.getElementById("bg-music").volume=Number(document.getElementById("vol-musica").value)/100};
 window.alternarSom=async()=>{let a=document.getElementById("bg-music");if(a.paused){a.volume=Number(document.getElementById("vol-musica").value)/100;try{await a.play()}catch(e){alert("O navegador bloqueou o áudio. Clique novamente após interagir com a página.")}}else a.pause()};
 
-window.sairDaConta=async()=>{try{if(heartbeatTimer)clearInterval(heartbeatTimer);if(unsubscribeGlobal)unsubscribeGlobal();if(unsubscribeSupport)unsubscribeSupport();if(auth.currentUser)await updateDoc(doc(db,"jogadores_reais",auth.currentUser.uid),{status:"Offline",lastSeen:serverTimestamp()});await signOut(auth)}catch(e){console.error(e)}finally{document.getElementById("game-container").classList.add("hidden");document.getElementById("login-screen").classList.remove("hidden");document.getElementById("auth-email").value="";document.getElementById("auth-pass").value="";notificar("🚪 Conta desconectada. Faça login novamente.","info")}};
+window.sairDaConta=async()=>{try{if(heartbeatTimer)clearInterval(heartbeatTimer);heartbeatTimer=null;if(unsubscribeGlobal){unsubscribeGlobal();unsubscribeGlobal=null}if(unsubscribeSupport){unsubscribeSupport();unsubscribeSupport=null}const u=auth.currentUser;if(u){try{await updateDoc(doc(db,"jogadores_reais",u.uid),{status:"Offline",lastSeen:serverTimestamp()})}catch(e){console.warn("Não foi possível atualizar o status offline",e)}await signOut(auth)}}catch(e){console.error(e)}finally{usuarioAtual=null;document.getElementById("game-container").classList.add("hidden");document.getElementById("login-screen").classList.remove("hidden");document.getElementById("auth-email").value="";document.getElementById("auth-pass").value="";document.getElementById("auth-email").focus();notificar("🚪 Conta desconectada. Faça login novamente para entrar em outra conta.","info")}};
 
 onAuthStateChanged(auth,async user=>{if(!user)return;try{await carregarJogador();await carregarCatalogoCustom();await carregarLogs();document.getElementById("login-screen").classList.add("hidden");document.getElementById("game-container").classList.remove("hidden");try{document.getElementById("bg-music").volume=.6}catch(e){}}catch(e){console.error(e)}});
 </script>
