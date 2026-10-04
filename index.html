@@ -33,9 +33,9 @@
     button:disabled { background: #475569; cursor: not-allowed; opacity: 0.6; }
     
     /* NAV & PANELS */
-    .nav-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 10px; }
-    .nav-bar-sub { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 15px; }
-    .nav-btn { padding: 8px 2px; font-size: 0.72rem; background: #334155; border: none; color: #fff; border-radius: 6px; cursor: pointer; }
+    .nav-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 6px; }
+    .nav-bar-sub { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-bottom: 15px; }
+    .nav-btn { padding: 8px 2px; font-size: 0.72rem; background: #334155; border: none; color: #fff; border-radius: 6px; cursor: pointer; text-align: center; }
     .nav-btn.active { background: var(--primary); color: #000; font-weight: bold; }
     
     /* HUD */
@@ -55,9 +55,25 @@
     .item-card { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 10px; text-align: center; font-size: 0.82rem; margin-bottom: 8px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
     .item-card img { width: 64px; height: 64px; object-fit: contain; margin-bottom: 6px; border-radius: 6px; }
     .item-card button { padding: 6px; font-size: 0.78rem; margin-top: 5px; width: 100%; }
-    
+    .item-card.equipped { border: 2px solid var(--success); background: rgba(16, 185, 129, 0.08); }
+
     /* BOSS ARENA */
     .boss-avatar { width: 100px; height: 100px; object-fit: contain; margin: 0 auto 10px; display: block; filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.4)); }
+
+    /* RANKING LISTA */
+    .ranking-list { display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; }
+    .ranking-item { display: flex; align-items: center; gap: 10px; background: #0f172a; border: 1px solid #334155; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; }
+    .ranking-item .rank-num { font-size: 1.1rem; font-weight: bold; width: 25px; text-align: center; color: var(--accent); }
+    .ranking-item img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--primary); }
+    .ranking-item .rank-info { flex: 1; }
+    .ranking-item .rank-badge { padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+
+    /* PATENTES COR */
+    .badge-bronze { background: #78350f; color: #fef3c7; }
+    .badge-prata { background: #475569; color: #f1f5f9; }
+    .badge-ouro { background: #b45309; color: #fef3c7; }
+    .badge-platina { background: #0284c7; color: #e0f2fe; }
+    .badge-lendario { background: #7e22ce; color: #f3e8ff; }
 
     .hidden { display: none !important; }
     .admin-badge { background: var(--accent); color: #000; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
@@ -67,7 +83,6 @@
     .chat-box { background: #0f172a; border: 1px solid #334155; border-radius: 8px; height: 180px; overflow-y: auto; padding: 10px; font-size: 0.8rem; margin-bottom: 8px; }
     .chat-msg { margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px dashed #334155; }
     .chat-msg.admin-msg { color: var(--accent); font-weight: bold; background: rgba(245, 158, 11, 0.1); padding: 4px; border-radius: 4px; }
-    .notif-card { background: #0f172a; border-left: 4px solid var(--primary); padding: 10px; margin-bottom: 8px; border-radius: 4px; font-size: 0.83rem; }
   </style>
 </head>
 <body>
@@ -149,14 +164,15 @@
     <!-- NAVEGAÇÃO -->
     <div class="nav-bar">
       <button class="nav-btn active" onclick="showPanel('combate', this)">⚔️ Batalhar</button>
+      <button class="nav-btn" onclick="showPanel('mochila', this)">🎒 Mochila</button>
       <button class="nav-btn" onclick="showPanel('loja', this)">🏪 Loja</button>
-      <button class="nav-btn" onclick="showPanel('upgrades', this)">⚒️ Upgrades</button>
-      <button class="nav-btn" onclick="showPanel('perfil', this)">👤 Perfil</button>
+      <button class="nav-btn" onclick="showPanel('upgrades', this)">⚒ Upgrades</button>
     </div>
     <div class="nav-bar-sub">
+      <button class="nav-btn" onclick="showPanel('ranking', this); loadGlobalRanking();">🏆 Ranking</button>
+      <button class="nav-btn" onclick="showPanel('perfil', this)">👤 Perfil</button>
       <button class="nav-btn" onclick="showPanel('daily', this)">🎁 Diário</button>
       <button class="nav-btn" onclick="showPanel('chat', this)">💬 Chat</button>
-      <button class="nav-btn" onclick="showPanel('notif', this)">🔔 Notificações</button>
       <button class="nav-btn hidden" id="nav-admin-btn" onclick="showPanel('admin', this)" style="background:#7c3aed;">⚙️ ADM</button>
     </div>
 
@@ -175,7 +191,7 @@
       </div>
 
       <div style="background:#0f172a; padding:12px; border-radius:8px; text-align:center; margin-bottom:10px;">
-        <img id="boss-img" src="https://img.icons8.com/isometric-folders/100/goblin.png" class="boss-avatar" alt="Boss">
+        <img id="boss-img" src="https://img.icons8.com/color/96/goblin.png" class="boss-avatar" alt="Boss">
         <h4 id="boss-name" style="color:var(--danger)">Goblin Rei</h4>
         <p style="font-size:0.85rem;">HP do Chefe: <span id="boss-hp">60</span></p>
       </div>
@@ -185,6 +201,20 @@
         <button onclick="rest()" style="background:var(--success);">💤 Descansar (+20 Eng)</button>
       </div>
       <button onclick="usePotionInCombat()" style="background:var(--accent);">🧪 Usar Poção de Cura</button>
+    </div>
+
+    <!-- MOCHILA / INVENTÁRIO -->
+    <div id="panel-mochila" class="panel-section">
+      <h3>🎒 Meu Inventário</h3>
+      <div class="tabs">
+        <div class="tab active" id="tab-inv-chars" onclick="switchInvCategory('chars')">Skins</div>
+        <div class="tab" id="tab-inv-weapons" onclick="switchInvCategory('weapons')">Armas</div>
+        <div class="tab" id="tab-inv-potions" onclick="switchInvCategory('potions')">Consumíveis</div>
+      </div>
+
+      <div id="inv-chars-list" class="grid-2"></div>
+      <div id="inv-weapons-list" class="grid-2 hidden"></div>
+      <div id="inv-potions-list" class="grid-2 hidden"></div>
     </div>
 
     <!-- LOJA -->
@@ -229,6 +259,15 @@
       </div>
     </div>
 
+    <!-- RANKING GLOBAL -->
+    <div id="panel-ranking" class="panel-section">
+      <h3>🏆 Ranking Global</h3>
+      <p style="font-size:0.8rem; text-align:center; color:#94a3b8; margin-bottom:10px;">Os melhores heróis de Dragon War em tempo real!</p>
+      <div class="ranking-list" id="ranking-container">
+        <p style="text-align:center; color:#94a3b8;">Carregando ranking...</p>
+      </div>
+    </div>
+
     <!-- PERFIL -->
     <div id="panel-perfil" class="panel-section">
       <h3>👤 Editar Perfil</h3>
@@ -259,15 +298,6 @@
       <div style="display:flex; gap:6px;">
         <input type="text" id="chat-input" placeholder="Digite sua mensagem...">
         <button onclick="sendChatMessage()" style="width: auto; padding:0 15px;">Enviar</button>
-      </div>
-    </div>
-
-    <!-- NOTIFICAÇÕES -->
-    <div id="panel-notif" class="panel-section">
-      <h3>🔔 Notificações do Sistema</h3>
-      <div id="notif-list">
-        <div class="notif-card"><strong>Evento de Inauguração:</strong> Bosses Lendários concedem o dobro de Diamantes!</div>
-        <div class="notif-card"><strong>Atualização 2.1:</strong> Novas sprites e 15 personagens adicionados à loja!</div>
       </div>
     </div>
 
@@ -318,7 +348,7 @@
 
   const defaultAvatar = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 24 24' fill='%2338bdf8'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>";
 
-  /* PERSONAGENS AMPLIADOS (15 ITENS COM IMAGENS) */
+  /* LISTA COMPLETA DE PERSONAGENS */
   const shopCharacters = [
     { id: 'c1', name: 'Guerreiro Sombra', atk: 5, hp: 20, price: 100, isGem: false, img: 'https://img.icons8.com/color/96/ninja.png' },
     { id: 'c2', name: 'Mago Elemental', atk: 8, hp: 15, price: 200, isGem: false, img: 'https://img.icons8.com/color/96/wizard.png' },
@@ -337,7 +367,7 @@
     { id: 'c15', name: 'Imperador Dragão', atk: 140, hp: 180, price: 75, isGem: true, img: 'https://img.icons8.com/color/96/dragon.png' }
   ];
 
-  /* ARMAS AMPLIADAS (15 ITENS COM IMAGENS) */
+  /* LISTA COMPLETA DE ARMAS */
   const shopWeapons = [
     { id: 'w1', name: 'Adaga de Madeira', atk: 3, price: 50, isGem: false, img: 'https://img.icons8.com/color/96/dagger.png' },
     { id: 'w2', name: 'Espada de Ferro', atk: 8, price: 120, isGem: false, img: 'https://img.icons8.com/color/96/sword.png' },
@@ -356,7 +386,7 @@
     { id: 'w15', name: 'Orbe do Infinito', atk: 185, price: 80, isGem: true, img: 'https://img.icons8.com/color/96/crystal-ball.png' }
   ];
 
-  /* BOSSES COM IMAGENS INDIVIDUAIS */
+  /* BOSSES */
   const bosses = [
     { name: "Goblin Rei", hp: 60, maxHp: 60, atk: 8, exp: 50, coins: 50, gems: 0, powerEng: 5, img: 'https://img.icons8.com/color/96/goblin.png' },
     { name: "Orc General", hp: 150, maxHp: 150, atk: 18, exp: 120, coins: 120, gems: 0, powerEng: 10, img: 'https://img.icons8.com/color/96/troll.png' },
@@ -415,6 +445,10 @@
         def: 5,
         weaponLvl: 1,
         powerLvl: 0,
+        equippedChar: null,
+        equippedWeapon: null,
+        ownedChars: [],
+        ownedWeapons: [],
         isAdmin: false,
         inventory: { pocao: 2 },
         lastDaily: 0
@@ -467,6 +501,15 @@
     document.getElementById('tab-shop-potions').classList.toggle('active', cat === 'potions');
   }
 
+  function switchInvCategory(cat) {
+    document.getElementById('inv-chars-list').classList.toggle('hidden', cat !== 'chars');
+    document.getElementById('inv-weapons-list').classList.toggle('hidden', cat !== 'weapons');
+    document.getElementById('inv-potions-list').classList.toggle('hidden', cat !== 'potions');
+    document.getElementById('tab-inv-chars').classList.toggle('active', cat === 'chars');
+    document.getElementById('tab-inv-weapons').classList.toggle('active', cat === 'weapons');
+    document.getElementById('tab-inv-potions').classList.toggle('active', cat === 'potions');
+  }
+
   function selectBoss() {
     currentBossIdx = parseInt(document.getElementById('boss-select').value);
     const b = bosses[currentBossIdx];
@@ -496,9 +539,9 @@
       const b = bosses[currentBossIdx];
       player.coins += b.coins;
       player.gems += b.gems;
-      player.powerEnergy += b.powerEng;
+      player.powerEnergy = (player.powerEnergy || 0) + b.powerEng;
       player.exp += b.exp;
-      log(`🎉 Derrotou ${b.name}! Recompensa: 🟡 ${b.coins} | 💎 ${b.gems} | ✨ ${b.powerEng}`);
+      log(`🎉 Derrotou ${b.name}! Recompensa: 🟡 ${b.coins} | 💎 ${b.gems} | ✨ ${b.powerEng} Energia de Poder`);
 
       if (player.exp >= player.level * 100) {
         player.level += 1;
@@ -538,6 +581,7 @@
   }
 
   async function buyChar(id) {
+    if (player.ownedChars && player.ownedChars.includes(id)) return alert("Você já possui este personagem!");
     const item = shopCharacters.find(c => c.id === id);
     if (item.isGem) {
       if (player.gems < item.price) return alert("Diamantes insuficientes!");
@@ -546,15 +590,19 @@
       if (player.coins < item.price) return alert("Moedas insuficientes!");
       player.coins -= item.price;
     }
-    player.atk += item.atk;
-    player.maxHp += item.hp;
-    player.hp = player.maxHp;
-    log(`👤 Personagem desbloqueado: ${item.name}!`);
+    
+    player.ownedChars = player.ownedChars || [];
+    player.ownedChars.push(id);
+    
+    log(`👤 Personagem comprado: ${item.name}! Guardado na Mochila.`);
     await syncData();
+    renderInventoryLists();
+    renderShopLists();
     updateUI();
   }
 
   async function buyWeapon(id) {
+    if (player.ownedWeapons && player.ownedWeapons.includes(id)) return alert("Você já possui esta arma!");
     const item = shopWeapons.find(w => w.id === id);
     if (item.isGem) {
       if (player.gems < item.price) return alert("Diamantes insuficientes!");
@@ -563,9 +611,56 @@
       if (player.coins < item.price) return alert("Moedas insuficientes!");
       player.coins -= item.price;
     }
-    player.atk += item.atk;
-    log(`⚔️ Arma equipada: ${item.name}!`);
+
+    player.ownedWeapons = player.ownedWeapons || [];
+    player.ownedWeapons.push(id);
+
+    log(`⚔️ Arma comprada: ${item.name}! Guardada na Mochila.`);
     await syncData();
+    renderInventoryLists();
+    renderShopLists();
+    updateUI();
+  }
+
+  async function equipChar(id) {
+    const item = shopCharacters.find(c => c.id === id);
+    if (!item) return;
+
+    if (player.equippedChar) {
+      const prev = shopCharacters.find(c => c.id === player.equippedChar);
+      if (prev) {
+        player.atk -= prev.atk;
+        player.maxHp -= prev.hp;
+      }
+    }
+
+    player.equippedChar = id;
+    player.avatar = item.img;
+    player.atk += item.atk;
+    player.maxHp += item.hp;
+    player.hp = Math.min(player.hp, player.maxHp);
+
+    log(`✨ Skin equipada: ${item.name}! Status aplicados.`);
+    await syncData();
+    renderInventoryLists();
+    updateUI();
+  }
+
+  async function equipWeapon(id) {
+    const item = shopWeapons.find(w => w.id === id);
+    if (!item) return;
+
+    if (player.equippedWeapon) {
+      const prev = shopWeapons.find(w => w.id === player.equippedWeapon);
+      if (prev) player.atk -= prev.atk;
+    }
+
+    player.equippedWeapon = id;
+    player.atk += item.atk;
+
+    log(`⚔️ Arma equipada: ${item.name}! (+${item.atk} Atk)`);
+    await syncData();
+    renderInventoryLists();
     updateUI();
   }
 
@@ -581,29 +676,83 @@
       player.coins -= price;
       player.inventory = player.inventory || {};
       player.inventory.pocao = (player.inventory.pocao || 0) + 1;
-      log("🧪 Poção guardada no inventário.");
+      log("🧪 Poção guardada na Mochila.");
     }
     await syncData();
+    renderInventoryLists();
     updateUI();
   }
 
+  /* SISTEMA DE UPGRADE COM VALIDAÇÃO DE ENERGIA DE PODER */
   async function upgradeWeapon() {
-    if (player.powerEnergy < 10) return alert("Requer 10 Energia de Poder!");
+    if ((player.powerEnergy || 0) < 10) {
+      alert("❌ Energia de Poder insuficiente! Batalhe contra chefões para conseguir mais ✨ Energia de Poder.");
+      return log("⚠️ Energia de Poder insuficiente para melhorar a arma.");
+    }
     player.powerEnergy -= 10;
     player.weaponLvl = (player.weaponLvl || 1) + 1;
     player.atk += 5;
-    log(`⚒️ Arma melhorada para o Nível ${player.weaponLvl}!`);
+    log(`⚒️ Arma melhorada para o Nível ${player.weaponLvl}! (+5 Ataque)`);
     await syncData();
     updateUI();
   }
 
   async function upgradePower() {
-    if (player.powerEnergy < 20) return alert("Requer 20 Energia de Poder!");
+    if ((player.powerEnergy || 0) < 20) {
+      alert("❌ Energia de Poder insuficiente! Batalhe contra chefões para conseguir mais ✨ Energia de Poder.");
+      return log("⚠️ Energia de Poder insuficiente para evoluir seu poder mágico.");
+    }
     player.powerEnergy -= 20;
     player.powerLvl = (player.powerLvl || 0) + 1;
-    log(`✨ Poder Mágico evoluído para o Nível ${player.powerLvl}!`);
+    log(`✨ Poder Mágico evoluído para o Nível ${player.powerLvl}! (+10 Dano Mágico)`);
     await syncData();
     updateUI();
+  }
+
+  /* SISTEMA DE RANKING GLOBAL */
+  function getRankBadge(level) {
+    if (level >= 20) return { name: "🔴 Lendário", class: "badge-lendario" };
+    if (level >= 15) return { name: "💎 Platina", class: "badge-platina" };
+    if (level >= 10) return { name: "🟡 Ouro", class: "badge-ouro" };
+    if (level >= 5) return { name: "⚪ Prata", class: "badge-prata" };
+    return { name: "🟤 Bronze", class: "badge-bronze" };
+  }
+
+  async function loadGlobalRanking() {
+    const box = document.getElementById('ranking-container');
+    if (!box) return;
+    box.innerHTML = '<p style="text-align:center; color:#94a3b8;">Carregando ranking...</p>';
+
+    try {
+      const snap = await db.collection('users').orderBy('level', 'desc').limit(20).get();
+      if (snap.empty) {
+        box.innerHTML = '<p style="text-align:center; color:#94a3b8;">Nenhum jogador encontrado.</p>';
+        return;
+      }
+
+      box.innerHTML = '';
+      let rank = 1;
+      snap.forEach(doc => {
+        const p = doc.data();
+        const badge = getRankBadge(p.level || 1);
+        const avatar = p.avatar || defaultAvatar;
+
+        box.innerHTML += `
+          <div class="ranking-item">
+            <div class="rank-num">#${rank}</div>
+            <img src="${avatar}" alt="Avatar">
+            <div class="rank-info">
+              <strong>${p.username || 'Herói'}</strong><br>
+              <small style="color:#cbd5e1;">Nível ${p.level || 1}</small>
+            </div>
+            <span class="rank-badge ${badge.class}">${badge.name}</span>
+          </div>
+        `;
+        rank++;
+      });
+    } catch (err) {
+      box.innerHTML = '<p style="text-align:center; color:var(--danger);">Erro ao carregar o ranking.</p>';
+    }
   }
 
   async function saveProfile() {
@@ -688,6 +837,7 @@
     if (charBox) {
       charBox.innerHTML = '';
       shopCharacters.forEach(c => {
+        const owned = player.ownedChars && player.ownedChars.includes(c.id);
         const priceTxt = c.isGem ? `💎 ${c.price}` : `🟡 ${c.price}`;
         charBox.innerHTML += `
           <div class="item-card">
@@ -695,9 +845,9 @@
             <div>
               <strong>${c.name}</strong><br>
               <small>+${c.atk} Atk | +${c.hp} HP</small><br>
-              <strong>${priceTxt}</strong>
+              <strong>${owned ? ' Adquirido' : priceTxt}</strong>
             </div>
-            <button onclick="buyChar('${c.id}')">Comprar</button>
+            <button ${owned ? 'disabled' : ''} onclick="buyChar('${c.id}')">${owned ? 'Na Mochila' : 'Comprar'}</button>
           </div>
         `;
       });
@@ -707,6 +857,7 @@
     if (weaponBox) {
       weaponBox.innerHTML = '';
       shopWeapons.forEach(w => {
+        const owned = player.ownedWeapons && player.ownedWeapons.includes(w.id);
         const priceTxt = w.isGem ? `💎 ${w.price}` : `🟡 ${w.price}`;
         weaponBox.innerHTML += `
           <div class="item-card">
@@ -714,12 +865,85 @@
             <div>
               <strong>${w.name}</strong><br>
               <small>+${w.atk} Atk</small><br>
-              <strong>${priceTxt}</strong>
+              <strong>${owned ? ' Adquirido' : priceTxt}</strong>
             </div>
-            <button onclick="buyWeapon('${w.id}')">Comprar</button>
+            <button ${owned ? 'disabled' : ''} onclick="buyWeapon('${w.id}')">${owned ? 'Na Mochila' : 'Comprar'}</button>
           </div>
         `;
       });
+    }
+  }
+
+  function renderInventoryLists() {
+    const charInvBox = document.getElementById('inv-chars-list');
+    if (charInvBox) {
+      charInvBox.innerHTML = '';
+      const owned = player.ownedChars || [];
+      if (owned.length === 0) {
+        charInvBox.innerHTML = '<p style="grid-column: span 2; color:#94a3b8;">Nenhuma Skin comprada ainda.</p>';
+      } else {
+        owned.forEach(id => {
+          const item = shopCharacters.find(c => c.id === id);
+          if (!item) return;
+          const isEquipped = player.equippedChar === id;
+          charInvBox.innerHTML += `
+            <div class="item-card ${isEquipped ? 'equipped' : ''}">
+              <img src="${item.img}" alt="${item.name}">
+              <div>
+                <strong>${item.name}</strong><br>
+                <small>+${item.atk} Atk | +${item.hp} HP</small>
+              </div>
+              <button onclick="equipChar('${item.id}')" ${isEquipped ? 'disabled style="background:var(--success);"' : ''}>
+                ${isEquipped ? 'Equipado' : 'Equipar'}
+              </button>
+            </div>
+          `;
+        });
+      }
+    }
+
+    const weaponInvBox = document.getElementById('inv-weapons-list');
+    if (weaponInvBox) {
+      weaponInvBox.innerHTML = '';
+      const owned = player.ownedWeapons || [];
+      if (owned.length === 0) {
+        weaponInvBox.innerHTML = '<p style="grid-column: span 2; color:#94a3b8;">Nenhuma Arma comprada ainda.</p>';
+      } else {
+        owned.forEach(id => {
+          const item = shopWeapons.find(w => w.id === id);
+          if (!item) return;
+          const isEquipped = player.equippedWeapon === id;
+          weaponInvBox.innerHTML += `
+            <div class="item-card ${isEquipped ? 'equipped' : ''}">
+              <img src="${item.img}" alt="${item.name}">
+              <div>
+                <strong>${item.name}</strong><br>
+                <small>+${item.atk} Atk</small>
+              </div>
+              <button onclick="equipWeapon('${item.id}')" ${isEquipped ? 'disabled style="background:var(--success);"' : ''}>
+                ${isEquipped ? 'Equipada' : 'Equipar'}
+              </button>
+            </div>
+          `;
+        });
+      }
+    }
+
+    const potionInvBox = document.getElementById('inv-potions-list');
+    if (potionInvBox) {
+      potionInvBox.innerHTML = '';
+      const potQty = player.inventory?.pocao || 0;
+      potionInvBox.innerHTML = `
+        <div class="item-card" style="grid-column: span 2;">
+          <img src="https://img.icons8.com/color/96/health-potion.png" alt="Poção">
+          <div>
+            <strong>Poção de Vida</strong><br>
+            <small>Recupera +50 HP</small><br>
+            <strong>Quantidade: ${potQty}</strong>
+          </div>
+          <button onclick="usePotionInCombat()" ${potQty <= 0 ? 'disabled' : ''}>Usar Poção</button>
+        </div>
+      `;
     }
   }
 
@@ -742,6 +966,9 @@
     setElText('ui-energy-text', `${player.energy || 0}/${player.maxEnergy || 50}`);
     setElText('ui-atk', (player.atk || 15) + ((player.powerLvl || 0) * 10));
     setElText('ui-def', player.def || 5);
+
+    const badge = getRankBadge(player.level || 1);
+    setElText('ui-char-title', `Patente: ${badge.name}`);
 
     const barHp = document.getElementById('bar-hp');
     if (barHp) barHp.style.width = `${Math.max(0, ((player.hp || 0) / (player.maxHp || 100)) * 100)}%`;
@@ -793,6 +1020,10 @@
             def: 5,
             weaponLvl: 1,
             powerLvl: 0,
+            equippedChar: null,
+            equippedWeapon: null,
+            ownedChars: [],
+            ownedWeapons: [],
             isAdmin: false,
             inventory: { pocao: 2 }
           };
@@ -800,6 +1031,7 @@
         }
 
         renderShopLists();
+        renderInventoryLists();
         selectBoss();
         updateUI();
         listenChat();
