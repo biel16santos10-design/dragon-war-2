@@ -6,461 +6,598 @@
   <title>Dragon War - Rise of Power</title>
   <style>
     :root {
-      --bg-dark: #050b14;
-      --panel-bg: rgba(8, 20, 38, 0.9);
+      --bg-dark: #030814;
+      --card-bg: rgba(6, 18, 38, 0.95);
       --border-blue: #00d2ff;
-      --border-dark: #122842;
-      --accent-gold: #ffb700;
+      --border-dark: #102a45;
       --text-main: #e0f2fe;
-      --btn-orange: linear-gradient(135deg, #ff9100, #ff3c00);
-      --btn-blue: linear-gradient(135deg, #00d2ff, #0055ff);
-      --btn-green: linear-gradient(135deg, #10b981, #059669);
-      --red-danger: #ef4444;
+      --text-gold: #ffb700;
+      --green: #22c55e;
+      --red: #ef4444;
+      --purple: #a855f7;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; }
 
     body {
-      background: radial-gradient(circle at center, #0a1c36, var(--bg-dark));
+      background: #000;
       color: var(--text-main);
+      min-height: 100vh;
       display: flex;
-      height: 100vh;
-      overflow: hidden;
+      justify-content: center;
+      align-items: center;
     }
 
-    /* BARRA LATERAL DE NAVEGAÇÃO */
-    .sidebar {
-      width: 240px;
-      background: rgba(3, 10, 22, 0.95);
-      border-right: 2px solid var(--border-dark);
+    /* TELA CINEMATOGRÁFICA INICIAL */
+    #cinema-screen {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle, rgba(10,25,50,0.8) 0%, rgba(3,8,20,1) 100%), 
+                  url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1000&auto=format&fit=crop') center/cover no-repeat;
+      z-index: 999;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 15px;
-      box-shadow: 5px 0 15px rgba(0,0,0,0.5);
-    }
-
-    .profile-card {
-      text-align: center;
-      padding-bottom: 15px;
-      border-bottom: 1px solid var(--border-dark);
-    }
-
-    .avatar {
-      width: 65px;
-      height: 65px;
-      border-radius: 50%;
-      border: 2px solid var(--border-blue);
-      box-shadow: 0 0 10px var(--border-blue);
-      margin-bottom: 8px;
-    }
-
-    .nick-container {
-      display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 6px;
+      padding: 40px 20px;
+      text-align: center;
     }
 
-    .nick { font-weight: bold; color: #fff; font-size: 1.05em; }
-    .btn-edit-nick { background: none; border: none; color: var(--accent-gold); cursor: pointer; font-size: 0.9em; }
-
-    .rank-badge {
-      font-size: 0.75em;
-      padding: 3px 8px;
-      border-radius: 10px;
-      background: rgba(255, 183, 0, 0.15);
-      color: var(--accent-gold);
-      border: 1px solid var(--accent-gold);
-      display: inline-block;
-      margin-top: 6px;
-      font-weight: bold;
+    .brand-title {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 900;
+      color: #ff4500;
+      text-shadow: 0 0 20px #ff4500, 0 0 40px #000;
+      letter-spacing: 2px;
     }
 
-    .resources-bar {
-      margin-top: 12px;
+    .sub-brand {
+      font-size: 1.1rem;
+      color: var(--border-blue);
+      letter-spacing: 4px;
+      margin-top: -10px;
+    }
+
+    .cinema-menu {
       display: flex;
-      justify-content: space-around;
-      background: rgba(0,0,0,0.4);
-      padding: 6px;
-      border-radius: 6px;
-      border: 1px solid var(--border-dark);
-      font-size: 0.85em;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 320px;
     }
 
-    /* BOTOES DE NAVEGAÇÃO */
-    .nav-group { margin-top: 15px; }
-
-    .nav-btn {
-      background: rgba(0, 210, 255, 0.03);
-      border: 1px solid var(--border-dark);
-      color: var(--text-main);
-      text-align: left;
-      padding: 11px 14px;
-      margin-bottom: 6px;
-      border-radius: 6px;
+    .btn-cinema {
+      background: linear-gradient(135deg, rgba(0, 210, 255, 0.2), rgba(0, 85, 255, 0.4));
+      border: 1.5px solid var(--border-blue);
+      color: #fff;
+      padding: 14px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      border-radius: 8px;
       cursor: pointer;
+      backdrop-filter: blur(5px);
       transition: 0.2s;
-      font-size: 0.9em;
-      width: 100%;
+      text-transform: uppercase;
+    }
+
+    .btn-cinema:hover {
+      background: var(--border-blue);
+      color: #000;
+      box-shadow: 0 0 15px var(--border-blue);
+    }
+
+    /* CONTAINER PRINCIPAL DO JOGO */
+    #game-container {
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      max-width: 1300px;
+      max-height: 900px;
+      background: var(--bg-dark);
+      border: 2px solid var(--border-dark);
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* BARRA SUPERIOR (HEADER DE RECURSOS) */
+    header {
+      background: rgba(5, 15, 30, 0.95);
+      border-bottom: 2px solid var(--border-dark);
+      padding: 10px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .user-profile {
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .nav-btn:hover, .nav-btn.active {
-      background: rgba(0, 210, 255, 0.15);
-      border-color: var(--border-blue);
-      color: #fff;
-      box-shadow: 0 0 8px rgba(0, 210, 255, 0.3);
+    .avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      border: 2px solid var(--border-blue);
+      background: #111 url('https://via.placeholder.com/45') center/cover;
     }
 
-    .btn-save { border-color: #10b981; color: #10b981; }
-    .btn-save:hover { background: #10b981; color: #000; }
+    .user-info { display: flex; flex-direction: column; }
+    .user-nick { font-weight: bold; font-size: 0.95rem; display: flex; align-items: center; gap: 5px; }
+    .badge-rank { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; background: rgba(255, 183, 0, 0.2); color: var(--text-gold); border: 1px solid var(--text-gold); }
 
-    .btn-logout { border-color: var(--red-danger); color: var(--red-danger); }
-    .btn-logout:hover { background: var(--red-danger); color: #fff; }
+    .resources-group {
+      display: flex;
+      gap: 15px;
+      background: rgba(0,0,0,0.5);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border-dark);
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
 
-    /* ÁREA PRINCIPAL */
-    .main-content {
+    /* CORPO PRINCIPAL E LAYOUT */
+    .main-body {
+      display: flex;
       flex: 1;
-      padding: 20px;
+      overflow: hidden;
+    }
+
+    /* MENU LATERAL (SIDEBAR) */
+    nav {
+      width: 220px;
+      background: rgba(3, 10, 22, 0.98);
+      border-right: 1px solid var(--border-dark);
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      gap: 6px;
       overflow-y: auto;
     }
 
-    .section { display: none; }
-    .section.active { display: block; }
+    .nav-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: #94a3b8;
+      padding: 10px 12px;
+      border-radius: 6px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: 0.2s;
+    }
 
-    /* CABEÇALHO DA SEÇÃO */
-    .section-title {
-      font-size: 1.3em;
+    .nav-btn:hover, .nav-btn.active {
+      background: rgba(0, 210, 255, 0.1);
+      border-color: var(--border-blue);
+      color: #fff;
+    }
+
+    /* SEÇÃO DE CONTEÚDO DINÂMICO */
+    .content-area {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      background: radial-gradient(circle at center, rgba(10,25,50,0.3), transparent);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ESTILOS ESPECÍFICOS DAS SEÇÕES */
+    .title-header {
+      font-size: 1.2rem;
       color: var(--border-blue);
       text-transform: uppercase;
       letter-spacing: 1px;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
       border-bottom: 1px solid var(--border-dark);
-      padding-bottom: 8px;
-    }
-
-    /* ACTION BUTTONS DA HOME */
-    .action-row {
+      padding-bottom: 6px;
       display: flex;
-      gap: 12px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .btn-game {
+    /* BOTÕES DA HOME */
+    .home-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .btn-action {
+      padding: 15px;
+      border-radius: 8px;
       border: none;
       color: #fff;
-      padding: 12px 22px;
       font-weight: bold;
-      font-size: 0.95em;
-      border-radius: 6px;
       cursor: pointer;
-      box-shadow: 0 0 12px rgba(0,0,0,0.5);
-      transition: transform 0.2s;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
-    .btn-game:hover { transform: translateY(-2px); }
-
-    /* CARDS DE STATS */
+    /* GRID DE CARDS (BOSSES, LOJA, PODERES) */
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
     }
 
     .card {
-      background: var(--panel-bg);
-      border: 1px solid var(--border-dark);
-      border-radius: 8px;
-      padding: 15px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    }
-
-    /* LOJA DE PERSONAGENS */
-    .shop-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 15px;
-    }
-
-    .tab-btn {
-      background: rgba(0,0,0,0.5);
-      border: 1px solid var(--border-dark);
-      color: #94a3b8;
-      padding: 8px 14px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.85em;
-    }
-
-    .tab-btn.active {
-      background: var(--border-blue);
-      color: #000;
-      font-weight: bold;
-      border-color: var(--border-blue);
-    }
-
-    .shop-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-      gap: 15px;
-    }
-
-    .char-card {
-      background: var(--panel-bg);
+      background: var(--card-bg);
       border: 1px solid var(--border-dark);
       border-radius: 8px;
       padding: 12px;
-      text-align: center;
-      transition: border-color 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
     }
 
-    .char-card:hover { border-color: var(--border-blue); }
-
-    .char-card img {
+    .card img {
       width: 100%;
-      height: 120px;
+      height: 110px;
       object-fit: cover;
       border-radius: 6px;
-      margin-bottom: 10px;
     }
 
-    .stats-info {
-      font-size: 0.8em;
-      color: #94a3b8;
-      text-align: left;
-      margin: 8px 0;
+    /* LOJA E ABAS */
+    .shop-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      overflow-x: auto;
+      padding-bottom: 5px;
     }
 
-    .btn-buy {
-      background: #22c55e;
-      color: #000;
-      border: none;
-      font-weight: bold;
-      width: 100%;
-      padding: 8px;
+    .shop-tab-btn {
+      background: rgba(0,0,0,0.5);
+      border: 1px solid var(--border-dark);
+      color: #64748b;
+      padding: 8px 12px;
       border-radius: 4px;
       cursor: pointer;
+      font-size: 0.8rem;
+      white-space: nowrap;
     }
 
-    .btn-equip {
+    .shop-tab-btn.active {
       background: var(--border-blue);
       color: #000;
-      border: none;
       font-weight: bold;
-      width: 100%;
-      padding: 8px;
-      border-radius: 4px;
-      cursor: pointer;
     }
 
-    .badge-equipped {
-      background: var(--accent-gold);
-      color: #000;
-      font-weight: bold;
-      padding: 8px;
-      border-radius: 4px;
-      display: block;
-      width: 100%;
-      font-size: 0.85em;
-    }
-
-    /* TABELAS DE RANKING */
-    .ranking-table {
+    /* TABELA DE RANKING E INVENTÁRIO */
+    .game-table {
       width: 100%;
       border-collapse: collapse;
-      background: var(--panel-bg);
-      border-radius: 8px;
-      overflow: hidden;
-      font-size: 0.85em;
+      font-size: 0.85rem;
     }
 
-    .ranking-table th, .ranking-table td {
-      padding: 10px 14px;
-      text-align: left;
+    .game-table th, .game-table td {
+      padding: 8px 10px;
       border-bottom: 1px solid var(--border-dark);
+      text-align: left;
     }
 
-    .ranking-table th {
-      background: rgba(0, 210, 255, 0.1);
-      color: var(--border-blue);
-    }
+    .game-table th { background: rgba(0, 210, 255, 0.08); color: var(--border-blue); }
 
-    /* MODAL */
+    /* MODAL DE RECOMPENSAS / BÔNUS DIÁRIO */
     .modal {
       display: none;
       position: fixed;
-      top:0; left:0; width:100%; height:100%;
+      top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(0,0,0,0.85);
+      z-index: 1000;
       justify-content: center;
       align-items: center;
-      z-index: 100;
+      padding: 15px;
     }
 
-    .modal-content {
-      background: var(--panel-bg);
-      border: 1px solid var(--border-blue);
-      border-radius: 8px;
+    .modal-card {
+      background: var(--card-bg);
+      border: 2px solid var(--border-blue);
+      border-radius: 10px;
       padding: 20px;
-      width: 380px;
+      width: 100%;
+      max-width: 450px;
       text-align: center;
-      box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin: 15px 0;
+    }
+
+    .day-box {
+      background: rgba(0,0,0,0.5);
+      border: 1px solid var(--border-dark);
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+    }
+
+    .day-box.active { border-color: var(--text-gold); background: rgba(255, 183, 0, 0.1); }
+    .day-box.claimed { opacity: 0.4; }
+
+    /* ADAPTAÇÃO PARA CELULAR (RESPONSIVO) */
+    @media (max-width: 768px) {
+      .main-body { flex-direction: column-reverse; }
+      nav {
+        width: 100%;
+        height: 60px;
+        flex-direction: row;
+        border-right: none;
+        border-top: 1px solid var(--border-dark);
+        padding: 5px;
+      }
+      .nav-btn {
+        flex: 1;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-size: 0.65rem;
+        padding: 4px;
+        gap: 2px;
+      }
+      header { font-size: 0.8rem; }
+      .resources-group { font-size: 0.75rem; padding: 4px 8px; }
+      .cards-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-  <!-- BARRA LATERAL DE NAVEGAÇÃO -->
-  <div class="sidebar">
+  <!-- 1. TELA CINEMATOGRÁFICA INICIAL -->
+  <div id="cinema-screen">
     <div>
-      <div class="profile-card">
-        <img src="https://via.placeholder.com/65" class="avatar" alt="Avatar">
-        <div class="nick-container">
-          <div class="nick" id="player-nick">Jogador DW</div>
-          <button class="btn-edit-nick" onclick="alterarNick()" title="Mudar Nick (1.000 Moedas)">✏️</button>
-        </div>
-        <div class="rank-badge" id="player-rank">🌱 Iniciante</div>
-        
-        <div class="resources-bar">
-          <span>💰 <b id="player-coins">1.500</b></span>
-          <span>💎 <b id="player-gems">50</b></span>
-        </div>
-      </div>
+      <div class="brand-title">DRAGON WAR</div>
+      <div class="sub-brand">RISE OF POWER</div>
+    </div>
 
-      <div class="nav-group">
-        <button class="nav-btn active" onclick="switchTab(this, 'home')">🏠 Home</button>
-        <button class="nav-btn" onclick="switchTab(this, 'loja')">🛒 Loja Unificada</button>
-        <button class="nav-btn" onclick="switchTab(this, 'ranking')">🏆 Ranking Geral</button>
-        <button class="nav-btn" onclick="switchTab(this, 'poderes')">✨ Poderes</button>
-        <button class="nav-btn" onclick="switchTab(this, 'resumo')">📊 Resumo</button>
+    <div style="width: 100%; max-width: 320px;">
+      <div style="margin-bottom: 10px;">
+        <input type="text" id="login-uid-input" placeholder="Digite seu Nick/UID" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border-blue); background: #000; color: #fff; text-align: center; margin-bottom: 8px;">
+      </div>
+      
+      <div class="cinema-menu">
+        <button class="btn-cinema" style="background: linear-gradient(135deg, #10b981, #059669);" onclick="iniciarJogoLogado()">⚔️ JOGAR</button>
+        <button class="btn-cinema" onclick="carregarJogoPrompt()">📂 CARREGAR JOGO</button>
+        <button class="btn-cinema" onclick="novoJogo()">➕ NOVO JOGO</button>
       </div>
     </div>
 
-    <div>
-      <button class="nav-btn btn-save" onclick="salvarJogo()">💾 Salvar Jogo</button>
-      <button class="nav-btn btn-logout" onclick="trocarConta()">🚪 Sair / Outra Conta</button>
-    </div>
+    <div style="font-size: 0.8rem; color: #64748b;">Servidor Online | DW v2.6.0</div>
   </div>
 
-  <!-- ÁREA PRINCIPAL DE CONTEÚDO -->
-  <div class="main-content">
-
-    <!-- SEÇÃO HOME -->
-    <div id="home" class="section active">
-      <div class="section-title">🏠 Tela Inicial</div>
-      
-      <div class="action-row">
-        <button class="btn-game" style="background: var(--btn-orange);" onclick="abrirCombate()">⚔️ JOGAR</button>
-        <button class="btn-game" style="background: var(--btn-blue);" onclick="batalhaRapida()">🚀 BATALHA RÁPIDA</button>
-        <button class="btn-game" style="background: linear-gradient(135deg, #9d4edd, #5a189a);" onclick="abrirBonus()">🎁 BÔNUS DIÁRIO</button>
-      </div>
-
-      <div class="cards-grid">
-        <div class="card">
-          <h3>Estatísticas Rápidas</h3>
-          <p style="margin-top: 10px;">Vitórias: <b id="stat-wins">0</b></p>
-          <p>Derrotas: <b id="stat-losses">0</b></p>
-          <p>Nível: <b id="stat-level">1</b></p>
+  <!-- 2. CONTAINER PRINCIPAL DA INTERFACE DO JOGADOR -->
+  <div id="game-container">
+    
+    <!-- BARRA SUPERIOR DO PERFIL E RECURSOS -->
+    <header>
+      <div class="user-profile">
+        <div class="avatar"></div>
+        <div class="user-info">
+          <div class="user-nick">
+            <span id="ui-nick">Carregando...</span>
+            <button onclick="mudarNick()" style="background:none; border:none; cursor:pointer; font-size:0.8rem;" title="Mudar Nick (1.000 Moedas)">✏️</button>
+          </div>
+          <div><span class="badge-rank" id="ui-rank-badge">🌱 Iniciante</span> <span style="font-size: 0.75rem; color: #aaa;">Nv. <b id="ui-level">1</b></span></div>
         </div>
       </div>
-    </div>
 
-    <!-- SEÇÃO LOJA UNIFICADA (8 PERSONAGENS) -->
-    <div id="loja" class="section">
-      <div class="section-title">🛒 Loja Unificada</div>
+      <div class="resources-group">
+        <span>💰 <span id="ui-coins">0</span></span>
+        <span>💎 <span id="ui-gems">0</span></span>
+        <span>⚡ <span id="ui-energy">120/120</span></span>
+      </div>
+    </header>
+
+    <div class="main-body">
       
-      <div class="shop-tabs">
-        <button class="tab-btn active">👥 Personagens</button>
-        <button class="tab-btn">⚔️ Equipamentos</button>
-        <button class="tab-btn">🧪 Consumíveis</button>
-        <button class="tab-btn">📜 Materiais</button>
-        <button class="tab-btn">💎 Gemas</button>
-      </div>
+      <!-- MENU DE NAVEGAÇÃO LATERAL -->
+      <nav>
+        <button class="nav-btn active" onclick="switchTab(this, 'tab-home')">🏠 <span>Home</span></button>
+        <button class="nav-btn" onclick="switchTab(this, 'tab-jogar')">⚔️ <span>Jogar / Boss</span></button>
+        <button class="nav-btn" onclick="switchTab(this, 'tab-loja')">🛒 <span>Loja</span></button>
+        <button class="nav-btn" onclick="switchTab(this, 'tab-poderes')">✨ <span>Poderes</span></button>
+        <button class="nav-btn" onclick="switchTab(this, 'tab-inventario')">🎒 <span>Inventário</span></button>
+        <button class="nav-btn" onclick="switchTab(this, 'tab-ranking')">🏆 <span>Ranking</span></button>
+        <button class="nav-btn" onclick="switchTab(this, 'tab-resumo')">📊 <span>Resumo</span></button>
+        <button class="nav-btn" onclick="switchTab(this, 'tab-config')">⚙️ <span>Config</span></button>
+      </nav>
 
-      <div class="shop-grid" id="characters-grid">
-        <!-- Renderizado via Javascript -->
-      </div>
-    </div>
+      <!-- ÁREA CONTEÚDO DAS ABAS -->
+      <div class="content-area">
 
-    <!-- SEÇÃO RANKING GERAL -->
-    <div id="ranking" class="section">
-      <div class="section-title">🏆 Ranking Geral</div>
-      <table class="ranking-table">
-        <thead>
-          <tr>
-            <th>Posição</th>
-            <th>Jogador</th>
-            <th>Rank</th>
-            <th>Nível</th>
-            <th>Vitórias</th>
-          </tr>
-        </thead>
-        <tbody id="ranking-list">
-          <!-- Renderizado via JS -->
-        </tbody>
-      </table>
-    </div>
+        <!-- ABA 1: HOME (INICIAL) -->
+        <div id="tab-home" class="tab-content active">
+          <div class="title-header">Painel Principal</div>
+          
+          <div class="home-actions">
+            <button class="btn-action" style="background: linear-gradient(135deg, #ff9100, #ff3c00);" onclick="switchTabDirect('tab-jogar')">⚔️ JOGAR</button>
+            <button class="btn-action" style="background: linear-gradient(135deg, #00d2ff, #0055ff);" onclick="batalhaRapida()">🚀 BATALHA RÁPIDA</button>
+            <button class="btn-action" style="background: linear-gradient(135deg, #a855f7, #6b21a8);" onclick="abrirModalBonus()">🎁 BÔNUS DIÁRIO</button>
+            <button class="btn-action" style="background: linear-gradient(135deg, #ef4444, #991b1b);" onclick="sairParaMenu()">↩️ SAIR</button>
+          </div>
 
-    <!-- SEÇÃO PODERES -->
-    <div id="poderes" class="section">
-      <div class="section-title">✨ Poderes e Habilidades</div>
-      <div class="cards-grid" id="powers-grid">
-        <!-- Renderizado via JS -->
-      </div>
-    </div>
+          <div class="cards-grid">
+            <div class="card">
+              <h3>Estatísticas Rápidas</h3>
+              <p style="font-size: 0.85rem;">Vitórias: <b id="stat-wins" style="color: var(--green);">0</b></p>
+              <p style="font-size: 0.85rem;">Derrotas: <b id="stat-losses" style="color: var(--red);">0</b></p>
+              <p style="font-size: 0.85rem;">Batalhas Totais: <b id="stat-battles">0</b></p>
+              <p style="font-size: 0.85rem;">Taxa de Vitória: <b id="stat-winrate">0%</b></p>
+            </div>
 
-    <!-- SEÇÃO RESUMO -->
-    <div id="resumo" class="section">
-      <div class="section-title">📊 Resumo do Jogador</div>
-      <div class="card">
-        <h3>Progresso de Rank</h3>
-        <p style="font-size: 1.3em; color: var(--accent-gold); margin-top: 5px;" id="summary-rank">🌱 Iniciante</p>
-        <div style="background: #000; height: 10px; border-radius: 5px; margin-top: 10px; overflow: hidden; border: 1px solid var(--border-dark);">
-          <div id="rank-bar" style="background: var(--accent-gold); width: 0%; height: 100%;"></div>
+            <div class="card">
+              <h3>Progresso do Rank</h3>
+              <p style="font-size: 0.9rem; color: var(--text-gold);" id="home-rank-name">🌱 Iniciante</p>
+              <div style="background: rgba(0,0,0,0.5); height: 8px; border-radius: 4px; overflow: hidden; margin-top: 5px;">
+                <div id="home-rank-bar" style="background: var(--text-gold); width: 0%; height: 100%;"></div>
+              </div>
+              <p style="font-size: 0.75rem; color: #64748b; margin-top: 4px;" id="home-rank-text">0/5 vitórias para próximo Rank</p>
+            </div>
+          </div>
         </div>
-        <p style="font-size: 0.8em; margin-top: 5px;" id="rank-progress-text">0 / 5 Vitórias para o próximo Rank</p>
+
+        <!-- ABA 2: JOGAR (3 BOSSES) -->
+        <div id="tab-jogar" class="tab-content">
+          <div class="title-header">Combates de Chefe</div>
+          <div class="cards-grid">
+            
+            <div class="card" style="border-color: #ef4444;">
+              <img src="https://via.placeholder.com/300x120/8b0000/ffffff?text=KHALDRON+(SSS)" alt="Khaldron">
+              <h4 style="color: #ef4444;">KHALDRON (SSS)</h4>
+              <p style="font-size: 0.75rem; color: #aaa;">The Nightmare Dragon • Lv. 80</p>
+              <p style="font-size: 0.8rem;">Poder: <b>2.500.000</b></p>
+              <button class="btn-action" style="background: #ef4444; width: 100%; margin-top: 5px;" onclick="lutarBoss('Khaldron', 2500000)">ENTRAR NA BATALHA</button>
+            </div>
+
+            <div class="card" style="border-color: #ff9100;">
+              <img src="https://via.placeholder.com/300x120/a52a2a/ffffff?text=IGNEOUS+(SS)" alt="Igneous">
+              <h4 style="color: #ff9100;">IGNEOUS (SS)</h4>
+              <p style="font-size: 0.75rem; color: #aaa;">The Fire Demon • Lv. 70</p>
+              <p style="font-size: 0.8rem;">Poder: <b>1.800.000</b></p>
+              <button class="btn-action" style="background: #ff9100; width: 100%; margin-top: 5px;" onclick="lutarBoss('Igneous', 1800000)">ENTRAR NA BATALHA</button>
+            </div>
+
+            <div class="card" style="border-color: #a855f7;">
+              <img src="https://via.placeholder.com/300x120/4b0082/ffffff?text=MALAKAI+(S)" alt="Malakai">
+              <h4 style="color: #a855f7;">MALAKAI (S)</h4>
+              <p style="font-size: 0.75rem; color: #aaa;">The Shadow Warrior • Lv. 60</p>
+              <p style="font-size: 0.8rem;">Poder: <b>1.200.000</b></p>
+              <button class="btn-action" style="background: #a855f7; width: 100%; margin-top: 5px;" onclick="lutarBoss('Malakai', 1200000)">ENTRAR NA BATALHA</button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ABA 3: LOJA UNIFICADA (5 ABAS E 12 ITENS) -->
+        <div id="tab-loja" class="tab-content">
+          <div class="title-header">Loja do Servidor</div>
+          
+          <div class="shop-tabs">
+            <button class="shop-tab-btn active" onclick="filtrarLoja('personagens', this)">👥 Personagens</button>
+            <button class="shop-tab-btn" onclick="filtrarLoja('equipamentos', this)">⚔️ Equipamentos</button>
+            <button class="shop-tab-btn" onclick="filtrarLoja('consumiveis', this)">🧪 Consumíveis</button>
+            <button class="shop-tab-btn" onclick="filtrarLoja('materiais', this)">📜 Materiais</button>
+            <button class="shop-tab-btn" onclick="filtrarLoja('gemas', this)">💎 Gemas</button>
+          </div>
+
+          <div class="cards-grid" id="shop-items-container">
+            <!-- Renderizado via JS -->
+          </div>
+        </div>
+
+        <!-- ABA 4: PODERES -->
+        <div id="tab-poderes" class="tab-content">
+          <div class="title-header">Árvore de Poderes</div>
+          <div class="cards-grid" id="powers-container">
+            <!-- Renderizado via JS -->
+          </div>
+        </div>
+
+        <!-- ABA 5: INVENTÁRIO -->
+        <div id="tab-inventario" class="tab-content">
+          <div class="title-header">Mochila de Itens</div>
+          <div class="cards-grid" id="inventory-container">
+            <!-- Renderizado via JS -->
+          </div>
+        </div>
+
+        <!-- ABA 6: RANKING GERAL -->
+        <div id="tab-ranking" class="tab-content">
+          <div class="title-header">Ranking dos Jogadores</div>
+          <table class="game-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>NICK</th>
+                <th>RANK</th>
+                <th>NÍVEL</th>
+                <th>VITÓRIAS</th>
+              </tr>
+            </thead>
+            <tbody id="ranking-body">
+              <!-- Renderizado via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ABA 7: RESUMO COMPLETO -->
+        <div id="tab-resumo" class="tab-content">
+          <div class="title-header">Resumo Geral da Conta</div>
+          <div class="card" id="resumo-detalhado">
+            <!-- Renderizado via JS -->
+          </div>
+        </div>
+
+        <!-- ABA 8: CONFIGURAÇÕES -->
+        <div id="tab-config" class="tab-content">
+          <div class="title-header">Configurações e Salvamento</div>
+          <div class="cards-grid">
+            <div class="card">
+              <button class="btn-action" style="background: var(--green);" onclick="salvarJogoManual()">💾 SALVAR JOGO</button>
+              <button class="btn-action" style="background: var(--red); margin-top: 8px;" onclick="resetarProgresso()">⚠️ NOVO JOGO / RESETAR</button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
-
   </div>
 
   <!-- MODAL BÔNUS DIÁRIO -->
   <div id="modal-bonus" class="modal">
-    <div class="modal-content">
-      <h3>🎁 Bônus Diário</h3>
-      <p style="margin: 15px 0; font-size: 0.9em; color: #94a3b8;">Resgate sua recompensa diária de moedas e gemas!</p>
-      <button class="btn-game" style="background: var(--btn-green); width: 100%;" onclick="resgatarBonus()">RESGATAR</button>
-      <button style="background: transparent; border: none; color: #aaa; margin-top: 12px; cursor: pointer; font-size: 0.85em;" onclick="fecharBonus()">Fechar</button>
+    <div class="modal-card">
+      <h3 style="color: var(--text-gold);">🎁 RECOMPENSA DIÁRIA</h3>
+      <p style="font-size: 0.8rem; color: #aaa; margin-top: 4px;">Resgate seu bônus diário consecutivo!</p>
+      
+      <div class="calendar-grid" id="bonus-days-grid">
+        <!-- Renderizado via JS -->
+      </div>
+
+      <button class="btn-action" style="background: var(--green); width: 100%;" onclick="resgatarBonusDiario()">RESGATAR RECOMPENSA</button>
+      <button style="background: none; border: none; color: #aaa; margin-top: 10px; cursor: pointer; font-size: 0.8rem;" onclick="fecharModalBonus()">Fechar</button>
     </div>
   </div>
 
-  <script>
-    // ESTADO LOCAL DE TESTE (ENQUANTO NÃO HÁ NENHUM CONECTADO AO FIREBASE)
-    let state = {
-      nick: "Jogador DW",
-      coins: 1500,
-      gems: 50,
-      wins: 0,
-      losses: 0,
-      level: 1,
-      ownedChars: ['c1'],
-      equippedChar: 'c1'
+  <!-- LÓGICA INTEGRAÇÃO COM FIREBASE E MOTOR LOCAL DO JOGO -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, onSnapshot, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // Configuração padrão Firebase
+    const firebaseConfig = {
+      apiKey: "SEU_API_KEY",
+      authDomain: "seu-app.firebaseapp.com",
+      projectId: "seu-app",
+      storageBucket: "seu-app.appspot.com",
+      messagingSenderId: "00000000000",
+      appId: "1:00000000000:web:00000000000"
     };
 
-    const ALL_CHARACTERS = [
-      { id: 'c1', name: 'Guerreiro de Fogo', atk: 120, def: 80, spd: 50, price: 0, img: 'https://via.placeholder.com/200/ff4500/ffffff?text=Fogo' },
-      { id: 'c2', name: 'Mago Sombrio', atk: 160, def: 40, spd: 70, price: 500, img: 'https://via.placeholder.com/200/8a2be2/ffffff?text=Sombra' },
-      { id: 'c3', name: 'Arqueira de Gelo', atk: 140, def: 60, spd: 90, price: 800, img: 'https://via.placeholder.com/200/00bfff/ffffff?text=Gelo' },
-      { id: 'c4', name: 'Paladino Sagrado', atk: 110, def: 150, spd: 40, price: 1200, img: 'https://via.placeholder.com/200/ffd700/ffffff?text=Sagrado' },
-      { id: 'c5', name: 'Assassino Noturno', atk: 180, def: 30, spd: 110, price: 2000, img: 'https://via.placeholder.com/200/2f4f4f/ffffff?text=Assassino' },
-      { id: 'c6', name: 'Invocador de Raios', atk: 170, def: 50, spd: 85, price: 3000, img: 'https://via.placeholder.com/200/1e90ff/ffffff?text=Raio' },
-      { id: 'c7', name: 'Lorde Dragão', atk: 210, def: 120, spd: 75, price: 5000, img: 'https://via.placeholder.com/200/b22222/ffffff?text=Dragao' },
-      { id: 'c8', name: 'Titan Divino', atk: 250, def: 200, spd: 60, price: 10000, img: 'https://via.placeholder.com/200/ffffff/000000?text=Titan' }
-    ];
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
+    // SISTEMA DE RANKS (8 RANKS)
     const RANKS = [
       { name: "🌱 Iniciante", min: 0 },
       { name: "🥉 Bronze", min: 5 },
@@ -472,124 +609,372 @@
       { name: "🐉 Lendário", min: 150 }
     ];
 
-    function updateUI() {
-      document.getElementById('player-nick').innerText = state.nick;
-      document.getElementById('player-coins').innerText = state.coins;
-      document.getElementById('player-gems').innerText = state.gems;
-      document.getElementById('stat-wins').innerText = state.wins;
-      document.getElementById('stat-losses').innerText = state.losses;
-      document.getElementById('stat-level').innerText = state.level;
+    // BASE DE DADOS DA LOJA (12 ITENS COMPLETA)
+    const SHOP_ITEMS = [
+      // 8 Personagens
+      { id: 'p1', type: 'personagens', name: 'Guerreiro de Fogo', price: 0, atk: 120, def: 80, spd: 50, img: 'https://via.placeholder.com/200/ff4500/ffffff?text=Fogo' },
+      { id: 'p2', type: 'personagens', name: 'Mago Sombrio', price: 500, atk: 160, def: 40, spd: 70, img: 'https://via.placeholder.com/200/8a2be2/ffffff?text=Sombra' },
+      { id: 'p3', type: 'personagens', name: 'Arqueira de Gelo', price: 800, atk: 140, def: 60, spd: 90, img: 'https://via.placeholder.com/200/00bfff/ffffff?text=Gelo' },
+      { id: 'p4', type: 'personagens', name: 'Paladino Sagrado', price: 1200, atk: 110, def: 150, spd: 40, img: 'https://via.placeholder.com/200/ffd700/ffffff?text=Sagrado' },
+      { id: 'p5', type: 'personagens', name: 'Assassino Noturno', price: 2000, atk: 180, def: 30, spd: 110, img: 'https://via.placeholder.com/200/2f4f4f/ffffff?text=Assassino' },
+      { id: 'p6', type: 'personagens', name: 'Invocador de Raios', price: 3000, atk: 170, def: 50, spd: 85, img: 'https://via.placeholder.com/200/1e90ff/ffffff?text=Raio' },
+      { id: 'p7', type: 'personagens', name: 'Lorde Dragão', price: 5000, atk: 210, def: 120, spd: 75, img: 'https://via.placeholder.com/200/b22222/ffffff?text=Dragao' },
+      { id: 'p8', type: 'personagens', name: 'Titan Divino', price: 10000, atk: 250, def: 200, spd: 60, img: 'https://via.placeholder.com/200/ffffff/000000?text=Titan' },
+      // Outras categorias (Totalizando 12 Itens)
+      { id: 'e1', type: 'equipamentos', name: 'Lâmina do Dragão', price: 1500, atk: 50, img: 'https://via.placeholder.com/200/00d2ff/ffffff?text=Lamina' },
+      { id: 'c1', type: 'consumiveis', name: 'Poção de Cura HP', price: 100, hp: 50, img: 'https://via.placeholder.com/200/22c55e/ffffff?text=Pocao' },
+      { id: 'm1', type: 'materiais', name: 'Escama de Dragão', price: 300, img: 'https://via.placeholder.com/200/64748b/ffffff?text=Escama' },
+      { id: 'g1', type: 'gemas', name: 'Pacote 50 Gemas', price: 2000, gems: 50, img: 'https://via.placeholder.com/200/a855f7/ffffff?text=50+Gemas' }
+    ];
+
+    // ESTADO PADRÃO DO JOGADOR
+    let player = {
+      uid: "local_user",
+      nick: "Jogador DW",
+      coins: 1500,
+      gems: 50,
+      energy: 120,
+      wins: 0,
+      losses: 0,
+      level: 1,
+      ownedChars: ['p1'],
+      equippedChar: 'p1',
+      inventory: ['c1'],
+      bonusDay: 1,
+      lastBonusTime: 0
+    };
+
+    let unsubscribeSnapshot = null;
+
+    // INICIAR E CONECTAR COM SESSÃO FIREBASE VIA snapshot
+    window.iniciarJogoLogado = function() {
+      const input = document.getElementById('login-uid-input').value.trim();
+      if (input) player.uid = input;
+      
+      document.getElementById('cinema-screen').style.display = 'none';
+      document.getElementById('game-container').style.display = 'flex';
+
+      // Conectar escutador Firestore (Persistência Automática)
+      const userRef = doc(db, "users", player.uid);
+      unsubscribeSnapshot = onSnapshot(userRef, (docSnap) => {
+        if (docSnap.exists()) {
+          player = { ...player, ...docSnap.data() };
+        } else {
+          // Criar novo registro no Firestore se não existir
+          setDoc(userRef, player);
+        }
+        atualizarUI();
+      }, (error) => {
+        console.log("Modo Offline ativado (Sem conexão Firebase ativa).");
+        atualizarUI();
+      });
+    };
+
+    window.carregarJogoPrompt = function() {
+      const uid = prompt("Digite o UID/Nick da conta a carregar:");
+      if (uid) {
+        document.getElementById('login-uid-input').value = uid;
+        window.iniciarJogoLogado();
+      }
+    };
+
+    window.novoJogo = function() {
+      const nick = prompt("Escolha o Nick do seu novo Personagem:");
+      if (nick) {
+        player.uid = "user_" + Date.now();
+        player.nick = nick;
+        document.getElementById('login-uid-input').value = player.uid;
+        window.iniciarJogoLogado();
+      }
+    };
+
+    // ATUALIZAR INTERFACE COMPLETA
+    function atualizarUI() {
+      // Header
+      document.getElementById('ui-nick').innerText = player.nick;
+      document.getElementById('ui-coins').innerText = player.coins;
+      document.getElementById('ui-gems').innerText = player.gems;
+      document.getElementById('ui-level').innerText = player.level;
+      document.getElementById('ui-energy').innerText = `${player.energy}/120`;
 
       // Calcular Rank
       let curRank = RANKS[0];
       let nextRank = RANKS[1];
-      for (let r of RANKS) {
-        if (state.wins >= r.min) curRank = r;
+      for (let i = 0; i < RANKS.length; i++) {
+        if (player.wins >= RANKS[i].min) {
+          curRank = RANKS[i];
+          nextRank = RANKS[i + 1] || RANKS[i];
+        }
       }
-      document.getElementById('player-rank').innerText = curRank.name;
-      document.getElementById('summary-rank').innerText = curRank.name;
 
-      renderShop();
-      renderPowers();
+      document.getElementById('ui-rank-badge').innerText = curRank.name;
+      document.getElementById('home-rank-name').innerText = curRank.name;
+
+      // Stats
+      const battles = player.wins + player.losses;
+      const winrate = battles > 0 ? Math.round((player.wins / battles) * 100) : 0;
+      document.getElementById('stat-wins').innerText = player.wins;
+      document.getElementById('stat-losses').innerText = player.losses;
+      document.getElementById('stat-battles').innerText = battles;
+      document.getElementById('stat-winrate').innerText = `${winrate}%`;
+
+      // Barra de progresso de Rank
+      const reqWins = nextRank.min - curRank.min;
+      const progWins = player.wins - curRank.min;
+      const pct = reqWins > 0 ? Math.min(100, Math.round((progWins / reqWins) * 100)) : 100;
+      document.getElementById('home-rank-bar').style.width = `${pct}%`;
+      document.getElementById('home-rank-text').innerText = `${progWins}/${reqWins} vitórias para o próximo Rank`;
+
+      renderLoja('personagens');
+      renderPoderes();
+      renderInventario();
       renderRanking();
+      renderResumo();
     }
 
-    function renderShop() {
-      const grid = document.getElementById('characters-grid');
-      grid.innerHTML = '';
-      ALL_CHARACTERS.forEach(c => {
-        const isOwned = state.ownedChars.includes(c.id);
-        const isEquipped = state.equippedChar === c.id;
+    // RENDRERIZAR LOJA
+    window.filtrarLoja = function(tipo, btn) {
+      document.querySelectorAll('.shop-tab-btn').forEach(b => b.classList.remove('active'));
+      if(btn) btn.classList.add('active');
+      renderLoja(tipo);
+    };
 
-        let actionBtn = '';
-        if (isEquipped) actionBtn = '<span class="badge-equipped">✅ EQUIPADO</span>';
-        else if (isOwned) actionBtn = `<button class="btn-equip" onclick="equipar('${c.id}')">⚔️ EQUIPAR</button>`;
-        else actionBtn = `<button class="btn-buy" onclick="comprar('${c.id}', ${c.price})">🛒 COMPRAR (${c.price} 💰)</button>`;
+    function renderLoja(tipo) {
+      const container = document.getElementById('shop-items-container');
+      container.innerHTML = '';
 
-        grid.innerHTML += `
-          <div class="char-card">
-            <img src="${c.img}" alt="${c.name}">
-            <h4>${c.name}</h4>
-            <div class="stats-info">
-              <p>⚔️ ATK: ${c.atk}</p>
-              <p>🛡️ DEF: ${c.def}</p>
-              <p>⚡ SPD: ${c.spd}</p>
-            </div>
-            ${actionBtn}
+      const itens = SHOP_ITEMS.filter(i => i.type === tipo);
+      itens.forEach(item => {
+        let acaoBtn = '';
+        if (tipo === 'personagens') {
+          const jaComprado = player.ownedChars.includes(item.id);
+          const equipado = player.equippedChar === item.id;
+
+          if (equipado) {
+            acaoBtn = `<div style="color: var(--text-gold); font-weight: bold; text-align: center; padding: 8px;">✅ EQUIPADO</div>`;
+          } else if (jaComprado) {
+            acaoBtn = `<button class="btn-action" style="background: var(--border-blue); color: #000; width: 100%;" onclick="equiparPersonagem('${item.id}')">⚔️ EQUIPAR</button>`;
+          } else {
+            acaoBtn = `<button class="btn-action" style="background: var(--green); color: #000; width: 100%;" onclick="comprarItem('${item.id}', ${item.price})">🛒 COMPRAR (${item.price} 💰)</button>`;
+          }
+        } else {
+          acaoBtn = `<button class="btn-action" style="background: var(--green); color: #000; width: 100%;" onclick="comprarItem('${item.id}', ${item.price})">🛒 COMPRAR (${item.price} 💰)</button>`;
+        }
+
+        container.innerHTML += `
+          <div class="card">
+            <img src="${item.img}" alt="${item.name}">
+            <h4>${item.name}</h4>
+            ${item.atk ? `<p style="font-size:0.75rem;">⚔️ ATK: ${item.atk} | 🛡️ DEF: ${item.def} \vert{} ⚡ SPD: ${item.spd}</p>` : ''}
+            ${acaoBtn}
           </div>
         `;
       });
     }
 
-    function renderPowers() {
-      const powers = [
-        { name: "Fôlego de Fogo", lvl: 1 },
-        { name: "Raio Espiritual", lvl: 5 },
-        { name: "Nova Glacial", lvl: 10 }
+    // AÇÕES DA LOJA E PERSONAGEM
+    window.comprarItem = function(id, preco) {
+      if (player.coins < preco) return alert("Moedas insuficientes!");
+      player.coins -= preco;
+      
+      const item = SHOP_ITEMS.find(i => i.id === id);
+      if (item.type === 'personagens') player.ownedChars.push(id);
+      else if (item.type === 'gemas') player.gems += item.gems;
+      else player.inventory.push(id);
+
+      salvarFirebase();
+      atualizarUI();
+      alert(`Você adquiriu: ${item.name}!`);
+    };
+
+    window.equiparPersonagem = function(id) {
+      player.equippedChar = id;
+      salvarFirebase();
+      atualizarUI();
+    };
+
+    // ÁRVORE DE PODERES
+    function renderPoderes() {
+      const poderes = [
+        { name: 'Fôlego de Fogo', req: 1, desc: 'Aumenta dano de fogo inicial.' },
+        { name: 'Raio Espiritual', req: 5, desc: 'Aumenta taxa de acerto crítico.' },
+        { name: 'Nova Glacial', req: 10, desc: 'Congela inimigos por 1 turno.' }
       ];
-      const grid = document.getElementById('powers-grid');
-      grid.innerHTML = '';
-      powers.forEach(p => {
-        const unlocked = state.level >= p.lvl;
-        grid.innerHTML += `
-          <div class="card" style="${!unlocked ? 'opacity: 0.5;' : ''}">
-            <h4>${p.name} ${unlocked ? '✅' : '🔒'}</h4>
-            <p style="font-size: 0.8em; color: #aaa;">${unlocked ? 'Desbloqueado' : 'Requer Nível ' + p.lvl}</p>
+
+      const container = document.getElementById('powers-container');
+      container.innerHTML = '';
+      poderes.forEach(p => {
+        const desbloqueado = player.level >= p.req;
+        container.innerHTML += `
+          <div class="card" style="opacity: ${desbloqueado ? '1' : '0.5'};">
+            <h4>${p.name} ${desbloqueado ? '✅' : '🔒'}</h4>
+            <p style="font-size: 0.75rem; color: #aaa;">${p.desc}</p>
+            <p style="font-size: 0.8rem; font-weight: bold;">${desbloqueado ? 'DESBLOQUEADO' : 'Requer Nível ' + p.req}</p>
           </div>
         `;
       });
     }
 
+    // INVENTÁRIO
+    function renderInventario() {
+      const container = document.getElementById('inventory-container');
+      container.innerHTML = '';
+      if (player.inventory.length === 0) {
+        container.innerHTML = `<p style="color: #64748b; font-size: 0.85rem;">Mochila vazia.</p>`;
+        return;
+      }
+      player.inventory.forEach((itemId, idx) => {
+        const item = SHOP_ITEMS.find(i => i.id === itemId);
+        if (item) {
+          container.innerHTML += `
+            <div class="card">
+              <h4>${item.name}</h4>
+              <p style="font-size:0.75rem;">Item Consumível/Material</p>
+            </div>
+          `;
+        }
+      });
+    }
+
+    // RANKING GERAL
     function renderRanking() {
-      const tbody = document.getElementById('ranking-list');
+      const tbody = document.getElementById('ranking-body');
       tbody.innerHTML = `
         <tr>
           <td>🥇 1º</td>
-          <td><b>${state.nick} (Você)</b></td>
-          <td>${document.getElementById('player-rank').innerText}</td>
-          <td>Lv. ${state.level}</td>
-          <td><b>${state.wins}</b></td>
+          <td><b>${player.nick} (Você)</b></td>
+          <td>${document.getElementById('ui-rank-badge').innerText}</td>
+          <td>Lv. ${player.level}</td>
+          <td><b>${player.wins}</b></td>
         </tr>
       `;
     }
 
-    // Ações
-    function switchTab(btn, tabId) {
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    // RESUMO COMPLETO DA CONTA
+    function renderResumo() {
+      const box = document.getElementById('resumo-detalhado');
+      box.innerHTML = `
+        <h3>📊 Detalhes do Jogador</h3>
+        <p style="font-size:0.85rem; margin-top:8px;">Nick Permanente: <b>${player.nick}</b></p>
+        <p style="font-size:0.85rem;">UID Firebase: <b>${player.uid}</b></p>
+        <p style="font-size:0.85rem;">Personagens Desbloqueados: <b>${player.ownedChars.length}/8</b></p>
+        <p style="font-size:0.85rem;">Itens no Inventário: <b>${player.inventory.length}</b></p>
+      `;
+    }
+
+    // FUNÇÃO BATALHA RÁPIDA E BOSS
+    window.batalhaRapida = function() {
+      if (player.energy < 10) return alert("Energia insuficiente! Requer 10 ⚡.");
+      player.energy -= 10;
+
+      if (Math.random() > 0.35) {
+        player.wins++;
+        player.coins += 150;
+        if (player.wins % 3 === 0) player.level++;
+        alert("⚔️ VITÓRIA! Recebeu +150 Moedas!");
+      } else {
+        player.losses++;
+        alert("💀 DERROTA! Treine mais e tente novamente.");
+      }
+      salvarFirebase();
+      atualizarUI();
+    };
+
+    window.lutarBoss = function(nomeBoss, poderReq) {
+      alert(`Iniciando combate cinematográfico contra ${nomeBoss}...`);
+      window.batalhaRapida();
+    };
+
+    // MUDAR NICK PERMANENTE (CUSTO 1.000 MOEDAS)
+    window.mudarNick = function() {
+      if (player.coins < 1000) return alert("Mudar de nick custa 💰 1.000 moedas!");
+      const novo = prompt("Digite o novo Nick permanente:");
+      if (novo && novo.trim() !== "") {
+        player.coins -= 1000;
+        player.nick = novo.trim();
+        salvarFirebase();
+        atualizarUI();
+        alert("Nick alterado e salvo com sucesso!");
+      }
+    };
+
+    // SISTEMA DE BÔNUS DIÁRIO
+    window.abrirModalBonus = function() {
+      const grid = document.getElementById('bonus-days-grid');
+      grid.innerHTML = '';
+      for (let i = 1; i <= 7; i++) {
+        grid.innerHTML += `
+          <div class="day-box ${i === player.bonusDay ? 'active' : ''} ${i < player.bonusDay ? 'claimed' : ''}">
+            Dia ${i}<br>
+            💰 ${i * 200}
+          </div>
+        `;
+      }
+      document.getElementById('modal-bonus').style.display = 'flex';
+    };
+
+    window.fecharModalBonus = function() { document.getElementById('modal-bonus').style.display = 'none'; };
+
+    window.resgatarBonusDiario = function() {
+      const agora = Date.now();
+      const passou24h = (agora - player.lastBonusTime) > 86400000;
+
+      if (!passou24h && player.lastBonusTime !== 0) {
+        return alert("Você já resgatou seu bônus diário! Volte amanhã.");
+      }
+
+      const reward = player.bonusDay * 200;
+      player.coins += reward;
+      player.lastBonusTime = agora;
+      player.bonusDay = player.bonusDay >= 7 ? 1 : player.bonusDay + 1;
+
+      salvarFirebase();
+      atualizarUI();
+      window.fecharModalBonus();
+      alert(`🎁 Bônus do Dia Resgatado: +${reward} Moedas!`);
+    };
+
+    // TROCA DE ABAS
+    window.switchTab = function(btn, tabId) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       document.getElementById(tabId).classList.add('active');
       btn.classList.add('active');
+    };
+
+    window.switchTabDirect = function(tabId) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+    };
+
+    // PERSISTÊNCIA MANUAL E FIREBASE
+    async function salvarFirebase() {
+      try {
+        const userRef = doc(db, "users", player.uid);
+        await setDoc(userRef, player, { merge: true });
+      } catch (e) {
+        console.error("Erro ao sincronizar com Firebase:", e);
+      }
     }
 
-    function alterarNick() {
-      if (state.coins < 1000) return alert("Moedas insuficientes! Requer 💰 1.000 moedas.");
-      const n = prompt("Novo Nick:");
-      if (n) { state.nick = n; state.coins -= 1000; updateUI(); }
-    }
+    window.salvarJogoManual = function() {
+      salvarFirebase();
+      alert("💾 Jogo Salvo com Sucesso!");
+    };
 
-    function comprar(id, preco) {
-      if (state.coins < preco) return alert("Moedas insuficientes!");
-      state.coins -= preco;
-      state.ownedChars.push(id);
-      updateUI();
-    }
+    window.sairParaMenu = function() {
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
+      document.getElementById('game-container').style.display = 'none';
+      document.getElementById('cinema-screen').style.display = 'flex';
+    };
 
-    function equipar(id) { state.equippedChar = id; updateUI(); }
-    function batalhaRapida() {
-      if (Math.random() > 0.4) { state.wins++; state.coins += 100; alert("VITÓRIA!"); }
-      else { state.losses++; alert("DERROTA!"); }
-      updateUI();
-    }
-
-    function abrirBonus() { document.getElementById('modal-bonus').style.display = 'flex'; }
-    function fecharBonus() { document.getElementById('modal-bonus').style.display = 'none'; }
-    function resgatarBonus() { state.coins += 500; state.gems += 10; alert("Bônus resgatado!"); fecharBonus(); updateUI(); }
-    function salvarJogo() { alert("💾 Progresso salvo localmente!"); }
-    function trocarConta() { if (confirm("Deseja sair da conta?")) location.reload(); }
-    function abrirCombate() { alert("Entrando na Arena de Batalha..."); }
-
-    // Inicializar Tela
-    updateUI();
+    window.resetarProgresso = function() {
+      if (confirm("Deseja realmente iniciar um NOVO JOGO e resetar os dados?")) {
+        player.wins = 0; player.losses = 0; player.coins = 1500; player.level = 1;
+        salvarFirebase();
+        atualizarUI();
+      }
+    };
   </script>
 </body>
 </html>
