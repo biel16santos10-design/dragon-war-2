@@ -187,20 +187,21 @@
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
+    <!-- Firebase SDKs (Versão Compat com as chaves reais do seu projeto) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
     <script>
-        // 🔑 CONFIGURAÇÃO REAL DO SEU FIREBASE (Cole suas chaves reais aqui caso precise atualizar)
+        // 🔑 CONFIGURAÇÃO REAL DO SEU FIREBASE (Extraída do seu painel)
         const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "seu-projeto.firebaseapp.com",
-            projectId: "seu-projeto-id",
-            storageBucket: "seu-projeto.appspot.com",
-            messagingSenderId: "SENDER_ID",
-            appId: "APP_ID"
+            apiKey: "AIzaSyDgooL-9qYU",
+            authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
+            projectId: "dragon-war-rise-of-power-2a9f1",
+            storageBucket: "dragon-war-rise-of-power-2a9f1.appspot.com",
+            messagingSenderId: "115455691167",
+            appId: "1:115455691167:web:ff3638f67b66c17c5515aa",
+            measurementId: "G-S7XE2EN"
         };
 
         if (!firebase.apps.length) {
@@ -278,7 +279,6 @@
                             jogadorAtual = doc.data();
                             entrarNoHub();
                         } else {
-                            // Se o usuário existe no Auth mas não no Firestore, cria um perfil padrão para não travar
                             let uidGerado = user.uid.substring(0, 8).toUpperCase();
                             jogadorAtual = {
                                 nome: email.split('@')[0],
@@ -314,7 +314,6 @@
             document.getElementById('sum-uid').innerText = jogadorAtual.uid;
             document.getElementById('sum-rank').innerText = jogadorAtual.rank;
 
-            // Renderizar histórico no resumo
             let historicoHtml = "";
             if(jogadorAtual.historico) {
                 jogadorAtual.historico.forEach(h => {
@@ -323,7 +322,6 @@
                 document.getElementById('sum-historico').innerHTML = historicoHtml;
             }
 
-            // Liberar painel de Admin apenas para o e-mail autorizado (markivus25@gmail.com)
             if (auth.currentUser && auth.currentUser.email === "markivus25@gmail.com") {
                 document.getElementById('admin-panel-section').style.display = 'block';
             }
