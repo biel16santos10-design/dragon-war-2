@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dragon War: Rise of Power - Painel</title>
-    <!-- Firebase SDKs (Certifique-se de usar a mesma versão do seu projeto) -->
+    <title>Dragon War: Rise of Power - Jogo & Painel DM</title>
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <style>
-        /* Estilos base do painel e do tema */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #0b0f19; color: #f8fafc; height: 100vh; overflow: hidden; }
         
-        /* Layout principal */
+        /* Layout */
         .game-container { display: flex; height: 100vh; }
         .sidebar { width: 260px; background: #0f172a; border-right: 1px solid #1e293b; display: flex; flex-direction: column; }
         .sidebar-header { padding: 20px; font-size: 16px; font-weight: bold; color: #38bdf8; border-bottom: 1px solid #1e293b; }
@@ -24,7 +24,6 @@
         .tab-panel { display: none; }
         .tab-panel.active { display: block; }
 
-        /* Cards e Tabelas */
         .card-box { background: #0f172a; border: 1px solid #1e293b; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
         .card-box h3 { font-size: 16px; color: #38bdf8; margin-bottom: 15px; }
         
@@ -33,12 +32,13 @@
         .ranking-table th { color: #94a3b8; font-weight: 600; }
         .ranking-table tr:hover { background: rgba(30, 41, 59, 0.5); }
 
-        /* Botões de Ação */
-        .btn-action { background: #0284c7; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; text-align: left; transition: opacity 0.2s; }
+        .btn-action { background: #0284c7; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; text-align: left; }
         .btn-action:hover { opacity: 0.9; }
 
-        /* Rodapé de Status */
         .status-bar { position: fixed; bottom: 0; left: 260px; right: 0; background: #0f172a; border-top: 1px solid #1e293b; padding: 10px 25px; display: flex; justify-content: space-between; font-size: 13px; color: #94a3b8; }
+        
+        /* Classe para ocultar abas de DM para jogadores comuns */
+        .dm-only { display: none !important; }
     </style>
 </head>
 <body>
@@ -47,43 +47,58 @@
         <!-- Menu Lateral -->
         <div class="sidebar">
             <div class="sidebar-header">DRAGON WAR: OP</div>
-            <ul class="nav-menu">
-                <li onclick="trocarTab('geral', this)" class="active">🛡 Visão Geral (Ativo)</li>
-                <li onclick="trocarTab('admin', this)">⚔️ Jogadores Online</li>
-                <li onclick="trocarTab('banidos', this)">🛑 Jogadores Banidos</li>
-                <li onclick="trocarTab('logs', this)">📜 Logs de Admin</li>
+            <ul class="nav-menu" id="menu-lateral">
+                <!-- Comum a todos -->
+                <li onclick="trocarTab('jogo', this)" class="active">⚔️ Jogar (Game View)</li>
+                
+                <!-- Apenas visível para DM / Admin -->
+                <li onclick="trocarTab('geral', this)" class="dm-only menu-dm">🛡 Visão Geral DM</li>
+                <li onclick="trocarTab('admin', this)" class="dm-only menu-dm">👥 Gestão de Jogadores</li>
+                <li onclick="trocarTab('banidos', this)" class="dm-only menu-dm">🛑 Jogadores Banidos</li>
+                <li onclick="trocarTab('logs', this)" class="dm-only menu-dm">📜 Logs de Auditoria</li>
             </ul>
         </div>
 
         <!-- Conteúdo Principal -->
         <div class="content-area">
             
-            <!-- ABA: VISÃO GERAL -->
-            <div id="tab-geral" class="tab-panel active">
+            <!-- TELA DO JOGO (Visão padrão do Jogador) -->
+            <div id="tab-jogo" class="tab-panel active">
                 <h1 style="font-size: 24px; margin-bottom: 5px;">DRAGON WAR: RISE OF POWER</h1>
-                <p style="color: #94a3b8; margin-bottom: 25px;">ADMIN PANEL (MENU DE ADM)</p>
+                <p style="color: #94a3b8; margin-bottom: 25px;">Sua jornada épica começa aqui.</p>
+                
+                <div class="card-box">
+                    <h3>ÁREA DE AVENTURA</h3>
+                    <p style="color: #94a3b8; margin-bottom: 15px;">Bem-vindo ao mundo de Dragen's Peak. Explore dungeons, lute contra monstros e evolua o seu personagem.</p>
+                    <div style="background: #1e293b; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                        <p><strong>Status do Personagem:</strong> <span id="lbl-nome-player" style="color: #38bdf8;">Carregando...</span></p>
+                        <p><strong>Nível:</strong> <span id="lbl-nivel-player">1</span> | <strong>Ouro:</strong> 🪙 <span id="lbl-ouro-player">0</span></p>
+                    </div>
+                    <button onclick="realizarAcaoAventura()" style="background: #16a34a; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">Explorar Dungeon</button>
+                </div>
+            </div>
+
+            <!-- ABA: VISÃO GERAL DM -->
+            <div id="tab-geral" class="tab-panel">
+                <h1 style="font-size: 24px; margin-bottom: 5px;">PAINEL DO DUNGEON MASTER (DM)</h1>
+                <p style="color: #94a3b8; margin-bottom: 25px;">Controle global do servidor.</p>
                 
                 <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
-                    <div>
-                        <div class="card-box">
-                            <h3>ESTATÍSTICAS DO SERVIDOR</h3>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 14px; color: #94a3b8;">
-                                <div>👥 Total Players: 12,543 (Online: 1,892)</div>
-                                <div>⏱️ Uptime: 4d 11h</div>
-                                <div>📶 Ping: 38ms</div>
-                                <div>⚡ Tps: 19.95</div>
-                            </div>
+                    <div class="card-box">
+                        <h3>ESTATÍSTICAS DO SERVIDOR</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 14px; color: #94a3b8;">
+                            <div>👥 Jogadores Online: <span id="stat-online">Carregando...</span></div>
+                            <div>⏱️ Uptime: Ativo</div>
+                            <div>📶 Status DB: Conectado</div>
+                            <div>⚡ Modo: DM / Master</div>
                         </div>
                     </div>
-                    <div>
-                        <div class="card-box">
-                            <h3>AÇÕES RÁPIDAS (BETA)</h3>
-                            <div style="display: flex; flex-direction: column; gap: 10px;">
-                                <button class="btn-action" onclick="adminSpawnBoss()">🐲 SPAWN DE BOSS</button>
-                                <button class="btn-action" style="background: #dc2626;" onclick="alert('Selecione um jogador na aba Jogadores Online para banir.')">🛑 BANIR JOGADOR</button>
-                                <button class="btn-action" style="background: #16a34a;" onclick="adminDarMoedas()">🪙 DAR MOEDAS</button>
-                                <button class="btn-action" style="background: #3b82f6;" onclick="adminModoDeus()">🛡️ MODO DEUS</button>
-                            </div>
+                    <div class="card-box">
+                        <h3>AÇÕES RÁPIDAS</h3>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <button class="btn-action" onclick="adminSpawnBoss()">🐲 SPAWN DE BOSS</button>
+                            <button class="btn-action" style="background: #16a34a;" onclick="adminDarMoedas()">🪙 DAR OURO</button>
+                            <button class="btn-action" style="background: #3b82f6;" onclick="adminModoDeus()">🛡️ MODO DEUS</button>
                         </div>
                     </div>
                 </div>
@@ -96,7 +111,7 @@
                 
                 <div class="card-box">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <h3 style="margin: 0;">LISTA DE JOGADORES ONLINE</h3>
+                        <h3 style="margin: 0;">LISTA DE JOGADORES</h3>
                         <input type="text" id="filtro-jogador" placeholder="Pesquisar por nome..." onkeyup="filtrarJogadoresAdmin()" style="padding: 6px 12px; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 4px; width: 220px;">
                     </div>
                     
@@ -105,74 +120,53 @@
                             <tr>
                                 <th>NOME</th>
                                 <th>NÍVEL</th>
-                                <th>CLASSE</th>
-                                <th>LOCAL</th>
+                                <th>OURO</th>
                                 <th>ESTADO</th>
                                 <th>AÇÕES</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <!-- Preenchido via Firebase -->
-                        </tbody>
+                        <tbody></tbody>
                     </table>
-
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
-                        <button onclick="paginaAnterior()" id="btn-anterior" style="background: #334155; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px;">Anterior</button>
-                        <span id="indicador-pagina" style="color: #94a3b8; font-size: 14px;">Página 1</span>
-                        <button onclick="proximaPagina()" id="btn-proxima" style="background: #334155; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px;">Próxima</button>
-                    </div>
                 </div>
             </div>
 
             <!-- ABA: JOGADORES BANIDOS -->
             <div id="tab-banidos" class="tab-panel">
                 <h2 style="font-size: 20px; margin-bottom: 5px;">REGISTRO DE BANIMENTOS</h2>
-                <p style="color: #94a3b8; margin-bottom: 20px;">Lista de usuários penalizados e impedidos de acessar o servidor.</p>
-                
+                <p style="color: #94a3b8; margin-bottom: 20px;">Usuários penalizados.</p>
                 <div class="card-box">
                     <table class="ranking-table" id="tabela-banidos">
                         <thead>
                             <tr>
                                 <th>NOME</th>
                                 <th>MOTIVO</th>
-                                <th>DATA DO BANIMENTO</th>
+                                <th>DATA</th>
                                 <th>AÇÕES</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <!-- Preenchido via Firebase -->
-                        </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- ABA: LOGS DE ADMIN -->
+            <!-- ABA: LOGS -->
             <div id="tab-logs" class="tab-panel">
-                <h2 style="font-size: 20px; margin-bottom: 5px;">REGISTRO DE AUDITORIA (LOGS)</h2>
-                <p style="color: #94a3b8; margin-bottom: 20px;">Histórico de ações realizadas pelos administradores.</p>
-                
+                <h2 style="font-size: 20px; margin-bottom: 5px;">AUDITORIA DE LOGS</h2>
+                <p style="color: #94a3b8; margin-bottom: 20px;">Histórico de ações de DM.</p>
                 <div class="card-box">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-                        <h3 style="margin: 0;">HISTÓRICO</h3>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <label style="color: #94a3b8; font-size: 13px;">De: <input type="date" id="filtro-data-inicio" onchange="renderizarLogsFiltrados()" style="background: #0f172a; border: 1px solid #334155; color: white; padding: 4px; border-radius: 4px;"></label>
-                            <label style="color: #94a3b8; font-size: 13px;">Até: <input type="date" id="filtro-data-fim" onchange="renderizarLogsFiltrados()" style="background: #0f172a; border: 1px solid #334155; color: white; padding: 4px; border-radius: 4px;"></label>
-                            <button onclick="exportarLogsCSV()" style="background: #16a34a; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold;">📥 Exportar CSV</button>
-                        </div>
+                    <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                        <button onclick="exportarLogsCSV()" style="background: #16a34a; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold;">📥 Exportar CSV</button>
                     </div>
-                    
                     <table class="ranking-table" id="tabela-logs">
                         <thead>
                             <tr>
                                 <th>DATA / HORA</th>
-                                <th>ADMINISTRADOR</th>
-                                <th>AÇÃO EXECUTADA</th>
+                                <th>ADMIN</th>
+                                <th>AÇÃO</th>
                                 <th>DETALHES</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <!-- Preenchido via Firebase -->
-                        </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
@@ -182,14 +176,12 @@
 
     <!-- Barra de Status Fixa -->
     <div class="status-bar">
-        <span>Bem-vindo, ADM_KAIROS (RANK: SUPER ADM)</span>
-        <span>Server: [BR-1] ELDERSTONE</span>
-        <span id="data-atual">Date: 28 OUT 2023, 14:32:01</span>
+        <span id="status-usuario-logado">Sessão: Jogador Comum</span>
+        <span>Server: [BR-1] DRAGEN'S PEAK</span>
     </div>
 
-    <!-- Script de Integração e Lógica -->
+    <!-- Script de Integração e Regra de Acesso DM -->
     <script>
-        // CONFIGURAÇÃO DO FIREBASE (Insira as suas credenciais reais aqui)
         const firebaseConfig = {
             apiKey: "SUA_API_KEY",
             authDomain: "SEU_AUTH_DOMAIN",
@@ -203,16 +195,33 @@
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.firestore();
+        const auth = firebase.auth();
 
-        // Variáveis globais do painel
-        let usuarioAtualId = "ID_DO_JOGADOR_ATUAL"; 
-        let dadosJogador = { ouro: 1000, vida: 100 };
-        let paginaAtual = 1;
-        let itensPorPagina = 5;
-        let listaJogadoresCache = [];
-        let listaLogsCache = [];
+        let usuarioAtualId = null;
+        let isDM = false;
 
-        // Navegação entre abas
+        // Monitor de Autenticação (Verifica automaticamente quem entrou)
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                usuarioAtualId = user.uid;
+                
+                // VERIFICAÇÃO DE DM: Se o e-mail for o seu, libera o painel completo de DM
+                if (user.email === "groupsacabraldigital@gmail.com") {
+                    isDM = true;
+                    document.querySelectorAll('.menu-dm').forEach(el => el.classList.remove('dm-only'));
+                    document.getElementById('status-usuario-logado').innerText = `Sessão: Gabriel (DM / Super Admin)`;
+                } else {
+                    isDM = false;
+                    document.getElementById('status-usuario-logado').innerText = `Sessão: ${user.email || 'Jogador'}`;
+                }
+
+                carregarDadosJogadorComum(user.uid);
+            } else {
+                // Caso não esteja logado, faz login anônimo ou de teste para o jogo rodar
+                auth.signInAnonymously().catch(err => console.error("Erro auth:", err));
+            }
+        });
+
         function trocarTab(tabId, elemento) {
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-menu li').forEach(l => l.classList.remove('active'));
@@ -220,169 +229,141 @@
             document.getElementById('tab-' + tabId).classList.add('active');
             if (elemento) elemento.classList.add('active');
 
-            if (tabId === 'admin') carregarJogadoresOnlineAdmin();
-            if (tabId === 'banidos') carregarJogadoresBanidos();
-            if (tabId === 'logs') carregarLogsAdmin();
+            if (tabId === 'admin' && isDM) carregarJogadoresOnlineAdmin();
+            if (tabId === 'banidos' && isDM) carregarJogadoresBanidos();
+            if (tabId === 'logs' && isDM) carregarLogsAdmin();
         }
 
-        // Funções de Ações Rápidas
+        // Funções do Jogador Comum
+        function carregarDadosJogadorComum(uid) {
+            db.collection("jogadores").doc(uid).onSnapshot(doc => {
+                if (doc.exists) {
+                    let data = doc.data();
+                    document.getElementById('lbl-nome-player').innerText = data.nome || "Guerreiro";
+                    document.getElementById('lbl-nivel-player').innerText = data.nivel || 1;
+                    document.getElementById('lbl-ouro-player').innerText = data.ouro || 0;
+                } else {
+                    // Cria o documento inicial se não existir
+                    db.collection("jogadores").doc(uid).set({
+                        nome: "Novo Herói",
+                        nivel: 1,
+                        ouro: 100,
+                        banido: false,
+                        criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+            });
+        }
+
+        function realizarAcaoAventura() {
+            if (!usuarioAtualId) return;
+            let ref = db.collection("jogadores").doc(usuarioAtualId);
+            db.runTransaction(transaction => {
+                return transaction.get(ref).then(doc => {
+                    let ouroAtual = doc.data().ouro || 0;
+                    transaction.update(ref, { ouro: ouroAtual + 50 });
+                });
+            }).then(() => {
+                alert("Você explorou a dungeon e encontrou 🪙 50 de ouro!");
+            }).catch(err => console.error(err));
+        }
+
+        // Funções de DM (Painel Admin)
         function adminSpawnBoss() {
+            if (!isDM) return;
             db.collection("servidor").doc("estadoGlobal").set({
                 bossAtivo: true,
-                bossNome: "Khaldron, O Dragão",
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             }, { merge: true }).then(() => {
-                registrarLogAdmin("SPAWN_BOSS", "Invocou o Boss Khaldron no servidor.");
+                registrarLogAdmin("SPAWN_BOSS", "Invocou Boss mundial.");
                 alert("Boss invocado com sucesso!");
-            }).catch(err => alert("Erro: " + err.message));
+            });
         }
 
         function adminDarMoedas() {
-            let qtd = prompt("Quantas moedas deseja adicionar?", "1000");
+            if (!isDM || !usuarioAtualId) return;
+            let qtd = Number(prompt("Quantidade de ouro para adicionar:", "1000"));
             if (!qtd) return;
-            dadosJogador.ouro += Number(qtd);
             db.collection("jogadores").doc(usuarioAtualId).update({
-                ouro: dadosJogador.ouro
+                ouro: firebase.firestore.FieldValue.increment(qtd)
             }).then(() => {
-                registrarLogAdmin("DAR_MOEDAS", `Adicionou ${qtd} moedas.`);
-                alert(`Adicionadas 🪙 ${qtd} moedas!`);
-            }).catch(err => alert("Erro: " + err.message));
+                registrarLogAdmin("DAR_OURO", `Adicionou ${qtd} de ouro.`);
+                alert("Ouro adicionado!");
+            });
         }
 
         function adminModoDeus() {
-            dadosJogador.vida = 9999;
+            if (!isDM || !usuarioAtualId) return;
             db.collection("jogadores").doc(usuarioAtualId).update({
-                vida: 9999
+                modoDeus: true
             }).then(() => {
-                registrarLogAdmin("MODO_DEUS", "Ativou o Modo Deus (Vida 9999).");
-                alert("🛡️ Modo Deus ativado!");
-            }).catch(err => alert("Erro: " + err.message));
+                registrarLogAdmin("MODO_DEUS", "Ativou Modo Deus.");
+                alert("Modo Deus ativado!");
+            });
         }
 
-        // Sistema de Banimento
-        function banirJogador(jogadorId) {
-            let motivo = prompt("Digite o motivo do banimento:", "Violação das regras do servidor");
-            if (motivo === null) return;
-            if (!motivo.trim()) {
-                alert("O motivo não pode estar vazio.");
-                return;
-            }
-            
-            db.collection("jogadores").doc(jogadorId).update({
-                status: "BANIDO",
+        function banirJogador(id) {
+            if (!isDM) return;
+            let motivo = prompt("Motivo do banimento:");
+            if (!motivo) return;
+            db.collection("jogadores").doc(id).update({
                 banido: true,
                 motivoBanimento: motivo,
                 dataBanimento: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
-                registrarLogAdmin("BANIR_JOGADOR", `ID: ${jogadorId} | Motivo: ${motivo}`);
-                alert("Jogador banido com sucesso!");
-            }).catch(err => alert("Erro: " + err.message));
+                registrarLogAdmin("BANIR", `ID: ${id} | Motivo: ${motivo}`);
+                alert("Jogador banido.");
+            });
         }
 
-        function reverterBanimento(jogadorId) {
-            if (!confirm("Deseja retirar o banimento deste jogador?")) return;
-            
-            db.collection("jogadores").doc(jogadorId).update({
-                status: "ATIVO",
+        function reverterBanimento(id) {
+            if (!isDM) return;
+            db.collection("jogadores").doc(id).update({
                 banido: false,
                 motivoBanimento: firebase.firestore.FieldValue.delete(),
                 dataBanimento: firebase.firestore.FieldValue.delete()
             }).then(() => {
-                registrarLogAdmin("DESBANIR_JOGADOR", `ID: ${jogadorId}`);
-                alert("Banimento removido!");
-            }).catch(err => alert("Erro: " + err.message));
+                registrarLogAdmin("DESBANIR", `ID: ${id}`);
+                alert("Banimento removido.");
+            });
         }
 
-        // Carregar Jogadores Online
         function carregarJogadoresOnlineAdmin() {
-            db.collection("jogadores").onSnapshot(snapshot => {
-                listaJogadoresCache = [];
+            db.collection("jogadores").where("banido", "!=", true).onSnapshot(snapshot => {
+                let tbody = document.querySelector('#tabela-jogadores-admin tbody');
+                if (!tbody) return;
+                tbody.innerHTML = "";
+                document.getElementById('stat-online').innerText = snapshot.size;
+
                 snapshot.forEach(doc => {
-                    listaJogadoresCache.push({ id: doc.id, ...doc.data() });
+                    let data = doc.data();
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${data.nome || "Herói"}</td>
+                            <td>${data.nivel || 1}</td>
+                            <td>🪙 ${data.ouro || 0}</td>
+                            <td style="color: #16a34a; font-weight: bold;">ONLINE</td>
+                            <td>
+                                <button onclick="banirJogador('${doc.id}')" style="background: #dc2626; color: white; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px;">Banir</button>
+                            </td>
+                        </tr>
+                    `;
                 });
-                renderizarTabelaPaginada();
             });
         }
 
-        function renderizarTabelaPaginada() {
-            let tbody = document.querySelector('#tabela-jogadores-admin tbody');
-            if (!tbody) return;
-            tbody.innerHTML = "";
-            
-            let inicio = (paginaAtual - 1) * itensPorPagina;
-            let fim = inicio + itensPorPagina;
-            let jogadoresPagina = listaJogadoresCache.slice(inicio, fim);
-            
-            if (jogadoresPagina.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #94a3b8;">Nenhum jogador encontrado.</td></tr>`;
-                return;
-            }
-            
-            jogadoresPagina.forEach(data => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${data.nome || "Guerreiro"}</td>
-                        <td>${data.nivel || 1}</td>
-                        <td>Guerreiro</td>
-                        <td>Dragen's Peak</td>
-                        <td style="color: #16a34a; font-weight: bold;">ONLINE</td>
-                        <td>
-                            <button onclick="banirJogador('${data.id}')" style="background: #dc2626; color: white; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px;">Banir</button>
-                        </td>
-                    </tr>
-                `;
-            });
-            
-            document.getElementById('indicador-pagina').innerText = `Página ${paginaAtual}`;
-            document.getElementById('btn-anterior').disabled = paginaAtual === 1;
-            document.getElementById('btn-proxima').disabled = fim >= listaJogadoresCache.length;
-        }
-
-        function proximaPagina() {
-            if ((paginaAtual * itensPorPagina) < listaJogadoresCache.length) {
-                paginaAtual++;
-                renderizarTabelaPaginada();
-            }
-        }
-
-        function paginaAnterior() {
-            if (paginaAtual > 1) {
-                paginaAtual--;
-                renderizarTabelaPaginada();
-            }
-        }
-
-        function filtrarJogadoresAdmin() {
-            let filtro = document.getElementById('filtro-jogador').value.toLowerCase();
-            let linhas = document.getElementById('tabela-jogadores-admin').getElementsByTagName('tr');
-            for (let i = 1; i < linhas.length; i++) {
-                let coluna = linhas[i].getElementsByTagName('td')[0];
-                if (coluna) {
-                    let texto = coluna.textContent || coluna.innerText;
-                    linhas[i].style.display = texto.toLowerCase().indexOf(filtro) > -1 ? "" : "none";
-                }
-            }
-        }
-
-        // Carregar Jogadores Banidos
         function carregarJogadoresBanidos() {
             db.collection("jogadores").where("banido", "==", true).onSnapshot(snapshot => {
                 let tbody = document.querySelector('#tabela-banidos tbody');
                 if (!tbody) return;
                 tbody.innerHTML = "";
-                
-                if (snapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8;">Nenhum jogador banido.</td></tr>`;
-                    return;
-                }
-                
                 snapshot.forEach(doc => {
                     let data = doc.data();
-                    let dataBan = data.dataBanimento ? data.dataBanimento.toDate().toLocaleDateString('pt-BR') : "Indisponível";
+                    let dataBan = data.dataBanimento ? data.dataBanimento.toDate().toLocaleDateString('pt-BR') : "-";
                     tbody.innerHTML += `
                         <tr>
-                            <td>${data.nome || "Desconhecido"}</td>
-                            <td style="color: #dc2626;">${data.motivoBanimento || "Não especificado"}</td>
+                            <td>${data.nome || "Herói"}</td>
+                            <td style="color: #dc2626;">${data.motivoBanimento || "N/A"}</td>
                             <td>${dataBan}</td>
                             <td>
                                 <button onclick="reverterBanimento('${doc.id}')" style="background: #16a34a; color: white; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px;">Desbanir</button>
@@ -393,94 +374,51 @@
             });
         }
 
-        // Logs e Auditoria
         function registrarLogAdmin(acao, detalhes) {
             db.collection("logs_admin").add({
-                admin: "ADM_KAIROS",
+                admin: "Gabriel (DM)",
                 acao: acao,
                 detalhes: detalhes,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            }).catch(err => console.error("Erro ao registrar log:", err));
+            });
         }
 
         function carregarLogsAdmin() {
-            db.collection("logs_admin").orderBy("timestamp", "desc").limit(200).onSnapshot(snapshot => {
-                listaLogsCache = [];
-                if (snapshot.empty) {
-                    renderizarLogsFiltrados();
-                    return;
-                }
+            db.collection("logs_admin").orderBy("timestamp", "desc").limit(50).onSnapshot(snapshot => {
+                let tbody = document.querySelector('#tabela-logs tbody');
+                if (!tbody) return;
+                tbody.innerHTML = "";
                 snapshot.forEach(doc => {
-                    listaLogsCache.push({ id: doc.id, ...doc.data() });
+                    let data = doc.data();
+                    let dataHora = data.timestamp ? data.timestamp.toDate().toLocaleString('pt-BR') : "Agora";
+                    tbody.innerHTML += `
+                        <tr>
+                            <td style="color: #94a3b8; font-size: 13px;">${dataHora}</td>
+                            <td style="color: #3b82f6; font-weight: bold;">${data.admin}</td>
+                            <td>${data.acao}</td>
+                            <td>${data.detalhes}</td>
+                        </tr>
+                    `;
                 });
-                renderizarLogsFiltrados();
-            });
-        }
-
-        function obterLogsFiltrados() {
-            let dataInicioStr = document.getElementById('filtro-data-inicio').value;
-            let dataFimStr = document.getElementById('filtro-data-fim').value;
-            let dataInicio = dataInicioStr ? new Date(dataInicioStr + "T00:00:00") : null;
-            let dataFim = dataFimStr ? new Date(dataFimStr + "T23:59:59") : null;
-
-            return listaLogsCache.filter(log => {
-                if (!log.timestamp) return false;
-                let logDate = log.timestamp.toDate();
-                if (dataInicio && logDate < dataInicio) return false;
-                if (dataFim && logDate > dataFim) return false;
-                return true;
-            });
-        }
-
-        function renderizarLogsFiltrados() {
-            let tbody = document.querySelector('#tabela-logs tbody');
-            if (!tbody) return;
-            tbody.innerHTML = "";
-            let logsFiltrados = obterLogsFiltrados();
-            
-            if (logsFiltrados.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8;">Nenhum log encontrado para o período.</td></tr>`;
-                return;
-            }
-            
-            logsFiltrados.forEach(data => {
-                let dataHora = data.timestamp ? data.timestamp.toDate().toLocaleString('pt-BR') : "Agora mesmo";
-                tbody.innerHTML += `
-                    <tr>
-                        <td style="color: #94a3b8; font-size: 13px;">${dataHora}</td>
-                        <td style="font-weight: bold; color: #3b82f6;">${data.admin || "Sistema"}</td>
-                        <td>${data.acao || ""}</td>
-                        <td>${data.detalhes || "-"}</td>
-                    </tr>
-                `;
             });
         }
 
         function exportarLogsCSV() {
-            let logsParaExportar = obterLogsFiltrados();
-            if (logsParaExportar.length === 0) {
-                alert("Não há logs para exportar.");
-                return;
-            }
-
-            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-            csvContent += "Data/Hora,Administrador,Acao,Detalhes\r\n";
-
-            logsParaExportar.forEach(log => {
-                let dataHora = log.timestamp ? log.timestamp.toDate().toLocaleString('pt-BR') : "Indisponível";
-                let admin = `"${(log.admin || "Sistema").replace(/"/g, '""')}"`;
-                let acao = `"${(log.acao || "").replace(/"/g, '""')}"`;
-                let detalhes = `"${(log.detalhes || "").replace(/"/g, '""')}"`;
-                csvContent += `${dataHora},${admin},${acao},${detalhes}\r\n`;
+            db.collection("logs_admin").orderBy("timestamp", "desc").get().then(snapshot => {
+                let csvContent = "data:text/csv;charset=utf-8,\uFEFFData/Hora,Admin,Acao,Detalhes\r\n";
+                snapshot.forEach(doc => {
+                    let d = doc.data();
+                    let dataHora = d.timestamp ? d.timestamp.toDate().toLocaleString('pt-BR') : "";
+                    csvContent += `${dataHora},"${d.admin}","${d.acao}","${d.detalhes}"\r\n`;
+                });
+                let encodedUri = encodeURI(csvContent);
+                let link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", `logs_dm_${Date.now()}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             });
-
-            let encodedUri = encodeURI(csvContent);
-            let link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `logs_admin_${new Date().toISOString().slice(0,10)}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
         }
     </script>
 </body>
