@@ -14,7 +14,6 @@ body {
     min-height: 100vh;
 }
 
-/* LOADING */
 #loadingScreen {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: #0a0e1a; display: flex; flex-direction: column;
@@ -28,7 +27,6 @@ body {
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 .loading-text { margin-top: 20px; color: #ff6b00; font-size: 1.2em; font-weight: bold; }
 
-/* AUTH */
 .auth-container {
     display: flex; justify-content: center; align-items: center;
     min-height: 100vh; padding: 20px;
@@ -75,13 +73,8 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .btn-primary { background: linear-gradient(135deg, #ff6b00, #ff4500); color: #fff; }
 .btn-success { background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; }
 
-/* GAME LAYOUT */
-.game-layout {
-    display: flex;
-    min-height: 100vh;
-}
+.game-layout { display: flex; min-height: 100vh; }
 
-/* SIDEBAR */
 .sidebar {
     width: 200px;
     background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
@@ -111,14 +104,12 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .sidebar-item .icon { font-size: 1.3em; }
 .sidebar-item .label { font-size: 0.9em; font-weight: bold; }
 
-/* MAIN CONTENT */
 .main-content {
     margin-left: 200px;
     flex: 1;
     padding: 20px;
 }
 
-/* TOP BAR */
 .top-bar {
     display: flex;
     justify-content: space-between;
@@ -128,6 +119,8 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     border-radius: 12px;
     border: 1px solid #334155;
     margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 .player-info {
     display: flex;
@@ -150,8 +143,9 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .player-details .level { font-size: 0.85em; color: #94a3b8; }
 .resources {
     display: flex;
-    gap: 20px;
+    gap: 15px;
     align-items: center;
+    flex-wrap: wrap;
 }
 .resource {
     display: flex;
@@ -168,12 +162,10 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .badge-vip { background: #ffd700; color: #000; padding: 2px 8px; border-radius: 10px; font-size: 0.7em; margin-left: 5px; }
 .text-admin { color: #c4b5fd; text-shadow: 0 0 10px rgba(196, 181, 253, 0.6); }
 
-/* SCREENS */
 .screen { display: none; }
 .screen.active { display: block; animation: fadeIn 0.3s; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-/* COMBAT SCREEN */
 .bosses-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -234,6 +226,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     display: flex;
     gap: 15px;
     justify-content: center;
+    flex-wrap: wrap;
 }
 .reward-item {
     display: flex;
@@ -255,11 +248,11 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     text-transform: uppercase;
 }
 
-/* SHOP SCREEN */
 .shop-categories {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
+    flex-wrap: wrap;
 }
 .category-btn {
     padding: 12px 20px;
@@ -294,7 +287,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .rarity-common { border-color: #22c55e; }
 .item-image { font-size: 60px; text-align: center; margin-bottom: 10px; }
 .item-name { font-weight: bold; margin-bottom: 5px; font-size: 0.95em; }
-.item-price { color: #fbbf24; font-weight: bold; margin-bottom: 10px; }
+.item-price { color: #fbbf24; font-weight: bold; margin-bottom: 10px; font-size: 0.9em; }
 .btn-buy {
     width: 100%;
     padding: 10px;
@@ -306,7 +299,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     font-weight: bold;
 }
 
-/* SKILLS SCREEN */
 .skills-container {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -365,7 +357,61 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     margin-top: 15px;
 }
 
-/* CHAT */
+/* SETTINGS MODAL */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+.modal-overlay.active { display: flex; }
+.modal {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    border: 2px solid #3b82f6;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(59, 130, 246, 0.4);
+}
+.modal h2 {
+    color: #60a5fa;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.modal-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    border: 1px solid #334155;
+}
+.modal-section h3 {
+    color: #fbbf24;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+.modal-section p {
+    color: #94a3b8;
+    font-size: 0.9em;
+    margin-bottom: 10px;
+}
+.modal-close {
+    width: auto;
+    padding: 10px 20px;
+    background: #64748b;
+    color: #fff;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
 .chat-toggle {
     position: fixed;
     bottom: 20px;
@@ -498,7 +544,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     font-size: 0.85em;
 }
 
-/* TOAST */
 #toast {
     position: fixed;
     bottom: 20px;
@@ -524,35 +569,32 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     .bosses-grid { grid-template-columns: 1fr; }
     .skills-container { grid-template-columns: 1fr; }
     .chat-panel { width: calc(100% - 40px); }
+    .resources { gap: 8px; }
+    .resource { padding: 6px 10px; }
 }
 </style>
 </head>
 <body>
 
-<!-- LOADING -->
 <div id="loadingScreen">
     <div class="spinner"></div>
     <div class="loading-text">Carregando Dragon War...</div>
 </div>
 
-<!-- AUTH VIEW -->
 <div id="authView" class="hidden">
     <div class="auth-container">
         <div class="auth-card">
             <h1>DRAGON WAR</h1>
             <p class="subtitle">RISE OF POWER</p>
-            
             <div class="auth-tabs">
                 <div class="auth-tab active" onclick="switchAuthTab('login')">Entrar</div>
                 <div class="auth-tab" onclick="switchAuthTab('register')">Criar Conta</div>
             </div>
-
             <div id="loginForm" class="auth-form active">
                 <input id="loginEmail" type="email" placeholder="E-mail">
                 <input id="loginPass" type="password" placeholder="Senha">
                 <button class="btn-primary" onclick="doLogin()">ENTRAR</button>
             </div>
-
             <div id="registerForm" class="auth-form">
                 <input id="regNick" placeholder="Nome do Personagem">
                 <input id="regEmail" type="email" placeholder="E-mail">
@@ -563,18 +605,16 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     </div>
 </div>
 
-<!-- GAME VIEW -->
 <div id="gameView" class="hidden">
     <div class="game-layout">
         
-        <!-- SIDEBAR -->
         <div class="sidebar">
             <div class="sidebar-item active" onclick="showScreen('combat', this)">
-                <span class="icon">⚔️</span>
+                <span class="icon">️</span>
                 <span class="label">JOGAR</span>
             </div>
             <div class="sidebar-item" onclick="showScreen('combat', this)">
-                <span class="icon"></span>
+                <span class="icon">📊</span>
                 <span class="label">RESUMO</span>
             </div>
             <div class="sidebar-item" onclick="showScreen('combat', this)">
@@ -582,7 +622,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
                 <span class="label">CAMPANHA</span>
             </div>
             <div class="sidebar-item" onclick="showScreen('combat', this)">
-                <span class="icon">👁️</span>
+                <span class="icon">️</span>
                 <span class="label">DUNGEONS</span>
             </div>
             <div class="sidebar-item" onclick="showScreen('combat', this)">
@@ -603,10 +643,8 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
             </div>
         </div>
 
-        <!-- MAIN CONTENT -->
         <div class="main-content">
             
-            <!-- TOP BAR -->
             <div class="top-bar">
                 <div class="player-info">
                     <div class="player-avatar" id="playerAvatar">?</div>
@@ -621,20 +659,29 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
                         <span class="resource-value" id="resEnergy">120/120</span>
                     </div>
                     <div class="resource">
-                        <span class="resource-icon">💎</span>
+                        <span class="resource-icon"></span>
+                        <span class="resource-value" id="resCoins">0</span>
+                    </div>
+                    <div class="resource">
+                        <span class="resource-icon"></span>
                         <span class="resource-value" id="resGems">0</span>
                     </div>
                     <div class="resource">
-                        <span class="resource-icon">💰</span>
-                        <span class="resource-value" id="resCoins">0</span>
+                        <span class="resource-icon">🔮</span>
+                        <span class="resource-value" id="resCrystals">0</span>
                     </div>
-                    <button id="btnOpenAdmin" class="hidden" style="width:auto;padding:8px 15px;background:#7c3aed;color:#fff;border-radius:8px;margin:0;" onclick="window.location.href='admin.html'">🛡️ ADM</button>
+                    <div class="resource">
+                        <span class="resource-icon">⭐</span>
+                        <span class="resource-value" id="resPoints">0</span>
+                    </div>
+                    <button onclick="openSettings()" style="width:auto;padding:8px 15px;background:#3b82f6;color:#fff;border-radius:8px;margin:0;">⚙️ Config</button>
+                    <button id="btnOpenAdmin" class="hidden" style="width:auto;padding:8px 15px;background:#7c3aed;color:#fff;border-radius:8px;margin:0;" onclick="window.location.href='admin.html'">️ ADM</button>
                     <button id="logoutBtn" style="width:auto;padding:8px 15px;background:#ef4444;color:#fff;border-radius:8px;margin:0;">Sair</button>
                 </div>
             </div>
 
-            <!-- COMBAT SCREEN -->
             <div id="combatScreen" class="screen active">
+                <h2 style="font-size: 2em; margin-bottom: 20px; color: #fbbf24;">️ SELEÇÃO DE BOSS</h2>
                 <div class="bosses-grid">
                     <div class="boss-card">
                         <div class="boss-rank">SSS</div>
@@ -648,18 +695,17 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
                         <div class="rewards">
                             <div class="rewards-title">RECOMPENSAS</div>
                             <div class="rewards-grid">
-                                <div class="reward-item"><span class="reward-icon"></span><span>Gemas</span></div>
-                                <div class="reward-item"><span class="reward-icon">💰</span><span>Ouro</span></div>
-                                <div class="reward-item"><span class="reward-icon">🔮</span><span>Fragmentos</span></div>
-                                <div class="reward-item"><span class="reward-icon">⚔️</span><span>Equip.</span></div>
+                                <div class="reward-item"><span class="reward-icon">💎</span><span>500</span></div>
+                                <div class="reward-item"><span class="reward-icon">💰</span><span>5.000</span></div>
+                                <div class="reward-item"><span class="reward-icon">🔮</span><span>100</span></div>
                             </div>
                         </div>
-                        <button class="btn-battle" onclick="startBattle('Khaldrón', 5000, 500)">⚔️ ENTRAR NA BATALHA</button>
+                        <button class="btn-battle" onclick="startBattle('Khaldrón', 5000, 500, 100)">⚔️ ENTRAR NA BATALHA</button>
                     </div>
 
                     <div class="boss-card">
                         <div class="boss-rank">SS</div>
-                        <div class="boss-image"></div>
+                        <div class="boss-image">👹</div>
                         <div class="boss-name">IGNEOUS</div>
                         <div class="boss-title">The Fire Demon</div>
                         <div class="boss-stats">
@@ -669,13 +715,12 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
                         <div class="rewards">
                             <div class="rewards-title">RECOMPENSAS</div>
                             <div class="rewards-grid">
-                                <div class="reward-item"><span class="reward-icon">💎</span><span>Gemas</span></div>
-                                <div class="reward-item"><span class="reward-icon">💰</span><span>Ouro</span></div>
-                                <div class="reward-item"><span class="reward-icon">🔮</span><span>Fragmentos</span></div>
-                                <div class="reward-item"><span class="reward-icon">⚔️</span><span>Equip.</span></div>
+                                <div class="reward-item"><span class="reward-icon">💎</span><span>300</span></div>
+                                <div class="reward-item"><span class="reward-icon">💰</span><span>3.000</span></div>
+                                <div class="reward-item"><span class="reward-icon">🔮</span><span>60</span></div>
                             </div>
                         </div>
-                        <button class="btn-battle" onclick="startBattle('Igneous', 3000, 300)">⚔️ ENTRAR NA BATALHA</button>
+                        <button class="btn-battle" onclick="startBattle('Igneous', 3000, 300, 60)">⚔️ ENTRAR NA BATALHA</button>
                     </div>
 
                     <div class="boss-card">
@@ -690,18 +735,76 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
                         <div class="rewards">
                             <div class="rewards-title">RECOMPENSAS</div>
                             <div class="rewards-grid">
-                                <div class="reward-item"><span class="reward-icon">💎</span><span>Gemas</span></div>
-                                <div class="reward-item"><span class="reward-icon">💰</span><span>Ouro</span></div>
-                                <div class="reward-item"><span class="reward-icon"></span><span>Fragmentos</span></div>
-                                <div class="reward-item"><span class="reward-icon">⚔️</span><span>Equip.</span></div>
+                                <div class="reward-item"><span class="reward-icon">💎</span><span>200</span></div>
+                                <div class="reward-item"><span class="reward-icon">💰</span><span>2.000</span></div>
+                                <div class="reward-item"><span class="reward-icon"></span><span>40</span></div>
                             </div>
                         </div>
-                        <button class="btn-battle" onclick="startBattle('Malakai', 2000, 200)">️ ENTRAR NA BATALHA</button>
+                        <button class="btn-battle" onclick="startBattle('Malakai', 2000, 200, 40)">⚔️ ENTRAR NA BATALHA</button>
+                    </div>
+
+                    <div class="boss-card">
+                        <div class="boss-rank">SSS</div>
+                        <div class="boss-image">👑</div>
+                        <div class="boss-name">DRAGON KING</div>
+                        <div class="boss-title">The Ancient Ruler</div>
+                        <div class="boss-stats">
+                            <div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">100</div></div>
+                            <div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">5M</div></div>
+                        </div>
+                        <div class="rewards">
+                            <div class="rewards-title">RECOMPENSAS</div>
+                            <div class="rewards-grid">
+                                <div class="reward-item"><span class="reward-icon">💎</span><span>1.000</span></div>
+                                <div class="reward-item"><span class="reward-icon">💰</span><span>10.000</span></div>
+                                <div class="reward-item"><span class="reward-icon">🔮</span><span>200</span></div>
+                            </div>
+                        </div>
+                        <button class="btn-battle" onclick="startBattle('Dragon King', 10000, 1000, 200)">⚔️ ENTRAR NA BATALHA</button>
+                    </div>
+
+                    <div class="boss-card">
+                        <div class="boss-rank">SS</div>
+                        <div class="boss-image">🧙</div>
+                        <div class="boss-name">ARCHMAGE</div>
+                        <div class="boss-title">The Dark Sorcerer</div>
+                        <div class="boss-stats">
+                            <div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">75</div></div>
+                            <div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">2M</div></div>
+                        </div>
+                        <div class="rewards">
+                            <div class="rewards-title">RECOMPENSAS</div>
+                            <div class="rewards-grid">
+                                <div class="reward-item"><span class="reward-icon">💎</span><span>400</span></div>
+                                <div class="reward-item"><span class="reward-icon"></span><span>4.000</span></div>
+                                <div class="reward-item"><span class="reward-icon">🔮</span><span>80</span></div>
+                            </div>
+                        </div>
+                        <button class="btn-battle" onclick="startBattle('Archmage', 4000, 400, 80)">⚔️ ENTRAR NA BATALHA</button>
+                    </div>
+
+                    <div class="boss-card">
+                        <div class="boss-rank">S</div>
+                        <div class="boss-image"></div>
+                        <div class="boss-name">VAMPIRE LORD</div>
+                        <div class="boss-title">The Blood King</div>
+                        <div class="boss-stats">
+                            <div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">65</div></div>
+                            <div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">1.5M</div></div>
+                        </div>
+                        <div class="rewards">
+                            <div class="rewards-title">RECOMPENSAS</div>
+                            <div class="rewards-grid">
+                                <div class="reward-item"><span class="reward-icon"></span><span>250</span></div>
+                                <div class="reward-item"><span class="reward-icon">💰</span><span>2.500</span></div>
+                                <div class="reward-item"><span class="reward-icon">🔮</span><span>50</span></div>
+                            </div>
+                        </div>
+                        <button class="btn-battle" onclick="startBattle('Vampire Lord', 2500, 250, 50)">⚔️ ENTRAR NA BATALHA</button>
                     </div>
                 </div>
             </div>
 
-            <!-- SHOP SCREEN -->
             <div id="shopScreen" class="screen">
                 <h2 style="font-size: 2em; margin-bottom: 20px; color: #fbbf24;">🛒 LOJA DE ITENS</h2>
                 <div class="shop-categories">
@@ -711,67 +814,90 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
                     <button class="category-btn">💎 Gemas</button>
                 </div>
                 <div class="shop-grid">
-                    <div class="shop-item rarity-legendary">
+                    <div class="shop-item rarity-common">
+                        <div class="item-image">🗡️</div>
+                        <div class="item-name">Espada de Ferro</div>
+                        <div class="item-price">💰 100</div>
+                        <button class="btn-buy" onclick="buyItem('Espada de Ferro', 100, 'coins')">COMPRAR</button>
+                    </div>
+                    <div class="shop-item rarity-common">
+                        <div class="item-image">🛡️</div>
+                        <div class="item-name">Escudo de Madeira</div>
+                        <div class="item-price">💰 150</div>
+                        <button class="btn-buy" onclick="buyItem('Escudo de Madeira', 150, 'coins')">COMPRAR</button>
+                    </div>
+                    <div class="shop-item rarity-rare">
                         <div class="item-image">⚔️</div>
-                        <div class="item-name">Lâmina do Dragão Celestial</div>
-                        <div class="item-price">💰 5.000</div>
-                        <button class="btn-buy" onclick="buyItem('Lâmina do Dragão', 5000)">COMPRAR</button>
+                        <div class="item-name">Espada de Aço</div>
+                        <div class="item-price">💰 500</div>
+                        <button class="btn-buy" onclick="buyItem('Espada de Aço', 500, 'coins')">COMPRAR</button>
+                    </div>
+                    <div class="shop-item rarity-rare">
+                        <div class="item-image">🏹</div>
+                        <div class="item-name">Arco Élfico</div>
+                        <div class="item-price">💰 800</div>
+                        <button class="btn-buy" onclick="buyItem('Arco Élfico', 800, 'coins')">COMPRAR</button>
                     </div>
                     <div class="shop-item rarity-epic">
                         <div class="item-image">️</div>
-                        <div class="item-name">Armadura do Dragão</div>
-                        <div class="item-price">💰 3.000</div>
-                        <button class="btn-buy" onclick="buyItem('Armadura do Dragão', 3000)">COMPRAR</button>
+                        <div class="item-name">Lâmina do Dragão</div>
+                        <div class="item-price"> 3.000</div>
+                        <button class="btn-buy" onclick="buyItem('Lâmina do Dragão', 3000, 'coins')">COMPRAR</button>
+                    </div>
+                    <div class="shop-item rarity-epic">
+                        <div class="item-image">🛡️</div>
+                        <div class="item-name">Armadura Mágica</div>
+                        <div class="item-price">💰 4.000</div>
+                        <button class="btn-buy" onclick="buyItem('Armadura Mágica', 4000, 'coins')">COMPRAR</button>
+                    </div>
+                    <div class="shop-item rarity-legendary">
+                        <div class="item-image">⚔️</div>
+                        <div class="item-name">Espada Lendária</div>
+                        <div class="item-price">💎 500</div>
+                        <button class="btn-buy" onclick="buyItem('Espada Lendária', 500, 'gems')">COMPRAR</button>
+                    </div>
+                    <div class="shop-item rarity-legendary">
+                        <div class="item-image">👑</div>
+                        <div class="item-name">Coroa do Rei</div>
+                        <div class="item-price">💎 1.000</div>
+                        <button class="btn-buy" onclick="buyItem('Coroa do Rei', 1000, 'gems')">COMPRAR</button>
+                    </div>
+                    <div class="shop-item rarity-common">
+                        <div class="item-image"></div>
+                        <div class="item-name">Poção de Vida</div>
+                        <div class="item-price">💰 50</div>
+                        <button class="btn-buy" onclick="buyItem('Poção de Vida', 50, 'coins')">COMPRAR</button>
                     </div>
                     <div class="shop-item rarity-rare">
                         <div class="item-image">🧪</div>
                         <div class="item-name">Poção de Mana</div>
-                        <div class="item-price">💰 500</div>
-                        <button class="btn-buy" onclick="buyItem('Poção de Mana', 500)">COMPRAR</button>
-                    </div>
-                    <div class="shop-item rarity-common">
-                        <div class="item-image">📜</div>
-                        <div class="item-name">Pergaminho do Poder</div>
-                        <div class="item-price">💰 250</div>
-                        <button class="btn-buy" onclick="buyItem('Pergaminho', 250)">COMPRAR</button>
+                        <div class="item-price">💰 200</div>
+                        <button class="btn-buy" onclick="buyItem('Poção de Mana', 200, 'coins')">COMPRAR</button>
                     </div>
                     <div class="shop-item rarity-epic">
-                        <div class="item-image">💍</div>
-                        <div class="item-name">Anel do Dragão</div>
-                        <div class="item-price">💰 2.500</div>
-                        <button class="btn-buy" onclick="buyItem('Anel do Dragão', 2500)">COMPRAR</button>
-                    </div>
-                    <div class="shop-item rarity-rare">
-                        <div class="item-image">🗡️</div>
-                        <div class="item-name">Espada da Tempestade</div>
-                        <div class="item-price"> 1.500</div>
-                        <button class="btn-buy" onclick="buyItem('Espada da Tempestade', 1500)">COMPRAR</button>
-                    </div>
-                    <div class="shop-item rarity-common">
-                        <div class="item-image">🧪</div>
-                        <div class="item-name">Poção de Vida</div>
-                        <div class="item-price">💰 300</div>
-                        <button class="btn-buy" onclick="buyItem('Poção de Vida', 300)">COMPRAR</button>
+                        <div class="item-image"></div>
+                        <div class="item-name">Pergaminho Raro</div>
+                        <div class="item-price">🔮 50</div>
+                        <button class="btn-buy" onclick="buyItem('Pergaminho Raro', 50, 'crystals')">COMPRAR</button>
                     </div>
                     <div class="shop-item rarity-legendary">
-                        <div class="item-image">🧥</div>
-                        <div class="item-name">Manto Sombrio</div>
-                        <div class="item-price">💰 4.000</div>
-                        <button class="btn-buy" onclick="buyItem('Manto Sombrio', 4000)">COMPRAR</button>
+                        <div class="item-image">💎</div>
+                        <div class="item-name">Cristal Místico</div>
+                        <div class="item-price">🔮 200</div>
+                        <button class="btn-buy" onclick="buyItem('Cristal Místico', 200, 'crystals')">COMPRAR</button>
                     </div>
                 </div>
             </div>
 
-            <!-- SKILLS SCREEN -->
             <div id="skillsScreen" class="screen">
                 <h2 style="font-size: 2em; margin-bottom: 20px; color: #fbbf24;">✨ PODERES</h2>
                 <div class="skills-container">
                     <div class="skill-tree">
                         <div class="skill-node unlocked" style="top: 50px; left: 50%; transform: translateX(-50%);" onclick="selectSkill('fire')">🔥</div>
-                        <div class="skill-node unlocked" style="top: 150px; left: 30%;" onclick="selectSkill('lightning')">⚡</div>
+                        <div class="skill-node unlocked" style="top: 150px; left: 30%;" onclick="selectSkill('lightning')"></div>
                         <div class="skill-node" style="top: 150px; left: 70%;" onclick="selectSkill('ice')">❄️</div>
                         <div class="skill-node locked" style="top: 250px; left: 50%; transform: translateX(-50%);" onclick="selectSkill('void')">🌌</div>
-                        <div class="skill-node unlocked" style="top: 350px; left: 20%;" onclick="selectSkill('slash')">️</div>
+                        <div class="skill-node unlocked" style="top: 350px; left: 20%;" onclick="selectSkill('slash')">⚔️</div>
                         <div class="skill-node" style="top: 350px; left: 80%;" onclick="selectSkill('serpent')">🐍</div>
                     </div>
                     <div class="skill-detail">
@@ -787,7 +913,38 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     </div>
 </div>
 
-<!-- CHAT -->
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settingsModal">
+    <div class="modal">
+        <h2>⚙️ Configurações</h2>
+        
+        <div class="modal-section">
+            <h3>👤 Editar Nome</h3>
+            <p>Altere o nome do seu personagem. Custo: 💰 1.000 moedas</p>
+            <input id="newNickInput" placeholder="Novo nome do personagem" maxlength="20">
+            <button class="btn-primary" onclick="changeNick()">ALTERAR NOME</button>
+        </div>
+
+        <div class="modal-section">
+            <h3>📊 Informações da Conta</h3>
+            <p><strong>UID:</strong> <span id="settingsUid">---</span></p>
+            <p><strong>E-mail:</strong> <span id="settingsEmail">---</span></p>
+            <p><strong>Nível:</strong> <span id="settingsLevel">1</span></p>
+            <p><strong>Função:</strong> <span id="settingsRole">Jogador</span></p>
+        </div>
+
+        <div class="modal-section">
+            <h3>💰 Recursos Atuais</h3>
+            <p>💰 Moedas: <span id="settingsCoins">0</span></p>
+            <p>💎 Gemas: <span id="settingsGems">0</span></p>
+            <p>🔮 Cristais: <span id="settingsCrystals">0</span></p>
+            <p>⭐ Pontos: <span id="settingsPoints">0</span></p>
+        </div>
+
+        <button class="modal-close" onclick="closeSettings()">FECHAR</button>
+    </div>
+</div>
+
 <button class="chat-toggle" id="chatToggle" onclick="toggleChat()">
     
     <span class="notification hidden" id="chatNotif">0</span>
@@ -862,13 +1019,9 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
         
-        if (screenId === 'combat') {
-            $('combatScreen').classList.add('active');
-        } else if (screenId === 'shop') {
-            $('shopScreen').classList.add('active');
-        } else if (screenId === 'skills') {
-            $('skillsScreen').classList.add('active');
-        }
+        if (screenId === 'combat') $('combatScreen').classList.add('active');
+        else if (screenId === 'shop') $('shopScreen').classList.add('active');
+        else if (screenId === 'skills') $('skillsScreen').classList.add('active');
         
         if (btn) btn.classList.add('active');
     };
@@ -913,6 +1066,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
                 email: email,
                 coins: 1000,
                 gems: 100,
+                crystals: 50,
                 points: 0,
                 level: 1,
                 xp: 0,
@@ -932,12 +1086,61 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
         }
     };
 
-    window.buyItem = async (name, price) => {
+    window.openSettings = () => {
         if (!currentUserData) return showToast('Carregando dados...');
-        if (currentUserData.coins < price) return showToast('❌ Moedas insuficientes!');
-        if (confirm(`Comprar ${name} por ${price.toLocaleString('pt-BR')} moedas?`)) {
+        $('settingsUid').textContent = currentUserId.substring(0, 12) + '...';
+        $('settingsEmail').textContent = currentUserData.email || '---';
+        $('settingsLevel').textContent = currentUserData.level || 1;
+        $('settingsRole').textContent = isUserAdmin ? '👑 Administrador' : 'Jogador';
+        $('settingsCoins').textContent = Number(currentUserData.coins || 0).toLocaleString('pt-BR');
+        $('settingsGems').textContent = Number(currentUserData.gems || 0).toLocaleString('pt-BR');
+        $('settingsCrystals').textContent = Number(currentUserData.crystals || 0).toLocaleString('pt-BR');
+        $('settingsPoints').textContent = Number(currentUserData.points || 0).toLocaleString('pt-BR');
+        $('newNickInput').value = currentUserData.nick || '';
+        $('settingsModal').classList.add('active');
+    };
+
+    window.closeSettings = () => {
+        $('settingsModal').classList.remove('active');
+    };
+
+    window.changeNick = async () => {
+        const newNick = $('newNickInput').value.trim();
+        if (!newNick) return showToast('Digite um nome válido.');
+        if (newNick.length < 3) return showToast('Nome muito curto (mín. 3 caracteres).');
+        if (newNick.length > 20) return showToast('Nome muito longo (máx. 20 caracteres).');
+        
+        const cost = 1000;
+        if (currentUserData.coins < cost) {
+            return showToast('❌ Moedas insuficientes! Custo: 💰 1.000');
+        }
+        
+        if (confirm(`Alterar nome para "${newNick}" por 💰 1.000 moedas?`)) {
             try {
-                await updateDoc(playerRef, { coins: currentUserData.coins - price });
+                await updateDoc(playerRef, {
+                    nick: newNick,
+                    coins: currentUserData.coins - cost
+                });
+                showToast('✅ Nome alterado para: ' + newNick);
+                closeSettings();
+            } catch(e) {
+                showToast('Erro: ' + e.message);
+            }
+        }
+    };
+
+    window.buyItem = async (name, price, currency) => {
+        if (!currentUserData) return showToast('Carregando dados...');
+        
+        const currentAmount = currentUserData[currency] || 0;
+        if (currentAmount < price) {
+            const currencyName = currency === 'coins' ? '💰 Moedas' : currency === 'gems' ? '💎 Gemas' : ' Cristais';
+            return showToast(`❌ ${currencyName} insuficientes!`);
+        }
+        
+        if (confirm(`Comprar ${name} por ${price.toLocaleString('pt-BR')} ${currency === 'coins' ? '💰' : currency === 'gems' ? '💎' : '🔮'}?`)) {
+            try {
+                await updateDoc(playerRef, { [currency]: currentAmount - price });
                 showToast('✅ ' + name + ' comprado!');
             } catch(e) {
                 showToast('Erro: ' + e.message);
@@ -945,21 +1148,23 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
         }
     };
 
-    window.startBattle = async (bossName, rewardCoins, rewardGems) => {
+    window.startBattle = async (bossName, rewardCoins, rewardGems, rewardCrystals) => {
         if (!currentUserData) return showToast('Carregando dados...');
         const win = Math.random() > 0.3;
         if (win) {
             const newCoins = (currentUserData.coins || 0) + rewardCoins;
             const newGems = (currentUserData.gems || 0) + rewardGems;
+            const newCrystals = (currentUserData.crystals || 0) + rewardCrystals;
             const newPoints = (currentUserData.points || 0) + 100;
             try {
                 await updateDoc(playerRef, {
                     coins: newCoins,
                     gems: newGems,
+                    crystals: newCrystals,
                     points: newPoints,
                     xp: (currentUserData.xp || 0) + 50
                 });
-                showToast(`⚔️ Vitória contra ${bossName}! +${rewardCoins} moedas, +${rewardGems} gemas!`);
+                showToast(`⚔️ Vitória! +${rewardCoins}💰 +${rewardGems} +${rewardCrystals}🔮`);
             } catch(e) {
                 showToast('Erro: ' + e.message);
             }
@@ -970,12 +1175,12 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 
     window.selectSkill = (skill) => {
         const skills = {
-            fire: { name: ' Fôlego de Fogo', damage: '680% + 120%', mp: 120, cooldown: '18s', points: 3, description: 'Libera uma onda de fogo que causa dano massivo em área.' },
-            lightning: { name: ' Raio Espiritual', damage: '520% + 80%', mp: 90, cooldown: '12s', points: 2, description: 'Invoca um raio que atinge inimigos em linha reta.' },
-            ice: { name: '❄️ Nova Glacial', damage: '450% + 60%', mp: 75, cooldown: '15s', points: 2, description: 'Congela todos os inimigos próximos por 3 segundos.' },
+            fire: { name: '🔥 Fôlego de Fogo', damage: '680% + 120%', mp: 120, cooldown: '18s', points: 3, description: 'Libera uma onda de fogo que causa dano massivo em área.' },
+            lightning: { name: '⚡ Raio Espiritual', damage: '520% + 80%', mp: 90, cooldown: '12s', points: 2, description: 'Invoca um raio que atinge inimigos em linha reta.' },
+            ice: { name: '️ Nova Glacial', damage: '450% + 60%', mp: 75, cooldown: '15s', points: 2, description: 'Congela todos os inimigos próximos por 3 segundos.' },
             void: { name: '🌌 Torrente do Vazio', damage: '800% + 150%', mp: 150, cooldown: '25s', points: 5, description: 'Libera uma onda de energia do vazio que causa dano enorme.' },
             slash: { name: '⚔️ Mestre da Espada', damage: '300% + 50%', mp: 50, cooldown: '8s', points: 1, description: 'Ataque rápido com a espada que causa dano físico.' },
-            serpent: { name: '🐍 Golpe da Serpente', damage: '400% + 70%', mp: 65, cooldown: '10s', points: 2, description: 'Ataque venenoso que causa dano ao longo do tempo.' }
+            serpent: { name: ' Golpe da Serpente', damage: '400% + 70%', mp: 65, cooldown: '10s', points: 2, description: 'Ataque venenoso que causa dano ao longo do tempo.' }
         };
         const s = skills[skill];
         if (!s) return;
@@ -1145,6 +1350,8 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 
             $('resCoins').textContent = Number(data.coins || 0).toLocaleString('pt-BR');
             $('resGems').textContent = Number(data.gems || 0).toLocaleString('pt-BR');
+            $('resCrystals').textContent = Number(data.crystals || 0).toLocaleString('pt-BR');
+            $('resPoints').textContent = Number(data.points || 0).toLocaleString('pt-BR');
             $('resEnergy').textContent = `${data.energy || 120}/120`;
 
             if (heartbeatInterval) clearInterval(heartbeatInterval);
