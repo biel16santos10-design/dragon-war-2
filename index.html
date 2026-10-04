@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dragon War - Painel do Jogador</title>
+  <title>Dragon War - Player UI</title>
   <style>
     :root {
       --bg-color: #060913;
@@ -13,20 +13,24 @@
       --accent-gold: #ffb700;
       --accent-purple: #9d4edd;
       --text-main: #e0f2fe;
+      --green-active: #10b981;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background: var(--bg-color); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
     /* Sidebar Navegação */
-    .sidebar { width: 220px; background: rgba(5, 10, 20, 0.95); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 15px; }
-    .profile-card { text-align: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
-    .avatar { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--accent-blue); margin-bottom: 5px; }
+    .sidebar { width: 250px; background: rgba(5, 10, 20, 0.95); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 15px; }
+    .profile-card { text-align: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color); }
+    .avatar { width: 70px; height: 70px; border-radius: 50%; border: 2px solid var(--accent-blue); margin-bottom: 8px; object-fit: cover; }
+    .nick-container { display: flex; align-items: center; justify-content: center; gap: 5px; }
     .nick { font-weight: bold; color: #fff; font-size: 1.1em; cursor: pointer; }
-    .nick:hover::after { content: ' ✏️'; font-size: 0.8em; }
-    .rank-badge { font-size: 0.8em; padding: 2px 8px; border-radius: 10px; background: #333; display: inline-block; margin-top: 5px; }
+    .btn-edit-nick { background: none; border: none; color: var(--accent-gold); cursor: pointer; font-size: 0.9em; }
+    .rank-badge { font-size: 0.85em; padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.1); display: inline-block; margin-top: 5px; font-weight: bold; }
+    
+    .resources-bar { font-size: 0.9em; margin-top: 10px; display: flex; justify-content: space-around; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 5px; }
 
-    .nav-btn { background: transparent; border: 1px solid transparent; color: var(--text-main); text-align: left; padding: 12px; margin: 4px 0; border-radius: 6px; cursor: pointer; transition: 0.2s; font-size: 0.95em; }
+    .nav-btn { background: transparent; border: 1px solid transparent; color: var(--text-main); text-align: left; padding: 12px; margin: 4px 0; border-radius: 6px; cursor: pointer; transition: 0.2s; font-size: 0.95em; width: 100%; }
     .nav-btn:hover, .nav-btn.active { background: rgba(0, 210, 255, 0.1); border-color: var(--accent-blue); color: #fff; text-shadow: 0 0 5px var(--accent-blue); }
 
     /* Conteúdo Principal */
@@ -34,26 +38,34 @@
     .section { display: none; }
     .section.active { display: block; }
 
-    /* UI Cards / Grids */
-    .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+    /* Cards e Ações */
+    .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
     .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
 
-    .btn-action { background: linear-gradient(135deg, #ff9100, #ff3c00); border: none; color: #fff; padding: 12px 24px; font-weight: bold; font-size: 1.1em; border-radius: 6px; cursor: pointer; box-shadow: 0 0 10px rgba(255, 60, 0, 0.5); }
-    .btn-action:hover { transform: scale(1.02); }
+    .btn-action { background: linear-gradient(135deg, #ff9100, #ff3c00); border: none; color: #fff; padding: 12px 20px; font-weight: bold; font-size: 0.95em; border-radius: 6px; cursor: pointer; box-shadow: 0 0 10px rgba(255, 60, 0, 0.4); transition: 0.2s; }
+    .btn-action:hover { transform: scale(1.03); }
+    .btn-action:disabled { opacity: 0.5; cursor: not-allowed; }
 
     /* Loja */
-    .shop-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+    .shop-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
     .tab-btn { background: #0b172a; border: 1px solid var(--border-color); color: #fff; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
     .tab-btn.active { background: var(--accent-blue); color: #000; font-weight: bold; }
-    .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
-    .shop-item { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; text-align: center; }
     
-    /* Status de Equipado */
-    .status-equipped { color: var(--accent-gold); font-weight: bold; }
+    .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; }
+    .shop-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; text-align: center; position: relative; }
+    .shop-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 6px; margin-bottom: 10px; }
+    .stats-list { font-size: 0.85em; color: #94a3b8; margin: 8px 0; text-align: left; }
+    
+    .btn-buy { background: #22c55e; color: #000; border: none; font-weight: bold; width: 100%; padding: 8px; border-radius: 4px; cursor: pointer; }
+    .btn-equip { background: var(--accent-blue); color: #000; border: none; font-weight: bold; width: 100%; padding: 8px; border-radius: 4px; cursor: pointer; }
+    .badge-equipped { background: var(--accent-gold); color: #000; font-weight: bold; padding: 8px; border-radius: 4px; display: block; width: 100%; }
+
+    /* Poderes */
+    .power-card { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 
     /* Modais */
-    .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; }
-    .modal-content { background: var(--card-bg); border: 1px solid var(--accent-blue); border-radius: 8px; padding: 20px; width: 400px; max-width: 90%; text-align: center; }
+    .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 100; }
+    .modal-content { background: var(--card-bg); border: 1px solid var(--accent-blue); border-radius: 8px; padding: 25px; width: 420px; max-width: 90%; text-align: center; }
   </style>
 </head>
 <body>
@@ -61,10 +73,19 @@
   <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="profile-card">
-      <img src="https://via.placeholder.com/60" class="avatar" alt="Avatar">
-      <div class="nick" id="player-nick" onclick="alterarNick()">Jogador DW</div>
-      <div class="rank-badge" id="player-rank">🌱 Iniciante</div>
+      <img src="https://via.placeholder.com/70" class="avatar" id="player-avatar" alt="Avatar">
+      <div class="nick-container">
+        <div class="nick" id="display-nick">Carregando...</div>
+        <button class="btn-edit-nick" onclick="alterarNick()" title="Mudar Nick (1.000 Moedas)">✏️</button>
+      </div>
+      <div class="rank-badge" id="display-rank">🌱 Iniciante</div>
+      
+      <div class="resources-bar">
+        <span>💰 <b id="res-coins">0</b></span>
+        <span>💎 <b id="res-gems">0</b></span>
+      </div>
     </div>
+
     <button class="nav-btn active" onclick="switchTab('home')">🏠 Home</button>
     <button class="nav-btn" onclick="switchTab('loja')">🛒 Loja Unificada</button>
     <button class="nav-btn" onclick="switchTab('poderes')">✨ Poderes</button>
@@ -77,18 +98,18 @@
     <!-- HOME -->
     <div id="home" class="section active">
       <h2>🏠 Tela Inicial</h2>
-      <div style="display: flex; gap: 15px; margin: 20px 0;">
-        <button class="btn-action">⚔️ JOGAR</button>
-        <button class="btn-action" style="background: linear-gradient(135deg, #00d2ff, #0055ff);">🚀 BATALHA RÁPIDA</button>
+      <div style="display: flex; gap: 15px; margin: 20px 0; flex-wrap: wrap;">
+        <button class="btn-action" onclick="iniciarCombate()">⚔️ JOGAR</button>
+        <button class="btn-action" style="background: linear-gradient(135deg, #00d2ff, #0055ff);" onclick="batalhaRapida()">🚀 BATALHA RÁPIDA</button>
         <button class="btn-action" style="background: linear-gradient(135deg, #9d4edd, #5a189a);" onclick="abrirModalBonus()">🎁 BÔNUS DIÁRIO</button>
       </div>
 
       <div class="grid-cards">
         <div class="card">
-          <h3>Estatísticas Rápida</h3>
-          <p>Vitórias: <span id="stat-wins">0</span></p>
-          <p>Derrotas: <span id="stat-losses">0</span></p>
-          <p>Nível: <span id="stat-level">1</span></p>
+          <h3>Stats Rápidos</h3>
+          <p style="margin-top:10px;">Vitórias: <b id="stat-wins">0</b></p>
+          <p>Derrotas: <b id="stat-losses">0</b></p>
+          <p>Nível: <b id="stat-level">1</b></p>
         </div>
       </div>
     </div>
@@ -97,53 +118,45 @@
     <div id="loja" class="section">
       <h2>🛒 Loja Unificada</h2>
       <div class="shop-tabs">
-        <button class="tab-btn active">👥 Personagens</button>
-        <button class="tab-btn">⚔️ Equipamentos</button>
-        <button class="tab-btn">🧪 Consumíveis</button>
-        <button class="tab-btn">📜 Materiais</button>
-        <button class="tab-btn">💎 Gemas</button>
+        <button class="tab-btn active" onclick="filtrarLoja('personagens')">👥 Personagens</button>
+        <button class="tab-btn" onclick="filtrarLoja('equipamentos')">⚔️ Equipamentos</button>
+        <button class="tab-btn" onclick="filtrarLoja('consumiveis')">🧪 Consumíveis</button>
+        <button class="tab-btn" onclick="filtrarLoja('materiais')">📜 Materiais</button>
+        <button class="tab-btn" onclick="filtrarLoja('gemas')">💎 Gemas</button>
       </div>
-      <div class="shop-grid">
-        <!-- Exemplo de Personagem na Loja -->
-        <div class="shop-item">
-          <h4>Guerreiro de Fogo</h4>
-          <p>ATK: 120 | DEF: 80 | SPD: 50</p>
-          <p style="margin: 10px 0; color: var(--accent-gold);">💰 500 Moedas</p>
-          <button class="btn-action" style="font-size:0.8em; padding: 6px 12px;">🛒 COMPRAR</button>
-        </div>
-        <div class="shop-item">
-          <h4>Mago Sombrio</h4>
-          <p>ATK: 150 | DEF: 40 | SPD: 70</p>
-          <p style="margin: 10px 0;" class="status-equipped">✅ EQUIPADO</p>
-        </div>
+
+      <!-- Grid dinâmico dos 8 Personagens -->
+      <div class="shop-grid" id="characters-grid">
+        <!-- Renderizado dinamicamente via JS -->
       </div>
     </div>
 
     <!-- PODERES -->
     <div id="poderes" class="section">
       <h2>✨ Árvore de Poderes</h2>
-      <div class="grid-cards" style="margin-top:20px;">
-        <div class="card">
-          <h3>Fôlego de Fogo ✅</h3>
-          <p>Habilidade Básica Desbloqueada</p>
-        </div>
-        <div class="card" style="opacity: 0.6;">
-          <h3>Raio Espiritual 🔒</h3>
-          <p>Requer Nível 5</p>
-        </div>
+      <div class="grid-cards" style="margin-top:20px;" id="powers-container">
+        <!-- Poderes Iniciais e Desbloqueáveis renderizados via JS -->
       </div>
     </div>
 
     <!-- RESUMO COMPLETO -->
     <div id="resumo" class="section">
-      <h2>📊 Resumo Completo</h2>
+      <h2>📊 Resumo Completo do Jogador</h2>
       <div class="card" style="margin-top:15px;">
-        <h3>Rank Atual</h3>
-        <p style="font-size: 1.5em; color: var(--accent-gold);">🥇 Ouro</p>
-        <div style="background: #222; height: 10px; border-radius: 5px; margin-top: 10px; overflow: hidden;">
-          <div style="background: var(--accent-gold); width: 65%; height: 100%;"></div>
+        <h3>Progresso de Rank</h3>
+        <p style="font-size: 1.5em; color: var(--accent-gold);" id="summary-rank-title">🌱 Iniciante</p>
+        <div style="background: #222; height: 14px; border-radius: 7px; margin-top: 10px; overflow: hidden; border: 1px solid var(--border-color);">
+          <div id="rank-progress-bar" style="background: var(--accent-gold); width: 0%; height: 100%; transition: width 0.3s;"></div>
         </div>
-        <p style="font-size:0.8em; margin-top:5px;">650 / 1000 XP para Platina</p>
+        <p style="font-size:0.85em; margin-top:5px;" id="rank-progress-text">0 / 5 Vitórias para o próximo Rank</p>
+      </div>
+
+      <div class="grid-cards" style="margin-top:20px;">
+        <div class="card">
+          <h4>Desempenho</h4>
+          <p>Batalhas Totais: <b id="summary-total-battles">0</b></p>
+          <p>Taxa de Vitória: <b id="summary-winrate">0%</b></p>
+        </div>
       </div>
     </div>
 
@@ -153,27 +166,280 @@
   <div id="modal-bonus" class="modal">
     <div class="modal-content">
       <h3>🎁 Bônus Diário</h3>
-      <p style="margin: 15px 0;">Resgate sua recompensa a cada 24 horas!</p>
-      <button class="btn-action" onclick="fecharModalBonus()">RESGATAR DIÁRIO</button>
+      <p style="margin: 15px 0;" id="bonus-status-text">Resgate sua recompensa diária!</p>
+      <button class="btn-action" id="btn-claim-bonus" onclick="claimDailyBonus()">RESGATAR RECOMPENSA</button>
+      <button style="background:transparent; border:none; color:#aaa; margin-top:15px; cursor:pointer;" onclick="fecharModalBonus()">Fechar</button>
     </div>
   </div>
 
+  <!-- FIREBASE & SCRIPT DE LÓGICA -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // Configuração do Firebase
+    const firebaseConfig = {
+      apiKey: "SEU_API_KEY",
+      authDomain: "seu-app.firebaseapp.com",
+      projectId: "seu-app",
+      storageBucket: "seu-app.appspot.com",
+      messagingSenderId: "00000000000",
+      appId: "1:00000000000:web:00000000000"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // UID do Usuário ativo (Simulado ou via Auth)
+    const CURRENT_USER_UID = "PLAYER_LOGGED_UID";
+
+    // Lista com os 8 Personagens do Jogo
+    const ALL_CHARACTERS = [
+      { id: 'c1', name: 'Guerreiro de Fogo', atk: 120, def: 80, spd: 50, price: 0, img: 'https://via.placeholder.com/200/ff4500/ffffff?text=Fogo' },
+      { id: 'c2', name: 'Mago Sombrio', atk: 160, def: 40, spd: 70, price: 500, img: 'https://via.placeholder.com/200/8a2be2/ffffff?text=Sombra' },
+      { id: 'c3', name: 'Arqueira de Gelada', atk: 140, def: 60, spd: 90, price: 800, img: 'https://via.placeholder.com/200/00bfff/ffffff?text=Gelo' },
+      { id: 'c4', name: 'Paladino Sagrado', atk: 110, def: 150, spd: 40, price: 1200, img: 'https://via.placeholder.com/200/ffd700/ffffff?text=Sagrado' },
+      { id: 'c5', name: 'Assassino Noturno', atk: 180, def: 30, spd: 110, price: 2000, img: 'https://via.placeholder.com/200/2f4f4f/ffffff?text=Assassino' },
+      { id: 'c6', name: 'Invocador de Raios', atk: 170, def: 50, spd: 85, price: 3000, img: 'https://via.placeholder.com/200/1e90ff/ffffff?text=Raio' },
+      { id: 'c7', name: 'Lorde Dragão', atk: 210, def: 120, spd: 75, price: 5000, img: 'https://via.placeholder.com/200/b22222/ffffff?text=Dragao' },
+      { id: 'c8', name: 'Titan Divino', atk: 250, def: 200, spd: 60, price: 10000, img: 'https://via.placeholder.com/200/ffffff/000000?text=Titan' }
+    ];
+
+    // Ranks Automáticos baseados em Vitórias
+    const RANKS = [
+      { name: "🌱 Iniciante", minWins: 0 },
+      { name: "🥉 Bronze", minWins: 5 },
+      { name: "🥈 Prata", minWins: 15 },
+      { name: "🥇 Ouro", minWins: 30 },
+      { name: "💠 Platina", minWins: 50 },
+      { name: "💎 Diamante", minWins: 75 },
+      { name: "👑 Mestre", minWins: 100 },
+      { name: "🐉 Lendário", minWins: 150 }
+    ];
+
+    let playerData = null;
+
+    // Escuta alterações do Firebase em tempo real (onSnapshot)
+    const playerRef = doc(db, "users", CURRENT_USER_UID);
+    onSnapshot(playerRef, (docSnap) => {
+      if (docSnap.exists()) {
+        playerData = docSnap.data();
+        renderUI();
+      }
+    });
+
+    // Função de Renderização Dinâmica da UI
+    function renderUI() {
+      if (!playerData) return;
+
+      // Stats Básicos & Recursos
+      document.getElementById('display-nick').innerText = playerData.nick || 'Jogador Sem Nome';
+      document.getElementById('res-coins').innerText = playerData.coins || 0;
+      document.getElementById('res-gems').innerText = playerData.gems || 0;
+      document.getElementById('stat-wins').innerText = playerData.wins || 0;
+      document.getElementById('stat-losses').innerText = playerData.losses || 0;
+      document.getElementById('stat-level').innerText = playerData.level || 1;
+
+      // Cálculo Automático de Rank
+      const currentWins = playerData.wins || 0;
+      let calculatedRank = RANKS[0];
+      let nextRank = RANKS[1];
+
+      for (let i = 0; i < RANKS.length; i++) {
+        if (currentWins >= RANKS[i].minWins) {
+          calculatedRank = RANKS[i];
+          nextRank = RANKS[i + 1] || RANKS[i];
+        }
+      }
+
+      document.getElementById('display-rank').innerText = calculatedRank.name;
+      document.getElementById('summary-rank-title').innerText = calculatedRank.name;
+
+      // Barra de progresso do Rank
+      if (nextRank !== calculatedRank) {
+        const range = nextRank.minWins - calculatedRank.minWins;
+        const progress = currentWins - calculatedRank.minWins;
+        const percentage = Math.min(100, Math.floor((progress / range) * 100));
+        document.getElementById('rank-progress-bar').style.width = percentage + '%';
+        document.getElementById('rank-progress-text').innerText = `${currentWins} / ${nextRank.minWins} Vitórias para o próximo Rank`;
+      } else {
+        document.getElementById('rank-progress-bar').style.width = '100%';
+        document.getElementById('rank-progress-text').innerText = 'Rank Máximo Atingido!';
+      }
+
+      // Resumo de Vitórias/Derrotas
+      const totalBattles = (playerData.wins || 0) + (playerData.losses || 0);
+      const winrate = totalBattles > 0 ? Math.round((playerData.wins / totalBattles) * 100) : 0;
+      document.getElementById('summary-total-battles').innerText = totalBattles;
+      document.getElementById('summary-winrate').innerText = winrate + '%';
+
+      // Renderizar Personagens na Loja
+      renderCharacters();
+
+      // Renderizar Poderes
+      renderPowers();
+    }
+
+    function renderCharacters() {
+      const grid = document.getElementById('characters-grid');
+      grid.innerHTML = '';
+
+      const owned = playerData.ownedCharacters || ['c1'];
+      const equipped = playerData.equippedCharacter || 'c1';
+
+      ALL_CHARACTERS.forEach(char => {
+        const isOwned = owned.includes(char.id);
+        const isEquipped = equipped === char.id;
+
+        let buttonHTML = '';
+        if (isEquipped) {
+          buttonHTML = `<span class="badge-equipped">✅ EQUIPADO</span>`;
+        } else if (isOwned) {
+          buttonHTML = `<button class="btn-equip" onclick="equipCharacter('${char.id}')">⚔️ EQUIPAR</button>`;
+        } else {
+          buttonHTML = `<button class="btn-buy" onclick="buyCharacter('${char.id}', ${char.price})">🛒 COMPRAR (${char.price} 💰)</button>`;
+        }
+
+        grid.innerHTML += `
+          <div class="shop-card">
+            <img src="${char.img}" alt="${char.name}">
+            <h4>${char.name}</h4>
+            <div class="stats-list">
+              <p>⚔️ ATK: ${char.atk}</p>
+              <p>🛡️ DEF: ${char.def}</p>
+              <p>⚡ SPD: ${char.spd}</p>
+            </div>
+            ${buttonHTML}
+          </div>
+        `;
+      });
+    }
+
+    function renderPowers() {
+      const powersContainer = document.getElementById('powers-container');
+      const level = playerData.level || 1;
+
+      const powersList = [
+        { name: "Fôlego de Fogo", reqLevel: 1 },
+        { name: "Golpe Forte", reqLevel: 1 },
+        { name: "Escudo Elemental", reqLevel: 1 },
+        { name: "Raio Espiritual", reqLevel: 5 },
+        { name: "Nova Glacial", reqLevel: 10 },
+        { name: "Torrente do Vazio", reqLevel: 20 }
+      ];
+
+      powersContainer.innerHTML = '';
+      powersList.forEach(p => {
+        const unlocked = level >= p.reqLevel;
+        powersContainer.innerHTML += `
+          <div class="card power-card" style="${!unlocked ? 'opacity: 0.5;' : ''}">
+            <div>
+              <h4>${p.name}</h4>
+              <p style="font-size:0.8em; color:#aaa;">${unlocked ? 'Desbloqueado' : `Requer Nível ${p.reqLevel}`}</p>
+            </div>
+            <span>${unlocked ? '✅' : '🔒'}</span>
+          </div>
+        `;
+      });
+    }
+
+    // --- AÇÕES DO JOGADOR ---
+
+    // 1. Alteração de Nick com verificação de Moedas (1000 Moedas)
+    window.alterarNick = async function() {
+      if ((playerData.coins || 0) < 1000) {
+        alert("Moedas insuficientes! Você precisa de 💰 1.000 moedas para alterar o Nick.");
+        return;
+      }
+      const newNick = prompt("Digite seu novo Nick permanente:");
+      if (newNick && newNick.trim() !== "") {
+        await updateDoc(playerRef, {
+          nick: newNick.trim(),
+          coins: increment(-1000)
+        });
+        alert("Nick alterado com sucesso!");
+      }
+    };
+
+    // 2. Comprar Personagem
+    window.buyCharacter = async function(charId, price) {
+      if ((playerData.coins || 0) < price) {
+        alert("Moedas insuficientes para comprar este personagem!");
+        return;
+      }
+      const currentOwned = playerData.ownedCharacters || ['c1'];
+      await updateDoc(playerRef, {
+        coins: increment(-price),
+        ownedCharacters: [...currentOwned, charId]
+      });
+      alert("Personagem adquirido com sucesso!");
+    };
+
+    // 3. Equipar Personagem
+    window.equipCharacter = async function(charId) {
+      await updateDoc(playerRef, {
+        equippedCharacter: charId
+      });
+    };
+
+    // 4. Bônus Diário (Sistema 24 horas)
+    window.claimDailyBonus = async function() {
+      const now = Date.now();
+      const lastClaim = playerData.lastDailyBonus || 0;
+      const cooldown = 24 * 60 * 60 * 1000; // 24 Horas em milissegundos
+
+      if (now - lastClaim < cooldown) {
+        alert("Você já resgatou seu bônus diário! Aguarde 24 horas.");
+        return;
+      }
+
+      await updateDoc(playerRef, {
+        coins: increment(500),
+        gems: increment(10),
+        lastDailyBonus: now
+      });
+
+      alert("Recompensa resgatada: 💰 500 Moedas e 💎 10 Gemas!");
+      fecharModalBonus();
+    };
+
+    // 5. Batalha Rápida (Exemplo de atualização de vitórias)
+    window.batalhaRapida = async function() {
+      const isWin = Math.random() > 0.4; // 60% de chance de vitória no teste
+      if (isWin) {
+        await updateDoc(playerRef, {
+          wins: increment(1),
+          coins: increment(100),
+          level: increment(1)
+        });
+        alert("🚀 Batalha Encerrada: VITÓRIA! (+1 Vitória, +100 Moedas)");
+      } else {
+        await updateDoc(playerRef, {
+          losses: increment(1)
+        });
+        alert("🚀 Batalha Encerrada: DERROTA!");
+      }
+    };
+
+    window.iniciarCombate = function() {
+      alert("Redirecionando para a Arena de Combate...");
+    };
+  </script>
+
   <script>
+    // Controle de Abas UI
     function switchTab(tabId) {
       document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       document.getElementById(tabId).classList.add('active');
+      event.currentTarget.classList.add('active');
     }
 
     function abrirModalBonus() { document.getElementById('modal-bonus').style.display = 'flex'; }
     function fecharModalBonus() { document.getElementById('modal-bonus').style.display = 'none'; }
-
-    function alterarNick() {
-      let novoNick = prompt("Digite o novo Nick (Custa 💰 1.000):");
-      if(novoNick) {
-        document.getElementById('player-nick').innerText = novoNick;
-        // Lógica de integração Firebase Firestore (nick)
-      }
+    function filtrarLoja(categoria) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      event.currentTarget.classList.add('active');
     }
   </script>
 </body>
