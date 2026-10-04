@@ -28,9 +28,9 @@
         .screen.active {
             display: flex;
         }
-        /* Estilos da Tela Inicial */
+        /* Tela Inicial / Menu Principal */
         #home-screen {
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('fundo-dragon.jpg') no-repeat center center/cover;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.8)), url('fundo-dragon.jpg') no-repeat center center/cover;
             justify-content: space-between;
             padding: 40px;
         }
@@ -63,12 +63,12 @@
             cursor: pointer;
             font-size: 16px;
             text-align: left;
-            width: 200px;
+            width: 220px;
         }
         .menu-btn:hover {
             background: rgba(30, 144, 255, 0.3);
         }
-        /* Estilos do Jogo Principal / Dashboard */
+        /* Tela de Jogo Principal */
         #game-screen {
             background: #0f172a;
             display: grid;
@@ -114,7 +114,7 @@
     <div id="home-screen" class="screen active">
         <div class="home-left">
             <div style="display: flex; align-items: center; gap: 10px;">
-                <img id="user-avatar" src="avatar.png" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #f5af19;" alt="Avatar">
+                <div style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #f5af19; background: #1e293b; display: flex; align-items: center; justify-content: center; font-weight: bold;">GC</div>
                 <div>
                     <h3 id="display-name">Gabriel Cabral</h3>
                     <small style="color: #94a3b8;">UID: <span id="display-uid">12345678</span></small>
@@ -124,42 +124,42 @@
             <button class="menu-btn" onclick="abrirSalvar()">📄 SALVAR</button>
             <button class="menu-btn" onclick="abrirCarregar()">📂 CARREGAR</button>
             <button class="menu-btn" onclick="abrirNovoJogo()">➕ NOVO JOGO</button>
+            <button class="menu-btn" onclick="irParaAdmin()" style="border-color: #f5af19; color: #f5af19;">🛡️ PAINEL ADM</button>
         </div>
     </div>
 
-    <!-- TELA 2: PAINEL DO JOGO (COM ABAS) -->
+    <!-- TELA 2: DASHBOARD DO JOGADOR -->
     <div id="game-screen" class="screen">
         <div class="sidebar">
-            <h2 style="color: #f5af19; margin-bottom: 20px;">DRAGON WAR</h2>
+            <h2 style="color: #f5af19; margin-bottom: 20px; font-size: 18px;">DRAGON WAR</h2>
             <button onclick="mudarAba('resumo', this)">Resumo</button>
-            <button onclick="mudarAba('campanha', this)">Campanha</button>
+            <button onclick="mudarAba('campanha', this)">Campanha / Bosses</button>
             <button onclick="mudarAba('loja', this)" class="active">Loja de Itens</button>
             <button onclick="mudarAba('poderes', this)">Poderes</button>
             <button onclick="mudarAba('inventario', this)">Inventário</button>
-            <button onclick="mudarAba('admin', this)">Painel ADM</button>
+            <button onclick="voltarHome()" style="margin-top: auto; color: #f87171;">⬅ Voltar ao Menu</button>
         </div>
         <div class="content-area">
             <!-- ABA RESUMO -->
             <div id="resumo" class="tab-content">
                 <h2>Resumo do Herói</h2>
-                <p>Estatísticas e dados gerais da conta conectados ao Firebase.</p>
+                <p style="color: #94a3b8; margin-top: 10px;">Estatísticas da conta e dados sincronizados com o Firestore.</p>
             </div>
 
-            <!-- ABA CAMPANHA / BOSSES -->
+            <!-- ABA CAMPANHA -->
             <div id="campanha" class="tab-content">
                 <h2>Batalha contra Chefões</h2>
-                <!-- Cards de Bosses aqui -->
+                <p style="color: #94a3b8; margin-top: 10px;">Enfrente Khaldron, Igneous e Malakai para obter recompensas épicas.</p>
             </div>
 
             <!-- ABA LOJA -->
             <div id="loja" class="tab-content active">
                 <h2>Loja de Itens</h2>
                 <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 20px;">
-                    <!-- Exemplo de Item da Loja -->
                     <div style="background: #1e293b; padding: 15px; border-radius: 8px; border: 1px solid #3b82f6; text-align: center;">
-                        <h4>Lâmina do Dragão</h4>
+                        <h4 style="color: #38bdf8;">Lâmina do Dragão</h4>
                         <p style="color: #f5af19; margin: 10px 0;">5.000 Moedas</p>
-                        <button onclick="comprarItem('Lamina do Dragao', 5000)" style="background: #22c55e; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">COMPRAR</button>
+                        <button onclick="comprarItem('Lâmina do Dragão', 5000)" style="background: #22c55e; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">COMPRAR</button>
                     </div>
                 </div>
             </div>
@@ -167,34 +167,32 @@
             <!-- ABA PODERES -->
             <div id="poderes" class="tab-content">
                 <h2>Árvore de Habilidades</h2>
+                <p style="color: #94a3b8; margin-top: 10px;">Evolua seus poderes elementais e habilidades de combate.</p>
             </div>
 
             <!-- ABA INVENTÁRIO -->
             <div id="inventario" class="tab-content">
                 <h2>Inventário / Mochila</h2>
-            </div>
-
-            <!-- ABA ADMIN -->
-            <div id="admin" class="tab-content">
-                <h2>Painel Administrativo</h2>
+                <p style="color: #94a3b8; margin-top: 10px;">Gerencie seus equipamentos, consumíveis e materiais coletados.</p>
             </div>
         </div>
     </div>
 
     <script>
-        // Função para alternar entre a Tela Inicial e o Jogo
         function entrarNoJogo() {
             document.getElementById('home-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
         }
 
-        // Função para alternar as abas internas do jogo
+        function voltarHome() {
+            document.getElementById('game-screen').classList.remove('active');
+            document.getElementById('home-screen').classList.add('active');
+        }
+
         function mudarAba(nomeAba, elementoBtn) {
-            // Remove active de todas as abas e botões
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.sidebar button').forEach(btn => btn.classList.remove('active'));
 
-            // Ativa a aba e o botão correspondente
             document.getElementById(nomeAba).classList.add('active');
             if(elementoBtn) elementoBtn.classList.add('active');
         }
@@ -203,8 +201,7 @@
             let nome = prompt("Digite o nome do seu personagem:");
             let email = prompt("Digite o seu e-mail:");
             if(nome && email) {
-                alert(`Perfil de ${nome} criado com sucesso! Dados prontos para salvar no Firebase.`);
-                // Aqui você insere a chamada para salvar/criar o usuário no Firestore
+                alert(`Perfil de ${nome} criado e pronto para salvar no Firebase!`);
             }
         }
 
@@ -216,9 +213,12 @@
             alert("Carregando dados da conta...");
         }
 
+        function irParaAdmin() {
+            window.location.href = 'admin.html';
+        }
+
         function comprarItem(nomeItem, preco) {
-            // Lógica de compra integrada com saldo do Firestore
-            alert(`Você comprou: ${nomeItem} por ${preco} moedas! Item adicionado ao inventário.`);
+            alert(`Você comprou: ${nomeItem} por ${preco} moedas! Saldo atualizado.`);
         }
     </script>
 </body>
