@@ -33,7 +33,7 @@ sidebar{width:260px;background:rgba(19,27,46,.95);border-right:1px solid var(--p
 main{flex-grow:1;display:flex;flex-direction:column;position:relative;padding-bottom:60px}
 header{padding:15px 25px;background:rgba(19,27,46,.9);border-bottom:1px solid var(--panel-border);display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(5px)}
 .content-area{flex-grow:1;padding:25px;overflow-y:auto;position:relative}.panel-section{display:none}.panel-section.active{display:block}
-.adm-tag{color:var(--adm-color);font-weight:bold}
+.tag{display:inline-block;padding:5px 9px;border-radius:999px;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.25);font-size:11px;color:#bae6fd}.adm-tag{color:var(--adm-color);font-weight:bold}
 .dragon-rainbow-name{background:linear-gradient(90deg,#ef4444,#f59e0b,#10b981,#3b82f6,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900;font-size:15px}
 .global-chat-bar{position:absolute;bottom:0;left:0;width:100%;height:55px;background:rgba(2,6,23,.95);border-top:1px solid var(--panel-border);display:flex;align-items:center;padding:0 15px;gap:10px;z-index:50;backdrop-filter:blur(5px)}
 .global-chat-bar span{font-size:12px;color:var(--accent-color);font-weight:bold;white-space:nowrap;text-transform:uppercase}
@@ -60,12 +60,12 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 .progress{height:7px;background:#1e293b;border-radius:5px;overflow:hidden;margin-top:5px}.progress>div{height:100%;background:var(--accent-color)}
 #notificacoes-box{position:fixed;top:15px;right:15px;width:min(360px,calc(100vw - 30px));z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}.dw-notificacao{background:rgba(15,23,42,.97);border:1px solid var(--panel-border);border-left:4px solid var(--accent-color);color:#fff;padding:10px 12px;border-radius:8px;box-shadow:0 10px 25px rgba(0,0,0,.45);font-size:12px}.dw-notificacao.success{border-left-color:#10b981}.dw-notificacao.danger{border-left-color:#ef4444}.dw-notificacao.info{border-left-color:#38bdf8}
 @media(max-width:900px){sidebar{width:210px}.grid-boxes,.shop-grid{grid-template-columns:repeat(2,1fr)}.stat-grid{grid-template-columns:repeat(2,1fr)}header{gap:8px;flex-wrap:wrap}.content-area{padding:15px}}
-@media(max-width:650px){sidebar{width:175px;padding:10px}.server-banner{height:55px}.menu-item{font-size:11px;padding:8px}.grid-boxes,.shop-grid{grid-template-columns:1fr}.modal-card{width:92%}}
+@media(max-width:650px){sidebar{width:175px;padding:10px}.server-banner{height:55px}.menu-item{font-size:11px;padding:8px}.grid-boxes,.shop-grid{grid-template-columns:1fr}.modal-card{width:92%}.chat-tools{right:8px;bottom:8px;gap:5px}.chat-toggle,.adm-contact-btn{font-size:11px;padding:0 10px}.chat-window{right:8px;width:calc(100% - 16px)}}
 
-.chat-toggle{position:absolute;right:14px;bottom:8px;height:38px;padding:0 14px;border:1px solid var(--accent-color);border-radius:20px;background:rgba(19,27,46,.98);color:#fff;font-weight:800;cursor:pointer;z-index:60;box-shadow:0 5px 18px rgba(0,0,0,.35)}
+.chat-tools{position:absolute;right:14px;bottom:8px;display:flex;align-items:center;gap:8px;z-index:80}.chat-toggle{height:38px;padding:0 14px;border:1px solid var(--accent-color);border-radius:20px;background:rgba(19,27,46,.98);color:#fff;font-weight:800;cursor:pointer;z-index:60;box-shadow:0 5px 18px rgba(0,0,0,.35)}
 .chat-window{position:absolute;right:14px;bottom:60px;width:min(380px,calc(100% - 28px));height:330px;background:rgba(7,10,18,.98);border:1px solid var(--accent-color);border-radius:10px;z-index:70;display:flex;flex-direction:column;box-shadow:0 12px 35px rgba(0,0,0,.65);overflow:hidden}
 
-.adm-contact-btn{position:absolute;left:14px;bottom:8px;height:38px;padding:0 14px;border:1px solid #ef4444;border-radius:20px;background:rgba(19,27,46,.98);color:#fff;font-weight:800;cursor:pointer;z-index:60;box-shadow:0 5px 18px rgba(0,0,0,.35)}
+.adm-contact-btn{height:38px;padding:0 14px;border:1px solid #ef4444;border-radius:20px;background:rgba(19,27,46,.98);color:#fff;font-weight:800;cursor:pointer;z-index:60;box-shadow:0 5px 18px rgba(0,0,0,.35)}
 .adm-contact-card{width:min(480px,92vw)}
 .adm-contact-note{font-size:12px;color:#94a3b8;line-height:1.5;margin:8px 0 15px}
 .adm-name-top{font-weight:900;font-size:14px;letter-spacing:.3px}
@@ -98,7 +98,7 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <div><div id="sidebar-name" style="font-weight:bold;font-size:15px">Usuário</div><div style="font-size:11px;color:#94a3b8" id="sidebar-role">Jogador Real</div></div>
 </div>
 <ul class="menu-list" id="menu-list"></ul>
-<button class="btn btn-gray" onclick="sairDaConta()" style="margin-top:12px;width:100%;font-size:12px">🚪 SAIR DA CONTA</button>
+<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--panel-border);flex-shrink:0"><button class="btn btn-gray" onclick="sairDaConta()" style="width:100%;font-size:12px;border:1px solid #64748b">🚪 SAIR DA CONTA</button></div>
 </sidebar>
 
 <main>
@@ -116,14 +116,14 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <div id="section-jogar" class="panel-section">
 <h2>Modo Batalha - Sistema de Fases</h2>
 <p style="color:#94a3b8;margin-top:5px">Progressão salva por jogador no Firestore.</p>
-<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-top:20px">
+<div id="battle-mode-selection" style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-top:20px">
 <div class="box-item" style="cursor:pointer" onclick="iniciarFases('normal')"><h3 style="color:var(--accent-color)">⚔️ Fácil — 30 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Níveis 1–10 tranquilos • 11–24 intermediários • 25–30 difíceis e com recompensas maiores.</p><div style="font-size:11px;color:#f59e0b;margin-top:8px">🎁 Recompensa aumenta a partir do nível 25</div></div>
 <div class="box-item" style="cursor:pointer" onclick="iniciarFases('dificil')"><h3 style="color:var(--accent-color)">💀 Difícil — 30 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Requer nível 10 • inimigos mais fortes e recompensas maiores.</p><div style="font-size:11px;color:#f59e0b;margin-top:8px">🎁 Nível 25+ = recompensa Elite</div></div>
 <div class="box-item" style="cursor:pointer" onclick="iniciarFases('avancada')"><h3 style="color:var(--accent-color)">🔥 Avançado — 25 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Requer nível 16 • alta resistência e grande recompensa.</p><div style="font-size:11px;color:#f59e0b;margin-top:8px">👑 Nível 25 = Elite</div></div>
 <div class="box-item" style="cursor:pointer;border-color:var(--adm-color)" onclick="iniciarFases('hardcore')"><h3 style="color:var(--adm-color)">☠️ Hardcore Elite — 25 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Requer nível 25 • dificuldade máxima e recompensas especiais.</p><div style="font-size:11px;color:#f59e0b;margin-top:8px">💎 Recompensa especial</div></div>
 </div>
 <div id="arena-fases-container" class="hidden" style="margin-top:20px;background:var(--panel-bg);padding:20px;border-radius:8px;border:1px solid var(--panel-border)">
-<h3 id="fases-titulo-cat" style="color:var(--accent-color)">Fase Ativa</h3>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3 id="fases-titulo-cat" style="color:var(--accent-color)">Fase Ativa</h3><button class="btn btn-gray" style="width:auto;padding:7px 12px" onclick="voltarSelecaoFases()">✕ Voltar</button></div>
 <p id="fases-etapa-info" style="font-size:14px;color:#94a3b8;margin:10px 0">Nível 1</p>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px">
 <div style="background:#070a12;padding:12px;border-radius:6px"><div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px"><span>Sua Vida:</span><span id="player-hp-txt" style="color:#10b981;font-weight:bold">100/100</span></div><div style="width:100%;background:#1e293b;height:8px;border-radius:4px;overflow:hidden"><div id="player-hp-bar" style="width:100%;background:#10b981;height:100%"></div></div></div>
@@ -154,10 +154,31 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 </div><div id="loja-grid" class="shop-grid"></div></div>
 
 <div id="section-poderes" class="panel-section">
-<h2>⚡ Catálogo de Poderes</h2><p style="color:#94a3b8;margin-top:5px">Poderes disponíveis e poderes criados pelo ADM.</p>
-<div id="adm-poderes-controls" class="hidden" style="margin-top:15px;margin-bottom:15px;background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)">
-<h4>Cadastrar Novo Poder</h4><input type="text" id="poder-nome" class="form-control" placeholder="Nome"><input type="number" id="poder-dano" class="form-control" placeholder="Dano" value="500"><button class="btn" onclick="criarPoder()">Adicionar Poder</button></div>
-<div id="lista-mais-de-50-poderes" class="shop-grid"></div></div>
+<h2>⚡ Catálogo de Poderes</h2><p style="color:#94a3b8;margin-top:5px">Poderes oficiais e poderes publicados pelo ADM. O jogador pode apenas visualizar e comprar.</p>
+<div class="box-item" style="margin-top:15px;border-left:3px solid #8b5cf6"><b>👑 Criação de poderes</b><p style="font-size:12px;color:#94a3b8;margin-top:5px">Somente o ADM pode criar e publicar novos poderes no catálogo.</p></div>
+<div id="lista-mais-de-50-poderes" class="shop-grid" style="margin-top:15px"></div></div>
+
+<div id="section-guildas" class="panel-section">
+<h2>🛡️ Guildas</h2>
+<p style="color:#94a3b8;margin-top:5px">Crie sua própria guilda ou entre em uma guilda disponível.</p>
+<div id="guilda-resumo" style="margin-top:15px"></div>
+<div id="guilda-acoes" class="box-item" style="margin-top:15px">
+<h3>🏰 Criar ou entrar</h3>
+<p style="font-size:12px;color:#94a3b8;margin-top:5px">Criar uma guilda custa <b style="color:#38bdf8">500 💎</b>. Entrar em uma guilda aberta custa <b style="color:#38bdf8">50 💎</b>.</p>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+<button class="btn" style="width:auto" onclick="abrirCriacaoGuilda()">🏰 Criar Guilda — 500 💎</button>
+<button class="btn btn-blue" style="width:auto" onclick="carregarGuildasDisponiveis()">🔎 Ver Guildas Disponíveis</button>
+</div>
+<div id="form-criar-guilda" class="hidden" style="margin-top:15px;padding:15px;background:rgba(0,0,0,.18);border-radius:8px;border:1px solid var(--panel-border)">
+<input id="guilda-nome" class="form-control" placeholder="Nome da guilda">
+<input id="guilda-descricao" class="form-control" placeholder="Descrição da guilda">
+<select id="guilda-tipo" class="form-control"><option value="aberta">🔓 Guilda Aberta</option><option value="fechada">🔒 Guilda Fechada</option></select>
+<button class="btn" style="width:auto" onclick="criarGuilda()">✅ Criar Guilda</button>
+</div>
+</div>
+<div id="guildas-disponiveis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:15px"></div>
+<div id="guilda-painel" class="hidden" style="margin-top:15px"></div>
+</div>
 
 <div id="section-inventario" class="panel-section">
 <h2>🎒 Seu Inventário</h2><p style="color:#94a3b8;margin-top:5px">Itens comprados e recompensas ficam salvos na sua conta.</p><div id="inventario-itens" style="margin-top:15px;display:flex;gap:15px;flex-wrap:wrap"></div></div>
@@ -178,7 +199,7 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <div class="avatar-help">Ou escolha uma das 20 fotos de perfil oficiais do Dragon War.</div>
 <div id="avatar-gallery" class="avatar-gallery"></div>
 <div id="perfil-rank" class="profile-rank">⭐ Iniciante</div>
-<div id="perfil-recursos" style="margin:5px 0 12px;color:#94a3b8"></div><button class="btn" onclick="salvarPerfilJogador()">Salvar Alterações</button>
+<div id="perfil-recursos" style="margin:5px 0 12px;color:#94a3b8"></div><div id="perfil-guilda" class="profile-rank" style="margin-bottom:12px">🛡️ Sem guilda</div><button class="btn" onclick="salvarPerfilJogador()">Salvar Alterações</button>
 </div>
 <div style="background:var(--panel-bg);padding:20px;border-radius:8px;border:1px solid var(--panel-border)">
 <h4>🔊 Sistema de Som</h4><label>Volume da Música:</label><input type="range" min="0" max="100" value="60" class="form-control" id="vol-musica" oninput="atualizarVolume()">
@@ -218,7 +239,10 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <div style="margin-top:30px;border-top:1px solid var(--panel-border);padding-top:15px"><h4>Histórico do Chat Global</h4><div class="chat-box" id="adm-chat-history"></div></div>
 </div></main>
 
-<button id="adm-contact-toggle" class="adm-contact-btn" onclick="abrirContatoAdm()">👑 FALAR COM ADM</button>
+<div class="chat-tools" aria-label="Comunicação">
+  <button id="adm-contact-toggle" class="adm-contact-btn" onclick="abrirContatoAdm()">👑 FALAR COM ADM</button>
+  <button id="chat-toggle" class="chat-toggle" onclick="alternarChatGlobal()">💬 CHAT</button>
+</div>
 <div id="modal-contato-adm" class="modal-overlay hidden">
   <div class="modal-card adm-contact-card">
     <button class="close-modal" onclick="fecharContatoAdm()">✕</button>
@@ -233,9 +257,8 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
     <button class="btn btn-adm" onclick="enviarSolicitacaoAdm()">📨 ENVIAR PARA ADM</button>
   </div>
 </div>
-<button id="chat-toggle" class="chat-toggle" onclick="alternarChatGlobal()">💬 CHAT GLOBAL</button>
 <div id="chat-window" class="chat-window hidden">
-  <div class="chat-window-head"><b>💬 CHAT GLOBAL</b><button class="chat-close" onclick="fecharChatGlobal()">✕</button></div>
+  <div class="chat-window-head"><b>🤖 CHAT • DRAGON WAR</b><button class="chat-close" title="Fechar chat" onclick="fecharChatGlobal()">✕</button></div>
   <div class="chat-box" id="chat-container"></div>
   <div class="chat-compose"><input type="text" id="footer-chat-input" placeholder="Digite sua mensagem..."><button class="btn" onclick="enviarMensagemRodape()">Enviar</button></div>
 </div>
@@ -266,7 +289,7 @@ const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 const EMAIL_ADMIN="groupsacabraldigital@gmail.com";
 let modoCadastro=false, unsubscribeGlobal=null, unsubscribeSupport=null, heartbeatTimer=null;
 let categoriaLoja="all", jogadorSelecionadoModal={id:"",nome:"",data:{}}, salaAtualId="";
-let usuarioAtual={uid:"",email:"",displayName:"",avatar:"",isAdm:false,isSubAdm:false,coins:150,diamonds:10,level:5,xp:0,inventory:[],phaseProgress:{normal:1,dificil:1,avancada:1,hardcore:1},achievements:[],dailyRewardLastClaim:0,dailyRewardCount:0,mana:100,maxMana:100,banned:false};
+let usuarioAtual={uid:"",email:"",displayName:"",avatar:"",isAdm:false,isSubAdm:false,coins:150,diamonds:10,level:5,xp:0,inventory:[],phaseProgress:{normal:1,dificil:1,avancada:1,hardcore:1},achievements:[],dailyRewardLastClaim:0,dailyRewardCount:0,mana:100,maxMana:100,banned:false,guildId:"",guildName:"",guildRank:""};
 let faseAtualInfo={categoria:"",etapa:1,hpMovel:100,maxHp:100,playerHp:100,playerMp:100,defend:false};
 
 const categorias={
@@ -360,16 +383,16 @@ function atualizarPerfilUI(){
  document.getElementById("player-edit-name").value=usuarioAtual.displayName||nomeAtual();
  document.getElementById("player-edit-email").value=usuarioAtual.email;
  document.getElementById("player-edit-avatar").value=usuarioAtual.avatar||"";
- document.getElementById("perfil-recursos").innerHTML=`Nível ${usuarioAtual.level} • ${patenteAtual(usuarioAtual.level)} • XP ${usuarioAtual.xp}`;document.getElementById("perfil-rank").innerText=patenteAtual(usuarioAtual.level);renderizarGaleriaAvatares();
+ document.getElementById("perfil-recursos").innerHTML=`Nível ${usuarioAtual.level} • ${patenteAtual(usuarioAtual.level)} • XP ${usuarioAtual.xp}`;document.getElementById("perfil-rank").innerText=patenteAtual(usuarioAtual.level);renderPerfilGuilda();renderizarGaleriaAvatares();
 }
 function montarMenuLateral(){
  const m=document.getElementById("menu-list");m.innerHTML="";
- const itens=[{id:"jogar",label:"🎮 Modo Batalha"},{id:"loja",label:"🛒 Loja & Itens"},{id:"poderes",label:"⚡ Poderes (50+)"},{id:"inventario",label:"🎒 Inventário"},{id:"rank",label:"🏆 Rankings"},{id:"config-jogador",label:"⚙ Meu Perfil"},{id:"evento",label:"🎉 Eventos"}];
+ const itens=[{id:"jogar",label:"🎮 Modo Batalha"},{id:"loja",label:"🛒 Loja & Itens"},{id:"poderes",label:"⚡ Poderes (50+)"},{id:"guildas",label:"🛡️ Guildas"},{id:"inventario",label:"🎒 Inventário"},{id:"rank",label:"🏆 Rankings"},{id:"config-jogador",label:"⚙ Meu Perfil"},{id:"evento",label:"🎉 Eventos"}];
  if(usuarioAtual.isAdm||usuarioAtual.isSubAdm)itens.push({id:"jogadores",label:"👥 Jogadores Reais"},{id:"painel-adm",label:"👑 Painel ADM"});
  itens.forEach((x,i)=>{let li=document.createElement("li");li.className="menu-item"+(i===0?" active":"");li.innerText=x.label;li.onclick=()=>trocarSecao(x.id,li);m.appendChild(li)});
  trocarSecao("jogar",m.children[0]);
 }
-window.trocarSecao=(id,el)=>{document.querySelectorAll(".panel-section").forEach(x=>x.classList.remove("active"));document.getElementById("section-"+id)?.classList.add("active");document.querySelectorAll(".menu-item").forEach(x=>x.classList.remove("active"));if(el)el.classList.add("active");document.getElementById("current-page-title").innerText=el?el.innerText:id;if(id==="jogadores"&&usuarioAtual.isAdm)carregarJogadoresReaisDoBanco();if(id==="loja")renderLoja();if(id==="inventario")atualizarInventarioUI();if(id==="rank")mudarTabRank("global")};
+window.trocarSecao=(id,el)=>{document.querySelectorAll(".panel-section").forEach(x=>x.classList.remove("active"));document.getElementById("section-"+id)?.classList.add("active");document.querySelectorAll(".menu-item").forEach(x=>x.classList.remove("active"));if(el)el.classList.add("active");document.getElementById("current-page-title").innerText=el?el.innerText:id;if(id==="jogar"){document.getElementById("arena-fases-container")?.classList.add("hidden");document.getElementById("battle-mode-selection")?.classList.remove("hidden")}if(id==="jogadores"&&usuarioAtual.isAdm)carregarJogadoresReaisDoBanco();if(id==="loja")renderLoja();if(id==="inventario")atualizarInventarioUI();if(id==="rank")mudarTabRank("global");if(id==="guildas")carregarGuildaDoJogador();if(id==="config-jogador")renderPerfilGuilda()};
 
 async function carregarJogador(){
  const ref=doc(db,"jogadores_reais",auth.currentUser.uid),snap=await getDoc(ref),base=snap.exists()?snap.data():{};
@@ -410,13 +433,13 @@ window.iniciarFases=async(cat)=>{
  faseAtualInfo.defend=false;
  document.getElementById("fases-titulo-cat").innerText=`${c.nome.toUpperCase()} • ${nivel.faixa}`;
  atualizarBatalhaUI();
- document.querySelector("#section-jogar>div:nth-child(2)").classList.add("hidden");
+ document.getElementById("battle-mode-selection").classList.add("hidden");
  document.getElementById("arena-fases-container").classList.remove("hidden");
  document.getElementById("log-batalha").innerHTML="Início da batalha!<div>> Ataque inicial preparado.</div>";
  adicionarLogBatalha(`Nível ${faseAtualInfo.etapa} iniciado • ${nivel.faixa} • ❤️ ${nivel.hp} HP`);
 };
 window.desistirBatalha=()=>{if(confirm("Desistir da batalha? Seu progresso já concluído continua salvo."))voltarSelecaoFases()};
-window.voltarSelecaoFases=()=>{document.getElementById("arena-fases-container").classList.add("hidden");document.querySelector("#section-jogar>div:nth-child(2)").classList.remove("hidden")};
+window.voltarSelecaoFases=()=>{document.getElementById("arena-fases-container").classList.add("hidden");document.getElementById("battle-mode-selection").classList.remove("hidden")};
 function atualizarBatalhaUI(){
  let c=categorias[faseAtualInfo.categoria],nivel=dadosNivelBatalha(faseAtualInfo.categoria,faseAtualInfo.etapa),nome=alvos[faseAtualInfo.categoria][(faseAtualInfo.etapa-1)%5],p=Math.max(0,faseAtualInfo.hpMovel/faseAtualInfo.maxHp*100);
  document.getElementById("fases-titulo-cat").innerText=`${c.nome.toUpperCase()} • ${nivel.faixa}`;
@@ -516,6 +539,62 @@ window.comprarItem=async id=>{let i=catalogo.find(x=>x.id===id);if(!i)return;if(
 function atualizarInventarioUI(){let c=document.getElementById("inventario-itens");if(!usuarioAtual.inventory.length){c.innerHTML='<div class="box-item">Seu inventário está vazio.</div>';return}c.innerHTML=usuarioAtual.inventory.map((i,n)=>`<div class="item-card" style="width:170px"><h4>${icone(i.category)} ${i.nome}</h4><p>${i.desc||"Item Dragon War"}</p><button class="btn btn-blue" style="padding:5px;font-size:10px" onclick="usarItemInventario(${n})">Usar / Equipar</button></div>`).join("")}
 window.usarItemInventario=async n=>{let i=usuarioAtual.inventory[n];if(!i)return;if(i.category==="potion"){usuarioAtual.coins+=0;alert(`🧪 ${i.nome} usado.`)}else alert(`${icone(i.category)} ${i.nome} equipado.`);await salvarProgresso()};
 function renderizarPoderes(){let c=document.getElementById("lista-mais-de-50-poderes");c.innerHTML=catalogo.filter(x=>x.category==="power").map(p=>`<div class="item-card"><h4>${p.nome}</h4><p>${p.desc}</p><div class="price">${p.price} 🪙</div><button class="btn" style="padding:5px;font-size:10px" onclick="comprarItem('${p.id}')">Comprar</button></div>`).join("")}
+/* ===================== GUILDAS ===================== */
+const guildaBase=[
+ {id:"guilda_dragao_azul",nome:"Dragões Azuis",descricao:"Guilda aberta para guerreiros do mar e do gelo.",tipo:"aberta",membros:12,level:8,cor:"#38bdf8"},
+ {id:"guilda_tempestade",nome:"Legião da Tempestade",descricao:"Vento, trovão e ataques rápidos.",tipo:"aberta",membros:18,level:12,cor:"#a78bfa"},
+ {id:"guilda_chama",nome:"Cavaleiros da Chama",descricao:"Guilda de guerreiros de fogo e dragões.",tipo:"fechada",membros:24,level:16,cor:"#f97316"},
+ {id:"guilda_sombria",nome:"Ordem do Dragão Sombrio",descricao:"Guilda fechada para jogadores avançados.",tipo:"fechada",membros:31,level:21,cor:"#c084fc"}
+];
+
+function renderPerfilGuilda(){
+ const el=document.getElementById("perfil-guilda"); if(!el)return;
+ if(usuarioAtual.guildId) el.innerHTML=`🛡️ Guilda: <b>${usuarioAtual.guildName||"Guilda"}</b> • ${usuarioAtual.guildRank||"Membro"}`;
+ else el.innerHTML="🛡️ Sem guilda";
+}
+function renderGuildaResumo(g){
+ const el=document.getElementById("guilda-resumo"); if(!el)return;
+ if(!g){el.innerHTML=`<div class="box-item"><h3>👤 Você ainda não está em uma guilda</h3><p style="color:#94a3b8;margin-top:5px">Escolha uma guilda disponível ou crie a sua.</p></div>`;return;}
+ el.innerHTML=`<div class="box-item" style="border-left:4px solid ${g.cor||"#38bdf8"}"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><div><h3>🛡️ ${g.nome}</h3><p style="color:#94a3b8;margin-top:5px">${g.descricao||"Guilda Dragon War"}</p></div><div style="text-align:right"><b style="color:#f59e0b">Nível ${g.level||1}</b><br><span style="font-size:12px;color:#94a3b8">${g.membros||1} membros</span></div></div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><span class="tag">${g.tipo==="fechada"?"🔒 Fechada":"🔓 Aberta"}</span><span class="tag">🪙 ${g.guildCoins||0} moedas de guilda</span><span class="tag">👤 ${usuarioAtual.guildRank||"Membro"}</span></div></div>`;
+}
+function abrirCriacaoGuilda(){document.getElementById("form-criar-guilda")?.classList.toggle("hidden");}
+async function carregarGuildasDisponiveis(){
+ const box=document.getElementById("guildas-disponiveis"); if(!box)return; box.innerHTML='<div class="box-item">🔄 Carregando guildas...</div>';
+ let lista=[...guildaBase];
+ try{const snap=await getDocs(collection(db,"guildas"));snap.forEach(d=>{const g=d.data();if(!lista.some(x=>x.id===d.id))lista.push({...g,id:d.id});});}catch(e){console.warn(e)}
+ box.innerHTML=lista.map(g=>`<div class="item-card"><h3>🛡️ ${g.nome}</h3><p style="font-size:12px;color:#94a3b8;margin:6px 0">${g.descricao||"Guilda Dragon War"}</p><div style="font-size:12px">${g.tipo==="fechada"?"🔒 Guilda Fechada":"🔓 Guilda Aberta"}</div><div style="font-size:12px;margin-top:5px">👥 ${g.membros||1} membros • ⚔️ Nv. ${g.level||1}</div><div style="font-size:12px;margin-top:5px;color:#38bdf8">Entrada: ${g.tipo==="fechada"?"Convite":"50 💎"}</div><button class="btn btn-blue" style="margin-top:10px" onclick="entrarNaGuilda('${g.id}')">${g.tipo==="fechada"?"📨 Solicitar entrada":"🛡️ Entrar — 50 💎"}</button></div>`).join("");
+}
+async function criarGuilda(){
+ if(!auth.currentUser)return alert("Faça login primeiro."); if(usuarioAtual.guildId)return alert("Você já está em uma guilda.");
+ const nome=document.getElementById("guilda-nome").value.trim(); const descricao=document.getElementById("guilda-descricao").value.trim(); const tipo=document.getElementById("guilda-tipo").value;
+ if(nome.length<3)return alert("Digite um nome de guilda com pelo menos 3 caracteres."); if(Number(usuarioAtual.diamonds||0)<500)return alert("Você precisa de 500 💎 para criar uma guilda.");
+ const id="guilda_"+Date.now(); const g={nome,descricao:descricao||"Guilda criada no Dragon War.",tipo,membros:1,level:1,guildCoins:0,ownerUid:usuarioAtual.uid,ownerName:nomeAtual(),cor:"#38bdf8",createdAt:serverTimestamp()};
+ try{await setDoc(doc(db,"guildas",id),g);usuarioAtual.diamonds-=500;usuarioAtual.guildId=id;usuarioAtual.guildName=nome;usuarioAtual.guildRank="Líder";await salvarProgresso();renderGuildaResumo(g);renderPerfilGuilda();document.getElementById("form-criar-guilda")?.classList.add("hidden");carregarGuildasDisponiveis();alert(`🛡️ Guilda ${nome} criada com sucesso!`);}catch(e){console.error(e);alert("Não foi possível criar a guilda agora.");}
+}
+async function entrarNaGuilda(id){
+ if(usuarioAtual.guildId)return alert("Você já está em uma guilda.");
+ let g=guildaBase.find(x=>x.id===id); try{const snap=await getDoc(doc(db,"guildas",id));if(snap.exists())g={...snap.data(),id};}catch(e){}
+ if(!g)return alert("Guilda não encontrada.");
+ if(g.tipo==="fechada")return alert("🔒 Essa guilda é fechada. O líder precisa convidar você.");
+ if(Number(usuarioAtual.diamonds||0)<50)return alert("Você precisa de 50 💎 para entrar.");
+ try{usuarioAtual.diamonds-=50;usuarioAtual.guildId=id;usuarioAtual.guildName=g.nome;usuarioAtual.guildRank="Membro";await salvarProgresso();if(!String(id).startsWith("guilda_" )||!guildaBase.some(x=>x.id===id)){await updateDoc(doc(db,"guildas",id),{membros:(Number(g.membros)||0)+1});}else{try{await updateDoc(doc(db,"guildas",id),{membros:(Number(g.membros)||0)+1});}catch(e){}}renderGuildaResumo({...g,membros:(Number(g.membros)||0)+1});renderPerfilGuilda();carregarGuildasDisponiveis();alert(`🛡️ Você entrou na guilda ${g.nome}!`);}catch(e){console.error(e);alert("Não foi possível entrar na guilda.");}
+}
+async function carregarGuildaDoJogador(){
+ if(!usuarioAtual.guildId){renderGuildaResumo(null);carregarGuildasDisponiveis();return;}
+ let g=null; try{const snap=await getDoc(doc(db,"guildas",usuarioAtual.guildId));if(snap.exists())g={...snap.data(),id:snap.id};}catch(e){}
+ if(!g)g=guildaBase.find(x=>x.id===usuarioAtual.guildId)||{id:usuarioAtual.guildId,nome:usuarioAtual.guildName,descricao:"Sua guilda",tipo:"aberta",membros:1,level:1,guildCoins:0};
+ renderGuildaResumo(g); renderGuildaPainel(g); renderPerfilGuilda();
+}
+function renderGuildaPainel(g){
+ const el=document.getElementById("guilda-painel"); if(!el)return; el.classList.remove("hidden");
+ el.innerHTML=`<div class="box-item"><h3>🏰 ${g.nome}</h3><p style="color:#94a3b8;margin-top:4px">${g.descricao||"Guilda Dragon War"}</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px"><div class="stat"><b>${g.guildCoins||0}</b>Moedas de Guilda</div><div class="stat"><b>${g.membros||1}</b>Membros</div><div class="stat"><b>${g.level||1}</b>Nível da Guilda</div><div class="stat"><b>${usuarioAtual.guildRank||"Membro"}</b>Seu cargo</div></div></div>
+ <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:12px"><div class="item-card"><h3>🐉 Loot contra Dragão</h3><p>Participe de batalhas da guilda para ganhar moedas de guilda e recursos.</p><button class="btn" onclick="simularLootGuilda()">⚔️ Atacar Dragão</button></div><div class="item-card"><h3>🛒 Loja da Guilda</h3><p>Use suas moedas de guilda para comprar recursos exclusivos.</p><button class="btn btn-blue" onclick="abrirLojaGuilda()">🛍️ Ver Recursos</button></div><div class="item-card"><h3>🧙 Personagens da Guilda</h3><p>Personagens e bônus especiais para membros da guilda.</p><button class="btn btn-purple" onclick="abrirPersonagensGuilda()">👥 Ver Personagens</button></div><div class="item-card"><h3>🏳️ Insígnia da Guilda</h3><p>Escolha a identidade visual da sua guilda.</p><button class="btn btn-green" onclick="escolherInsigniaGuilda()">🏳️ Alterar Insígnia</button></div></div><div id="guilda-subconteudo" style="margin-top:12px"></div>`;
+}
+async function simularLootGuilda(){if(!usuarioAtual.guildId)return;let ganho=25+Math.floor(Math.random()*76);let g=await getDoc(doc(db,"guildas",usuarioAtual.guildId)).catch(()=>null);let atual=g&&g.exists()?Number(g.data().guildCoins||0):0;try{await updateDoc(doc(db,"guildas",usuarioAtual.guildId),{guildCoins:atual+ganho});}catch(e){}alert(`🐉 Vitória contra o Dragão! Sua guilda recebeu +${ganho} moedas de guilda.`);carregarGuildaDoJogador();}
+function abrirLojaGuilda(){const el=document.getElementById("guilda-subconteudo");if(!el)return;const itens=[['Poção de Vida da Guilda',100,'🧪'],['Fragmento de Dragão',250,'💎'],['Insígnia Rara',500,'🏳️'],['Cristal de Energia',750,'🔷'],['Baú do Dragão',1000,'🎁']];el.innerHTML=`<div class="box-item"><h3>🛒 Loja de Recursos da Guilda</h3><p style="color:#94a3b8">Preços em moedas de guilda.</p><div class="shop-grid" style="margin-top:12px">${itens.map(i=>`<div class="item-card"><h4>${i[2]} ${i[0]}</h4><div class="price">${i[1]} 🛡️</div><button class="btn" onclick="comprarRecursoGuilda('${i[0]}',${i[1]})">Comprar</button></div>`).join('')}</div></div>`;}
+async function comprarRecursoGuilda(nome,preco){if(!usuarioAtual.guildId)return;if(!confirm(`Comprar ${nome} por ${preco} moedas de guilda?`))return;const ref=doc(db,"guildas",usuarioAtual.guildId);const snap=await getDoc(ref);const g=snap.exists()?snap.data():null;if(!g||Number(g.guildCoins||0)<preco)return alert("Moedas de guilda insuficientes.");await updateDoc(ref,{guildCoins:Number(g.guildCoins||0)-preco});alert(`🛒 ${nome} comprado para a guilda.`);carregarGuildaDoJogador();}
+function abrirPersonagensGuilda(){const el=document.getElementById("guilda-subconteudo");if(!el)return;el.innerHTML=`<div class="box-item"><h3>🧙 Personagens de Guilda</h3><p style="color:#94a3b8">Personagens especiais ficam disponíveis conforme a guilda evolui.</p><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><span class="tag">🛡️ Guardião da Guilda</span><span class="tag">🐉 Caçador de Dragões</span><span class="tag">🌊 Mago das Marés</span><span class="tag">🌪️ Mestre dos Ventos</span></div></div>`;}
+function escolherInsigniaGuilda(){const el=document.getElementById("guilda-subconteudo");if(!el)return;const ins=['🐉','⚔️','🛡️','🔥','🌊','🌪️','❄️','👑'];el.innerHTML=`<div class="box-item"><h3>🏳️ Insígnia da Guilda</h3><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">${ins.map(x=>`<button class="btn" style="width:auto;font-size:24px" onclick="alert('Insígnia ${x} selecionada para sua guilda.')">${x}</button>`).join('')}</div></div>`;}
 window.criarPoder=async()=>{if(!usuarioAtual.isAdm)return alert("Acesso negado.");let n=document.getElementById("poder-nome").value.trim(),d=Number(document.getElementById("poder-dano").value)||500;if(!n)return alert("Informe o nome.");let item={id:"custom_"+Date.now(),nome:n,category:"power",price:500,stat:d,desc:"Poder criado pelo ADM • +"+d};catalogo.push(item);await setDoc(doc(db,"catalogo",item.id),item);renderizarPoderes();renderLoja();alert("Poder criado e salvo.");};
 
 window.adicionarItemCatalogo=async()=>{if(!usuarioAtual.isAdm)return alert("Acesso negado.");let cat=document.getElementById("new-item-category").value,n=document.getElementById("new-item-name").value.trim(),price=Number(document.getElementById("new-item-price").value),stat=Number(document.getElementById("new-item-damage").value)||50;if(!n||!price)return alert("Preencha nome e preço.");let item={id:"custom_"+Date.now(),nome:n,category:cat,price,stat,desc:"Conteúdo criado pelo ADM"};catalogo.push(item);await setDoc(doc(db,"catalogo",item.id),item);renderLoja();renderizarPoderes();alert("Item adicionado ao catálogo global.");};
