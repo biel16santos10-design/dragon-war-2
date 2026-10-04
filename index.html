@@ -21,7 +21,7 @@ body{background-color:var(--bg-color);color:var(--text-color);height:100vh;displ
 .btn-green{background:linear-gradient(90deg,#10b981,#059669);color:white}
 .btn-purple{background:linear-gradient(90deg,#8b5cf6,#6d28d9);color:white}
 .btn-gray{background:#334155;color:white}
-.auth-switch{margin-top:15px;font-size:13px;color:#94a3b8;cursor:pointer}.auth-switch:hover{color:var(--accent-color);text-decoration:underline}
+.auth-status{line-height:1.35}.auth-switch{margin-top:15px;font-size:13px;color:#94a3b8;cursor:pointer}.auth-switch:hover{color:var(--accent-color);text-decoration:underline}
 #game-container{display:flex;width:100%;height:100%;background:linear-gradient(rgba(11,15,25,.85),rgba(11,15,25,.95)),url('89097.png') no-repeat center center;background-size:cover;position:relative}
 sidebar{width:260px;background:rgba(19,27,46,.95);border-right:1px solid var(--panel-border);display:flex;flex-direction:column;padding:20px;backdrop-filter:blur(5px)}
 .server-banner{width:100%;height:75px;background:linear-gradient(145deg,#0b1730,#132b4d);border-radius:6px;margin-bottom:15px;border:1px solid var(--accent-color);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;text-align:center;overflow:hidden}.server-banner b{font-size:18px;letter-spacing:2px;color:#fff}.server-banner span{font-size:10px;letter-spacing:3px;color:#f59e0b;font-weight:900}
@@ -86,7 +86,7 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <h2 id="auth-title">Dragon War: Rise of Power</h2>
 <div class="input-group"><label>E-mail:</label><input type="email" id="auth-email" placeholder="seuemail@dominio.com"></div>
 <div class="input-group"><label>Senha:</label><input type="password" id="auth-pass" placeholder="******"></div>
-<button class="btn" id="auth-btn-action" onclick="realizarAutenticacao()">Entrar na Partida</button>
+<button class="btn" id="auth-btn-action" onclick="realizarAutenticacao()">Entrar na Partida</button><div class="auth-status" style="min-height:18px;margin-top:9px;font-size:11px;color:#94a3b8">Conecte-se para abrir o jogo e continuar sua conta.</div>
 <div class="auth-switch" id="auth-switch-mode" onclick="alternarModoAuth()">Não tem conta? Cadastre-se com ID Real</div>
 </div></div>
 
@@ -115,7 +115,7 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 
 <div class="content-area">
 
-<div id="dw-game-entry-bar" class="dw-entry-actions" style="margin:12px 0 18px"><button class="dw-btn primary" onclick="dwOpenCentral()">⚡ Central</button><button class="dw-btn" onclick="abrirContatoAdm()">👑 Falar com Suporte</button><button class="dw-btn" onclick="alternarChatGlobal()">💬 Chat</button></div>
+<div id="dw-game-entry-bar" class="dw-entry-actions" style="margin:12px 0 18px"><button class="dw-btn primary" onclick="dwOpenCentral()">⚡ Central</button><button class="dw-btn" onclick="abrirContatoAdm()">🛟 Falar com Suporte</button></div>
 <div id="section-jogar" class="panel-section">
 <h2>Modo Batalha - Sistema de Fases</h2>
 <p style="color:#94a3b8;margin-top:5px">Progressão salva por jogador no Firestore.</p>
@@ -248,21 +248,20 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 </div></main>
 
 <div class="chat-tools" aria-label="Comunicação">
-  <button id="adm-contact-toggle" class="adm-contact-btn" onclick="abrirContatoAdm()">👑 FALAR COM SUPORTE</button>
-  <button id="chat-toggle" class="chat-toggle" onclick="alternarChatGlobal()">💬 CHAT</button>
+  <button id="adm-contact-toggle" class="adm-contact-btn" onclick="abrirContatoAdm()">🛟 FALAR COM SUPORTE</button>
 </div>
 <div id="modal-contato-adm" class="modal-overlay hidden">
   <div class="modal-card adm-contact-card">
     <button class="close-modal" onclick="fecharContatoAdm()">✕</button>
-    <h3 style="color:#ef4444;margin-bottom:4px">👑 ADM GABRIEL</h3>
-    <p class="adm-contact-note">Envie uma solicitação diretamente para o administrador. Preencha seu nome, seu ID e o motivo da mensagem.</p>
+    <h3 style="color:#38bdf8;margin-bottom:4px">🛟 CENTRAL DE SUPORTE</h3>
+    <p class="adm-contact-note">Abra um atendimento. Seu nome, UID, e-mail e motivo serão enviados para a equipe responsável.</p>
     <label>Seu nome</label>
     <input id="adm-msg-nome" class="form-control" placeholder="Nome do jogador">
     <label>Seu ID / UID</label>
     <input id="adm-msg-id" class="form-control" placeholder="ID do jogador">
     <label>Motivo da mensagem</label>
     <textarea id="adm-msg-motivo" class="form-control" rows="5" placeholder="Explique o motivo da mensagem..."></textarea>
-    <button class="btn btn-adm" onclick="enviarSolicitacaoAdm()">📨 ENVIAR PARA ADM</button>
+    <button class="btn btn-adm" onclick="enviarSolicitacaoAdm()">📨 ABRIR SOLICITAÇÃO</button>
   </div>
 </div>
 <div id="chat-window" class="chat-window hidden">
@@ -287,13 +286,27 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 
 <audio id="bg-music" loop src="music.mp3"></audio>
 
-<script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import{getFirestore,doc,setDoc,getDoc,getDocs,updateDoc,addDoc,collection,query,orderBy,onSnapshot,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script>
 const firebaseConfig={apiKey:"AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",authDomain:"dragon-war-rise-of-power-2a9f1.firebaseapp.com",projectId:"dragon-war-rise-of-power-2a9f1",storageBucket:"dragon-war-rise-of-power-2a9f1.firebasestorage.app",messagingSenderId:"115455691167",appId:"1:115455691167:web:ff3638f67b66c17c5515aa",measurementId:"G-S7XE2EN9CL"};
-const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+const app=firebase.initializeApp(firebaseConfig),auth=firebase.auth(),db=firebase.firestore();
+const createUserWithEmailAndPassword=(a,e,p)=>a.createUserWithEmailAndPassword(e,p);
+const signInWithEmailAndPassword=(a,e,p)=>a.signInWithEmailAndPassword(e,p);
+const onAuthStateChanged=(a,cb)=>a.onAuthStateChanged(cb);
+const signOut=(a)=>a.signOut();
+const doc=(d,...parts)=>d.doc(parts.join("/"));
+const collection=(d,...parts)=>d.collection(parts.join("/"));
+const query=(ref,...ops)=>ops.reduce((q,op)=>op(q),ref);
+const orderBy=(field,direction="asc")=>q=>q.orderBy(field,direction);
+const getDoc=ref=>ref.get();
+const getDocs=ref=>ref.get();
+const setDoc=(ref,data,opts)=>opts?.merge?ref.set(data,{merge:true}):ref.set(data);
+const updateDoc=(ref,data)=>ref.update(data);
+const addDoc=(ref,data)=>ref.add(data);
+const onSnapshot=(ref,cb,err)=>ref.onSnapshot(cb,err);
+const serverTimestamp=()=>firebase.firestore.FieldValue.serverTimestamp();
 const EMAIL_ADMIN="groupsacabraldigital@gmail.com";
 let modoCadastro=false, unsubscribeGlobal=null, unsubscribeSupport=null, heartbeatTimer=null;
 let categoriaLoja="all", jogadorSelecionadoModal={id:"",nome:"",data:{}}, salaAtualId="";
@@ -450,19 +463,29 @@ async function carregarJogador(){
    setDoc(ref,{...montarEstadoPersistente(),uid:usuarioAtual.uid,email:usuarioAtual.email,lastSeen:serverTimestamp(),status:"Online",updatedAt:serverTimestamp()},{merge:true}).catch(err=>console.warn("Salvamento inicial em segundo plano:",err));
  }
  atualizarPerfilUI();montarMenuLateral();renderLoja();renderizarPoderes();atualizarInventarioUI();renderizarEventos();atualizarDailyUI();iniciarHeartbeat();assinarChatGlobal();verificarAchievements();
- if(usuarioAtual.isAdm){carregarJogadoresReaisDoBanco();document.getElementById("adm-loja-controls").classList.remove("hidden");document.getElementById("adm-poderes-controls").classList.remove("hidden");document.getElementById("adm-evento-controls").classList.remove("hidden");document.getElementById("player-power-admin-note")?.classList.remove("hidden")}
+ if(usuarioAtual.isAdm){carregarJogadoresReaisDoBanco();document.getElementById("adm-loja-controls")?.classList.remove("hidden");document.getElementById("adm-poderes-controls")?.classList.remove("hidden");document.getElementById("adm-evento-controls")?.classList.remove("hidden");document.getElementById("player-power-admin-note")?.classList.remove("hidden")}
 }
 window.alternarModoAuth=()=>{modoCadastro=!modoCadastro;document.getElementById("auth-title").innerText=modoCadastro?"Criar Conta Real":"Entrar no Servidor";document.getElementById("auth-btn-action").innerText=modoCadastro?"Registrar e Gerar ID":"Entrar na Partida";document.getElementById("auth-switch-mode").innerText=modoCadastro?"Já tem conta? Faça login":"Não tem conta? Cadastre-se com ID Real"};
 let autenticacaoEmAndamento=false;
+let authSessionToken=0;
 window.realizarAutenticacao=async()=>{
  if(autenticacaoEmAndamento)return;
- const email=document.getElementById("auth-email").value.trim(),pass=document.getElementById("auth-pass").value.trim();
- if(!email||!pass)return alert("Preencha o e-mail e a senha!");
+ const email=document.getElementById("auth-email")?.value.trim().toLowerCase();
+ const pass=document.getElementById("auth-pass")?.value||"";
+ if(!email||!pass)return alert("Preencha o e-mail e a senha.");
+ if(pass.length<6)return alert("A senha precisa ter pelo menos 6 caracteres.");
  const btn=document.getElementById("auth-btn-action"),titulo=document.getElementById("auth-title");
- autenticacaoEmAndamento=true;if(btn){btn.disabled=true;btn.dataset.oldText=btn.innerText;btn.innerText="⏳ Conectando...";}
+ autenticacaoEmAndamento=true;
+ if(btn){btn.disabled=true;btn.innerText=modoCadastro?"⏳ Criando conta...":"⏳ Entrando no jogo...";}
+ if(titulo)titulo.innerText=modoCadastro?"Criando sua conta...":"Conectando ao Dragon War...";
  try{
-   if(modoCadastro) await createUserWithEmailAndPassword(auth,email,pass);
-   else await signInWithEmailAndPassword(auth,email,pass);
+   if(modoCadastro){
+     await createUserWithEmailAndPassword(auth,email,pass);
+     notificar("✅ Conta criada. Abrindo o jogo...","success");
+   }else{
+     await signInWithEmailAndPassword(auth,email,pass);
+   }
+   // onAuthStateChanged faz a abertura definitiva do jogo; não duplicamos a sessão aqui.
  }catch(e){
    console.error("Firebase Auth:",e);
    const mapa={
@@ -470,16 +493,27 @@ window.realizarAutenticacao=async()=>{
     "auth/invalid-login-credentials":"E-mail ou senha incorretos.",
     "auth/user-not-found":"Conta não encontrada.",
     "auth/wrong-password":"Senha incorreta.",
+    "auth/invalid-password":"Senha incorreta.",
     "auth/email-already-in-use":"Este e-mail já possui uma conta.",
     "auth/weak-password":"A senha precisa ter pelo menos 6 caracteres.",
     "auth/invalid-email":"Digite um e-mail válido.",
-    "auth/network-request-failed":"Sem conexão com o Firebase. Verifique sua internet."
+    "auth/network-request-failed":"Falha de rede. Verifique a internet.",
+    "auth/too-many-requests":"Muitas tentativas. Aguarde alguns minutos e tente novamente."
    };
    alert("❌ "+(mapa[e.code]||e.message||"Não foi possível autenticar."));
  }finally{
-   autenticacaoEmAndamento=false;if(btn){btn.disabled=false;btn.innerText=btn.dataset.oldText||"Entrar na Partida";}
+   autenticacaoEmAndamento=false;
+   if(btn){btn.disabled=false;btn.innerText=modoCadastro?"Registrar e Gerar ID":"Entrar na Partida";}
+   if(titulo)titulo.innerText=modoCadastro?"Criar Conta Real":"Dragon War: Rise of Power";
  }
 };
+
+function abrirTelaDoJogo(){
+ const login=document.getElementById("login-screen"),game=document.getElementById("game-container");
+ login?.classList.add("hidden");
+ game?.classList.remove("hidden");
+ document.body.style.overflow="hidden";
+}
 
 function iniciarHeartbeat(){clearInterval(heartbeatTimer);heartbeatTimer=setInterval(async()=>{if(auth.currentUser)await updateDoc(doc(db,"jogadores_reais",auth.currentUser.uid),{lastSeen:serverTimestamp(),status:"Online"})},30000)}
 window.addEventListener("beforeunload",()=>{if(auth.currentUser)updateDoc(doc(db,"jogadores_reais",auth.currentUser.uid),{status:"Offline"}).catch(()=>{})});
@@ -683,7 +717,7 @@ async function carregarGuildasDisponiveis(){
   box.innerHTML='<div class="box-item"><h3>🛡️ Nenhuma guilda disponível</h3><p style="color:#94a3b8;margin-top:6px">Ainda não existe nenhuma guilda criada no servidor. Crie a primeira por 500 💎.</p></div>';
   return;
  }
- box.innerHTML=lista.map(g=>`<div class="item-card"><h3>🛡️ ${escapeHtml(g.nome||"Guilda")}</h3><p style="font-size:12px;color:#94a3b8;margin:6px 0">${escapeHtml(g.descricao||"Guilda Dragon War")}</p><div style="font-size:12px">${g.tipo==="fechada"?"🔒 Guilda Fechada":"🔓 Guilda Aberta"}</div><div style="font-size:12px;margin-top:5px">👥 ${g.membros||1} membros • ⚔️ Nv. ${g.level||1}</div><div style="font-size:12px;margin-top:5px;color:#38bdf8">Entrada: ${g.tipo==="fechada"?"Convite":"50 💎"}</div><button class="btn btn-blue" style="margin-top:10px" onclick="entrarNaGuilda('${g.id}')">${g.tipo==="fechada"?"📨 Solicitar entrada":"🛡️ Entrar — 50 💎"}</button></div>`).join(""):`<div class="box-item" style="grid-column:1/-1;text-align:center"><h3>🔎 Nenhuma guilda encontrada</h3><p style="color:#94a3b8">Ainda não existem guildas disponíveis para entrar.</p></div>`;
+ box.innerHTML=lista.length?lista.map(g=>`<div class="item-card"><h3>🛡️ ${escapeHtml(g.nome||"Guilda")}</h3><p style="font-size:12px;color:#94a3b8;margin:6px 0">${escapeHtml(g.descricao||"Guilda Dragon War")}</p><div style="font-size:12px">${g.tipo==="fechada"?"🔒 Guilda Fechada":"🔓 Guilda Aberta"}</div><div style="font-size:12px;margin-top:5px">👥 ${g.membros||1} membros • ⚔️ Nv. ${g.level||1}</div><div style="font-size:12px;margin-top:5px;color:#38bdf8">Entrada: ${g.tipo==="fechada"?"Convite":"50 💎"}</div><button class="btn btn-blue" style="margin-top:10px" onclick="entrarNaGuilda('${g.id}')">${g.tipo==="fechada"?"📨 Solicitar entrada":"🛡️ Entrar — 50 💎"}</button></div>`).join(""):`<div class="box-item" style="grid-column:1/-1;text-align:center"><h3>🔎 Nenhuma guilda encontrada</h3><p style="color:#94a3b8">Ainda não existem guildas disponíveis para entrar.</p></div>`;
 }
 async function criarGuilda(){
  if(!auth.currentUser)return alert("Faça login primeiro."); if(usuarioAtual.guildId)return alert("Você já está em uma guilda.");
@@ -789,13 +823,16 @@ window.enviarSolicitacaoAdm=async()=>{
  const nome=document.getElementById("adm-msg-nome").value.trim();
  const id=document.getElementById("adm-msg-id").value.trim();
  const motivo=document.getElementById("adm-msg-motivo").value.trim();
- if(!nome||!id||!motivo)return alert("Preencha nome, ID e motivo da mensagem.");
- if(usuarioAtual.isAdm)return alert("O ADM principal não precisa abrir uma solicitação para si mesmo.");
+ if(!nome||!id||!motivo)return alert("Preencha nome, ID e motivo da solicitação.");
+ if(!usuarioAtual?.uid)return alert("Sua conta ainda não terminou de carregar.");
+ const btn=document.querySelector("#modal-contato-adm .btn-adm");
  try{
-   await addDoc(collection(db,"solicitacoes_adm"),{nome,id,uid:usuarioAtual.uid,email:usuarioAtual.email||"",motivo,status:"nova",createdAt:serverTimestamp()});
-   notificar("📨 Mensagem enviada para o ADM Gabriel!","success");
+   if(btn){btn.disabled=true;btn.innerText="⏳ ENVIANDO...";}
+   await addDoc(collection(db,"solicitacoes_adm"),{nome,id,uid:usuarioAtual.uid,email:usuarioAtual.email||"",motivo,status:"nova",origem:"central_suporte",createdAt:serverTimestamp()});
+   notificar("🛟 Solicitação enviada. A equipe de suporte poderá atender você.","success");
    fecharContatoAdm();
- }catch(e){console.error(e);alert("Não foi possível enviar a mensagem. Verifique sua conexão com o Firebase.");}
+ }catch(e){console.error("Suporte:",e);alert("Não foi possível abrir o suporte agora. Confira a conexão com o Firebase e tente novamente.");}
+   finally{if(btn){btn.disabled=false;btn.innerText="📨 ABRIR SOLICITAÇÃO";}}
 };
 
 window.enviarMensagemGlobalAdm=async()=>{if(!usuarioAtual.isAdm)return alert("Acesso negado.");let i=document.getElementById("global-msg-adm"),text=i.value.trim();if(!text)return;await addDoc(collection(db,"chat_global"),{senderUid:usuarioAtual.uid,senderName:"👑 ADM GABRIEL",text,global:true,createdAt:serverTimestamp()});await registrarLog("Mensagem global",text);i.value="";};
@@ -812,50 +849,118 @@ window.alternarSom=async()=>{let a=document.getElementById("bg-music");if(a.paus
 window.sairDaConta=async()=>{try{if(heartbeatTimer)clearInterval(heartbeatTimer);if(unsubscribeGlobal)unsubscribeGlobal();if(unsubscribeSupport)unsubscribeSupport();if(auth.currentUser)await updateDoc(doc(db,"jogadores_reais",auth.currentUser.uid),{status:"Offline",lastSeen:serverTimestamp()});await signOut(auth)}catch(e){console.error(e)}finally{document.getElementById("game-container").classList.add("hidden");document.getElementById("login-screen").classList.remove("hidden");document.getElementById("auth-email").value="";document.getElementById("auth-pass").value="";notificar("🚪 Conta desconectada. Faça login novamente.","info")}};
 
 let sessaoCarregando=false;
-async function abrirSessaoComSeguranca(user){
- if(sessaoCarregando)return; sessaoCarregando=true;
- const login=document.getElementById("login-screen"),game=document.getElementById("game-container");
- try{
-  login?.classList.remove("hidden");
-  const status=login?.querySelector(".auth-subtitle")||login?.querySelector("p");
-  if(status)status.innerText="⏳ Carregando sua conta...";
-  const limite=new Promise((_,rej)=>setTimeout(()=>rej(Object.assign(new Error("Tempo limite ao carregar a conta."),{code:"timeout"})),15000));
-  await Promise.race([carregarJogador(),limite]);
-  login?.classList.add("hidden"); game?.classList.remove("hidden");
-  // Recursos secundários carregam depois que o jogo já abriu, evitando travar a entrada.
-  Promise.resolve().then(async()=>{
-    try{await carregarCatalogoCustom();}catch(err){console.warn("Catálogo em segundo plano:",err)}
-    if(usuarioAtual?.isAdm){
-      try{await carregarLogs();}catch(err){console.warn("Logs ADM:",err)}
-      try{carregarSolicitacoesAdm();}catch(err){console.warn("Solicitações ADM:",err)}
-    }
-  });
-  document.getElementById('dw-central')?.classList.add('hidden');
-  const bm=document.querySelector('#menu-list .menu-item'); if(bm)trocarSecao('jogar',bm);
-  notificar(usuarioAtual.isAdm?'👑 Painel ADM carregado.':'🎮 Conta do jogador carregada.','success');
-  if(!navigator.onLine) notificar('📡 Você entrou offline. Os dados serão sincronizados quando a conexão voltar.','info');
- }catch(e){
-  console.error("Falha ao carregar sessão:",e);
-  if(e.code==="account-banned"){alert("🚫 Esta conta está banida.");try{await signOut(auth)}catch(_){} }
-  else alert("❌ Não foi possível carregar sua conta.\n\n"+(e.message||"Tente novamente."));
-  try{await signOut(auth)}catch(_){}
-  game?.classList.add("hidden"); login?.classList.remove("hidden");
- }finally{
-  const status=login?.querySelector(".auth-subtitle")||login?.querySelector("p");
-  if(status)status.innerText="Entre com sua conta para jogar.";
-  sessaoCarregando=false;
- }
+let sessaoNumero=0;
+
+function abrirTelaDoJogoSeguro(){
+  const login=document.getElementById("login-screen");
+  const game=document.getElementById("game-container");
+  if(login) login.classList.add("hidden");
+  if(game) game.classList.remove("hidden");
+  document.body.style.overflow="hidden";
 }
-onAuthStateChanged(auth,async user=>{if(!user){sessaoCarregando=false;return;}await abrirSessaoComSeguranca(user);try{
- if(faseAtualInfo.categoria&&categorias[faseAtualInfo.categoria]&&faseAtualInfo.hpMovel>0){
-  const primeiroMenu=document.querySelector("#menu-list .menu-item");
-  trocarSecao("jogar",primeiroMenu);
-  document.getElementById("battle-mode-selection")?.classList.add("hidden");
-  document.getElementById("arena-fases-container")?.classList.remove("hidden");
-  atualizarBatalhaUI();
-  adicionarLogBatalha("💾 Batalha restaurada automaticamente do último salvamento.");
- }
- try{document.getElementById("bg-music").volume=.6}catch(e){}}catch(e){console.error(e)}});
+
+function prepararJogoBasico(user){
+  const email=user?.email||"";
+  usuarioAtual={
+    ...usuarioAtual,
+    uid:user?.uid||usuarioAtual.uid||"",
+    email,
+    displayName:usuarioAtual.displayName||email.split("@")[0]||"Jogador",
+    role:usuarioAtual.role||"USER",
+    isAdm:usuarioAtual.isAdm===true || email.toLowerCase()===EMAIL_ADMIN
+  };
+  try{ atualizarPerfilUI(); }catch(e){ console.warn("Perfil inicial:",e); }
+  try{ montarMenuLateral(); }catch(e){ console.warn("Menu inicial:",e); }
+  try{
+    const first=document.querySelector("#menu-list .menu-item");
+    if(first) trocarSecao("jogar",first);
+  }catch(e){ console.warn("Abertura da batalha:",e); }
+}
+
+async function abrirSessaoComSeguranca(user){
+  if(!user) return;
+  const token=++sessaoNumero;
+  if(sessaoCarregando) return;
+  sessaoCarregando=true;
+  const login=document.getElementById("login-screen");
+  const status=login?.querySelector(".auth-status");
+  try{
+    if(status) status.innerText="⏳ Entrando no Dragon War...";
+
+    // PRIMEIRO abre a interface. O jogador nunca fica preso na tela de login
+    // esperando Firestore, catálogo, chat ou outras consultas.
+    prepararJogoBasico(user);
+    abrirTelaDoJogoSeguro();
+    notificar("🎮 Entrando no Dragon War...","info");
+
+    // Depois sincroniza a conta real em segundo plano.
+    try{
+      await Promise.race([
+        carregarJogador(),
+        new Promise((_,rej)=>setTimeout(()=>rej(Object.assign(new Error("timeout"),{code:"timeout"})),10000))
+      ]);
+      if(token!==sessaoNumero) return;
+      try{ atualizarPerfilUI(); }catch(e){}
+      try{ montarMenuLateral(); }catch(e){}
+      try{ const first=document.querySelector("#menu-list .menu-item"); if(first) trocarSecao("jogar",first); }catch(e){}
+      notificar(usuarioAtual.isAdm?"👑 ADM Gabriel conectado.":"✅ Conta carregada com sucesso!","success");
+
+      Promise.resolve().then(async()=>{
+        try{await carregarCatalogoCustom();}catch(e){console.warn("Catálogo:",e)}
+        try{await renderizarEventos();}catch(e){console.warn("Eventos:",e)}
+        try{if(usuarioAtual.isAdm)await carregarLogs();}catch(e){console.warn("Logs:",e)}
+        try{if(usuarioAtual.isAdm)await carregarSolicitacoesAdm();}catch(e){console.warn("Suporte ADM:",e)}
+      });
+
+      setTimeout(()=>{
+        try{
+          if(faseAtualInfo.categoria&&categorias[faseAtualInfo.categoria]&&faseAtualInfo.hpMovel>0){
+            const bm=document.querySelector("#menu-list .menu-item");
+            if(bm)trocarSecao("jogar",bm);
+            document.getElementById("battle-mode-selection")?.classList.add("hidden");
+            document.getElementById("arena-fases-container")?.classList.remove("hidden");
+            atualizarBatalhaUI();
+            adicionarLogBatalha("💾 Batalha restaurada automaticamente.");
+          }
+        }catch(e){console.warn("Restauração da batalha:",e)}
+      },50);
+    }catch(e){
+      if(e.code==="account-banned"){
+        alert("🚫 Esta conta está banida.");
+        try{await signOut(auth)}catch(_){}
+        return;
+      }
+      // A autenticação já foi concluída. Mesmo sem Firestore, mantém o jogador dentro.
+      console.warn("Sincronização Firestore atrasada:",e);
+      notificar("📡 Você entrou. Os dados serão sincronizados quando o servidor responder.","info");
+    }
+  }catch(e){
+    console.error("Falha ao abrir interface:",e);
+    abrirTelaDoJogoSeguro();
+    notificar("🎮 Jogo aberto. Algumas informações podem carregar depois.","info");
+  }finally{
+    if(status) status.innerText="Conecte-se para abrir o jogo e continuar sua conta.";
+    sessaoCarregando=false;
+  }
+}
+
+onAuthStateChanged(auth,user=>{
+  if(!user){
+    sessaoCarregando=false;
+    const game=document.getElementById("game-container");
+    if(game)game.classList.add("hidden");
+    const login=document.getElementById("login-screen");
+    if(login)login.classList.remove("hidden");
+    return;
+  }
+  abrirSessaoComSeguranca(user).catch(e=>{
+    console.error("Sessão:",e);
+    sessaoCarregando=false;
+    prepararJogoBasico(user);
+    abrirTelaDoJogoSeguro();
+  });
+});
+
 </script>
 
 <style id="dw-extra-style">
@@ -919,6 +1024,10 @@ window.dwRefreshAll=async()=>{try{await dwRenderOverview();}catch(e){}let u=wind
  function escapeHtml(x){return String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
  window.addEventListener('input',e=>{if(e.target?.id==='dw-private-target')dwStartChats();});
 })();
+document.getElementById("auth-email")?.addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("auth-pass")?.focus()});
+document.getElementById("auth-pass")?.addEventListener("keydown",e=>{if(e.key==="Enter")window.realizarAutenticacao()});
+window.addEventListener("online",()=>notificar("📡 Conexão restaurada.","success"));
+
 </script>
 </body>
-  </html>
+</html>
