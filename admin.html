@@ -7,10 +7,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .admin-name {
+        /* Estilo do Desenvolvedor (Gabriel) */
+        .dev-name {
             color: #ef4444 !important;
             font-weight: bold;
-            text-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.7);
+        }
+        /* Estilo do ADM Comum */
+        .adm-name {
+            color: #3b82f6 !important;
+            font-weight: bold;
         }
         body {
             background-color: #0f172a;
@@ -21,22 +27,20 @@
 <body class="min-h-screen flex flex-col justify-between">
 
     <!-- CONTAINER PRINCIPAL -->
-    <div id="app" class="container mx-auto p-4 max-w-4xl">
+    <div id="app" class="container mx-auto p-4 max-w-5xl">
         
-        <!-- TELA DE AUTENTICAÇÃO DUAL (LOGIN / CADASTRO) -->
+        <!-- TELA DE AUTENTICAÇÃO DUAL -->
         <section id="auth-screen" class="max-w-md mx-auto mt-20 bg-slate-800 p-8 rounded-xl shadow-2xl border border-slate-700">
             <div class="text-center mb-6">
                 <h1 class="text-3xl font-extrabold text-amber-500 tracking-wider">DRAGON WAR</h1>
                 <p class="text-slate-400 text-sm">Rise of Power</p>
             </div>
 
-            <!-- Abas Dual -->
             <div class="flex mb-6 border-b border-slate-700">
                 <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 pb-2 font-bold text-amber-500 border-b-2 border-amber-500 transition">Entrar</button>
                 <button id="tab-register" onclick="switchAuthTab('register')" class="flex-1 pb-2 font-bold text-slate-400 transition">Cadastrar</button>
             </div>
 
-            <!-- Formulário -->
             <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4">
                 <div>
                     <label class="block text-sm text-slate-300 mb-1">E-mail</label>
@@ -55,18 +59,23 @@
             <div id="auth-error" class="mt-4 text-red-400 text-sm text-center"></div>
         </section>
 
-        <!-- TELA DO JOGO (OCULTA ATÉ O LOGIN) -->
+        <!-- TELA DO JOGO -->
         <div id="game-screen" class="hidden space-y-6">
             
-            <!-- TOPO / HEADER DO JOGO -->
+            <!-- HEADER -->
             <header class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center shadow-md">
-                <div>
-                    <h2 id="user-display-name" class="text-xl font-bold">Herói</h2>
-                    <p class="text-xs text-slate-400">Nível 1 | Ouro: <span id="user-gold" class="text-amber-400 font-bold">100</span></p>
+                <div class="flex items-center gap-3">
+                    <div>
+                        <div id="user-display-container" class="flex items-center gap-2">
+                            <h2 id="user-display-name" class="text-xl font-bold">Herói</h2>
+                            <span id="user-badge"></span>
+                        </div>
+                        <p class="text-xs text-slate-400">Nível 1 | Ouro: <span id="user-gold" class="text-amber-400 font-bold">100</span> | Gemas: <span id="user-gems" class="text-purple-400 font-bold">10</span></p>
+                    </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <!-- Botão do Painel Administrativo (Aparece apenas para o Gabriel/Admin) -->
-                    <button id="btn-admin-panel" onclick="toggleAdminPanel(true)" class="hidden bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded text-sm font-bold transition shadow">
+                    <!-- Botão Painel ADM (Disponível para Dev e ADMs com permissões diferentes) -->
+                    <button id="btn-admin-panel" onclick="openAdminPanel()" class="hidden bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded text-sm font-bold transition shadow">
                         <i class="fas fa-shield-alt mr-1"></i> Painel ADM
                     </button>
                     <button onclick="handleLogout()" class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-3 py-1.5 rounded text-sm transition">
@@ -75,25 +84,23 @@
                 </div>
             </header>
 
-            <!-- CONTEÚDO PRINCIPAL DO JOGO -->
+            <!-- CONTEÚDO -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Arena de Batalha -->
+                <!-- Arena -->
                 <div class="md:col-span-2 bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-md">
                     <h3 class="text-lg font-bold text-amber-500 mb-3"><i class="fas fa-gavel mr-2"></i>Arena de Combate</h3>
                     <p class="text-sm text-slate-300 mb-4">Enfrente monstros e chefes para subir de poder e coletar recompensas exclusivas.</p>
-                    <button onclick="triggerBattle()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-4 py-2 rounded transition">Batalhar contra Dragão Menor</button>
+                    <button onclick="triggerBattle()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-4 py-2 rounded transition">Batalhar</button>
                     <div id="battle-log" class="mt-4 p-3 bg-slate-900 rounded border border-slate-800 text-xs text-slate-300 h-28 overflow-y-auto">
                         [Sistema] Pronto para a batalha, guerreiro...
                     </div>
                 </div>
 
-                <!-- Chat da Comunidade / Guilda -->
+                <!-- Chat Global -->
                 <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col justify-between shadow-md h-72">
                     <h3 class="text-sm font-bold text-amber-500 mb-2"><i class="fas fa-comments mr-2"></i>Chat Global</h3>
                     <div id="chat-messages" class="flex-1 bg-slate-900 p-2 rounded border border-slate-800 text-xs overflow-y-auto space-y-1 mb-2">
-                        <!-- Mensagens simuladas com destaque -->
-                        <div><span class="admin-name">Gabriel</span>: Sejam bem-vindos ao Dragon War!</div>
-                        <div><span class="text-slate-400">Aventureiro</span>: Salve galera!</div>
+                        <div><span class="dev-name">Gabriel <i class="fas fa-check-circle text-amber-400 text-[10px]" title="Desenvolvedor Master"></i></span>: Sejam bem-vindos ao Dragon War!</div>
                     </div>
                     <div class="flex gap-2">
                         <input type="text" id="chat-input" placeholder="Digite sua mensagem..." class="flex-1 bg-slate-900 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none">
@@ -104,44 +111,34 @@
 
         </div>
 
-        <!-- MODAL DO PAINEL ADMINISTRATIVO -->
+        <!-- MODAL DO PAINEL ADMINISTRATIVO (DINÂMICO CONFORME O CARGO) -->
         <div id="admin-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center hidden z-50 p-4">
-            <div class="bg-slate-800 w-full max-w-2xl rounded-xl border border-red-600/50 shadow-2xl overflow-hidden">
+            <div class="bg-slate-800 w-full max-w-3xl rounded-xl border border-red-600/50 shadow-2xl overflow-hidden">
                 <div class="bg-red-900/40 p-4 border-b border-red-600/40 flex justify-between items-center">
-                    <h3 class="text-lg font-bold text-red-400"><i class="fas fa-user-shield mr-2"></i>Painel Administrativo Restrito</h3>
-                    <button onclick="toggleAdminPanel(false)" class="text-slate-400 hover:text-white"><i class="fas fa-times text-lg"></i></button>
+                    <h3 id="admin-modal-title" class="text-lg font-bold text-red-400"><i class="fas fa-user-shield mr-2"></i>Painel Administrativo</h3>
+                    <button onclick="closeAdminPanel()" class="text-slate-400 hover:text-white"><i class="fas fa-times text-lg"></i></button>
                 </div>
-                <div class="p-6 space-y-4">
-                    <p class="text-xs text-slate-300">Painel de controle avançado. Como administrador, você possui permissão total sobre os registros, eventos globais e gerenciamento de itens.</p>
-                    
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-slate-900 p-4 rounded border border-slate-700">
-                            <h4 class="text-sm font-bold text-amber-400 mb-2">Conceder Ouro Global</h4>
-                            <input type="number" id="adm-gold-val" placeholder="Quantidade" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-xs mb-2 text-white">
-                            <button onclick="admAction('gold')" class="w-full bg-red-600 hover:bg-red-500 text-white text-xs font-bold py-2 rounded transition">Distribuir para Todos</button>
-                        </div>
-                        <div class="bg-slate-900 p-4 rounded border border-slate-700">
-                            <h4 class="text-sm font-bold text-amber-400 mb-2">Aviso Global no Chat</h4>
-                            <input type="text" id="adm-msg-val" placeholder="Mensagem do Servidor" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-xs mb-2 text-white">
-                            <button onclick="admAction('broadcast')" class="w-full bg-red-600 hover:bg-red-500 text-white text-xs font-bold py-2 rounded transition">Enviar Alerta</button>
-                        </div>
-                    </div>
+                
+                <div id="admin-panel-content" class="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+                    <!-- O conteúdo muda dinamicamente via JS dependendo se é o DEV (Gabriel) ou ADM Comum -->
                 </div>
+
                 <div class="bg-slate-900 p-4 border-t border-slate-700 flex justify-end">
-                    <button onclick="toggleAdminPanel(false)" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded text-xs font-bold">Fechar Painel</button>
+                    <button onclick="closeAdminPanel()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded text-xs font-bold">Fechar</button>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <!-- SCRIPT DE CONTROLE DO SISTEMA -->
+    <!-- SCRIPT DO SISTEMA -->
     <script>
         let currentMode = 'login';
         let currentUser = null;
 
-        // Identificação do Admin (Seu e-mail ou nome configurado)
-        const ADMIN_EMAIL = "markivus25@gmail.com"; 
+        // Configuração de Contas Especiais
+        const DEV_EMAIL = "markivus25@gmail.com"; 
+        const ADMIN_EMAILS = ["adm.comum@dragonwar.com"]; // Adicione e-mails de ADMs comuns aqui se quiser
 
         function switchAuthTab(mode) {
             currentMode = mode;
@@ -149,9 +146,8 @@
             const registerBtn = document.getElementById('tab-register');
             const nameField = document.getElementById('register-name-field');
             const submitBtn = document.getElementById('auth-btn');
-            const errorDiv = document.getElementById('auth-error');
             
-            errorDiv.innerText = "";
+            document.getElementById('auth-error').innerText = "";
 
             if (mode === 'login') {
                 loginBtn.className = "flex-1 pb-2 font-bold text-amber-500 border-b-2 border-amber-500 transition";
@@ -169,25 +165,29 @@
         function handleAuth(event) {
             event.preventDefault();
             const email = document.getElementById('auth-email').value;
-            const password = document.getElementById('auth-password').value;
             const usernameInput = document.getElementById('auth-username').value;
 
-            // Simulação de autenticação dual local (pode ser conectado ao Firebase Auth facilmente)
             if (currentMode === 'register' && !usernameInput) {
-                document.getElementById('auth-error').innerText = "Por favor, insira um nome de herói.";
+                document.getElementById('auth-error').innerText = "Insira um nome de herói.";
                 return;
             }
 
             let finalName = usernameInput || email.split('@')[0];
-            if (email === ADMIN_EMAIL || finalName.toLowerCase() === 'gabriel') {
-                finalName = "Gabriel"; // Garante o nome correto
+            let role = 'player'; // padrão
+
+            if (email === DEV_EMAIL || finalName.toLowerCase() === 'gabriel') {
+                finalName = "Gabriel";
+                role = 'dev'; // Desenvolvedor Master (Você)
+            } else if (ADMIN_EMAILS.includes(email)) {
+                role = 'admin'; // ADM Comum
             }
 
             currentUser = {
                 email: email,
                 name: finalName,
-                isAdmin: (email === ADMIN_EMAIL || finalName.toLowerCase() === 'gabriel'),
-                gold: 150
+                role: role, // 'dev', 'admin', ou 'player'
+                gold: 150,
+                gems: 15
             };
 
             initGameSession();
@@ -198,18 +198,29 @@
             document.getElementById('game-screen').classList.remove('hidden');
 
             const nameDisplay = document.getElementById('user-display-name');
-            nameDisplay.innerText = currentUser.name;
+            const badgeDisplay = document.getElementById('user-badge');
+            const btnAdmin = document.getElementById('btn-admin-panel');
 
-            // Aplica a classe de destaque vermelho caso seja você (Admin)
-            if (currentUser.isAdmin) {
-                nameDisplay.className = "text-xl font-bold admin-name";
-                document.getElementById('btn-admin-panel').classList.remove('hidden');
+            nameDisplay.innerText = currentUser.name;
+            badgeDisplay.innerHTML = '';
+
+            if (currentUser.role === 'dev') {
+                // Seu estilo: Nome colorido com selo de verificação especial
+                nameDisplay.className = "text-xl font-bold dev-name";
+                badgeDisplay.innerHTML = `<i class="fas fa-check-circle text-amber-400 text-sm" title="Desenvolvedor Master"></i>`;
+                btnAdmin.classList.remove('hidden');
+            } else if (currentUser.role === 'admin') {
+                // Estilo ADM Comum: Nome normal com tag [ADM]
+                nameDisplay.className = "text-xl font-bold adm-name";
+                badgeDisplay.innerHTML = `<span class="bg-blue-600 text-white text-[10px] px-1.5 py-0.5 rounded font-bold uppercase">ADM</span>`;
+                btnAdmin.classList.remove('hidden');
             } else {
                 nameDisplay.className = "text-xl font-bold text-white";
-                document.getElementById('btn-admin-panel').classList.add('hidden');
+                btnAdmin.classList.add('hidden');
             }
 
             document.getElementById('user-gold').innerText = currentUser.gold;
+            document.getElementById('user-gems').innerText = currentUser.gems;
         }
 
         function handleLogout() {
@@ -219,33 +230,105 @@
             document.getElementById('auth-form').reset();
         }
 
-        function toggleAdminPanel(show) {
+        function openAdminPanel() {
             const modal = document.getElementById('admin-modal');
-            if (show) {
-                modal.classList.remove('hidden');
-            } else {
-                modal.classList.add('hidden');
+            const content = document.getElementById('admin-panel-content');
+            const title = document.getElementById('admin-modal-title');
+            
+            content.innerHTML = '';
+
+            if (currentUser.role === 'dev') {
+                // PAINEL COMPLETO DO DESENVOLVEDOR (VOCÊ)
+                title.innerHTML = `<i class="fas fa-crown mr-2 text-amber-400"></i>Painel do Desenvolvedor Master (Gabriel)`;
+                content.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-900 p-4 rounded border border-slate-700">
+                            <h4 class="text-sm font-bold text-amber-400 mb-2">Editor de Recursos (Ouro / Gemas)</h4>
+                            <input type="text" id="dev-target-user" placeholder="Nome do Jogador" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-xs mb-2 text-white">
+                            <div class="flex gap-2 mb-2">
+                                <input type="number" id="dev-add-gold" placeholder="+ Ouro" class="w-1/2 bg-slate-800 border border-slate-700 rounded p-2 text-xs text-white">
+                                <input type="number" id="dev-add-gems" placeholder="+ Gemas" class="w-1/2 bg-slate-800 border border-slate-700 rounded p-2 text-xs text-white">
+                            </div>
+                            <button onclick="devAction('resources')" class="w-full bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold py-2 rounded transition">Aplicar Recursos</button>
+                        </div>
+
+                        <div class="bg-slate-900 p-4 rounded border border-slate-700">
+                            <h4 class="text-sm font-bold text-amber-400 mb-2">Criar Novo Item / Arma</h4>
+                            <input type="text" id="dev-item-name" placeholder="Nome da Arma/Item" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-xs mb-2 text-white">
+                            <input type="number" id="dev-item-power" placeholder="Poder de Ataque" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-xs mb-2 text-white">
+                            <button onclick="devAction('createItem')" class="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-2 rounded transition">Adicionar ao Jogo</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 p-4 rounded border border-slate-700">
+                        <h4 class="text-sm font-bold text-amber-400 mb-2">Gerenciamento de Jogadores (Online, Ban, Mutar, Conversar)</h4>
+                        <div class="flex justify-between items-center bg-slate-800 p-2 rounded text-xs mb-2">
+                            <span><b>Aventureiro123</b> (Online)</span>
+                            <div class="flex gap-1">
+                                <button onclick="alert('Mensagem privada iniciada.')" class="bg-blue-600 px-2 py-1 rounded text-white">Chat PV</button>
+                                <button onclick="alert('Jogador mutado.')" class="bg-yellow-600 px-2 py-1 rounded text-white">Mutar</button>
+                                <button onclick="alert('Jogador banido.')" class="bg-red-600 px-2 py-1 rounded text-white">Banir</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 p-4 rounded border border-slate-700">
+                        <h4 class="text-sm font-bold text-amber-400 mb-2">Criar Evento Global</h4>
+                        <input type="text" id="dev-event-title" placeholder="Nome do Evento (Ex: Dobro de XP)" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-xs mb-2 text-white">
+                        <button onclick="devAction('event')" class="w-full bg-red-600 hover:bg-red-500 text-white text-xs font-bold py-2 rounded transition">Lançar Evento</button>
+                    </div>
+                `;
+            } else if (currentUser.role === 'admin') {
+                // PAINEL RESTRITO DO ADM COMUM (Apenas Eventos, Mutar e Suporte)
+                title.innerHTML = `<i class="fas fa-shield-alt mr-2 text-blue-400"></i>Painel do Administrador (Moderação)`;
+                content.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="bg-slate-900 p-4 rounded border border-slate-700">
+                            <h4 class="text-sm font-bold text-blue-400 mb-2">Criar Evento para a Comunidade</h4>
+                            <input type="text" id="adm-event-name" placeholder="Título do Evento" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-xs mb-2 text-white">
+                            <button onclick="admComumAction('event')" class="w-full bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2 rounded transition">Publicar Evento</button>
+                        </div>
+                        <div class="bg-slate-900 p-4 rounded border border-slate-700">
+                            <h4 class="text-sm font-bold text-blue-400 mb-2">Moderação de Chat (Mutar / Conversar)</h4>
+                            <input type="text" id="adm-mute-target" placeholder="Nome do Jogador para Mutar" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-xs mb-2 text-white">
+                            <button onclick="admComumAction('mute')" class="w-full bg-yellow-600 hover:bg-yellow-500 text-white text-xs font-bold py-2 rounded transition">Mutar Jogador</button>
+                        </div>
+                    </div>
+                `;
             }
+
+            modal.classList.remove('hidden');
         }
 
-        function admAction(type) {
-            if (type === 'gold') {
-                const val = document.getElementById('adm-gold-val').value;
-                alert(`Sucesso! Concedido ${val || 0} de ouro globalmente.`);
-            } else if (type === 'broadcast') {
-                const msg = document.getElementById('adm-msg-val').value;
-                const chat = document.getElementById('chat-messages');
-                chat.innerHTML += `<div><span class="admin-name">[SERVIDOR/ADM]</span>: ${msg}</div>`;
-                chat.scrollTop = chat.scrollHeight;
+        function closeAdminPanel() {
+            document.getElementById('admin-modal').classList.add('hidden');
+        }
+
+        function devAction(type) {
+            if (type === 'resources') {
+                alert("Recursos (Ouro/Gemas) atualizados com sucesso para o jogador!");
+            } else if (type === 'createItem') {
+                alert("Nova arma/item criada e adicionada à loja global com sucesso!");
+            } else if (type === 'event') {
+                alert("Evento global criado e anunciado para todos os servidores!");
             }
-            toggleAdminPanel(false);
+            closeAdminPanel();
+        }
+
+        function admComumAction(type) {
+            if (type === 'event') {
+                alert("Evento criado com sucesso pelo Administrador!");
+            } else if (type === 'mute') {
+                alert("O jogador selecionado foi mutado com sucesso.");
+            }
+            closeAdminPanel();
         }
 
         function triggerBattle() {
             const log = document.getElementById('battle-log');
-            log.innerHTML += `<br>[Batalha] Você desferiu um golpe crítico e venceu o monstro! +25 Ouro.`;
+            log.innerHTML += `<br>[Batalha] Vitória na arena! +20 Ouro.`;
             log.scrollTop = log.scrollHeight;
-            currentUser.gold += 25;
+            currentUser.gold += 20;
             document.getElementById('user-gold').innerText = currentUser.gold;
         }
 
@@ -255,9 +338,18 @@
             if(!text) return;
 
             const chat = document.getElementById('chat-messages');
-            const nameClass = currentUser.isAdmin ? 'admin-name' : 'text-slate-300';
+            let nameClass = "text-slate-300";
+            let badge = "";
+
+            if (currentUser.role === 'dev') {
+                nameClass = "dev-name";
+                badge = `<i class="fas fa-check-circle text-amber-400 text-[10px]" title="Desenvolvedor Master"></i>`;
+            } else if (currentUser.role === 'admin') {
+                nameClass = "adm-name";
+                badge = `<span class="bg-blue-600 text-white text-[9px] px-1 rounded">ADM</span>`;
+            }
             
-            chat.innerHTML += `<div><span class="${nameClass}">${currentUser.name}</span>: ${text}</div>`;
+            chat.innerHTML += `<div><span class="${nameClass}">${currentUser.name} ${badge}</span>: ${text}</div>`;
             input.value = '';
             chat.scrollTop = chat.scrollHeight;
         }
