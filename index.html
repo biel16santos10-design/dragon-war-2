@@ -3,345 +3,520 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dragon War - Rise of Power</title>
+  <title>Dragon War - RPG Completo</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --primary: #38bdf8;
+      --accent: #f59e0b;
+      --danger: #ef4444;
+      --success: #10b981;
+      --text: #f8fafc;
     }
-    body {
-      background: #0f172a;
-      color: #f8fafc;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-    }
-    .card {
-      background: rgba(30, 41, 59, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 25px;
-      width: 100%;
-      max-width: 500px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #38bdf8;
-      font-size: 1.8rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    .tabs {
-      display: flex;
-      margin-bottom: 20px;
-      border-bottom: 1px solid #334155;
-    }
-    .tab {
-      flex: 1;
-      padding: 10px;
-      text-align: center;
-      cursor: pointer;
-      color: #94a3b8;
-      font-weight: bold;
-    }
-    .tab.active {
-      color: #38bdf8;
-      border-bottom: 2px solid #38bdf8;
-    }
-    .form-group {
-      margin-bottom: 15px;
-    }
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 0.9rem;
-      color: #cbd5e1;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #475569;
-      background: #0f172a;
-      color: #fff;
-      font-size: 1rem;
-    }
-    input:focus {
-      outline: none;
-      border-color: #38bdf8;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 6px;
-      background: #0284c7;
-      color: white;
-      font-weight: bold;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.2s;
-      margin-top: 5px;
-    }
-    button:hover {
-      background: #0369a1;
-    }
-    .btn-action {
-      background: #10b981;
-      margin-top: 10px;
-    }
-    .btn-action:hover {
-      background: #059669;
-    }
-    .btn-logout {
-      background: #ef4444;
-      margin-top: 15px;
-    }
-    .btn-logout:hover {
-      background: #dc2626;
-    }
-    .hidden {
-      display: none;
-    }
-
-    /* ESTILOS DA INTERFACE DO JOGO */
-    .game-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      background: #0f172a;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-    }
-    .stat-box {
-      font-size: 0.95rem;
-      color: #cbd5e1;
-    }
-    .stat-box strong {
-      color: #38bdf8;
-    }
-    .battle-box {
-      background: #1e293b;
-      border: 1px solid #334155;
-      padding: 15px;
-      border-radius: 8px;
-      text-align: center;
-      margin-bottom: 15px;
-    }
-    .log-box {
-      background: #0f172a;
-      padding: 10px;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      color: #a7f3d0;
-      min-height: 50px;
-      max-height: 100px;
-      overflow-y: auto;
-      text-align: left;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 15px; display: flex; justify-content: center; }
+    .app-container { width: 100%; max-width: 480px; }
+    .card { background: var(--card-bg); border-radius: 12px; padding: 20px; border: 1px solid #334155; box-shadow: 0 8px 20px rgba(0,0,0,0.4); margin-bottom: 15px; }
+    h1, h2, h3 { text-align: center; color: var(--primary); margin-bottom: 15px; }
+    
+    /* AUTH */
+    .tabs { display: flex; border-bottom: 2px solid #334155; margin-bottom: 15px; }
+    .tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; color: #94a3b8; font-weight: bold; }
+    .tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
+    .input-group { margin-bottom: 12px; }
+    label { font-size: 0.85rem; color: #cbd5e1; display: block; margin-bottom: 4px; }
+    input, select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #fff; }
+    button { width: 100%; padding: 12px; border: none; border-radius: 6px; background: #0284c7; color: white; font-weight: bold; cursor: pointer; margin-top: 8px; }
+    button:hover { opacity: 0.9; }
+    
+    /* NAV & PANELS */
+    .nav-bar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-bottom: 15px; }
+    .nav-btn { padding: 8px 2px; font-size: 0.75rem; background: #334155; border: none; color: #fff; border-radius: 6px; cursor: pointer; }
+    .nav-btn.active { background: var(--primary); color: #000; font-weight: bold; }
+    
+    /* HUD */
+    .hud { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #0f172a; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 0.85rem; }
+    .bar-container { background: #334155; border-radius: 4px; height: 12px; overflow: hidden; margin-top: 2px; }
+    .bar-fill { height: 100%; transition: width 0.3s; }
+    .hp-fill { background: var(--danger); }
+    .energy-fill { background: var(--accent); }
+    
+    /* SEÇÕES */
+    .panel-section { display: none; }
+    .panel-section.active { display: block; }
+    
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .item-card { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 10px; text-align: center; font-size: 0.85rem; margin-bottom: 8px; }
+    .item-card button { padding: 6px; font-size: 0.8rem; margin-top: 5px; }
+    
+    .hidden { display: none !important; }
+    .admin-badge { background: var(--accent); color: #000; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+    .log-box { background: #0f172a; padding: 10px; border-radius: 6px; font-size: 0.8rem; color: #10b981; height: 80px; overflow-y: auto; margin-top: 10px; }
   </style>
 </head>
 <body>
 
-  <div class="card">
+<div class="app-container">
+
+  <!-- AUTH CARD -->
+  <div id="auth-card" class="card">
     <h1>🐉 Dragon War</h1>
-
-    <!-- TELA DE AUTENTICAÇÃO -->
-    <div id="auth-screen">
-      <div class="tabs">
-        <div class="tab active" id="tab-login" onclick="showForm('login')">LOGIN</div>
-        <div class="tab" id="tab-register" onclick="showForm('register')">CRIAR CONTA</div>
-      </div>
-
-      <!-- FORMULÁRIO DE LOGIN -->
-      <form id="login-form" onsubmit="handleLogin(event)">
-        <div class="form-group">
-          <label for="login-email">E-mail</label>
-          <input type="email" id="login-email" required placeholder="seu@email.com">
-        </div>
-        <div class="form-group">
-          <label for="login-password">Senha</label>
-          <input type="password" id="login-password" required placeholder="••••••••">
-        </div>
-        <button type="submit">ENTRAR NO JOGO</button>
-      </form>
-
-      <!-- FORMULÁRIO DE REGISTRO -->
-      <form id="register-form" class="hidden" onsubmit="handleRegister(event)">
-        <div class="form-group">
-          <label for="reg-username">Nome do Guerreiro</label>
-          <input type="text" id="reg-username" required placeholder="Ex: GabrielTheKing">
-        </div>
-        <div class="form-group">
-          <label for="reg-email">E-mail</label>
-          <input type="email" id="reg-email" required placeholder="seu@email.com">
-        </div>
-        <div class="form-group">
-          <label for="reg-password">Senha</label>
-          <input type="password" id="reg-password" required placeholder="••••••••">
-        </div>
-        <button type="submit">CRIAR CONTA E JOGAR</button>
-      </form>
+    <div class="tabs">
+      <div class="tab active" id="tab-login" onclick="switchAuthTab('login')">LOGIN</div>
+      <div class="tab" id="tab-register" onclick="switchAuthTab('register')">REGISTRAR</div>
     </div>
 
-    <!-- TELA DO JOGO (RPG) -->
-    <div id="game-screen" class="hidden">
-      <h2 style="text-align: center; margin-bottom: 15px;">Mestre: <span id="player-name" style="color: #38bdf8;">---</span></h2>
-      
-      <div class="game-stats">
-        <div class="stat-box"><strong>Nível:</strong> <span id="player-level">1</span></div>
-        <div class="stat-box"><strong>Moedas:</strong> 🟡 <span id="player-coins">100</span></div>
-        <div class="stat-box"><strong>Vida:</strong> ❤️ <span id="player-hp">100</span>/100</div>
-        <div class="stat-box"><strong>Ataque:</strong> ⚔️ <span id="player-atk">15</span></div>
+    <form id="form-login" onsubmit="handleLogin(event)">
+      <div class="input-group">
+        <label>E-mail</label>
+        <input type="email" id="login-email" required placeholder="seu@email.com">
+      </div>
+      <div class="input-group">
+        <label>Senha</label>
+        <input type="password" id="login-password" required placeholder="••••••••">
+      </div>
+      <button type="submit">ENTRAR NO JOGO</button>
+    </form>
+
+    <form id="form-register" class="hidden" onsubmit="handleRegister(event)">
+      <div class="input-group">
+        <label>Nome do Herói (Sem 'ADM' / 'Master')</label>
+        <input type="text" id="reg-name" required placeholder="Ex: GabrielGuerriro">
+      </div>
+      <div class="input-group">
+        <label>E-mail</label>
+        <input type="email" id="reg-email" required placeholder="seu@email.com">
+      </div>
+      <div class="input-group">
+        <label>Senha</label>
+        <input type="password" id="reg-password" required placeholder="••••••••">
+      </div>
+      <button type="submit" style="background: var(--success);">CRIAR CONTA</button>
+    </form>
+  </div>
+
+  <!-- GAME CARD -->
+  <div id="game-card" class="card hidden">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+      <h2 style="margin:0; font-size:1.2rem;" id="ui-username">Herói <span id="admin-indicator"></span></h2>
+      <button onclick="handleLogout()" style="width:auto; padding:4px 10px; background:var(--danger); font-size:0.75rem; margin:0;">Sair</button>
+    </div>
+
+    <!-- HUD -->
+    <div class="hud">
+      <div>Nível: <strong id="ui-level" style="color:var(--primary)">1</strong></div>
+      <div>Moedas: 🟡 <strong id="ui-coins">100</strong></div>
+      <div>
+        Vida: <span id="ui-hp-text">100/100</span>
+        <div class="bar-container"><div id="bar-hp" class="bar-fill hp-fill" style="width: 100%;"></div></div>
+      </div>
+      <div>
+        Energia: <span id="ui-energy-text">50/50</span>
+        <div class="bar-container"><div id="bar-energy" class="bar-fill energy-fill" style="width: 100%;"></div></div>
+      </div>
+      <div>Ataque: ⚔️ <strong id="ui-atk">15</strong></div>
+      <div>Defesa: 🛡️ <strong id="ui-def">5</strong></div>
+    </div>
+
+    <!-- NAV BAR -->
+    <div class="nav-bar">
+      <button class="nav-btn active" onclick="showPanel('combate', this)">Combat</button>
+      <button class="nav-btn" onclick="showPanel('loja', this)">Loja</button>
+      <button class="nav-btn" onclick="showPanel('inventario', this)">Inven.</button>
+      <button class="nav-btn" onclick="showPanel('skills', this)">Skills</button>
+      <button class="nav-btn hidden" id="nav-admin-btn" onclick="showPanel('admin', this)" style="background:#7c3aed;">ADM</button>
+    </div>
+
+    <!-- COMBATE -->
+    <div id="panel-combate" class="panel-section active">
+      <h3>⚔️ Batalha de Chefões</h3>
+      <div class="input-group">
+        <label>Escolher Chefe (Boss):</label>
+        <select id="boss-select" onchange="selectBoss()">
+          <option value="0">Nível 1: Goblin Rei (HP: 60)</option>
+          <option value="1">Nível 2: Orc General (HP: 150)</option>
+          <option value="2">Nível 3: Golem de Pedra (HP: 350)</option>
+          <option value="3">Nível 4: Quimera Sombria (HP: 700)</option>
+          <option value="4">Nível 5: Dragão Ancião (HP: 1500)</option>
+        </select>
       </div>
 
-      <div class="battle-box">
-        <h3 style="color: #f43f5e; margin-bottom: 5px;">Inimigo: <span id="enemy-name">Dragão Filhote</span></h3>
-        <p style="margin-bottom: 10px; font-size: 0.9rem;">HP do Inimigo: ❤️ <span id="enemy-hp">50</span>/50</p>
-        <button class="btn-action" onclick="attackEnemy()">⚔️ ATACAR</button>
+      <div style="background:#0f172a; padding:12px; border-radius:8px; text-align:center; margin-bottom:10px;">
+        <h4 id="boss-name" style="color:var(--danger)">Goblin Rei</h4>
+        <p style="font-size:0.85rem;">HP do Chefe: <span id="boss-hp">60</span></p>
       </div>
 
-      <div class="log-box" id="game-log">
-        > Bem-vindo a Dragon War! Clique em Atacar para iniciar a batalha.
+      <div class="grid-2">
+        <button onclick="attack()" style="background:var(--danger);">⚔️ Atacar (-5 Energia)</button>
+        <button onclick="rest()" style="background:var(--success);">💤 Descansar (+20 Eng)</button>
       </div>
+      <button onclick="usePotionInCombat()" style="background:var(--accent);">🧪 Usar Poção de Cura</button>
+    </div>
 
-      <button onclick="handleLogout()" class="btn-logout">SAIR DA CONTA</button>
+    <!-- LOJA -->
+    <div id="panel-loja" class="panel-section">
+      <h3>🏪 Loja do Reino</h3>
+      <div class="grid-2">
+        <div class="item-card">
+          <strong>Espada de Aço</strong><br>+10 Ataque<br>🟡 150 Moedas
+          <button onclick="buyItem('espada', 150)">Comprar</button>
+        </div>
+        <div class="item-card">
+          <strong>Escudo Real</strong><br>+8 Defesa<br>🟡 120 Moedas
+          <button onclick="buyItem('escudo', 120)">Comprar</button>
+        </div>
+        <div class="item-card">
+          <strong>Poção de Vida</strong><br>Recupera 50 HP<br>🟡 40 Moedas
+          <button onclick="buyItem('pocao', 40)">Comprar</button>
+        </div>
+        <div class="item-card">
+          <strong>Armadura Dragão</strong><br>+20 Def, +30 HP<br>🟡 500 Moedas
+          <button onclick="buyItem('armadura', 500)">Comprar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- INVENTÁRIO -->
+    <div id="panel-inventario" class="panel-section">
+      <h3>🎒 Seu Inventário</h3>
+      <div id="inventory-list">
+        <!-- Gerado via Script -->
+      </div>
+    </div>
+
+    <!-- SKILLS -->
+    <div id="panel-skills" class="panel-section">
+      <h3>📜 Árvore de Habilidades</h3>
+      <div class="item-card">
+        <strong>Fúria do Guerreiro</strong> (Requer Nível 3)<br>Aumenta Ataque Base em +10
+        <button id="btn-skill-1" onclick="unlockSkill(1, 3)">Desbloquear</button>
+      </div>
+      <div class="item-card">
+        <strong>Pele de Pedra</strong> (Requer Nível 5)<br>Aumenta Defesa Base em +10
+        <button id="btn-skill-2" onclick="unlockSkill(2, 5)">Desbloquear</button>
+      </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div id="panel-admin" class="panel-section">
+      <h3 style="color:#a7f3d0">⚙️️ Painel de Administração</h3>
+      <div class="input-group">
+        <label>Adicionar Moedas (+500):</label>
+        <button onclick="adminAddCoins()" style="background:#059669; margin:0;">+500 Moedas</button>
+      </div>
+      <div class="input-group">
+        <label>Promover outro usuário a Admin (UID):</label>
+        <input type="text" id="admin-target-uid" placeholder="Cole o UID do usuário">
+        <button onclick="adminPromoteUser()" style="background:#7c3aed;">Promover a ADMIN</button>
+      </div>
+    </div>
+
+    <!-- LOG -->
+    <div class="log-box" id="game-log">
+      > Conectado ao servidor Dragon War.
     </div>
   </div>
 
-  <!-- FIREBASE SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</div>
 
-  <!-- LÓGICA DO JOGO E CONEXÃO COM O FIREBASE -->
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
-      authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
-      projectId: "dragon-war-rise-of-power-2a9f1",
-      storageBucket: "dragon-war-rise-of-power-2a9f1.firebasestorage.app",
-      messagingSenderId: "115455691167",
-      appId: "1:115455691167:web:ff3638f67b66c17c5515aa",
-      measurementId: "G-S7XE2EN9CL"
-    };
+<!-- FIREBASE SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
+<script>
+  // CONFIGURAÇÃO REAL DO FIREBASE
+  const firebaseConfig = {
+    apiKey: "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
+    authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
+    projectId: "dragon-war-rise-of-power-2a9f1",
+    storageBucket: "dragon-war-rise-of-power-2a9f1.firebasestorage.app",
+    messagingSenderId: "115455691167",
+    appId: "1:115455691167:web:ff3638f67b66c17c5515aa",
+    measurementId: "G-S7XE2EN9CL"
+  };
+
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  // DADOS DOS CHEFÕES
+  const bosses = [
+    { name: "Goblin Rei", hp: 60, maxHp: 60, atk: 8, exp: 50, coins: 50 },
+    { name: "Orc General", hp: 150, maxHp: 150, atk: 18, exp: 120, coins: 120 },
+    { name: "Golem de Pedra", hp: 350, maxHp: 350, atk: 30, exp: 250, coins: 250 },
+    { name: "Quimera Sombria", hp: 700, maxHp: 700, atk: 50, exp: 500, coins: 500 },
+    { name: "Dragão Ancião", hp: 1500, maxHp: 1500, atk: 90, exp: 1200, coins: 1000 }
+  ];
+
+  let currentBossIdx = 0;
+  let currentBossHp = 60;
+  let player = {};
+
+  // AUTENTICAÇÃO TABS
+  function switchAuthTab(type) {
+    document.getElementById('form-login').classList.toggle('hidden', type !== 'login');
+    document.getElementById('form-register').classList.toggle('hidden', type === 'login');
+    document.getElementById('tab-login').classList.toggle('active', type === 'login');
+    document.getElementById('tab-register').classList.toggle('active', type !== 'login');
+  }
+
+  // REGISTRO
+  async function handleRegister(e) {
+    e.preventDefault();
+    const name = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const pass = document.getElementById('reg-password').value;
+
+    const restricted = ["ADM", "ADMIN", "MASTER", "GERENTE", "SUPREME"];
+    if (restricted.some(r => name.toUpperCase().includes(r))) {
+      alert("Nome de usuário proibido! Não utilize termos administrativos.");
+      return;
     }
-    const auth = firebase.auth();
-    const db = firebase.firestore();
 
-    let playerData = {};
-    let enemyHP = 50;
+    try {
+      const res = await auth.createUserWithEmailAndPassword(email, pass);
+      const initialData = {
+        username: name,
+        email: email,
+        level: 1,
+        exp: 0,
+        coins: 100,
+        hp: 100,
+        maxHp: 100,
+        energy: 50,
+        maxEnergy: 50,
+        atk: 15,
+        def: 5,
+        isAdmin: false,
+        inventory: { pocao: 2, espada: 0, escudo: 0, armadura: 0 },
+        skills: { skill1: false, skill2: false }
+      };
+      await db.collection('users').doc(res.user.uid).set(initialData);
+      log("Conta criada com sucesso!");
+    } catch (err) {
+      alert("Erro ao registrar: " + err.message);
+    }
+  }
 
-    function showForm(type) {
-      document.getElementById('login-form').classList.toggle('hidden', type !== 'login');
-      document.getElementById('register-form').classList.toggle('hidden', type === 'login');
-      document.getElementById('tab-login').classList.toggle('active', type === 'login');
-      document.getElementById('tab-register').classList.toggle('active', type !== 'login');
+  // LOGIN
+  async function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value.trim();
+    const pass = document.getElementById('login-password').value;
+    try {
+      await auth.signInWithEmailAndPassword(email, pass);
+    } catch (err) {
+      alert("Erro ao entrar: " + err.message);
+    }
+  }
+
+  function handleLogout() {
+    auth.signOut();
+  }
+
+  // NAVEGAÇÃO INTERNA
+  function showPanel(panelName, btn) {
+    document.querySelectorAll('.panel-section').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(`panel-${panelName}`).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // SELEÇÃO DE BOSS
+  function selectBoss() {
+    currentBossIdx = parseInt(document.getElementById('boss-select').value);
+    currentBossHp = bosses[currentBossIdx].hp;
+    document.getElementById('boss-name').innerText = bosses[currentBossIdx].name;
+    document.getElementById('boss-hp').innerText = currentBossHp;
+    log(`Avoou para enfrentar: ${bosses[currentBossIdx].name}`);
+  }
+
+  // COMBATE & AÇÕES
+  async function attack() {
+    if (player.energy < 5) {
+      log("⚠️ Energia insuficiente! Use Descansar para recuperar.");
+      return;
+    }
+    if (player.hp <= 0) {
+      log("☠️ Você está desmaiado! Restaure sua vida com poções.");
+      return;
     }
 
-    async function handleRegister(e) {
-      e.preventDefault();
-      const name = document.getElementById('reg-username').value;
-      const email = document.getElementById('reg-email').value;
-      const password = document.getElementById('reg-password').value;
+    player.energy -= 5;
+    const dmg = Math.max(1, player.atk + Math.floor(Math.random() * 5));
+    currentBossHp -= dmg;
 
-      try {
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        const user = userCredential.user;
+    log(`⚔️ Você causou ${dmg} de dano no ${bosses[currentBossIdx].name}!`);
 
-        const initialData = {
-          username: name,
-          email: email,
-          level: 1,
-          coins: 100,
-          hp: 100,
-          atk: 15
-        };
+    if (currentBossHp <= 0) {
+      const b = bosses[currentBossIdx];
+      player.coins += b.coins;
+      player.exp += b.exp;
+      log(`🎉 VITORIA! Derrotou ${b.name}! Ganhou 🟡 ${b.coins} moedas e ${b.exp} EXP!`);
+      
+      // LEVEL UP
+      if (player.exp >= player.level * 100) {
+        player.level += 1;
+        player.maxHp += 20;
+        player.hp = player.maxHp;
+        player.atk += 5;
+        log(`🌟 LEVEL UP! Você subiu para o Nível ${player.level}!`);
+      }
+      currentBossHp = b.maxHp;
+    } else {
+      // CONTRA-ATAQUE DO BOSS
+      const bossDmg = Math.max(1, bosses[currentBossIdx].atk - player.def);
+      player.hp -= bossDmg;
+      log(`💥 O chefe contra-atacou e causou ${bossDmg} de dano!`);
 
-        await db.collection('users').doc(user.uid).set(initialData);
-      } catch (error) {
-        alert("Erro no cadastro: " + error.message);
+      if (player.hp <= 0) {
+        player.hp = 0;
+        log("☠️ GAME OVER! Você perdeu a batalha.");
       }
     }
 
-    async function handleLogin(e) {
-      e.preventDefault();
-      const email = document.getElementById('login-email').value;
-      const password = document.getElementById('login-password').value;
+    document.getElementById('boss-hp').innerText = Math.max(0, currentBossHp);
+    await syncData();
+    updateUI();
+  }
 
-      try {
-        await auth.signInWithEmailAndPassword(email, password);
-      } catch (error) {
-        alert("Erro ao entrar: " + error.message);
+  async function rest() {
+    player.energy = Math.min(player.maxEnergy, player.energy + 20);
+    log("💤 Você descansou e recuperou 20 de Energia.");
+    await syncData();
+    updateUI();
+  }
+
+  async function usePotionInCombat() {
+    if ((player.inventory.pocao || 0) <= 0) {
+      log("⚠️ Você não possui Poções de Cura no inventário!");
+      return;
+    }
+    player.inventory.pocao -= 1;
+    player.hp = Math.min(player.maxHp, player.hp + 50);
+    log("🧪 Você usou uma Poção de Cura (+50 HP)!");
+    await syncData();
+    updateUI();
+  }
+
+  // LOJA & COMPRAS
+  async function buyItem(item, price) {
+    if (player.coins < price) {
+      log("⚠️ Moedas insuficientes!");
+      return;
+    }
+    player.coins -= price;
+    player.inventory[item] = (player.inventory[item] || 0) + 1;
+
+    if (item === 'espada') player.atk += 10;
+    if (item === 'escudo') player.def += 8;
+    if (item === 'armadura') { player.def += 20; player.maxHp += 30; }
+
+    log(`🛒 Compra realizada: ${item}!`);
+    await syncData();
+    updateUI();
+  }
+
+  // SKILLS
+  async function unlockSkill(num, reqLevel) {
+    if (player.level < reqLevel) {
+      log(`⚠️ Requer Nível ${reqLevel} para desbloquear!`);
+      return;
+    }
+    if (player.skills[`skill${num}`]) {
+      log("⚠️ Habilidade já desbloqueada!");
+      return;
+    }
+    player.skills[`skill${num}`] = true;
+    if (num === 1) player.atk += 10;
+    if (num === 2) player.def += 10;
+
+    log(`✨ Habilidade ${num} desbloqueada!`);
+    await syncData();
+    updateUI();
+  }
+
+  // ADMIN ACTIONS
+  async function adminAddCoins() {
+    if (!player.isAdmin) return;
+    player.coins += 500;
+    log("⚙️ ADMIN: +500 Moedas concedidas!");
+    await syncData();
+    updateUI();
+  }
+
+  async function adminPromoteUser() {
+    if (!player.isAdmin) return;
+    const uid = document.getElementById('admin-target-uid').value.trim();
+    if (!uid) return;
+    await db.collection('users').doc(uid).update({ isAdmin: true });
+    log(`⚙️ ADMIN: Usuário ${uid} promovido a Administrador!`);
+  }
+
+  // SINCRONIZAÇÃO FIRESTORE
+  async function syncData() {
+    if (!auth.currentUser) return;
+    await db.collection('users').doc(auth.currentUser.uid).update(player);
+  }
+
+  // ATUALIZAR INTERFACE
+  function updateUI() {
+    document.getElementById('ui-username').innerText = player.username;
+    document.getElementById('ui-level').innerText = player.level;
+    document.getElementById('ui-coins').innerText = player.coins;
+    document.getElementById('ui-hp-text').innerText = `${player.hp}/${player.maxHp}`;
+    document.getElementById('ui-energy-text').innerText = `${player.energy}/${player.maxEnergy}`;
+    document.getElementById('ui-atk').innerText = player.atk;
+    document.getElementById('ui-def').innerText = player.def;
+
+    document.getElementById('bar-hp').style.width = `${Math.max(0, (player.hp / player.maxHp) * 100)}%`;
+    document.getElementById('bar-energy').style.width = `${Math.max(0, (player.energy / player.maxEnergy) * 100)}%`;
+
+    // Painel Admin
+    if (player.isAdmin) {
+      document.getElementById('nav-admin-btn').classList.remove('hidden');
+      document.getElementById('admin-indicator').innerHTML = '<span class="admin-badge">ADMIN</span>';
+    } else {
+      document.getElementById('nav-admin-btn').classList.add('hidden');
+      document.getElementById('admin-indicator').innerHTML = '';
+    }
+
+    // Renderizar Inventário
+    const invContainer = document.getElementById('inventory-list');
+    invContainer.innerHTML = '';
+    for (const [item, count] of Object.entries(player.inventory || {})) {
+      if (count > 0) {
+        invContainer.innerHTML += `
+          <div class="item-card">
+            <strong>${item.toUpperCase()}</strong> - Quantidade: ${count}
+          </div>
+        `;
       }
     }
+  }
 
-    function handleLogout() {
-      auth.signOut();
-    }
+  function log(msg) {
+    const box = document.getElementById('game-log');
+    box.innerHTML = `> ${msg}<br>` + box.innerHTML;
+  }
 
-    async function attackEnemy() {
-      if (!playerData.username) return;
-
-      const damage = Math.floor(Math.random() * playerData.atk) + 5;
-      enemyHP -= damage;
-
-      let log = document.getElementById('game-log');
-
-      if (enemyHP <= 0) {
-        playerData.coins += 20;
-        playerData.level += 1;
-        playerData.atk += 5;
-        enemyHP = 50 + (playerData.level * 10);
-
-        log.innerHTML = `> 💥 Você derrotou o inimigo! Ganhou 20 moedas e subiu para o Nível ${playerData.level}!`;
-
-        await db.collection('users').doc(auth.currentUser.uid).update({
-          coins: playerData.coins,
-          level: playerData.level,
-          atk: playerData.atk
-        });
-
+  // MONITORAR USUÁRIO
+  auth.onAuthStateChanged(async (user) => {
+    if (user) {
+      const doc = await db.collection('users').doc(user.uid).get();
+      if (doc.exists) {
+        player = doc.data();
         updateUI();
-      } else {
-        document.getElementById('enemy-hp').innerText = enemyHP;
-        log.innerHTML = `> ⚔️ Você causou ${damage} de dano! HP do Inimigo: ${enemyHP}`;
+        document.getElementById('auth-card').classList.add('hidden');
+        document.getElementById('game-card').classList.remove('hidden');
       }
+    } else {
+      document.getElementById('auth-card').classList.remove('hidden');
+      document.getElementById('game-card').classList.add('hidden');
     }
-
-    function updateUI() {
-      document.getElementById('player-name').innerText = playerData.username || "Guerreiro";
-      document.getElementById('player-level').innerText = playerData.level || 1;
-      document.getElementById('player-coins').innerText = playerData.coins || 100;
-      document.getElementById('player-hp').innerText = playerData.hp || 100;
-      document.getElementById('player-atk').innerText = playerData.atk || 15;
-      document.getElementById('enemy-hp').innerText = enemyHP;
-    }
-
-    auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        const doc = await db.collection('users').doc(user.uid).get();
-        if (doc.exists) {
-          playerData = doc.data();
-          updateUI();
-        }
-        document.getElementById('auth-screen').classList.add('hidden');
-        document.getElementById('game-screen').classList.remove('hidden');
-      } else {
-        document.getElementById('auth-screen').classList.remove('hidden');
-        document.getElementById('game-screen').classList.add('hidden');
-      }
-    });
-  </script>
+  });
+</script>
 </body>
 </html>
