@@ -54,6 +54,16 @@
 
         .adm-tag { color: var(--adm-color); font-weight: bold; }
         
+        /* ESTILO PARA NOME COLORIDO DO JOGO NO PERFIL DO FUNDADOR */
+        .dragon-rainbow-name {
+            background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            font-size: 15px;
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+        }
+        
         /* BARRA FIXA DE CHAT GLOBAL NO RODAPÉ */
         .global-chat-bar { position: absolute; bottom: 0; left: 0; width: 100%; height: 55px; background: rgba(2, 6, 23, 0.95); border-top: 1px solid var(--panel-border); display: flex; align-items: center; padding: 0 15px; gap: 10px; z-index: 50; backdrop-filter: blur(5px); }
         .global-chat-bar span { font-size: 12px; color: var(--accent-color); font-weight: bold; white-space: nowrap; text-transform: uppercase; }
@@ -460,24 +470,32 @@
 
         function atualizarPerfilUI() {
             const nomeCurto = usuarioAtual.email.split('@')[0];
-            let tagCargo = "";
-            if(usuarioAtual.isAdm) tagCargo = ` <span class="adm-tag">[FUNDADOR]</span> 👑`;
-            else if(usuarioAtual.isSubAdm) tagCargo = ` <span style="color:#f59e0b;">[MODERADOR]</span> 🛡️`;
-
-            document.getElementById('sidebar-name').innerHTML = nomeCurto + tagCargo;
-            document.getElementById('sidebar-role').innerText = usuarioAtual.isAdm ? "Administrador Principal" : (usuarioAtual.isSubAdm ? "Moderador / ADM Parcial" : "Aventureiro Real");
-
             const avatarImg = document.getElementById('sidebar-avatar-img');
             const avatarTxt = document.getElementById('sidebar-avatar-txt');
 
-            if(usuarioAtual.avatar) {
-                avatarImg.src = usuarioAtual.avatar;
+            if (usuarioAtual.isAdm) {
+                // Perfil customizado do ADM Fundador (Gabriel): Nome do jogo colorido + ADM + Foto de dragãozinho
+                document.getElementById('sidebar-name').innerHTML = `<span class="dragon-rainbow-name">Dragon War - Rise of Power</span> <span class="adm-tag">[ADM]</span>`;
+                document.getElementById('sidebar-role').innerText = "Fundador Principal";
+                
+                // Foto padrão de dragãozinho para o ADM (se não tiver outra personalizada)
+                avatarImg.src = "89097.png";
                 avatarImg.style.display = "block";
                 avatarTxt.style.display = "none";
             } else {
-                avatarTxt.innerText = nomeCurto.charAt(0).toUpperCase();
-                avatarTxt.style.display = "flex";
-                avatarImg.style.display = "none";
+                let tagCargo = usuarioAtual.isSubAdm ? ` <span style="color:#f59e0b;">[MODERADOR]</span> 🛡️` : "";
+                document.getElementById('sidebar-name').innerHTML = nomeCurto + tagCargo;
+                document.getElementById('sidebar-role').innerText = usuarioAtual.isSubAdm ? "Moderador / ADM Parcial" : "Aventureiro Real";
+
+                if(usuarioAtual.avatar) {
+                    avatarImg.src = usuarioAtual.avatar;
+                    avatarImg.style.display = "block";
+                    avatarTxt.style.display = "none";
+                } else {
+                    avatarTxt.innerText = nomeCurto.charAt(0).toUpperCase();
+                    avatarTxt.style.display = "flex";
+                    avatarImg.style.display = "none";
+                }
             }
         }
 
@@ -588,7 +606,6 @@
             document.getElementById('fases-titulo-cat').innerText = `Categoria: ${categoria.toUpperCase()}`;
             atualizarInfoEtapaUI();
             
-            // Trocar visual para exibir a telinha interna de fases
             document.querySelector('#section-jogar > div:nth-child(3)').classList.add('hidden');
             document.getElementById('arena-fases-container').classList.remove('hidden');
         }
@@ -605,11 +622,11 @@
             document.getElementById('fases-etapa-info').innerText = `Etapa ${faseAtualInfo.etapa}/5 - Alvo: ${movelNome}`;
             const pct = Math.max(0, (faseAtualInfo.hpMovel / faseAtualInfo.maxHp) * 100);
             document.getElementById('movel-hp').innerText = `${Math.round(pct)}%`;
-            document.getElementById('movel-hp-bar.style').width = `${pct}%`;
+            document.getElementById('movel-hp-bar').style.width = `${pct}%`;
         }
 
         window.atacarMovelFase = function() {
-            let danoArma = 35; // Dano padrão da arma do jogador
+            let danoArma = 35;
             faseAtualInfo.hpMovel -= danoArma;
 
             if(faseAtualInfo.hpMovel <= 0) {
@@ -723,7 +740,6 @@
             document.getElementById('target-player').value = "";
         }
 
-        // Função de envio pelo chat global inferior (Apenas ADM / Sub-ADM podem enviar)
         window.enviarMensagemRodape = function() {
             if(!usuarioAtual.isAdm && !usuarioAtual.isSubAdm) {
                 alert("Apenas administradores podem escrever no chat global do servidor!");
