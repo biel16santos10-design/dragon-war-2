@@ -15,7 +15,7 @@
       --text: #f8fafc;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-    body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 15px; display: flex; justify-content: center; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 15px; display: flex; justify-content: center; align-items: center; }
     .app-container { width: 100%; max-width: 480px; }
     .card { background: var(--card-bg); border-radius: 12px; padding: 20px; border: 1px solid #334155; box-shadow: 0 8px 20px rgba(0,0,0,0.4); margin-bottom: 15px; }
     h1, h2, h3 { text-align: center; color: var(--primary); margin-bottom: 15px; }
@@ -52,7 +52,7 @@
     
     .hidden { display: none !important; }
     .admin-badge { background: var(--accent); color: #000; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
-    .log-box { background: #0f172a; padding: 10px; border-radius: 6px; font-size: 0.8rem; color: #10b981; height: 80px; overflow-y: auto; margin-top: 10px; }
+    .log-box { background: #0f172a; padding: 10px; border-radius: 6px; font-size: 0.8rem; color: #10b981; height: 90px; overflow-y: auto; margin-top: 10px; border: 1px solid #334155; }
   </style>
 </head>
 <body>
@@ -76,24 +76,28 @@
         <label>Senha</label>
         <input type="password" id="login-password" required placeholder="••••••••">
       </div>
-      <button type="submit">ENTRAR NO JOGO</button>
+      <button type="submit" id="btn-login-submit">ENTRAR NO JOGO</button>
     </form>
 
     <form id="form-register" class="hidden" onsubmit="handleRegister(event)">
       <div class="input-group">
-        <label>Nome do Herói (Sem 'ADM' / 'Master')</label>
-        <input type="text" id="reg-name" required placeholder="Ex: GabrielGuerriro">
+        <label>Nome do Herói</label>
+        <input type="text" id="reg-name" required placeholder="Ex: GabrielGuerreiro">
       </div>
       <div class="input-group">
         <label>E-mail</label>
         <input type="email" id="reg-email" required placeholder="seu@email.com">
       </div>
       <div class="input-group">
-        <label>Senha</label>
+        <label>Senha (mínimo 6 caracteres)</label>
         <input type="password" id="reg-password" required placeholder="••••••••">
       </div>
       <button type="submit" style="background: var(--success);">CRIAR CONTA</button>
     </form>
+
+    <div class="log-box" id="auth-log">
+      > Aguardando ação do usuário...
+    </div>
   </div>
 
   <!-- GAME CARD -->
@@ -148,7 +152,7 @@
       </div>
 
       <div class="grid-2">
-        <button onclick="attack()" style="background:var(--danger);">⚔️ Atacar (-5 Energia)</button>
+        <button onclick="attack()" style="background:var(--danger);">⚔️ Atacar (-5 Eng)</button>
         <button onclick="rest()" style="background:var(--success);">💤 Descansar (+20 Eng)</button>
       </div>
       <button onclick="usePotionInCombat()" style="background:var(--accent);">🧪 Usar Poção de Cura</button>
@@ -200,7 +204,7 @@
 
     <!-- ADMIN -->
     <div id="panel-admin" class="panel-section">
-      <h3 style="color:#a7f3d0">⚙️️ Painel de Administração</h3>
+      <h3 style="color:#a7f3d0">⚙ Painel de Administração</h3>
       <div class="input-group">
         <label>Adicionar Moedas (+500):</label>
         <button onclick="adminAddCoins()" style="background:#059669; margin:0;">+500 Moedas</button>
@@ -220,7 +224,7 @@
 
 </div>
 
-<!-- FIREBASE SDKs -->
+<!-- FIREBASE SDKs COMPAT -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -254,12 +258,23 @@
   let currentBossHp = 60;
   let player = {};
 
-  // AUTENTICAÇÃO TABS
+  // TAB DE LOGIN/REGISTRO
   function switchAuthTab(type) {
     document.getElementById('form-login').classList.toggle('hidden', type !== 'login');
     document.getElementById('form-register').classList.toggle('hidden', type === 'login');
     document.getElementById('tab-login').classList.toggle('active', type === 'login');
     document.getElementById('tab-register').classList.toggle('active', type !== 'login');
+  }
+
+  // LOG DE AUTENTICAÇÃO E JOGO
+  function authLog(msg) {
+    const box = document.getElementById('auth-log');
+    if (box) box.innerHTML = `> ${msg}<br>` + box.innerHTML;
+  }
+
+  function log(msg) {
+    const box = document.getElementById('game-log');
+    if (box) box.innerHTML = `> ${msg}<br>` + box.innerHTML;
   }
 
   // REGISTRO
@@ -274,6 +289,8 @@
       alert("Nome de usuário proibido! Não utilize termos administrativos.");
       return;
     }
+
+    authLog("Criando conta no Firebase...");
 
     try {
       const res = await auth.createUserWithEmailAndPassword(email, pass);
@@ -294,21 +311,32 @@
         skills: { skill1: false, skill2: false }
       };
       await db.collection('users').doc(res.user.uid).set(initialData);
-      log("Conta criada com sucesso!");
+      authLog("Conta criada e salva no banco de dados!");
     } catch (err) {
       alert("Erro ao registrar: " + err.message);
+      authLog("❌ Erro no registro: " + err.message);
     }
   }
 
-  // LOGIN
+  // LOGIN CORRIGIDO
   async function handleLogin(e) {
     e.preventDefault();
     const email = document.getElementById('login-email').value.trim();
     const pass = document.getElementById('login-password').value;
+    const btn = document.getElementById('btn-login-submit');
+
+    btn.innerText = "ENTRANDO...";
+    btn.disabled = true;
+    authLog("Conectando ao Firebase Auth...");
+
     try {
       await auth.signInWithEmailAndPassword(email, pass);
+      authLog("Senha correta! Carregando dados do personagem...");
     } catch (err) {
       alert("Erro ao entrar: " + err.message);
+      authLog("❌ Erro ao entrar: " + err.message);
+      btn.innerText = "ENTRAR NO JOGO";
+      btn.disabled = false;
     }
   }
 
@@ -330,7 +358,7 @@
     currentBossHp = bosses[currentBossIdx].hp;
     document.getElementById('boss-name').innerText = bosses[currentBossIdx].name;
     document.getElementById('boss-hp').innerText = currentBossHp;
-    log(`Avoou para enfrentar: ${bosses[currentBossIdx].name}`);
+    log(`Avançou para enfrentar: ${bosses[currentBossIdx].name}`);
   }
 
   // COMBATE & AÇÕES
@@ -340,7 +368,7 @@
       return;
     }
     if (player.hp <= 0) {
-      log("☠️ Você está desmaiado! Restaure sua vida com poções.");
+      log("☠️️ Você está desmaiado! Restaure sua vida com poções.");
       return;
     }
 
@@ -348,15 +376,14 @@
     const dmg = Math.max(1, player.atk + Math.floor(Math.random() * 5));
     currentBossHp -= dmg;
 
-    log(`⚔️ Você causou ${dmg} de dano no ${bosses[currentBossIdx].name}!`);
+    log(`⚔️️ Você causou ${dmg} de dano no ${bosses[currentBossIdx].name}!`);
 
     if (currentBossHp <= 0) {
       const b = bosses[currentBossIdx];
       player.coins += b.coins;
       player.exp += b.exp;
-      log(`🎉 VITORIA! Derrotou ${b.name}! Ganhou 🟡 ${b.coins} moedas e ${b.exp} EXP!`);
+      log(`🎉 VITÓRIA! Derrotou ${b.name}! Ganhou 🟡 ${b.coins} moedas e ${b.exp} EXP!`);
       
-      // LEVEL UP
       if (player.exp >= player.level * 100) {
         player.level += 1;
         player.maxHp += 20;
@@ -366,7 +393,6 @@
       }
       currentBossHp = b.maxHp;
     } else {
-      // CONTRA-ATAQUE DO BOSS
       const bossDmg = Math.max(1, bosses[currentBossIdx].atk - player.def);
       player.hp -= bossDmg;
       log(`💥 O chefe contra-atacou e causou ${bossDmg} de dano!`);
@@ -390,7 +416,7 @@
   }
 
   async function usePotionInCombat() {
-    if ((player.inventory.pocao || 0) <= 0) {
+    if (!player.inventory || (player.inventory.pocao || 0) <= 0) {
       log("⚠️ Você não possui Poções de Cura no inventário!");
       return;
     }
@@ -408,6 +434,7 @@
       return;
     }
     player.coins -= price;
+    if (!player.inventory) player.inventory = {};
     player.inventory[item] = (player.inventory[item] || 0) + 1;
 
     if (item === 'espada') player.atk += 10;
@@ -425,6 +452,7 @@
       log(`⚠️ Requer Nível ${reqLevel} para desbloquear!`);
       return;
     }
+    if (!player.skills) player.skills = {};
     if (player.skills[`skill${num}`]) {
       log("⚠️ Habilidade já desbloqueada!");
       return;
@@ -438,7 +466,7 @@
     updateUI();
   }
 
-  // ADMIN ACTIONS
+  // ADMIN
   async function adminAddCoins() {
     if (!player.isAdmin) return;
     player.coins += 500;
@@ -452,29 +480,28 @@
     const uid = document.getElementById('admin-target-uid').value.trim();
     if (!uid) return;
     await db.collection('users').doc(uid).update({ isAdmin: true });
-    log(`⚙️ ADMIN: Usuário ${uid} promovido a Administrador!`);
+    log(`⚙️️ ADMIN: Usuário ${uid} promovido a Administrador!`);
   }
 
   // SINCRONIZAÇÃO FIRESTORE
   async function syncData() {
     if (!auth.currentUser) return;
-    await db.collection('users').doc(auth.currentUser.uid).update(player);
+    await db.collection('users').doc(auth.currentUser.uid).set(player, { merge: true });
   }
 
   // ATUALIZAR INTERFACE
   function updateUI() {
-    document.getElementById('ui-username').innerText = player.username;
-    document.getElementById('ui-level').innerText = player.level;
-    document.getElementById('ui-coins').innerText = player.coins;
-    document.getElementById('ui-hp-text').innerText = `${player.hp}/${player.maxHp}`;
-    document.getElementById('ui-energy-text').innerText = `${player.energy}/${player.maxEnergy}`;
-    document.getElementById('ui-atk').innerText = player.atk;
-    document.getElementById('ui-def').innerText = player.def;
+    document.getElementById('ui-username').innerText = player.username || "Guerreiro";
+    document.getElementById('ui-level').innerText = player.level || 1;
+    document.getElementById('ui-coins').innerText = player.coins || 0;
+    document.getElementById('ui-hp-text').innerText = `${player.hp || 0}/${player.maxHp || 100}`;
+    document.getElementById('ui-energy-text').innerText = `${player.energy || 0}/${player.maxEnergy || 50}`;
+    document.getElementById('ui-atk').innerText = player.atk || 15;
+    document.getElementById('ui-def').innerText = player.def || 5;
 
-    document.getElementById('bar-hp').style.width = `${Math.max(0, (player.hp / player.maxHp) * 100)}%`;
-    document.getElementById('bar-energy').style.width = `${Math.max(0, (player.energy / player.maxEnergy) * 100)}%`;
+    document.getElementById('bar-hp').style.width = `${Math.max(0, ((player.hp || 0) / (player.maxHp || 100)) * 100)}%`;
+    document.getElementById('bar-energy').style.width = `${Math.max(0, ((player.energy || 0) / (player.maxEnergy || 50)) * 100)}%`;
 
-    // Painel Admin
     if (player.isAdmin) {
       document.getElementById('nav-admin-btn').classList.remove('hidden');
       document.getElementById('admin-indicator').innerHTML = '<span class="admin-badge">ADMIN</span>';
@@ -483,38 +510,70 @@
       document.getElementById('admin-indicator').innerHTML = '';
     }
 
-    // Renderizar Inventário
     const invContainer = document.getElementById('inventory-list');
-    invContainer.innerHTML = '';
-    for (const [item, count] of Object.entries(player.inventory || {})) {
-      if (count > 0) {
-        invContainer.innerHTML += `
-          <div class="item-card">
-            <strong>${item.toUpperCase()}</strong> - Quantidade: ${count}
-          </div>
-        `;
+    if (invContainer) {
+      invContainer.innerHTML = '';
+      for (const [item, count] of Object.entries(player.inventory || {})) {
+        if (count > 0) {
+          invContainer.innerHTML += `
+            <div class="item-card">
+              <strong>${item.toUpperCase()}</strong> - Quantidade: ${count}
+            </div>
+          `;
+        }
       }
     }
   }
 
-  function log(msg) {
-    const box = document.getElementById('game-log');
-    box.innerHTML = `> ${msg}<br>` + box.innerHTML;
-  }
-
-  // MONITORAR USUÁRIO
+  // MONITORAR STATUS DA AUTENTICAÇÃO (LOGIN AUTOMÁTICO / PERSISTENTE)
   auth.onAuthStateChanged(async (user) => {
+    const btn = document.getElementById('btn-login-submit');
+    if (btn) {
+      btn.innerText = "ENTRAR NO JOGO";
+      btn.disabled = false;
+    }
+
     if (user) {
-      const doc = await db.collection('users').doc(user.uid).get();
-      if (doc.exists) {
-        player = doc.data();
+      authLog("Conectando ao Firestore para carregar personagem...");
+      try {
+        const docRef = db.collection('users').doc(user.uid);
+        const doc = await docRef.get();
+
+        if (doc.exists) {
+          player = doc.data();
+        } else {
+          // Caso não exista registro no Firestore, cria com o perfil padrão
+          player = {
+            username: user.email.split('@')[0],
+            email: user.email,
+            level: 1,
+            exp: 0,
+            coins: 100,
+            hp: 100,
+            maxHp: 100,
+            energy: 50,
+            maxEnergy: 50,
+            atk: 15,
+            def: 5,
+            isAdmin: false,
+            inventory: { pocao: 2, espada: 0, escudo: 0, armadura: 0 },
+            skills: { skill1: false, skill2: false }
+          };
+          await docRef.set(player);
+        }
+
         updateUI();
         document.getElementById('auth-card').classList.add('hidden');
         document.getElementById('game-card').classList.remove('hidden');
+        log("✅ Login efetuado com sucesso! Bem-vindo ao Dragon War.");
+      } catch (err) {
+        alert("Erro ao acessar o banco de dados: " + err.message);
+        authLog("❌ Erro de permissão no Firestore: " + err.message);
       }
     } else {
       document.getElementById('auth-card').classList.remove('hidden');
       document.getElementById('game-card').classList.add('hidden');
+      authLog("Aguardando login ou novo registro...");
     }
   });
 </script>
