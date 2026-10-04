@@ -12,11 +12,12 @@
       --accent: #f59e0b;
       --danger: #ef4444;
       --success: #10b981;
+      --purple: #a855f7;
       --text: #f8fafc;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
     body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 15px; display: flex; justify-content: center; align-items: center; }
-    .app-container { width: 100%; max-width: 480px; }
+    .app-container { width: 100%; max-width: 520px; }
     .card { background: var(--card-bg); border-radius: 12px; padding: 20px; border: 1px solid #334155; box-shadow: 0 8px 20px rgba(0,0,0,0.4); margin-bottom: 15px; }
     h1, h2, h3 { text-align: center; color: var(--primary); margin-bottom: 15px; }
     
@@ -26,34 +27,44 @@
     .tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
     .input-group { margin-bottom: 12px; }
     label { font-size: 0.85rem; color: #cbd5e1; display: block; margin-bottom: 4px; }
-    input, select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #fff; }
+    input, select, textarea { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #fff; }
     button { width: 100%; padding: 12px; border: none; border-radius: 6px; background: #0284c7; color: white; font-weight: bold; cursor: pointer; margin-top: 8px; }
     button:hover { opacity: 0.9; }
     button:disabled { background: #475569; cursor: not-allowed; opacity: 0.6; }
     
     /* NAV & PANELS */
-    .nav-bar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-bottom: 15px; }
-    .nav-btn { padding: 8px 2px; font-size: 0.75rem; background: #334155; border: none; color: #fff; border-radius: 6px; cursor: pointer; }
+    .nav-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 10px; }
+    .nav-bar-sub { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 15px; }
+    .nav-btn { padding: 8px 2px; font-size: 0.72rem; background: #334155; border: none; color: #fff; border-radius: 6px; cursor: pointer; }
     .nav-btn.active { background: var(--primary); color: #000; font-weight: bold; }
     
     /* HUD */
-    .hud { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #0f172a; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 0.85rem; }
-    .bar-container { background: #334155; border-radius: 4px; height: 12px; overflow: hidden; margin-top: 2px; }
+    .profile-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .avatar-img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--primary); object-fit: cover; }
+    .hud { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #0f172a; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 0.82rem; }
+    .bar-container { background: #334155; border-radius: 4px; height: 10px; overflow: hidden; margin-top: 2px; }
     .bar-fill { height: 100%; transition: width 0.3s; }
     .hp-fill { background: var(--danger); }
     .energy-fill { background: var(--accent); }
+    .power-fill { background: var(--purple); }
     
     /* SEÇÕES */
     .panel-section { display: none; }
     .panel-section.active { display: block; }
     
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .item-card { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 10px; text-align: center; font-size: 0.85rem; margin-bottom: 8px; }
-    .item-card button { padding: 6px; font-size: 0.8rem; margin-top: 5px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .item-card { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 10px; text-align: center; font-size: 0.82rem; margin-bottom: 8px; }
+    .item-card button { padding: 6px; font-size: 0.78rem; margin-top: 5px; }
     
     .hidden { display: none !important; }
     .admin-badge { background: var(--accent); color: #000; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
     .log-box { background: #0f172a; padding: 10px; border-radius: 6px; font-size: 0.8rem; color: #10b981; height: 90px; overflow-y: auto; margin-top: 10px; border: 1px solid #334155; }
+    
+    /* CHAT & NOTIFICAÇÕES */
+    .chat-box { background: #0f172a; border: 1px solid #334155; border-radius: 8px; height: 180px; overflow-y: auto; padding: 10px; font-size: 0.8rem; margin-bottom: 8px; }
+    .chat-msg { margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px dashed #334155; }
+    .chat-msg.admin-msg { color: var(--accent); font-weight: bold; background: rgba(245, 158, 11, 0.1); padding: 4px; border-radius: 4px; }
+    .notif-card { background: #0f172a; border-left: 4px solid var(--primary); padding: 10px; margin-bottom: 8px; border-radius: 4px; font-size: 0.83rem; }
   </style>
 </head>
 <body>
@@ -103,15 +114,23 @@
 
   <!-- GAME CARD -->
   <div id="game-card" class="card hidden">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-      <h2 style="margin:0; font-size:1.2rem;" id="ui-username">Herói <span id="admin-indicator"></span></h2>
+    
+    <!-- PERFIL CABEÇALHO -->
+    <div class="profile-header">
+      <img id="ui-avatar" src="https://via.placeholder.com/50" class="avatar-img" alt="Avatar">
+      <div style="flex:1;">
+        <h2 style="margin:0; font-size:1.1rem; text-align:left;" id="ui-username">Herói <span id="admin-indicator"></span></h2>
+        <small style="color:#94a3b8;" id="ui-char-title">Guerreiro Novato</small>
+      </div>
       <button onclick="handleLogout()" style="width:auto; padding:4px 10px; background:var(--danger); font-size:0.75rem; margin:0;">Sair</button>
     </div>
 
-    <!-- HUD -->
+    <!-- HUD RECURSOS -->
     <div class="hud">
       <div>Nível: <strong id="ui-level" style="color:var(--primary)">1</strong></div>
+      <div>Energia Poder: ✨ <strong id="ui-power-eng" style="color:var(--purple)">0</strong></div>
       <div>Moedas: 🟡 <strong id="ui-coins">100</strong></div>
+      <div>Diamantes: 💎 <strong id="ui-gems">5</strong></div>
       <div>
         Vida: <span id="ui-hp-text">100/100</span>
         <div class="bar-container"><div id="bar-hp" class="bar-fill hp-fill" style="width: 100%;"></div></div>
@@ -121,29 +140,34 @@
         <div class="bar-container"><div id="bar-energy" class="bar-fill energy-fill" style="width: 100%;"></div></div>
       </div>
       <div>Ataque: ⚔️ <strong id="ui-atk">15</strong></div>
-      <div>Defesa: 🛡️ <strong id="ui-def">5</strong></div>
+      <div>Defesa: 🛡️️ <strong id="ui-def">5</strong></div>
     </div>
 
-    <!-- NAV BAR -->
+    <!-- NAVEGAÇÃO -->
     <div class="nav-bar">
-      <button class="nav-btn active" onclick="showPanel('combate', this)">Combat</button>
-      <button class="nav-btn" onclick="showPanel('loja', this)">Loja</button>
-      <button class="nav-btn" onclick="showPanel('inventario', this)">Inven.</button>
-      <button class="nav-btn" onclick="showPanel('skills', this)">Skills</button>
-      <button class="nav-btn hidden" id="nav-admin-btn" onclick="showPanel('admin', this)" style="background:#7c3aed;">ADM</button>
+      <button class="nav-btn active" onclick="showPanel('combate', this)">⚔️ Batalhar</button>
+      <button class="nav-btn" onclick="showPanel('loja', this)">🏪 Loja</button>
+      <button class="nav-btn" onclick="showPanel('upgrades', this)">⚒️ Upgrades</button>
+      <button class="nav-btn" onclick="showPanel('perfil', this)">👤 Perfil</button>
+    </div>
+    <div class="nav-bar-sub">
+      <button class="nav-btn" onclick="showPanel('daily', this)">🎁 Diário</button>
+      <button class="nav-btn" onclick="showPanel('chat', this)">💬 Chat</button>
+      <button class="nav-btn" onclick="showPanel('notif', this)">🔔 Notificações</button>
+      <button class="nav-btn hidden" id="nav-admin-btn" onclick="showPanel('admin', this)" style="background:#7c3aed;">⚙️ ADM</button>
     </div>
 
-    <!-- COMBATE -->
+    <!-- BATALHA -->
     <div id="panel-combate" class="panel-section active">
       <h3>⚔️ Batalha de Chefões</h3>
       <div class="input-group">
-        <label>Escolher Chefe (Boss):</label>
+        <label>Escolher Boss:</label>
         <select id="boss-select" onchange="selectBoss()">
-          <option value="0">Nível 1: Goblin Rei (HP: 60)</option>
-          <option value="1">Nível 2: Orc General (HP: 150)</option>
-          <option value="2">Nível 3: Golem de Pedra (HP: 350)</option>
-          <option value="3">Nível 4: Quimera Sombria (HP: 700)</option>
-          <option value="4">Nível 5: Dragão Ancião (HP: 1500)</option>
+          <option value="0">Nível 1: Goblin Rei (Fácil - Moedas)</option>
+          <option value="1">Nível 2: Orc General (Fácil - Moedas)</option>
+          <option value="2">Nível 3: Golem de Pedra (Médio - Moedas/Gems)</option>
+          <option value="3">Nível 4: Quimera Sombria (Difícil - Diamantes)</option>
+          <option value="4">Nível 5: Dragão Ancião (Lendário - Diamantes)</option>
         </select>
       </div>
 
@@ -159,67 +183,111 @@
       <button onclick="usePotionInCombat()" style="background:var(--accent);">🧪 Usar Poção de Cura</button>
     </div>
 
-    <!-- LOJA -->
+    <!-- LOJA EXPANDIDA -->
     <div id="panel-loja" class="panel-section">
       <h3>🏪 Loja do Reino</h3>
-      <div class="grid-2">
+      <div class="tabs">
+        <div class="tab active" id="tab-shop-chars" onclick="switchShopCategory('chars')">Personagens</div>
+        <div class="tab" id="tab-shop-weapons" onclick="switchShopCategory('weapons')">Armas</div>
+        <div class="tab" id="tab-shop-potions" onclick="switchShopCategory('potions')">Poções</div>
+      </div>
+
+      <!-- PERSONAGENS (10) -->
+      <div id="shop-chars-list" class="grid-2"></div>
+
+      <!-- ARMAS (10) -->
+      <div id="shop-weapons-list" class="grid-2 hidden"></div>
+
+      <!-- POÇÕES -->
+      <div id="shop-potions-list" class="grid-2 hidden">
         <div class="item-card">
-          <strong>Espada de Aço</strong><br>+10 Ataque<br>🟡 150 Moedas
-          <button onclick="buyItem('espada', 150)">Comprar</button>
+          <strong>Poção de Vida</strong><br>Recupera +50 HP<br>🟡 40 Moedas
+          <button onclick="buyPotion('pocao', 40)">Comprar</button>
         </div>
         <div class="item-card">
-          <strong>Escudo Real</strong><br>+8 Defesa<br>🟡 120 Moedas
-          <button onclick="buyItem('escudo', 120)">Comprar</button>
-        </div>
-        <div class="item-card">
-          <strong>Poção de Vida</strong><br>Recupera 50 HP<br>🟡 40 Moedas
-          <button onclick="buyItem('pocao', 40)">Comprar</button>
-        </div>
-        <div class="item-card">
-          <strong>Armadura Dragão</strong><br>+20 Def, +30 HP<br>🟡 500 Moedas
-          <button onclick="buyItem('armadura', 500)">Comprar</button>
+          <strong>Mega Elixir</strong><br>Recupera HP e Energia Max<br>💎 2 Diamantes
+          <button onclick="buyPotion('elixir', 2, true)">Comprar</button>
         </div>
       </div>
     </div>
 
-    <!-- INVENTÁRIO -->
-    <div id="panel-inventario" class="panel-section">
-      <h3>🎒 Seu Inventário</h3>
-      <div id="inventory-list">
-        <!-- Gerado via Script -->
-      </div>
-    </div>
-
-    <!-- SKILLS -->
-    <div id="panel-skills" class="panel-section">
-      <h3>📜 Árvore de Habilidades</h3>
+    <!-- MELHORIAS DE ARMAS E PODERES -->
+    <div id="panel-upgrades" class="panel-section">
+      <h3>⚒️ Painel de Upgrades</h3>
       <div class="item-card">
-        <strong>Fúria do Guerreiro</strong> (Requer Nível 3)<br>Aumenta Ataque Base em +10
-        <button id="btn-skill-1" onclick="unlockSkill(1, 3)">Desbloquear</button>
+        <strong>Melhorar Arma Atual</strong><br>+5 Ataque por Nível<br>Custo: ✨ 10 Energia de Poder
+        <button onclick="upgradeWeapon()">Melhorar Arma</button>
       </div>
       <div class="item-card">
-        <strong>Pele de Pedra</strong> (Requer Nível 5)<br>Aumenta Defesa Base em +10
-        <button id="btn-skill-2" onclick="unlockSkill(2, 5)">Desbloquear</button>
+        <strong>Evoluir Poder Mágico</strong><br>+10 Dano Mágico no Ataque<br>Custo: ✨ 20 Energia de Poder
+        <button onclick="upgradePower()">Evoluir Poder</button>
       </div>
     </div>
 
-    <!-- ADMIN -->
+    <!-- EDITAR PERFIL -->
+    <div id="panel-perfil" class="panel-section">
+      <h3>👤 Editar Perfil</h3>
+      <div class="input-group">
+        <label>Nome do Herói</label>
+        <input type="text" id="edit-username" placeholder="Novo nome">
+      </div>
+      <div class="input-group">
+        <label>URL da Foto de Perfil</label>
+        <input type="text" id="edit-avatar-url" placeholder="https://link-da-imagem.com/foto.jpg">
+      </div>
+      <button onclick="saveProfile()" style="background:var(--success);">Salvar Alterações</button>
+    </div>
+
+    <!-- RECOMPENSA DIÁRIA -->
+    <div id="panel-daily" class="panel-section">
+      <h3>🎁 Recompensa Diária</h3>
+      <div class="item-card" style="padding:20px;">
+        <p>Resgate diariamente 🟡 100 Moedas e 💎 2 Diamantes!</p>
+        <button onclick="claimDailyReward()" style="background:var(--accent);">Resgatar Recompensa</button>
+      </div>
+    </div>
+
+    <!-- CHAT GERAL -->
+    <div id="panel-chat" class="panel-section">
+      <h3>💬 Chat Geral</h3>
+      <div class="chat-box" id="chat-messages">
+        <!-- Mensagens via JS -->
+      </div>
+      <div style="display:flex; gap:6px;">
+        <input type="text" id="chat-input" placeholder="Digite sua mensagem...">
+        <button onclick="sendChatMessage()" style="width: auto; padding:0 15px;">Enviar</button>
+      </div>
+    </div>
+
+    <!-- NOTIFICAÇÕES DO SISTEMA -->
+    <div id="panel-notif" class="panel-section">
+      <h3>🔔 Notificações do Sistema</h3>
+      <div id="notif-list">
+        <div class="notif-card"><strong>Evento de Inauguração:</strong> Bosses Lendários concedem o dobro de Diamantes!</div>
+        <div class="notif-card"><strong>Atualização 2.0:</strong> Novo painel de energia de poder liberado.</div>
+      </div>
+    </div>
+
+    <!-- PAINEL ADM -->
     <div id="panel-admin" class="panel-section">
-      <h3 style="color:#a7f3d0">⚙ Painel de Administração</h3>
+      <h3 style="color:#a7f3d0">⚙️ Painel do Administrador</h3>
       <div class="input-group">
-        <label>Adicionar Moedas (+500):</label>
-        <button onclick="adminAddCoins()" style="background:#059669; margin:0;">+500 Moedas</button>
+        <label>Enviar Aviso Importante no Chat Geral:</label>
+        <textarea id="admin-global-msg" placeholder="Digite o aviso para todos os jogadores..."></textarea>
+        <button onclick="sendAdminAnnouncement()" style="background:var(--accent);">Disparar Aviso Geral</button>
       </div>
       <div class="input-group">
-        <label>Promover outro usuário a Admin (UID):</label>
-        <input type="text" id="admin-target-uid" placeholder="Cole o UID do usuário">
-        <button onclick="adminPromoteUser()" style="background:#7c3aed;">Promover a ADMIN</button>
+        <label>Adicionar Recursos:</label>
+        <div class="grid-2">
+          <button onclick="adminAddResources(500, 0)" style="background:#059669; margin:0;">+500 Moedas</button>
+          <button onclick="adminAddResources(0, 10)" style="background:#7c3aed; margin:0;">+10 Diamantes</button>
+        </div>
       </div>
     </div>
 
-    <!-- LOG -->
+    <!-- LOG DO JOGO -->
     <div class="log-box" id="game-log">
-      > Conectado ao servidor Dragon War.
+      > Conectado ao Dragon War.
     </div>
   </div>
 
@@ -246,20 +314,45 @@
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  // DADOS DOS CHEFÕES
+  // CATÁLOGOS DE PERSONAGENS E ARMAS
+  const shopCharacters = [
+    { id: 'c1', name: 'Guerreiro Sombra', atk: 5, hp: 20, price: 100, isGem: false },
+    { id: 'c2', name: 'Mago Elemental', atk: 8, hp: 15, price: 200, isGem: false },
+    { id: 'c3', name: 'Arqueira Real', atk: 12, hp: 25, price: 350, isGem: false },
+    { id: 'c4', name: 'Paladino Sagrado', atk: 15, hp: 50, price: 500, isGem: false },
+    { id: 'c5', name: 'Ninja do Vento', atk: 20, hp: 30, price: 750, isGem: false },
+    { id: 'c6', name: 'Berserker de Fogo', atk: 28, hp: 40, price: 1000, isGem: false },
+    { id: 'c7', name: 'Caçador de Dragões', atk: 35, hp: 60, price: 10, isGem: true },
+    { id: 'c8', name: 'Senhor dos Elementos', atk: 45, hp: 80, price: 20, isGem: true },
+    { id: 'c9', name: 'Cavaleiro Abissal', atk: 60, hp: 100, price: 35, isGem: true },
+    { id: 'c10', name: 'Imperador Dragão', atk: 85, hp: 150, price: 50, isGem: true }
+  ];
+
+  const shopWeapons = [
+    { id: 'w1', name: 'Adaga de Madeira', atk: 3, price: 50, isGem: false },
+    { id: 'w2', name: 'Espada de Ferro', atk: 8, price: 120, isGem: false },
+    { id: 'w3', name: 'Machado Mágico', atk: 15, price: 250, isGem: false },
+    { id: 'w4', name: 'Lança Celestial', atk: 22, price: 450, isGem: false },
+    { id: 'w5', name: 'Arco Fênix', atk: 30, price: 700, isGem: false },
+    { id: 'w6', name: 'Cetro do Caos', atk: 40, price: 1000, isGem: false },
+    { id: 'w7', name: 'Katana Sombria', atk: 55, price: 5, isGem: true },
+    { id: 'w8', name: 'Glaive Runica', atk: 70, price: 12, isGem: true },
+    { id: 'w9', name: 'Foice Estelar', atk: 90, price: 25, isGem: true },
+    { id: 'w10', name: 'Lâmina do Fim', atk: 120, price: 40, isGem: true }
+  ];
+
   const bosses = [
-    { name: "Goblin Rei", hp: 60, maxHp: 60, atk: 8, exp: 50, coins: 50 },
-    { name: "Orc General", hp: 150, maxHp: 150, atk: 18, exp: 120, coins: 120 },
-    { name: "Golem de Pedra", hp: 350, maxHp: 350, atk: 30, exp: 250, coins: 250 },
-    { name: "Quimera Sombria", hp: 700, maxHp: 700, atk: 50, exp: 500, coins: 500 },
-    { name: "Dragão Ancião", hp: 1500, maxHp: 1500, atk: 90, exp: 1200, coins: 1000 }
+    { name: "Goblin Rei", hp: 60, maxHp: 60, atk: 8, exp: 50, coins: 50, gems: 0, powerEng: 5 },
+    { name: "Orc General", hp: 150, maxHp: 150, atk: 18, exp: 120, coins: 120, gems: 0, powerEng: 10 },
+    { name: "Golem de Pedra", hp: 350, maxHp: 350, atk: 30, exp: 250, coins: 200, gems: 1, powerEng: 18 },
+    { name: "Quimera Sombria", hp: 700, maxHp: 700, atk: 50, exp: 500, coins: 350, gems: 3, powerEng: 30 },
+    { name: "Dragão Ancião", hp: 1500, maxHp: 1500, atk: 90, exp: 1200, coins: 600, gems: 8, powerEng: 60 }
   ];
 
   let currentBossIdx = 0;
   let currentBossHp = 60;
   let player = {};
 
-  // TAB DE LOGIN/REGISTRO
   function switchAuthTab(type) {
     document.getElementById('form-login').classList.toggle('hidden', type !== 'login');
     document.getElementById('form-register').classList.toggle('hidden', type === 'login');
@@ -267,7 +360,6 @@
     document.getElementById('tab-register').classList.toggle('active', type !== 'login');
   }
 
-  // LOG DE AUTENTICAÇÃO E JOGO
   function authLog(msg) {
     const box = document.getElementById('auth-log');
     if (box) box.innerHTML = `> ${msg}<br>` + box.innerHTML;
@@ -286,49 +378,42 @@
     const pass = document.getElementById('reg-password').value;
     const btn = document.getElementById('btn-reg-submit');
 
-    const restricted = ["ADM", "ADMIN", "MASTER", "GERENTE", "SUPREME"];
-    if (restricted.some(r => name.toUpperCase().includes(r))) {
-      alert("Nome de usuário proibido! Não utilize termos administrativos.");
-      return;
-    }
-
     btn.innerText = "Criando...";
     btn.disabled = true;
-    authLog("Criando conta no Firebase...");
 
     try {
       const res = await auth.createUserWithEmailAndPassword(email, pass);
       const initialData = {
         username: name,
+        avatar: "https://via.placeholder.com/50",
         email: email,
         level: 1,
         exp: 0,
         coins: 100,
+        gems: 5,
+        powerEnergy: 0,
         hp: 100,
         maxHp: 100,
         energy: 50,
         maxEnergy: 50,
         atk: 15,
         def: 5,
+        weaponLvl: 1,
+        powerLvl: 0,
         isAdmin: false,
-        inventory: { pocao: 2, espada: 0, escudo: 0, armadura: 0 },
-        skills: { skill1: false, skill2: false }
+        inventory: { pocao: 2 },
+        lastDaily: 0
       };
       await db.collection('users').doc(res.user.uid).set(initialData);
-      authLog("Conta criada e salva no banco de dados!");
+      authLog("Conta criada com sucesso!");
     } catch (err) {
-      if (err.code === 'auth/quota-exceeded') {
-        alert("Limite de requisições temporário do Firebase atingido! Aguarde uns minutos.");
-      } else {
-        alert("Erro ao registrar: " + err.message);
-      }
-      authLog("❌ Erro no registro: " + err.message);
+      alert("Erro ao registrar: " + err.message);
       btn.innerText = "CRIAR CONTA";
       btn.disabled = false;
     }
   }
 
-  // LOGIN COM PROTEÇÃO DE COTA
+  // LOGIN TRATADO
   async function handleLogin(e) {
     e.preventDefault();
     const email = document.getElementById('login-email').value.trim();
@@ -337,18 +422,26 @@
 
     btn.innerText = "Aguarde...";
     btn.disabled = true;
-    authLog("Conectando ao Firebase Auth...");
+
+    // Timeout de segurança para destravar se o Firebase demorar
+    const safetyTimeout = setTimeout(() => {
+      if (btn.disabled) {
+        btn.innerText = "ENTRAR NO JOGO";
+        btn.disabled = false;
+        alert("A conexão demorou a responder. Verifique sua senha e tente novamente.");
+      }
+    }, 6000);
 
     try {
       await auth.signInWithEmailAndPassword(email, pass);
-      authLog("Senha correta! Carregando dados do personagem...");
+      clearTimeout(safetyTimeout);
     } catch (err) {
+      clearTimeout(safetyTimeout);
       if (err.code === 'auth/quota-exceeded') {
-        alert("O Firebase bloqueou temporariamente por excesso de tentativas. Aguarde de 15 a 30 minutos antes de clicar novamente!");
+        alert("Cota de tentativas excedida no Firebase. Aguarde alguns minutos antes de tentar novamente!");
       } else {
         alert("Erro ao entrar: " + err.message);
       }
-      authLog("❌ Erro: " + err.message);
       btn.innerText = "ENTRAR NO JOGO";
       btn.disabled = false;
     }
@@ -358,7 +451,7 @@
     auth.signOut();
   }
 
-  // NAVEGAÇÃO INTERNA
+  // NAVEGAÇÃO
   function showPanel(panelName, btn) {
     document.querySelectorAll('.panel-section').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -366,38 +459,42 @@
     btn.classList.add('active');
   }
 
-  // SELEÇÃO DE BOSS
+  function switchShopCategory(cat) {
+    document.getElementById('shop-chars-list').classList.toggle('hidden', cat !== 'chars');
+    document.getElementById('shop-weapons-list').classList.toggle('hidden', cat !== 'weapons');
+    document.getElementById('shop-potions-list').classList.toggle('hidden', cat !== 'potions');
+    document.getElementById('tab-shop-chars').classList.toggle('active', cat === 'chars');
+    document.getElementById('tab-shop-weapons').classList.toggle('active', cat === 'weapons');
+    document.getElementById('tab-shop-potions').classList.toggle('active', cat === 'potions');
+  }
+
   function selectBoss() {
     currentBossIdx = parseInt(document.getElementById('boss-select').value);
     currentBossHp = bosses[currentBossIdx].hp;
     document.getElementById('boss-name').innerText = bosses[currentBossIdx].name;
     document.getElementById('boss-hp').innerText = currentBossHp;
-    log(`Avançou para enfrentar: ${bosses[currentBossIdx].name}`);
   }
 
-  // COMBATE & AÇÕES
+  // BATALHA
   async function attack() {
-    if (player.energy < 5) {
-      log("⚠️ Energia insuficiente! Use Descansar para recuperar.");
-      return;
-    }
-    if (player.hp <= 0) {
-      log("☠ Você está desmaiado! Restaure sua vida com poções.");
-      return;
-    }
+    if (player.energy < 5) return log("⚠️ Energia insuficiente! Use Descansar.");
+    if (player.hp <= 0) return log("☠ Você está desmaiado! Use uma poção.");
 
     player.energy -= 5;
-    const dmg = Math.max(1, player.atk + Math.floor(Math.random() * 5));
+    const extraAtk = (player.powerLvl || 0) * 10;
+    const dmg = Math.max(1, player.atk + extraAtk + Math.floor(Math.random() * 5));
     currentBossHp -= dmg;
 
-    log(`⚔ Você causou ${dmg} de dano no ${bosses[currentBossIdx].name}!`);
+    log(`⚔ Você causou ${dmg} de dano!`);
 
     if (currentBossHp <= 0) {
       const b = bosses[currentBossIdx];
       player.coins += b.coins;
+      player.gems += b.gems;
+      player.powerEnergy += b.powerEng;
       player.exp += b.exp;
-      log(`🎉 VITÓRIA! Derrotou ${b.name}! Ganhou 🟡 ${b.coins} moedas e ${b.exp} EXP!`);
-      
+      log(`🎉 Derrotou ${b.name}! Recompensa: 🟡 ${b.coins} | 💎 ${b.gems} | ✨ ${b.powerEng}`);
+
       if (player.exp >= player.level * 100) {
         player.level += 1;
         player.maxHp += 20;
@@ -409,12 +506,8 @@
     } else {
       const bossDmg = Math.max(1, bosses[currentBossIdx].atk - player.def);
       player.hp -= bossDmg;
-      log(`💥 O chefe contra-atacou e causou ${bossDmg} de dano!`);
-
-      if (player.hp <= 0) {
-        player.hp = 0;
-        log("☠️ GAME OVER! Você perdeu a batalha.");
-      }
+      log(`💥 O chefe causou ${bossDmg} de dano!`);
+      if (player.hp <= 0) player.hp = 0;
     }
 
     document.getElementById('boss-hp').innerText = Math.max(0, currentBossHp);
@@ -424,93 +517,207 @@
 
   async function rest() {
     player.energy = Math.min(player.maxEnergy, player.energy + 20);
-    log("💤 Você descansou e recuperou 20 de Energia.");
+    log("💤 Recuperou 20 de Energia.");
     await syncData();
     updateUI();
   }
 
   async function usePotionInCombat() {
-    if (!player.inventory || (player.inventory.pocao || 0) <= 0) {
-      log("⚠️️ Você não possui Poções de Cura no inventário!");
-      return;
-    }
+    if ((player.inventory?.pocao || 0) <= 0) return log("⚠️ Nenhuma poção disponível!");
     player.inventory.pocao -= 1;
     player.hp = Math.min(player.maxHp, player.hp + 50);
-    log("🧪 Você usou uma Poção de Cura (+50 HP)!");
+    log("🧪 Recuperou +50 de HP!");
     await syncData();
     updateUI();
   }
 
-  // LOJA & COMPRAS
-  async function buyItem(item, price) {
-    if (player.coins < price) {
-      log("⚠️ Moedas insuficientes!");
-      return;
+  // LOJA E COMPRAS
+  async function buyChar(id) {
+    const item = shopCharacters.find(c => c.id === id);
+    if (item.isGem) {
+      if (player.gems < item.price) return alert("Diamantes insuficientes!");
+      player.gems -= item.price;
+    } else {
+      if (player.coins < item.price) return alert("Moedas insuficientes!");
+      player.coins -= item.price;
     }
-    player.coins -= price;
-    if (!player.inventory) player.inventory = {};
-    player.inventory[item] = (player.inventory[item] || 0) + 1;
-
-    if (item === 'espada') player.atk += 10;
-    if (item === 'escudo') player.def += 8;
-    if (item === 'armadura') { player.def += 20; player.maxHp += 30; }
-
-    log(`🛒 Compra realizada: ${item}!`);
+    player.atk += item.atk;
+    player.maxHp += item.hp;
+    player.hp = player.maxHp;
+    log(`👤 Personagem desbloqueado: ${item.name}!`);
     await syncData();
     updateUI();
   }
 
-  // SKILLS
-  async function unlockSkill(num, reqLevel) {
-    if (player.level < reqLevel) {
-      log(`⚠️ Requer Nível ${reqLevel} para desbloquear!`);
-      return;
+  async function buyWeapon(id) {
+    const item = shopWeapons.find(w => w.id === id);
+    if (item.isGem) {
+      if (player.gems < item.price) return alert("Diamantes insuficientes!");
+      player.gems -= item.price;
+    } else {
+      if (player.coins < item.price) return alert("Moedas insuficientes!");
+      player.coins -= item.price;
     }
-    if (!player.skills) player.skills = {};
-    if (player.skills[`skill${num}`]) {
-      log("⚠️ Habilidade já desbloqueada!");
-      return;
-    }
-    player.skills[`skill${num}`] = true;
-    if (num === 1) player.atk += 10;
-    if (num === 2) player.def += 10;
-
-    log(`✨ Habilidade ${num} desbloqueada!`);
+    player.atk += item.atk;
+    log(`⚔️ Arma equipada: ${item.name}!`);
     await syncData();
     updateUI();
   }
 
-  // ADMIN
-  async function adminAddCoins() {
+  async function buyPotion(type, price, isGem = false) {
+    if (isGem) {
+      if (player.gems < price) return alert("Diamantes insuficientes!");
+      player.gems -= price;
+      player.hp = player.maxHp;
+      player.energy = player.maxEnergy;
+      log("🧪 Elixir aplicado! Vida e Energia restauradas.");
+    } else {
+      if (player.coins < price) return alert("Moedas insuficientes!");
+      player.coins -= price;
+      player.inventory.pocao = (player.inventory.pocao || 0) + 1;
+      log("🧪 Poção guardada no inventário.");
+    }
+    await syncData();
+    updateUI();
+  }
+
+  // UPGRADES
+  async function upgradeWeapon() {
+    if (player.powerEnergy < 10) return alert("Requer 10 Energia de Poder!");
+    player.powerEnergy -= 10;
+    player.weaponLvl = (player.weaponLvl || 1) + 1;
+    player.atk += 5;
+    log(`⚒️ Arma melhorada para o Nível ${player.weaponLvl}!`);
+    await syncData();
+    updateUI();
+  }
+
+  async function upgradePower() {
+    if (player.powerEnergy < 20) return alert("Requer 20 Energia de Poder!");
+    player.powerEnergy -= 20;
+    player.powerLvl = (player.powerLvl || 0) + 1;
+    log(`✨ Poder Mágico evoluído para o Nível ${player.powerLvl}!`);
+    await syncData();
+    updateUI();
+  }
+
+  // PERFIL
+  async function saveProfile() {
+    const name = document.getElementById('edit-username').value.trim();
+    const url = document.getElementById('edit-avatar-url').value.trim();
+    if (name) player.username = name;
+    if (url) player.avatar = url;
+    await syncData();
+    updateUI();
+    alert("Perfil atualizado!");
+  }
+
+  // RECOMPENSA DIÁRIA
+  async function claimDailyReward() {
+    const now = Date.now();
+    if (now - (player.lastDaily || 0) < 86400000) {
+      return alert("Recompensa já resgatada hoje! Volte em 24h.");
+    }
+    player.lastDaily = now;
+    player.coins += 100;
+    player.gems += 2;
+    log("🎁 Recompensa Diária resgatada: +100 Moedas | +2 Diamantes!");
+    await syncData();
+    updateUI();
+  }
+
+  // CHAT GERAL
+  async function sendChatMessage() {
+    const input = document.getElementById('chat-input');
+    const txt = input.value.trim();
+    if (!txt) return;
+    await db.collection('chat').add({
+      user: player.username,
+      msg: txt,
+      isAdmin: player.isAdmin || false,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    input.value = '';
+  }
+
+  function listenChat() {
+    db.collection('chat').orderBy('timestamp', 'desc').limit(15).onSnapshot(snap => {
+      const box = document.getElementById('chat-messages');
+      box.innerHTML = '';
+      snap.docs.reverse().forEach(doc => {
+        const d = doc.data();
+        const cls = d.isAdmin ? 'chat-msg admin-msg' : 'chat-msg';
+        box.innerHTML += `<div class="${cls}"><strong>${d.user}:</strong> ${d.msg}</div>`;
+      });
+      box.scrollTop = box.scrollHeight;
+    });
+  }
+
+  // ADM
+  async function sendAdminAnnouncement() {
     if (!player.isAdmin) return;
-    player.coins += 500;
-    log("⚙️ ADMIN: +500 Moedas concedidas!");
+    const txt = document.getElementById('admin-global-msg').value.trim();
+    if (!txt) return;
+    await db.collection('chat').add({
+      user: "📢 AVISO ADM",
+      msg: txt,
+      isAdmin: true,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    document.getElementById('admin-global-msg').value = '';
+    alert("Aviso disparado!");
+  }
+
+  async function adminAddResources(coins, gems) {
+    if (!player.isAdmin) return;
+    player.coins += coins;
+    player.gems += gems;
     await syncData();
     updateUI();
   }
 
-  async function adminPromoteUser() {
-    if (!player.isAdmin) return;
-    const uid = document.getElementById('admin-target-uid').value.trim();
-    if (!uid) return;
-    await db.collection('users').doc(uid).update({ isAdmin: true });
-    log(`⚙ ADMIN: Usuário ${uid} promovido a Administrador!`);
-  }
-
-  // SINCRONIZAÇÃO FIRESTORE
+  // SINCRONIZAÇÃO
   async function syncData() {
     if (!auth.currentUser) return;
     await db.collection('users').doc(auth.currentUser.uid).set(player, { merge: true });
   }
 
-  // ATUALIZAR INTERFACE
+  function renderShopLists() {
+    const charBox = document.getElementById('shop-chars-list');
+    charBox.innerHTML = '';
+    shopCharacters.forEach(c => {
+      const priceTxt = c.isGem ? `💎 ${c.price}` : `🟡 ${c.price}`;
+      charBox.innerHTML += `
+        <div class="item-card">
+          <strong>${c.name}</strong><br>+${c.atk} Atk | +${c.hp} HP<br>${priceTxt}
+          <button onclick="buyChar('${c.id}')">Comprar</button>
+        </div>
+      `;
+    });
+
+    const weaponBox = document.getElementById('shop-weapons-list');
+    weaponBox.innerHTML = '';
+    shopWeapons.forEach(w => {
+      const priceTxt = w.isGem ? `💎 ${w.price}` : `🟡 ${w.price}`;
+      weaponBox.innerHTML += `
+        <div class="item-card">
+          <strong>${w.name}</strong><br>+${w.atk} Atk<br>${priceTxt}
+          <button onclick="buyWeapon('${w.id}')">Comprar</button>
+        </div>
+      `;
+    });
+  }
+
   function updateUI() {
     document.getElementById('ui-username').innerText = player.username || "Guerreiro";
+    document.getElementById('ui-avatar').src = player.avatar || "https://via.placeholder.com/50";
     document.getElementById('ui-level').innerText = player.level || 1;
+    document.getElementById('ui-power-eng').innerText = player.powerEnergy || 0;
     document.getElementById('ui-coins').innerText = player.coins || 0;
+    document.getElementById('ui-gems').innerText = player.gems || 0;
     document.getElementById('ui-hp-text').innerText = `${player.hp || 0}/${player.maxHp || 100}`;
     document.getElementById('ui-energy-text').innerText = `${player.energy || 0}/${player.maxEnergy || 50}`;
-    document.getElementById('ui-atk').innerText = player.atk || 15;
+    document.getElementById('ui-atk').innerText = (player.atk || 15) + ((player.powerLvl || 0) * 10);
     document.getElementById('ui-def').innerText = player.def || 5;
 
     document.getElementById('bar-hp').style.width = `${Math.max(0, ((player.hp || 0) / (player.maxHp || 100)) * 100)}%`;
@@ -523,23 +730,9 @@
       document.getElementById('nav-admin-btn').classList.add('hidden');
       document.getElementById('admin-indicator').innerHTML = '';
     }
-
-    const invContainer = document.getElementById('inventory-list');
-    if (invContainer) {
-      invContainer.innerHTML = '';
-      for (const [item, count] of Object.entries(player.inventory || {})) {
-        if (count > 0) {
-          invContainer.innerHTML += `
-            <div class="item-card">
-              <strong>${item.toUpperCase()}</strong> - Quantidade: ${count}
-            </div>
-          `;
-        }
-      }
-    }
   }
 
-  // MONITORAR STATUS DA AUTENTICAÇÃO
+  // MONITORAMENTO DE AUTENTICAÇÃO
   auth.onAuthStateChanged(async (user) => {
     const btnLogin = document.getElementById('btn-login-submit');
     const btnReg = document.getElementById('btn-reg-submit');
@@ -548,7 +741,6 @@
     if (btnReg) { btnReg.innerText = "CRIAR CONTA"; btnReg.disabled = false; }
 
     if (user) {
-      authLog("Conectando ao Firestore...");
       try {
         const docRef = db.collection('users').doc(user.uid);
         const doc = await docRef.get();
@@ -558,35 +750,39 @@
         } else {
           player = {
             username: user.email.split('@')[0],
+            avatar: "https://via.placeholder.com/50",
             email: user.email,
             level: 1,
             exp: 0,
             coins: 100,
+            gems: 5,
+            powerEnergy: 0,
             hp: 100,
             maxHp: 100,
             energy: 50,
             maxEnergy: 50,
             atk: 15,
             def: 5,
+            weaponLvl: 1,
+            powerLvl: 0,
             isAdmin: false,
-            inventory: { pocao: 2, espada: 0, escudo: 0, armadura: 0 },
-            skills: { skill1: false, skill2: false }
+            inventory: { pocao: 2 }
           };
           await docRef.set(player);
         }
 
+        renderShopLists();
         updateUI();
+        listenChat();
         document.getElementById('auth-card').classList.add('hidden');
         document.getElementById('game-card').classList.remove('hidden');
-        log("✅ Login efetuado com sucesso!");
+        log("✅ Conectado com sucesso!");
       } catch (err) {
-        alert("Erro no banco de dados: " + err.message);
-        authLog("❌ Erro Firestore: " + err.message);
+        alert("Erro ao carregar dados: " + err.message);
       }
     } else {
       document.getElementById('auth-card').classList.remove('hidden');
       document.getElementById('game-card').classList.add('hidden');
-      authLog("Aguardando login...");
     }
   });
 </script>
