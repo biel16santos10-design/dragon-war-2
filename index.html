@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dragon War | Painel de Administração</title>
+    <title>Dragon War | Login e Painel</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #0b0f19; color: #fff; overflow-x: hidden; }
         .screen { display: none; width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
         .active { display: flex; }
 
-        /* TELA DE LOGIN DO ADM */
-        #auth-screen { background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.95)), url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover; justify-content: center; align-items: center; flex-direction: column; }
-        .auth-box { background: rgba(15, 23, 42, 0.95); border: 2px solid #ef4444; padding: 30px; border-radius: 12px; width: 380px; box-shadow: 0 0 25px rgba(239, 68, 68, 0.4); }
-        .auth-box h1 { text-align: center; margin-bottom: 20px; font-size: 22px; color: #f87171; text-shadow: 0 0 10px rgba(248,113,113,0.4); }
-        .auth-box input { width: 100%; padding: 12px; margin-bottom: 15px; background: #1e293b; border: 1px solid #475569; color: #fff; border-radius: 6px; }
-        .auth-box button { width: 100%; padding: 12px; background: #dc2626; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .auth-box button:hover { background: #b91c1c; box-shadow: 0 0 15px #ef4444; }
+        /* TELA DE LOGIN */
+        #login-screen { justify-content: center; align-items: center; background: radial-gradient(circle, #1e293b 0%, #0f172a 100%); }
+        .login-card { background: rgba(30, 41, 59, 0.85); border: 1px solid #334155; padding: 40px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; backdrop-filter: blur(10px); }
+        .login-card h2 { color: #f87171; margin-bottom: 25px; font-size: 24px; letter-spacing: 1px; }
+        .form-control { width: 100%; padding: 12px 15px; margin-bottom: 15px; background: #0f172a; border: 1px solid #475569; color: #fff; border-radius: 6px; font-size: 14px; }
+        .btn-main { width: 100%; padding: 12px; background: #dc2626; color: #fff; border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+        .btn-main:hover { background: #b91c1c; box-shadow: 0 0 15px rgba(220,38,38,0.5); }
 
         /* DASHBOARD DO PAINEL DE ADM */
         #game-screen { background: #0f172a; flex-direction: row; }
@@ -36,7 +36,7 @@
         .tab-panel { display: none; }
         .tab-panel.active { display: block; }
 
-        /* CARDS E TABELAS DE GERENCIAMENTO */
+        /* CARDS E TABELAS */
         .card-box { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
         .card-box h3 { color: #f87171; margin-bottom: 15px; font-size: 18px; }
         
@@ -44,59 +44,63 @@
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #334155; font-size: 14px; }
         th { color: #f87171; background: rgba(0,0,0,0.2); }
         
-        .form-control { width: 100%; padding: 10px; margin-bottom: 12px; background: #0f172a; border: 1px solid #475569; color: #fff; border-radius: 6px; }
         .btn-action { padding: 8px 15px; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 12px; }
         .btn-action:hover { background: #1d4ed8; }
         .btn-danger { background: #dc2626; }
         .btn-danger:hover { background: #b91c1c; }
-        .btn-success { background: #16a34a; }
     </style>
 </head>
 <body>
 
-    <!-- 1. TELA DE LOGIN DO ADMINISTRADOR -->
-    <div id="auth-screen" class="screen active">
-        <div class="auth-box">
-            <h1>DRAGON WAR - ADM</h1>
-            <p style="text-align:center; color:#94a3b8; font-size:13px; margin-bottom:20px;">Acesso Restrito à Moderação</p>
-            <input type="email" id="login-email" placeholder="E-mail de Administrador">
-            <input type="password" id="login-senha" placeholder="Senha">
-            <button onclick="fazerLoginAdmin()">ACESSAR PAINEL ADM</button>
+    <!-- TELA 1: LOGIN -->
+    <div id="login-screen" class="screen active">
+        <div class="login-card">
+            <h2>DRAGON WAR</h2>
+            <form id="form-login" onsubmit="fazerLogin(event)">
+                <input type="email" id="login-email" class="form-control" placeholder="E-mail" required>
+                <input type="password" id="login-senha" class="form-control" placeholder="Senha" required>
+                <button type="submit" class="btn-main">ENTRAR NO JOGO</button>
+            </form>
+            <p style="margin-top: 15px; font-size: 13px; color: #94a3b8;">Use groupsacabraldigital@gmail.com para ADM ou biel16santos10@gmail.com para Jogador</p>
         </div>
     </div>
 
-    <!-- 2. PAINEL DE GESTÃO DE JOGADORES -->
+    <!-- TELA 2: PAINEL DE ADM / GESTÃO -->
     <div id="game-screen" class="screen">
         <div class="sidebar">
             <div class="user-mini-profile">
-                <img id="sidebar-avatar" src="" alt="Avatar">
+                <img id="sidebar-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Admin" alt="Avatar">
                 <div>
                     <h4 id="sidebar-nome">Administrador</h4>
-                    <small style="color: #f87171;">Nível: Super ADM</small>
+                    <small id="sidebar-cargo" style="color: #f87171;">Cabral Digital Group</small>
                 </div>
             </div>
             <ul class="nav-menu">
                 <li onclick="trocarTab('jogadores', this)" class="active-tab">Gerenciar Jogadores</li>
                 <li onclick="trocarTab('spawn', this)">Spawn de Bosses / Eventos</li>
                 <li onclick="trocarTab('logs', this)">Logs de Moderação</li>
+                <li onclick="fazerLogout()" style="margin-top: 30px; background: rgba(220,38,38,0.2); color: #f87171;">Sair / Desconectar</li>
             </ul>
         </div>
 
         <div class="main-content">
             <div class="top-bar">
-                <div class="top-bar-title">Dragon War — Painel de Controle de Jogadores</div>
-                <div class="resource-badge">🛡️ Modo: <span>Administrador</span></div>
+                <div class="top-bar-title" id="titulo-painel">Dragon War — Painel de Controle</div>
+                <div class="resource-badge">🛡️ Acesso: <span id="badge-tipo-acesso" style="color: #22c55e;">Autenticado</span></div>
             </div>
 
             <div class="content-area">
                 
-                <!-- ABA 1: GERENCIAR E EDITAR JOGADORES -->
+                <!-- ABA 1: GERENCIAR JOGADORES -->
                 <div id="tab-jogadores" class="tab-panel active">
                     <h2>Base de Dados de Jogadores</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Visualize, edite status, adicione recursos ou edite o perfil de qualquer usuário do jogo em tempo real.</p>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Gerenciamento de contas e recursos conectados ao Firebase.</p>
                     
                     <div class="card-box">
-                        <h3>Lista de Contas Registradas</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h3>Contas Registradas</h3>
+                            <button class="btn-action" onclick="carregarJogadoresDoBanco()">🔄 Atualizar Lista</button>
+                        </div>
                         <table>
                             <thead>
                                 <tr>
@@ -105,23 +109,22 @@
                                     <th>Nível</th>
                                     <th>Ouro</th>
                                     <th>Diamantes</th>
-                                    <th>Ações de ADM</th>
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="tabela-jogadores-corpo">
-                                <!-- Preenchido dinamicamente pelo Firebase -->
-                                <tr><td colspan="6" style="text-align: center; color: #94a3b8;">Carregando jogadores da nuvem...</td></tr>
+                                <tr><td colspan="6" style="text-align: center; color: #94a3b8;">Carregando dados...</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- ABA 2: SPAWN DE BOSSES E EVENTOS -->
+                <!-- ABA 2: SPAWN DE BOSSES -->
                 <div id="tab-spawn" class="tab-panel">
                     <h2>Gerenciamento de Eventos Globais</h2>
                     <div class="card-box" style="margin-top: 20px;">
                         <h3>Disparar Boss Mundial para Todos os Servidores</h3>
-                        <p style="color: #94a3b8; margin-bottom: 15px;">Invoca um chefe de alto nível para todos os jogadores ativos no jogo no momento.</p>
+                        <p style="color: #94a3b8; margin-bottom: 15px;">Invoca um chefe de alto nível para os jogadores ativos.</p>
                         <select id="select-boss" class="form-control">
                             <option value="Kaldron (Nightmare Dragon)">Kaldron (Nightmare Dragon)</option>
                             <option value="Igneous (Fire Demon)">Igneous (Fire Demon)</option>
@@ -130,13 +133,13 @@
                     </div>
                 </div>
 
-                <!-- ABA 3: LOGS DE MODERAÇÃO -->
+                <!-- ABA 3: LOGS -->
                 <div id="tab-logs" class="tab-panel">
-                    <h2>Registro de Atividades da Moderação</h2>
+                    <h2>Registro de Atividades</h2>
                     <div class="card-box" style="margin-top: 20px;">
                         <h3>Histórico de Ações Executadas</h3>
                         <ul id="lista-logs" style="padding-left: 20px; color: #94a3b8; font-size: 14px; line-height: 1.8;">
-                            <li>[SISTEMA] Painel de ADM conectado ao banco de dados com sucesso.</li>
+                            <li>[SISTEMA] Sistema inicializado.</li>
                         </ul>
                     </div>
                 </div>
@@ -145,13 +148,12 @@
         </div>
     </div>
 
-    <!-- Firebase SDKs (Versão Compat com as chaves reais) -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
     <script>
-        // 🔑 CONFIGURAÇÃO REAL DO SEU FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyDgooL-9qYU",
             authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
@@ -168,27 +170,58 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        function fazerLoginAdmin() {
+        function fazerLogin(event) {
+            event.preventDefault();
             let email = document.getElementById('login-email').value.trim();
             let senha = document.getElementById('login-senha').value.trim();
 
-            if (!email || !senha) { alert("Preencha o e-mail e a senha de administrador!"); return; }
-
             auth.signInWithEmailAndPassword(email, senha)
                 .then((userCredential) => {
-                    const user = userCredential.user;
-                    document.getElementById('auth-screen').classList.remove('active');
-                    document.getElementById('game-screen').classList.add('active');
-                    
-                    document.getElementById('sidebar-nome').innerText = "Super ADM";
-                    document.getElementById('sidebar-avatar').src = "https://api.dicebear.com/7.x/bottts/svg?seed=" + user.email;
-                    
+                    let user = userCredential.user;
+                    configurarPainelConformeUsuario(user.email);
+                    mudarTela('game-screen');
                     carregarJogadoresDoBanco();
-                    adicionarLog("Administrador autenticado com sucesso.");
+                    adicionarLog(`Login efetuado com sucesso por: ${user.email}`);
                 })
                 .catch((error) => {
-                    alert("Erro de autenticação: " + error.message);
+                    alert("Erro de login: " + error.message);
                 });
+        }
+
+        function configurarPainelConformeUsuario(email) {
+            let nomePerfil = document.getElementById('sidebar-nome');
+            let cargoPerfil = document.getElementById('sidebar-cargo');
+            let avatar = document.getElementById('sidebar-avatar');
+            let badgeAcesso = document.getElementById('badge-tipo-acesso');
+
+            if(email === "biel16santos10@gmail.com") {
+                nomePerfil.innerText = "B16 Santos";
+                cargoPerfil.innerText = "Conta Jogador";
+                avatar.src = "https://api.dicebear.com/7.x/bottts/svg?seed=B16Santos";
+                badgeAcesso.innerText = "Modo Jogador";
+            } else if(email === "groupsacabraldigital@gmail.com") {
+                nomePerfil.innerText = "Cabral Digital Group";
+                cargoPerfil.innerText = "Super Administrador";
+                avatar.src = "https://api.dicebear.com/7.x/bottts/svg?seed=CabralAdmin";
+                badgeAcesso.innerText = "Acesso Total (ADM)";
+            } else {
+                nomePerfil.innerText = "Usuário";
+                cargoPerfil.innerText = "Membro";
+                avatar.src = "https://api.dicebear.com/7.x/bottts/svg?seed=" + email;
+                badgeAcesso.innerText = "Padrão";
+            }
+        }
+
+        function fazerLogout() {
+            auth.signOut().then(() => {
+                mudarTela('login-screen');
+                adicionarLog("Usuário desconectado.");
+            });
+        }
+
+        function mudarTela(idTela) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(idTela).classList.add('active');
         }
 
         function trocarTab(tabId, element) {
@@ -200,10 +233,12 @@
 
         function carregarJogadoresDoBanco() {
             let corpoTabela = document.getElementById('tabela-jogadores-corpo');
+            corpoTabela.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #94a3b8;">Buscando dados no Firebase...</td></tr>`;
+
             db.collection("jogadores").get().then((querySnapshot) => {
                 let html = "";
                 if(querySnapshot.empty) {
-                    corpoTabela.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #94a3b8;">Nenhum jogador encontrado no banco.</td></tr>`;
+                    corpoTabela.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #94a3b8;">Nenhum jogador encontrado.</td></tr>`;
                     return;
                 }
                 querySnapshot.forEach((doc) => {
@@ -217,44 +252,42 @@
                         <td>💎 ${j.diamantes || 0}</td>
                         <td>
                             <button class="btn-action" onclick="editarOuro('${idDoc}', ${j.moedas || 0})">+Ouro</button>
-                            <button class="btn-action btn-danger" onclick="banirJogador('${idDoc}', '${j.nome}')">Banir</button>
+                            <button class="btn-action btn-danger" onclick="banirJogador('${idDoc}', '${j.nome || 'Jogador'}')">Banir</button>
                         </td>
                     </tr>`;
                 });
                 corpoTabela.innerHTML = html;
             }).catch(err => {
-                corpoTabela.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #f87171;">Erro ao carregar dados do banco.</td></tr>`;
+                corpoTabela.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #f87171;">Erro ao carregar: ${err.message}</td></tr>`;
             });
         }
 
         function editarOuro(idDoc, ouroAtual) {
-            let quanto = prompt("Quanto de Ouro deseja adicionar ao jogador? (Digite um valor negativo para remover)", "5000");
+            let quanto = prompt("Quanto de Ouro deseja adicionar? (Negativo para remover)", "5000");
             if(quanto === null) return;
             let valorNovo = ouroAtual + parseInt(quanto);
 
-            db.collection("jogadores").doc(idDoc).update({
-                moedas: valorNovo
-            }).then(() => {
-                alert("Ouro atualizado com sucesso!");
+            db.collection("jogadores").doc(idDoc).update({ moedas: valorNovo }).then(() => {
+                alert("Ouro atualizado!");
                 carregarJogadoresDoBanco();
-                adicionarLog(`Modificou o ouro do jogador ID ${idDoc.substring(0,6)} para ${valorNovo}`);
+                adicionarLog(`Atualizou ouro do ID ${idDoc.substring(0,6)} para ${valorNovo}`);
             });
         }
 
-        function banirJogador(idDoc, nomeJogador) {
-            if(confirm(`Tem certeza que deseja banir o jogador ${nomeJogador}?`)) {
+        function banirJogador(idDoc, nome) {
+            if(confirm(`Deseja banir ${nome}?`)) {
                 db.collection("jogadores").doc(idDoc).delete().then(() => {
-                    alert(`Jogador ${nomeJogador} banido e removido do banco.`);
+                    alert(`Jogador ${nome} banido.`);
                     carregarJogadoresDoBanco();
-                    adicionarLog(`Baniu o jogador: ${nomeJogador}`);
+                    adicionarLog(`Baniu o jogador: ${nome}`);
                 });
             }
         }
 
         function dispararBossMundial() {
             let boss = document.getElementById('select-boss').value;
-            alert(`[EVENTO] O Boss mundial ${boss} foi invocado com sucesso nos servidores!`);
-            adicionarLog(`Invocou o boss mundial: ${boss}`);
+            alert(`[EVENTO] Boss ${boss} invocado!`);
+            adicionarLog(`Invocou boss mundial: ${boss}`);
         }
 
         function adicionarLog(texto) {
