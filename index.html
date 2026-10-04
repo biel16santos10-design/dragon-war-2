@@ -202,7 +202,7 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <div class="avatar-help">Ou escolha uma das 20 fotos de perfil oficiais do Dragon War.</div>
 <div id="avatar-gallery" class="avatar-gallery"></div>
 <div id="perfil-rank" class="profile-rank">⭐ Iniciante</div>
-<div id="perfil-recursos" style="margin:5px 0 12px;color:#94a3b8"></div><div id="perfil-vida" class="profile-rank" style="margin-bottom:12px">❤️ Vida restaurada</div><div id="perfil-guilda" class="profile-rank" style="margin-bottom:12px">🛡️ Sem guilda</div><button class="btn" onclick="salvarPerfilJogador()">Salvar Alterações</button>
+<div id="perfil-recursos" style="margin:5px 0 12px;color:#94a3b8"></div><div id="perfil-vida" class="profile-rank" style="margin-bottom:12px">❤️ Vida restaurada</div><div id="perfil-guilda" class="profile-rank" style="margin-bottom:12px">🛡️ Sem guilda</div><div id="perfil-save-status" style="font-size:11px;color:#94a3b8;margin:8px 0">💾 Salvamento automático ativado</div><button class="btn" onclick="salvarPerfilJogador()">Salvar Alterações</button>
 </div>
 <div style="background:var(--panel-bg);padding:20px;border-radius:8px;border:1px solid var(--panel-border)">
 <h4>🔊 Sistema de Som</h4><label>Volume da Música:</label><input type="range" min="0" max="100" value="60" class="form-control" id="vol-musica" oninput="atualizarVolume()">
@@ -383,7 +383,14 @@ function criarAvatarDragonWar(t,i){
 const avataresOficiais=temasAvatares.map((t,i)=>criarAvatarDragonWar(t,i));
 catalogo.filter(x=>x.category==="skin").forEach((x,i)=>{x.avatarIndex=i%avataresOficiais.length});
 function renderizarGaleriaAvatares(){const g=document.getElementById("avatar-gallery");if(!g)return;g.innerHTML=avataresOficiais.map((url,i)=>`<button type="button" class="avatar-option ${usuarioAtual.avatar===url?"selected":""}" title="${temasAvatares[i].nome}" onclick="selecionarAvatarOficial(${i})"><img src="${url}" alt="${temasAvatares[i].nome}"><span style="display:block;color:#cbd5e1;font-size:9px;margin-top:4px;line-height:1.1">${temasAvatares[i].nome}</span></button>`).join("")}
-window.selecionarAvatarOficial=i=>{usuarioAtual.avatar=avataresOficiais[i];document.getElementById("player-edit-avatar").value=usuarioAtual.avatar;renderizarGaleriaAvatares();atualizarPerfilUI()};
+window.selecionarAvatarOficial=async i=>{
+ usuarioAtual.avatar=avataresOficiais[i];
+ document.getElementById("player-edit-avatar").value=usuarioAtual.avatar;
+ renderizarGaleriaAvatares();
+ atualizarPerfilUI();
+ await salvarProgressoCompleto(false);
+ notificar("🖼️ Avatar salvo na sua conta.","success");
+};
 
 function atualizarPerfilUI(){
  const img=document.getElementById("sidebar-avatar-img"),txt=document.getElementById("sidebar-avatar-txt");
@@ -408,10 +415,13 @@ window.trocarSecao=(id,el)=>{document.querySelectorAll(".panel-section").forEach
 async function carregarJogador(){
  const ref=doc(db,"jogadores_reais",auth.currentUser.uid),snap=await getDoc(ref),existe=snap.exists(),base=existe?snap.data():{};
  const novoJogador={coins:10000,diamonds:0,level:1,xp:0,inventory:[],phaseProgress:{normal:1,dificil:1,avancada:1,hardcore:1},achievements:[],dailyRewardLastClaim:0,dailyRewardCount:0,dailyRewardDay:"",currentHp:100,mana:100,maxMana:100,banned:false,guildId:"",guildName:"",guildRank:""};
- usuarioAtual={...usuarioAtual,...(existe?base:novoJogador),uid:auth.currentUser.uid,email:auth.currentUser.email,displayName:base.displayName||auth.currentUser.email.split("@")[0],isAdm:auth.currentUser.email.toLowerCase()===EMAIL_ADMIN||base.isAdm===true,mana:Number(base.mana??100),maxMana:Number(base.maxMana??100),inventory:Array.isArray(base.inventory)?base.inventory:[],phaseProgress:base.phaseProgress||{normal:1,dificil:1,avancada:1,hardcore:1},achievements:base.achievements||[]};
+ usuarioAtual={...usuarioAtual,...(existe?base:novoJogador),uid:auth.currentUser.uid,email:auth.currentUser.email,displayName:base.displayName||auth.currentUser.email.split("@")[0],isAdm:auth.currentUser.email.toLowerCase()===EMAIL_ADMIN||base.isAdm===true,mana:Number(base.mana??100),maxMana:Number(base.maxMana??100),inventory:Array.isArray(base.inventory)?base.inventory:[],phaseProgress:base.phaseProgress||{normal:1,dificil:1,avancada:1,hardcore:1},achievements:Array.isArray(base.achievements)?base.achievements:[],dailyRewardCount:Number(base.dailyRewardCount||0),guildId:base.guildId||"",guildName:base.guildName||"",guildRank:base.guildRank||""};
  if(!existe){usuarioAtual.coins=10000;usuarioAtual.diamonds=0;usuarioAtual.level=1;usuarioAtual.xp=0;usuarioAtual.guildId="";usuarioAtual.guildName="";usuarioAtual.guildRank="";usuarioAtual.currentHp=100;usuarioAtual.mana=100;usuarioAtual.maxMana=100;}
  if(usuarioAtual.isAdm){usuarioAtual.coins=Math.max(Number(usuarioAtual.coins||0),999999);usuarioAtual.diamonds=Math.max(Number(usuarioAtual.diamonds||0),99999);usuarioAtual.level=Math.max(Number(usuarioAtual.level||1),100)}
- await setDoc(ref,{...usuarioAtual,lastSeen:serverTimestamp(),status:"Online",updatedAt:serverTimestamp()},{merge:true});
+ const bs=base.battleState;
+ if(bs&&bs.categoria&&categorias[bs.categoria]){faseAtualInfo={categoria:bs.categoria,etapa:Number(bs.etapa||1),hpMovel:Number(bs.hpMovel||0),maxHp:Number(bs.maxHp||0),playerHp:Number(bs.playerHp!=null?bs.playerHp:(usuarioAtual.currentHp!=null?usuarioAtual.currentHp:100)),playerMp:Number(bs.playerMp!=null?bs.playerMp:(usuarioAtual.mana!=null?usuarioAtual.mana:100)),defend:!!bs.defend}}
+ else{faseAtualInfo={categoria:"",etapa:1,hpMovel:100,maxHp:100,playerHp:Number(usuarioAtual.currentHp??100),playerMp:Number(usuarioAtual.mana??100),defend:false}}
+ await setDoc(ref,{...montarEstadoPersistente(),uid:usuarioAtual.uid,email:usuarioAtual.email,lastSeen:serverTimestamp(),status:"Online",updatedAt:serverTimestamp()},{merge:true});
  atualizarPerfilUI();montarMenuLateral();renderLoja();renderizarPoderes();atualizarInventarioUI();renderizarEventos();atualizarDailyUI();iniciarHeartbeat();assinarChatGlobal();verificarAchievements();
  if(usuarioAtual.isAdm){carregarJogadoresReaisDoBanco();document.getElementById("adm-loja-controls").classList.remove("hidden");document.getElementById("adm-poderes-controls").classList.remove("hidden");document.getElementById("adm-evento-controls").classList.remove("hidden");document.getElementById("player-power-admin-note")?.classList.remove("hidden")}
 }
@@ -425,8 +435,13 @@ function iniciarHeartbeat(){clearInterval(heartbeatTimer);heartbeatTimer=setInte
 window.addEventListener("beforeunload",()=>{if(auth.currentUser)updateDoc(doc(db,"jogadores_reais",auth.currentUser.uid),{status:"Offline"}).catch(()=>{})});
 
 window.salvarPerfilJogador=async()=>{
- const nome=document.getElementById("player-edit-name").value.trim(),avatar=document.getElementById("player-edit-avatar").value.trim();if(!nome)return alert("Informe um nome.");
- usuarioAtual.displayName=nome;usuarioAtual.avatar=avatar;await updateDoc(doc(db,"jogadores_reais",usuarioAtual.uid),{displayName:nome,avatar,updatedAt:serverTimestamp()});atualizarPerfilUI();alert("Perfil salvo no Firestore!");
+ const nome=document.getElementById("player-edit-name").value.trim(),avatar=document.getElementById("player-edit-avatar").value.trim();
+ if(!nome)return alert("Informe um nome.");
+ usuarioAtual.displayName=nome;
+ usuarioAtual.avatar=avatar;
+ await salvarProgressoCompleto(false);
+ atualizarPerfilUI();
+ notificar("💾 Perfil, avatar, nível, diamantes e demais informações foram salvos.","success");
 };
 
 window.iniciarFases=async(cat)=>{
@@ -544,7 +559,43 @@ window.batalhaAcao=async acao=>{
  atualizarBatalhaUI();atualizarMoedasDiamantesUI();
 };
 
-async function salvarProgresso(){await updateDoc(doc(db,"jogadores_reais",usuarioAtual.uid),{coins:usuarioAtual.coins,diamonds:usuarioAtual.diamonds,level:usuarioAtual.level,xp:usuarioAtual.xp,phaseProgress:usuarioAtual.phaseProgress,inventory:usuarioAtual.inventory,achievements:usuarioAtual.achievements,mana:Number(usuarioAtual.mana??100),maxMana:Number(usuarioAtual.maxMana??100),currentHp:Number(usuarioAtual.currentHp??100),dailyRewardDay:usuarioAtual.dailyRewardDay||"",dailyRewardLastClaim:usuarioAtual.dailyRewardLastClaim||0,updatedAt:serverTimestamp()});atualizarMoedasDiamantesUI();verificarAchievements()}
+function montarEstadoPersistente(){
+ return {
+  displayName:usuarioAtual.displayName||"",avatar:usuarioAtual.avatar||"",
+  coins:Number(usuarioAtual.coins||0),diamonds:Number(usuarioAtual.diamonds||0),
+  level:Number(usuarioAtual.level||1),xp:Number(usuarioAtual.xp||0),
+  inventory:Array.isArray(usuarioAtual.inventory)?usuarioAtual.inventory:[],
+  phaseProgress:usuarioAtual.phaseProgress||{normal:1,dificil:1,avancada:1,hardcore:1},
+  achievements:Array.isArray(usuarioAtual.achievements)?usuarioAtual.achievements:[],
+  mana:Number(usuarioAtual.mana??100),maxMana:Number(usuarioAtual.maxMana??100),currentHp:Number(usuarioAtual.currentHp??100),
+  dailyRewardDay:usuarioAtual.dailyRewardDay||"",dailyRewardLastClaim:usuarioAtual.dailyRewardLastClaim||0,dailyRewardCount:Number(usuarioAtual.dailyRewardCount||0),
+  guildId:usuarioAtual.guildId||"",guildName:usuarioAtual.guildName||"",guildRank:usuarioAtual.guildRank||"",
+  isSubAdm:!!usuarioAtual.isSubAdm,banned:!!usuarioAtual.banned,
+  battleState:{categoria:faseAtualInfo.categoria||"",etapa:Number(faseAtualInfo.etapa||1),hpMovel:Number(faseAtualInfo.hpMovel||0),maxHp:Number(faseAtualInfo.maxHp||0),playerHp:Number(faseAtualInfo.playerHp??usuarioAtual.currentHp??100),playerMp:Number(faseAtualInfo.playerMp??usuarioAtual.mana??100),defend:!!faseAtualInfo.defend},
+  updatedAt:serverTimestamp()
+ };
+}
+let salvamentoEmAndamento=false;
+async function salvarProgressoCompleto(atualizarUI=true){
+ if(!usuarioAtual.uid||!auth.currentUser)return false;
+ const estado=montarEstadoPersistente();
+ try{
+  salvamentoEmAndamento=true;
+  await setDoc(doc(db,"jogadores_reais",usuarioAtual.uid),estado,{merge:true});
+  try{localStorage.setItem("dragonWar:lastState:"+usuarioAtual.uid,JSON.stringify({...estado,updatedAt:Date.now()}));}catch(e){}
+  if(atualizarUI)atualizarMoedasDiamantesUI();
+  return true;
+ }catch(e){
+  try{localStorage.setItem("dragonWar:lastState:"+usuarioAtual.uid,JSON.stringify({...estado,updatedAt:Date.now()}));}catch(x){}
+  console.warn("Falha ao salvar no Firestore; cópia local mantida.",e);
+  return false;
+ }finally{salvamentoEmAndamento=false;}
+}
+async function salvarProgresso(){return salvarProgressoCompleto(true)}
+async function salvarAutomaticamente(){if(auth.currentUser&&usuarioAtual.uid&&!salvamentoEmAndamento)await salvarProgressoCompleto(false)}
+setInterval(salvarAutomaticamente,10000);
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")salvarAutomaticamente()});
+window.addEventListener("pagehide",()=>{try{if(usuarioAtual.uid){const estado=montarEstadoPersistente();localStorage.setItem("dragonWar:lastState:"+usuarioAtual.uid,JSON.stringify({...estado,updatedAt:Date.now()}));}}catch(e){}});
 
 function renderLoja(){let g=document.getElementById("loja-grid");let arr=categoriaLoja==="all"?catalogo:catalogo.filter(x=>x.category===categoriaLoja);g.innerHTML=arr.map((i,n)=>{const skinImg=i.category==="skin"?avataresOficiais[(Number(i.avatarIndex??n))%avataresOficiais.length]:"";return `<div class="item-card">${skinImg?`<img class="skin-shop-img" src="${skinImg}" alt="${escapeHtml(i.nome)}">`:""}<h4>${icone(i.category)} ${escapeHtml(i.nome)}</h4><p>${escapeHtml(i.desc||"")}</p><div class="price">${i.price} 🪙</div><button class="btn" style="padding:6px;margin-top:7px;font-size:11px" onclick="comprarItem('${i.id}')">${i.category==="skin"?"Comprar Skin":"Comprar"}</button></div>`}).join("")}
 function icone(c){return c==="weapon"?"⚔️":c==="skin"?"🧙":c==="potion"?"🧪":"⚡"}
@@ -706,7 +757,16 @@ window.alternarSom=async()=>{let a=document.getElementById("bg-music");if(a.paus
 
 window.sairDaConta=async()=>{try{if(heartbeatTimer)clearInterval(heartbeatTimer);if(unsubscribeGlobal)unsubscribeGlobal();if(unsubscribeSupport)unsubscribeSupport();if(auth.currentUser)await updateDoc(doc(db,"jogadores_reais",auth.currentUser.uid),{status:"Offline",lastSeen:serverTimestamp()});await signOut(auth)}catch(e){console.error(e)}finally{document.getElementById("game-container").classList.add("hidden");document.getElementById("login-screen").classList.remove("hidden");document.getElementById("auth-email").value="";document.getElementById("auth-pass").value="";notificar("🚪 Conta desconectada. Faça login novamente.","info")}};
 
-onAuthStateChanged(auth,async user=>{if(!user)return;try{await carregarJogador();await carregarCatalogoCustom();await carregarLogs();carregarSolicitacoesAdm();document.getElementById("login-screen").classList.add("hidden");document.getElementById("game-container").classList.remove("hidden");try{document.getElementById("bg-music").volume=.6}catch(e){}}catch(e){console.error(e)}});
+onAuthStateChanged(auth,async user=>{if(!user)return;try{await carregarJogador();await carregarCatalogoCustom();await carregarLogs();carregarSolicitacoesAdm();document.getElementById("login-screen").classList.add("hidden");document.getElementById("game-container").classList.remove("hidden");
+ if(faseAtualInfo.categoria&&categorias[faseAtualInfo.categoria]&&faseAtualInfo.hpMovel>0){
+  const primeiroMenu=document.querySelector("#menu-list .menu-item");
+  trocarSecao("jogar",primeiroMenu);
+  document.getElementById("battle-mode-selection")?.classList.add("hidden");
+  document.getElementById("arena-fases-container")?.classList.remove("hidden");
+  atualizarBatalhaUI();
+  adicionarLogBatalha("💾 Batalha restaurada automaticamente do último salvamento.");
+ }
+ try{document.getElementById("bg-music").volume=.6}catch(e){}}catch(e){console.error(e)}});
 </script>
 </body>
 </html>
