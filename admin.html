@@ -42,7 +42,27 @@
         .table-custom th, .table-custom td { padding: 12px; text-align: left; border-bottom: 1px solid #1f2937; font-size: 13px; }
         .table-custom th { color: #ef4444; background: #0f172a; }
 
-        .badge-dev { background: linear-gradient(135deg, #ef4444, #f59e0b); color: #fff; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; display: inline-block; }
+        /* SEU NOME COLORIDO E LOGO EXCLUSIVA */
+        .nome-colorido-fundador {
+            background: linear-gradient(90deg, #ff007f, #7928ca, #ffb800, #00dfd8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            font-size: 16px;
+            text-shadow: 0 0 10px rgba(255,0,127,0.3);
+        }
+        .badge-logo-adm {
+            background: #ef4444;
+            color: #fff;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .btn-mini { padding: 6px 12px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; font-size: 11px; margin-right: 5px; }
     </style>
@@ -52,12 +72,12 @@
     <!-- TELA DE LOGIN DO ADM -->
     <div id="login-adm" class="screen active">
         <div class="login-box">
-            <h2>🛡️ PAINEL DO FUNDADOR</h2>
-            <p style="color: #94a3b8; font-size: 13px; margin-bottom: 20px;">Acesso Restrito ao Desenvolvedor & ADM</p>
+            <h2>🛡️ PAINEL DE CONTROLE ADM</h2>
+            <p style="color: #94a3b8; font-size: 13px; margin-bottom: 20px;">Acesso Restrito à Staff Autorizada</p>
             <form onsubmit="loginAdm(event)">
                 <input type="email" id="adm-email" class="form-control" placeholder="E-mail de ADM" required>
                 <input type="password" id="adm-senha" class="form-control" placeholder="Senha de Acesso" required>
-                <button type="submit" class="btn-adm">ACESSAR PAINEL GLOBAL</button>
+                <button type="submit" class="btn-adm">ACESSAR PAINEL</button>
             </form>
         </div>
     </div>
@@ -68,15 +88,16 @@
             <div class="adm-profile">
                 <img id="adm-avatar-img" src="https://api.dicebear.com/7.x/bottts/svg?seed=AdminGod" alt="ADM">
                 <div>
-                    <h4 id="adm-nome-display" style="color: #f87171; font-size: 15px;">Gabriel (Dev)</h4>
-                    <span class="badge-dev">DESENVOLVEDOR</span>
+                    <!-- SEU NOME COLORIDO E LOGO EXCLUSIVA -->
+                    <h4 id="adm-nome-display" class="nome-colorido-fundador">Gabriel (Fundador)</h4>
+                    <span class="badge-logo-adm">🛡️ [ADM] Dev</span>
                 </div>
             </div>
 
-            <ul class="nav-menu">
+            <ul class="nav-menu" id="menu-lateral-adm">
                 <li onclick="trocarTab('geral', this)" class="active-tab">📊 Visão Geral</li>
                 <li onclick="trocarTab('jogadores', this)">👥 Gerenciar Jogadores (God Mode)</li>
-                <li onclick="trocarTab('staff', this)">🛡️ Controle de ADMs & Bans</li>
+                <li id="menu-tab-staff" onclick="trocarTab('staff', this)">🛡️ Controle de ADMs & Bans</li>
                 <li onclick="trocarTab('eventos', this)">🎁 Criar & Gerenciar Eventos</li>
                 <li onclick="trocarTab('monstros', this)">⚔️ Criar & Gerenciar Monstros</li>
                 <li onclick="trocarTab('lojaadm', this)">🛒 Loja & Itens Globais</li>
@@ -85,7 +106,7 @@
 
         <div class="main-content">
             <div class="top-bar">
-                <h2 style="color: #ef4444; font-size: 20px;">DRAGON WAR: CENTRA DE CONTROLE MASTER</h2>
+                <h2 style="color: #ef4444; font-size: 20px;">DRAGON WAR: CENTRAL MASTER</h2>
                 <button class="btn-mini" style="background: #ef4444; color: #fff; padding: 8px 15px;" onclick="location.reload()">SAIR / LOGOUT</button>
             </div>
 
@@ -96,7 +117,6 @@
                         <h3>Status do Servidor Global</h3>
                         <p style="color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Firebase Sincronizado e Operante em Tempo Real.</p>
                         <p style="font-size: 14px; margin: 8px 0;">👥 Total de Jogadores Cadastrados: <b id="stat-total-jogadores" style="color: #ef4444;">0</b></p>
-                        <p style="font-size: 14px; margin: 8px 0;">🛡️ ADMs Ativos no Sistema: <b id="stat-total-adms" style="color: #f59e0b;">1</b></p>
                     </div>
                     <div class="card-box">
                         <h3>Painel de Avisos Rápidos</h3>
@@ -110,7 +130,7 @@
             <div id="tab-jogadores" class="tab-panel">
                 <div class="card-box">
                     <h3>Lista de Jogadores (Modo Deus / Edição Total)</h3>
-                    <p style="color: #94a3b8; font-size: 13px; margin-bottom: 15px;">Edite ouro, gemas, adicione skins ou envie presentes diretamente para a conta de qualquer jogador.</p>
+                    <p style="color: #94a3b8; font-size: 13px; margin-bottom: 15px;">Edite ouro, gemas, adicione itens ou dê banimentos.</p>
                     <table class="table-custom">
                         <thead>
                             <tr>
@@ -132,8 +152,9 @@
                 <div class="grid-2">
                     <div class="card-box">
                         <h3>Adicionar Novo ADM</h3>
+                        <p style="color: #94a3b8; font-size: 13px; margin-bottom: 10px;">O usuário promovido receberá automaticamente acesso às funções básicas de moderação pelo painel.</p>
                         <input type="email" id="novo-adm-email" class="form-control" placeholder="E-mail do usuário para promover">
-                        <button class="btn-adm" onclick="promoverParaAdm()">PROMOVER A ADM</button>
+                        <button class="btn-adm" onclick="promoverParaAdm()">PROMOVER A ADM AUTOMATICAMENTE</button>
                     </div>
                     <div class="card-box">
                         <h3>Gerenciar Banimentos</h3>
@@ -147,10 +168,10 @@
             <div id="tab-eventos" class="tab-panel">
                 <div class="card-box">
                     <h3>Criar & Lançar Evento Global</h3>
-                    <input type="text" id="ev-titulo" class="form-control" placeholder="Título do Evento (Ex: Batalha de Ouro Dobrado)">
-                    <input type="text" id="ev-desc" class="form-control" placeholder="Descrição curta do evento">
-                    <input type="text" id="ev-recompensa" class="form-control" placeholder="Recompensa (Ex: +1000 Ouro e 10 Gemas)">
-                    <button class="btn-adm" onclick="publicarEventoGlobal()">PUBLICAR EVENTO EM TEMPO REAL</button>
+                    <input type="text" id="ev-titulo" class="form-control" placeholder="Título do Evento">
+                    <input type="text" id="ev-desc" class="form-control" placeholder="Descrição curta">
+                    <input type="text" id="ev-recompensa" class="form-control" placeholder="Recompensa">
+                    <button class="btn-adm" onclick="publicarEventoGlobal()">PUBLICAR EVENTO</button>
                 </div>
             </div>
 
@@ -158,11 +179,10 @@
             <div id="tab-monstros" class="tab-panel">
                 <div class="card-box">
                     <h3>Configurar Arena de Monstros</h3>
-                    <p style="color: #94a3b8; font-size: 13px; margin-bottom: 15px;">Adicione novos chefões ou ajuste os monstros da arena para os jogadores.</p>
-                    <input type="text" id="mob-nome" class="form-control" placeholder="Nome do Monstro (Ex: Titã de Magma)">
-                    <input type="number" id="mob-hp" class="form-control" placeholder="HP Máximo (Ex: 500)">
-                    <input type="number" id="mob-dano" class="form-control" placeholder="Dano Base (Ex: 45)">
-                    <button class="btn-adm" onclick="criarMonstroArena()">CRIAR MONSTRO NA ARENA</button>
+                    <input type="text" id="mob-nome" class="form-control" placeholder="Nome do Monstro">
+                    <input type="number" id="mob-hp" class="form-control" placeholder="HP Máximo">
+                    <input type="number" id="mob-dano" class="form-control" placeholder="Dano Base">
+                    <button class="btn-adm" onclick="criarMonstroArena()">CRIAR MONSTRO</button>
                 </div>
             </div>
 
@@ -172,7 +192,7 @@
                     <h3>Adicionar Item na Loja Global</h3>
                     <input type="text" id="loja-item-nome" class="form-control" placeholder="Nome da Arma ou Skin">
                     <input type="number" id="loja-item-preco" class="form-control" placeholder="Preço em Ouro">
-                    <button class="btn-adm" onclick="adicionarItemLojaGlobal()">ADICIONAR NA LOJA DE TODOS</button>
+                    <button class="btn-adm" onclick="adicionarItemLojaGlobal()">ADICIONAR NA LOJA</button>
                 </div>
             </div>
 
@@ -199,7 +219,8 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        let admAtualId = null;
+        let admAtualEmail = null;
+        const EMAIL_FUNDADOR = "markivus25@gmail.com"; // Seu e-mail principal com nome colorido exclusivo
 
         function loginAdm(event) {
             event.preventDefault();
@@ -207,11 +228,41 @@
             let senha = document.getElementById('adm-senha').value.trim();
 
             auth.signInWithEmailAndPassword(email, senha).then(cred => {
-                admAtualId = cred.user.uid;
-                document.getElementById('login-adm').classList.remove('active');
-                document.getElementById('adm-screen').classList.add('active');
-                carregarDadosPainelAdm();
+                admAtualEmail = cred.user.email;
+
+                // Verifica se é o fundador ou um ADM cadastrado
+                if (admAtualEmail === EMAIL_FUNDADOR) {
+                    liberarPainelCompleto("Gabriel (Fundador)", true);
+                } else {
+                    // Checa se consta na coleção de staff
+                    db.collection("staff_adms").where("email", "==", admAtualEmail).get().then(snapshot => {
+                        if (!snapshot.empty) {
+                            liberarPainelCompleto("Administrador", false);
+                        } else {
+                            alert("Acesso negado! Este e-mail não possui privilégios de ADM.");
+                            auth.signOut();
+                        }
+                    });
+                }
             }).catch(err => alert("Erro ao acessar ADM: " + err.message));
+        }
+
+        function liberarPainelCompleto(nomeExibicao, eFundador) {
+            document.getElementById('login-adm').classList.remove('active');
+            document.getElementById('adm-screen').classList.add('active');
+
+            let nomeDisplay = document.getElementById('adm-nome-display');
+            if (eFundador) {
+                nomeDisplay.innerText = "Gabriel (Fundador)";
+                nomeDisplay.className = "nome-colorido-fundador";
+            } else {
+                nomeDisplay.innerText = nomeExibicao;
+                nomeDisplay.style.color = "#f59e0b";
+                // ADMs normais não gerenciam outros staff por segurança básica
+                document.getElementById('menu-tab-staff').style.display = 'none';
+            }
+
+            carregarDadosPainelAdm();
         }
 
         function trocarTab(tabId, element) {
@@ -222,7 +273,6 @@
         }
 
         function carregarDadosPainelAdm() {
-            // Carrega todos os jogadores para o God Mode
             db.collection("jogadores").onSnapshot(snapshot => {
                 let tbody = document.getElementById('tabela-jogadores-corpo');
                 tbody.innerHTML = "";
@@ -235,7 +285,7 @@
                     
                     tbody.innerHTML += `
                         <tr>
-                            <td><b>${d.nome || 'Guerreiro'}</b></td>
+                            <td><b>[ADM/Player] ${d.nome || 'Guerreiro'}</b></td>
                             <td>Nível ${d.nivel || 1}</td>
                             <td>🪙 ${d.ouro || 0}</td>
                             <td>💎 ${d.gemas || 0}</td>
@@ -257,21 +307,21 @@
                     let novoOuro = (Number(data.ouro) || 0) + qtdOuro;
                     let novasGemas = (Number(data.gemas) || 0) + qtdGemas;
                     db.collection("jogadores").doc(uid).update({ ouro: novoOuro, gemas: novasGemas });
-                    alert("Recompensa enviada com sucesso para o jogador!");
+                    alert("Recompensa enviada com sucesso!");
                 }
             });
         }
 
         function alternarBanJogador(uid, statusAtual) {
             db.collection("jogadores").doc(uid).update({ banido: !statusAtual });
-            alert(statusAtual ? "Jogador desbanido!" : "Jogador banido do servidor!");
+            alert(statusAtual ? "Jogador desbanido!" : "Jogador banido com sucesso!");
         }
 
         function enviarAvisoGlobal() {
             let texto = document.getElementById('aviso-global-texto').value.trim();
             if(!texto) return;
             db.collection("config_jogo").doc("aviso_global").set({ mensagem: texto, timestamp: Date.now() }).then(() => {
-                alert("Aviso global enviado com sucesso para todos os jogadores!");
+                alert("Aviso global enviado!");
                 document.getElementById('aviso-global-texto').value = "";
             });
         }
@@ -285,9 +335,8 @@
             db.collection("config_jogo").doc("eventos_ativos").get().then(doc => {
                 let lista = doc.exists && doc.data().lista ? doc.data().lista : [];
                 lista.push({ titulo, descricao, recompensa, data: "Hoje" });
-                
                 db.collection("config_jogo").doc("eventos_ativos").set({ lista }).then(() => {
-                    alert("Evento publicado e sincronizado com o sininho de todos os jogadores!");
+                    alert("Evento publicado e sincronizado!");
                     document.getElementById('ev-titulo').value = "";
                     document.getElementById('ev-desc').value = "";
                     document.getElementById('ev-recompensa').value = "";
@@ -298,8 +347,9 @@
         function promoverParaAdm() {
             let email = document.getElementById('novo-adm-email').value.trim();
             if(!email) return;
-            db.collection("staff_adms").add({ email, promovidoPor: admAtualId, data: Date.now() }).then(() => {
-                alert(`Usuário ${email} promovido a ADM com sucesso!`);
+            // Salva na coleção staff_adms permitindo acesso automático imediato
+            db.collection("staff_adms").add({ email, promovidoPor: admAtualEmail, data: Date.now() }).then(() => {
+                alert(`Usuário ${email} promovido a ADM com sucesso! Ele já pode acessar o painel com as funções básicas.`);
                 document.getElementById('novo-adm-email').value = "";
             });
         }
@@ -311,7 +361,7 @@
             if(!nome) return;
 
             db.collection("config_jogo").doc("monstros_arena").set({ nome, hp, dano, ativo: true }).then(() => {
-                alert("Novo monstro configurado na arena com sucesso!");
+                alert("Monstro configurado na arena!");
             });
         }
 
@@ -324,7 +374,7 @@
                 let armas = doc.exists && doc.data().armas ? doc.data().armas : [];
                 armas.push({ nome, preco });
                 db.collection("config_jogo").doc("loja_global").update({ armas }).then(() => {
-                    alert("Item adicionado na loja de todos os jogadores instantaneamente!");
+                    alert("Item adicionado na loja global!");
                 });
             });
         }
