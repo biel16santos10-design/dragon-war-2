@@ -84,7 +84,6 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <div class="card">
 <img src="89097.png" alt="Dragon War Logo" class="logo-login">
 <h2 id="auth-title">Dragon War: Rise of Power</h2>
-<div style="font-size:12px;color:#94a3b8;margin:-10px 0 16px">Digite seu e-mail e senha. O sistema abrirá automaticamente o ambiente da sua conta.</div>
 <div class="input-group"><label>E-mail:</label><input type="email" id="auth-email" placeholder="seuemail@dominio.com"></div>
 <div class="input-group"><label>Senha:</label><input type="password" id="auth-pass" placeholder="******"></div>
 <button class="btn" id="auth-btn-action" onclick="realizarAutenticacao()">Entrar na Partida</button>
@@ -291,9 +290,9 @@ import{getFirestore,doc,setDoc,getDoc,getDocs,updateDoc,addDoc,collection,query,
 const firebaseConfig={apiKey:"AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",authDomain:"dragon-war-rise-of-power-2a9f1.firebaseapp.com",projectId:"dragon-war-rise-of-power-2a9f1",storageBucket:"dragon-war-rise-of-power-2a9f1.firebasestorage.app",messagingSenderId:"115455691167",appId:"1:115455691167:web:ff3638f67b66c17c5515aa",measurementId:"G-S7XE2EN9CL"};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 const EMAIL_ADMIN="groupsacabraldigital@gmail.com";
-let modoCadastro=false, unsubscribeGlobal=null, unsubscribeSupport=null, heartbeatTimer=null, modoSistema="jogador";
+let modoCadastro=false, unsubscribeGlobal=null, unsubscribeSupport=null, heartbeatTimer=null;
 let categoriaLoja="all", jogadorSelecionadoModal={id:"",nome:"",data:{}}, salaAtualId="";
-let usuarioAtual={uid:"",email:"",displayName:"",avatar:"",isAdm:false,isSubAdm:false,role:"USER",vip:0,coins:10000,diamonds:0,level:1,xp:0,inventory:[],phaseProgress:{normal:1,dificil:1,avancada:1,hardcore:1},achievements:[],dailyRewardLastClaim:0,dailyRewardCount:0,dailyRewardDay:"",currentHp:100,mana:100,maxMana:100,banned:false,guildId:"",guildName:"",guildRank:""};
+let usuarioAtual={uid:"",email:"",displayName:"",avatar:"",isAdm:false,isSubAdm:false,coins:10000,diamonds:0,level:1,xp:0,inventory:[],phaseProgress:{normal:1,dificil:1,avancada:1,hardcore:1},achievements:[],dailyRewardLastClaim:0,dailyRewardCount:0,dailyRewardDay:"",currentHp:100,mana:100,maxMana:100,banned:false,guildId:"",guildName:"",guildRank:""};
 let faseAtualInfo={categoria:"",etapa:1,hpMovel:100,maxHp:100,playerHp:100,playerMp:100,defend:false};
 
 const categorias={
@@ -339,7 +338,6 @@ function atualizarMoedasDiamantesUI(){
  const rankEl=document.getElementById("header-player-rank"); if(rankEl)rankEl.textContent=patenteAtual(usuarioAtual.level);
 }
 function nomeAtual(){return usuarioAtual.displayName||usuarioAtual.email.split("@")[0]}
-function identidadeHTML(){if(usuarioAtual.isAdm)return '<span class="adm-tag">👑 ADM GABRIEL</span> <span class="badge vip">VIP 10</span>'; if(usuarioAtual.isSubAdm)return '<span class="adm-tag">🛡️ MODERADOR</span>'; return escapeHtml(nomeAtual())}
 function patenteAtual(level){level=Number(level)||1;if(level>=100)return "👑 Lendário";if(level>=75)return "💎 Mestre";if(level>=50)return "🔥 Profissional";if(level>=25)return "⚔️ Intermediário";return "🌱 Iniciante"}
 const temasAvatares=[
  {nome:"Guerreiro do Fogo",simbolo:"🔥",a:"#ff3d00",b:"#ffb300"},
@@ -410,34 +408,25 @@ function atualizarPerfilUI(){
 }
 function montarMenuLateral(){
  const m=document.getElementById("menu-list");m.innerHTML="";
- let itens;
- if(modoSistema==="admin" && usuarioAtual.isAdm){
-  itens=[{id:"painel-adm",label:"👑 Dashboard ADM"},{id:"jogadores",label:"👥 Jogadores"},{id:"evento",label:"🎉 Eventos"},{id:"config-jogador",label:"⚙ Configurações"}];
- }else{
-  itens=[{id:"jogar",label:"🎮 Modo Batalha"},{id:"loja",label:"🛒 Loja & Itens"},{id:"poderes",label:"⚡ Poderes (50+)"},{id:"guildas",label:"🛡️ Guildas"},{id:"inventario",label:"🎒 Inventário"},{id:"rank",label:"🏆 Rankings"},{id:"config-jogador",label:"⚙ Meu Perfil"},{id:"evento",label:"🎉 Eventos"}];
- }
+ const itens=[{id:"jogar",label:"🎮 Modo Batalha"},{id:"loja",label:"🛒 Loja & Itens"},{id:"poderes",label:"⚡ Poderes (50+)"},{id:"guildas",label:"🛡️ Guildas"},{id:"inventario",label:"🎒 Inventário"},{id:"rank",label:"🏆 Rankings"},{id:"config-jogador",label:"⚙ Meu Perfil"},{id:"evento",label:"🎉 Eventos"}];
+ if(usuarioAtual.isAdm||usuarioAtual.isSubAdm)itens.push({id:"jogadores",label:"👥 Jogadores Reais"},{id:"painel-adm",label:"👑 Painel ADM"});
  itens.forEach((x,i)=>{let li=document.createElement("li");li.className="menu-item"+(i===0?" active":"");li.innerText=x.label;li.onclick=()=>trocarSecao(x.id,li);m.appendChild(li)});
- trocarSecao(itens[0].id,m.children[0]);
+ trocarSecao("jogar",m.children[0]);
 }
 window.trocarSecao=(id,el)=>{document.querySelectorAll(".panel-section").forEach(x=>x.classList.remove("active"));document.getElementById("section-"+id)?.classList.add("active");document.querySelectorAll(".menu-item").forEach(x=>x.classList.remove("active"));if(el)el.classList.add("active");document.getElementById("current-page-title").innerText=el?el.innerText:id;if(id==="jogar"){document.getElementById("arena-fases-container")?.classList.add("hidden");document.getElementById("battle-mode-selection")?.classList.remove("hidden")}if(id==="jogadores"&&usuarioAtual.isAdm)carregarJogadoresReaisDoBanco();if(id==="loja")renderLoja();if(id==="inventario")atualizarInventarioUI();if(id==="rank"){renderMeuRankTopo();mudarTabRank("global")}if(id==="guildas")carregarGuildaDoJogador();if(id==="config-jogador")renderPerfilGuilda()};
 
 async function carregarJogador(){
  const ref=doc(db,"jogadores_reais",auth.currentUser.uid),snap=await getDoc(ref),existe=snap.exists(),base=existe?snap.data():{};
- const email=String(auth.currentUser.email||"").toLowerCase();
- const role=String(base.role||((base.isAdm||email===EMAIL_ADMIN)?"ADMINISTRADOR":(base.isSubAdm?"MODERADOR":"USER"))).toUpperCase();
- const isAdm=role==="ADMINISTRADOR"||role==="SUPER_ADM"||base.isAdm===true||email===EMAIL_ADMIN;
- const novoJogador={role:"USER",vip:0,coins:10000,diamonds:0,level:1,xp:0,inventory:[],phaseProgress:{normal:1,dificil:1,avancada:1,hardcore:1},achievements:[],dailyRewardLastClaim:0,dailyRewardCount:0,dailyRewardDay:"",currentHp:100,mana:100,maxMana:100,banned:false,guildId:"",guildName:"",guildRank:""};
- usuarioAtual={...usuarioAtual,...(existe?base:novoJogador),uid:auth.currentUser.uid,email:auth.currentUser.email,role,isAdm,isSubAdm:!!base.isSubAdm,displayName:base.displayName||auth.currentUser.email.split("@")[0],mana:Number(base.mana??100),maxMana:Number(base.maxMana??100),inventory:Array.isArray(base.inventory)?base.inventory:[],phaseProgress:base.phaseProgress||novoJogador.phaseProgress,achievements:Array.isArray(base.achievements)?base.achievements:[],dailyRewardCount:Number(base.dailyRewardCount||0),guildId:base.guildId||"",guildName:base.guildName||"",guildRank:base.guildRank||"",vip:Number(base.vip??base.vipLevel??0)};
- if(!existe){Object.assign(usuarioAtual,novoJogador)}
- if(isAdm){usuarioAtual.role=(email===EMAIL_ADMIN?"SUPER_ADM":role);usuarioAtual.isAdm=true;usuarioAtual.coins=Math.max(Number(usuarioAtual.coins||0),999999);usuarioAtual.diamonds=Math.max(Number(usuarioAtual.diamonds||0),99999);usuarioAtual.level=Math.max(Number(usuarioAtual.level||1),100);usuarioAtual.vip=10;}
- if(usuarioAtual.banned){await signOut(auth);throw new Error("CONTA_BANIDA")}
+ const novoJogador={coins:10000,diamonds:0,level:1,xp:0,inventory:[],phaseProgress:{normal:1,dificil:1,avancada:1,hardcore:1},achievements:[],dailyRewardLastClaim:0,dailyRewardCount:0,dailyRewardDay:"",currentHp:100,mana:100,maxMana:100,banned:false,guildId:"",guildName:"",guildRank:""};
+ usuarioAtual={...usuarioAtual,...(existe?base:novoJogador),uid:auth.currentUser.uid,email:auth.currentUser.email,displayName:base.displayName||auth.currentUser.email.split("@")[0],isAdm:auth.currentUser.email.toLowerCase()===EMAIL_ADMIN||base.isAdm===true,mana:Number(base.mana??100),maxMana:Number(base.maxMana??100),inventory:Array.isArray(base.inventory)?base.inventory:[],phaseProgress:base.phaseProgress||{normal:1,dificil:1,avancada:1,hardcore:1},achievements:Array.isArray(base.achievements)?base.achievements:[],dailyRewardCount:Number(base.dailyRewardCount||0),guildId:base.guildId||"",guildName:base.guildName||"",guildRank:base.guildRank||""};
+ if(!existe){usuarioAtual.coins=10000;usuarioAtual.diamonds=0;usuarioAtual.level=1;usuarioAtual.xp=0;usuarioAtual.guildId="";usuarioAtual.guildName="";usuarioAtual.guildRank="";usuarioAtual.currentHp=100;usuarioAtual.mana=100;usuarioAtual.maxMana=100;}
+ if(usuarioAtual.isAdm){usuarioAtual.coins=Math.max(Number(usuarioAtual.coins||0),999999);usuarioAtual.diamonds=Math.max(Number(usuarioAtual.diamonds||0),99999);usuarioAtual.level=Math.max(Number(usuarioAtual.level||1),100)}
  const bs=base.battleState;
- if(bs&&bs.categoria&&categorias[bs.categoria])faseAtualInfo={categoria:bs.categoria,etapa:Number(bs.etapa||1),hpMovel:Number(bs.hpMovel||0),maxHp:Number(bs.maxHp||0),playerHp:Number(bs.playerHp!=null?bs.playerHp:(usuarioAtual.currentHp!=null?usuarioAtual.currentHp:100)),playerMp:Number(bs.playerMp!=null?bs.playerMp:(usuarioAtual.mana!=null?usuarioAtual.mana:100)),defend:!!bs.defend};
- else faseAtualInfo={categoria:"",etapa:1,hpMovel:100,maxHp:100,playerHp:Number(usuarioAtual.currentHp??100),playerMp:Number(usuarioAtual.mana??100),defend:false};
- await setDoc(ref,{...montarEstadoPersistente(),uid:usuarioAtual.uid,email:usuarioAtual.email,role:usuarioAtual.role,vip:usuarioAtual.vip,isAdm:usuarioAtual.isAdm,isSubAdm:usuarioAtual.isSubAdm,lastSeen:serverTimestamp(),status:"Online",updatedAt:serverTimestamp()},{merge:true});
- modoSistema=isAdm?"admin":"jogador";
+ if(bs&&bs.categoria&&categorias[bs.categoria]){faseAtualInfo={categoria:bs.categoria,etapa:Number(bs.etapa||1),hpMovel:Number(bs.hpMovel||0),maxHp:Number(bs.maxHp||0),playerHp:Number(bs.playerHp!=null?bs.playerHp:(usuarioAtual.currentHp!=null?usuarioAtual.currentHp:100)),playerMp:Number(bs.playerMp!=null?bs.playerMp:(usuarioAtual.mana!=null?usuarioAtual.mana:100)),defend:!!bs.defend}}
+ else{faseAtualInfo={categoria:"",etapa:1,hpMovel:100,maxHp:100,playerHp:Number(usuarioAtual.currentHp??100),playerMp:Number(usuarioAtual.mana??100),defend:false}}
+ await setDoc(ref,{...montarEstadoPersistente(),uid:usuarioAtual.uid,email:usuarioAtual.email,lastSeen:serverTimestamp(),status:"Online",updatedAt:serverTimestamp()},{merge:true});
  atualizarPerfilUI();montarMenuLateral();renderLoja();renderizarPoderes();atualizarInventarioUI();renderizarEventos();atualizarDailyUI();iniciarHeartbeat();assinarChatGlobal();verificarAchievements();
- if(isAdm){carregarJogadoresReaisDoBanco();document.getElementById("adm-loja-controls")?.classList.remove("hidden");document.getElementById("adm-poderes-controls")?.classList.remove("hidden");document.getElementById("adm-evento-controls")?.classList.remove("hidden");document.getElementById("player-power-admin-note")?.classList.remove("hidden");}
+ if(usuarioAtual.isAdm){carregarJogadoresReaisDoBanco();document.getElementById("adm-loja-controls").classList.remove("hidden");document.getElementById("adm-poderes-controls").classList.remove("hidden");document.getElementById("adm-evento-controls").classList.remove("hidden");document.getElementById("player-power-admin-note")?.classList.remove("hidden")}
 }
 window.alternarModoAuth=()=>{modoCadastro=!modoCadastro;document.getElementById("auth-title").innerText=modoCadastro?"Criar Conta Real":"Entrar no Servidor";document.getElementById("auth-btn-action").innerText=modoCadastro?"Registrar e Gerar ID":"Entrar na Partida";document.getElementById("auth-switch-mode").innerText=modoCadastro?"Já tem conta? Faça login":"Não tem conta? Cadastre-se com ID Real"};
 window.realizarAutenticacao=async()=>{
@@ -575,7 +564,7 @@ window.batalhaAcao=async acao=>{
 
 function montarEstadoPersistente(){
  return {
-  displayName:usuarioAtual.displayName||"",avatar:usuarioAtual.avatar||"",role:usuarioAtual.role||"USER",vip:Number(usuarioAtual.vip||0),
+  displayName:usuarioAtual.displayName||"",avatar:usuarioAtual.avatar||"",
   coins:Number(usuarioAtual.coins||0),diamonds:Number(usuarioAtual.diamonds||0),
   level:Number(usuarioAtual.level||1),xp:Number(usuarioAtual.xp||0),
   inventory:Array.isArray(usuarioAtual.inventory)?usuarioAtual.inventory:[],
@@ -771,30 +760,103 @@ window.alternarSom=async()=>{let a=document.getElementById("bg-music");if(a.paus
 
 window.sairDaConta=async()=>{try{if(heartbeatTimer)clearInterval(heartbeatTimer);if(unsubscribeGlobal)unsubscribeGlobal();if(unsubscribeSupport)unsubscribeSupport();if(auth.currentUser)await updateDoc(doc(db,"jogadores_reais",auth.currentUser.uid),{status:"Offline",lastSeen:serverTimestamp()});await signOut(auth)}catch(e){console.error(e)}finally{document.getElementById("game-container").classList.add("hidden");document.getElementById("login-screen").classList.remove("hidden");document.getElementById("auth-email").value="";document.getElementById("auth-pass").value="";notificar("🚪 Conta desconectada. Faça login novamente.","info")}};
 
-onAuthStateChanged(auth,async user=>{
- if(!user){modoSistema="jogador";document.getElementById("game-container").classList.add("hidden");document.getElementById("login-screen").classList.remove("hidden");return;}
- try{
-  await carregarJogador();
-  document.getElementById("login-screen").classList.add("hidden");
-  document.getElementById("game-container").classList.remove("hidden");
-  const roleLabel=usuarioAtual.isAdm?"👑 SUPER ADM • VIP 10":usuarioAtual.isSubAdm?"🛡️ MODERADOR":"👤 Jogador";
-  document.getElementById("sidebar-role").innerText=roleLabel;
-  if(usuarioAtual.isAdm){
-    document.getElementById("current-page-title").innerText="Dashboard ADM";
-    const first=document.querySelector("#menu-list .menu-item");
-    trocarSecao("painel-adm",first);
-    carregarSolicitacoesAdm();carregarLogs();carregarJogadoresReaisDoBanco();
-  }else{
-    const first=document.querySelector("#menu-list .menu-item");
-    trocarSecao("jogar",first);
-  }
-  try{document.getElementById("bg-music").volume=.6}catch(e){}
- }catch(e){
-  console.error(e);
-  if(e.message!=="CONTA_BANIDA")alert("Não foi possível carregar sua conta. Verifique o cadastro no Firebase.");
-  document.getElementById("game-container").classList.add("hidden");document.getElementById("login-screen").classList.remove("hidden");
+onAuthStateChanged(auth,async user=>{if(!user)return;try{await carregarJogador();await carregarCatalogoCustom();await carregarLogs();carregarSolicitacoesAdm();document.getElementById("login-screen").classList.add("hidden");document.getElementById("game-container").classList.remove("hidden");
+ if(faseAtualInfo.categoria&&categorias[faseAtualInfo.categoria]&&faseAtualInfo.hpMovel>0){
+  const primeiroMenu=document.querySelector("#menu-list .menu-item");
+  trocarSecao("jogar",primeiroMenu);
+  document.getElementById("battle-mode-selection")?.classList.add("hidden");
+  document.getElementById("arena-fases-container")?.classList.remove("hidden");
+  atualizarBatalhaUI();
+  adicionarLogBatalha("💾 Batalha restaurada automaticamente do último salvamento.");
  }
-});
+ try{document.getElementById("bg-music").volume=.6}catch(e){}}catch(e){console.error(e)}});
+</script>
+
+<style id="dw-extra-style">
+.dw-central-btn{position:fixed;right:16px;bottom:18px;z-index:9998;border:1px solid rgba(139,92,246,.55);background:linear-gradient(135deg,#101a38,#21104b);color:#fff;border-radius:14px;padding:11px 15px;font-weight:800;box-shadow:0 10px 30px #0008;cursor:pointer}.dw-modal{position:fixed;inset:0;z-index:9999;background:#02050bd9;display:flex;align-items:center;justify-content:center;padding:16px}.dw-modal.hidden{display:none}.dw-panel{width:min(1050px,96vw);max-height:92vh;overflow:auto;background:linear-gradient(180deg,#07101f,#0b1020);border:1px solid #33456d;border-radius:20px;box-shadow:0 25px 80px #000c;color:#eef6ff}.dw-head{position:sticky;top:0;background:#080e1bfa;border-bottom:1px solid #243250;padding:16px;display:flex;justify-content:space-between;align-items:center;z-index:2}.dw-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;padding:16px}.dw-card{background:#0c1628;border:1px solid #223554;border-radius:15px;padding:14px}.dw-card h4{margin:0 0 7px}.dw-card p{color:#9fb0ca;font-size:13px}.dw-btn{border:0;border-radius:10px;padding:9px 12px;background:#253a63;color:#fff;font-weight:700;cursor:pointer;margin:3px}.dw-btn.primary{background:linear-gradient(135deg,#6d28d9,#2563eb)}.dw-btn.danger{background:#8b1e32}.dw-btn.green{background:#146c43}.dw-input{width:100%;box-sizing:border-box;background:#070d18;color:#fff;border:1px solid #2b3d5e;border-radius:9px;padding:10px;margin:5px 0}.dw-avatar{height:130px;border-radius:14px;background:radial-gradient(circle at 50% 25%,#3b82f6,#111827 65%);display:flex;align-items:center;justify-content:center;font-size:54px;border:1px solid #33456d;margin-bottom:9px}.dw-avatar.vip{background:radial-gradient(circle at 50% 25%,#f59e0b,#29170a 65%)}.dw-avatar.adm{background:radial-gradient(circle at 50% 25%,#ef4444,#24070b 65%)}.dw-tag{display:inline-block;padding:3px 7px;border-radius:99px;background:#17243b;color:#cbd5e1;font-size:11px;margin:2px}.dw-notify{position:fixed;right:16px;bottom:72px;z-index:10000;background:#111b2e;border:1px solid #7c3aed;color:#fff;padding:12px 15px;border-radius:12px;box-shadow:0 15px 40px #0009;display:none}.dw-notify.show{display:block}.dw-tabs{display:flex;gap:7px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid #1e2b43}.dw-section{display:none}.dw-section.active{display:block}.dw-chat{height:300px;overflow:auto;background:#050a13;border:1px solid #23334f;border-radius:12px;padding:10px}.dw-msg{padding:8px 10px;margin:5px 0;background:#0e192b;border-radius:10px}.dw-msg.me{border-left:3px solid #8b5cf6}.dw-badge{min-width:18px;height:18px;border-radius:99px;background:#ef4444;display:inline-flex;align-items:center;justify-content:center;font-size:11px;margin-left:5px}.dw-secret{border-color:#ef4444;box-shadow:0 0 18px #ef444433}.dw-admin-only{display:none}
+</style>
+<button class="dw-central-btn" id="dw-central-open" onclick="dwOpenCentral()">⚡ Central</button>
+<div id="dw-admin-alert" class="dw-notify">📨 Novo pedido para o ADM</div>
+<div id="dw-central" class="dw-modal hidden">
+ <div class="dw-panel">
+  <div class="dw-head"><div><b>🐉 Dragon War — Central</b><div style="font-size:12px;color:#8fa2c0">Guilda • Loja • Inventário • Chats • Rankings</div></div><button class="dw-btn" onclick="dwCloseCentral()">✕</button></div>
+  <div class="dw-tabs">
+   <button class="dw-btn primary" onclick="dwTab('dw-home')">🏠 Visão geral</button>
+   <button class="dw-btn" onclick="dwTab('dw-guild')">🏰 Guilda</button>
+   <button class="dw-btn" onclick="dwTab('dw-store')">🛒 Loja</button>
+   <button class="dw-btn" onclick="dwTab('dw-inv')">🎒 Inventário</button>
+   <button class="dw-btn" onclick="dwTab('dw-chats')">💬 Chats</button>
+   <button class="dw-btn" onclick="dwTab('dw-ranks')">🏆 Rankings</button>
+   <button class="dw-btn dw-admin-only" id="dw-adm-tab" onclick="dwTab('dw-adm')">👑 ADM <span id="dw-adm-count" class="dw-badge">0</span></button>
+  </div>
+  <section id="dw-home" class="dw-section active"><div class="dw-grid">
+   <div class="dw-card"><h4>👤 Perfil</h4><p id="dw-profile-summary">Carregando...</p></div>
+   <div class="dw-card"><h4>💰 Recursos</h4><p id="dw-resource-summary">Carregando...</p></div>
+   <div class="dw-card"><h4>🏰 Guilda</h4><p id="dw-guild-summary">Sem guilda</p><button class="dw-btn primary" onclick="dwTab('dw-guild')">Abrir guilda</button></div>
+   <div class="dw-card"><h4>💬 Comunicação</h4><p>Chat geral, privê e guilda. O canal ADM é separado.</p><button class="dw-btn" onclick="dwTab('dw-chats')">Abrir chats</button></div>
+  </div></section>
+  <section id="dw-guild" class="dw-section"><div class="dw-grid">
+   <div class="dw-card" style="grid-column:1/-1"><h3>🏰 Criar uma Guilda</h3><p>Crie sua própria guilda com nome, descrição, tipo e identidade. A guilda real será salva no Firebase.</p><input id="dw-guild-name" class="dw-input" placeholder="Nome da guilda"><input id="dw-guild-desc" class="dw-input" placeholder="Descrição"><select id="dw-guild-type" class="dw-input"><option value="aberta">Aberta</option><option value="fechada">Fechada</option></select><button class="dw-btn primary" onclick="dwCreateGuildNew()">🏰 Criar Guilda</button></div>
+   <div class="dw-card"><h4>🛡️ Minha Guilda</h4><p id="dw-my-guild">Sem guilda.</p><button class="dw-btn" onclick="dwRefreshGuild()">Atualizar</button></div>
+   <div class="dw-card"><h4>🪙 Loja da Guilda</h4><p>Moeda exclusiva da guilda, recursos, personagens, insígnias e itens.</p><button class="dw-btn primary" onclick="dwOpenExistingGuildShop()">Abrir loja da guilda</button></div>
+   <div class="dw-card"><h4>🐉 Conteúdo da Guilda</h4><p>Dragão da guilda, loot, nível, membros e personagens.</p><button class="dw-btn" onclick="dwOpenExistingGuildPanel()">Abrir painel</button></div>
+  </div></section>
+  <section id="dw-store" class="dw-section"><div class="dw-grid">
+   <div class="dw-card" style="grid-column:1/-1"><h3>🛒 Loja Principal</h3><p>Disponível mesmo para quem não quer entrar em guilda. A loja da guilda usa outra moeda e outra área.</p></div>
+   <div class="dw-card"><div class="dw-avatar">⚔️</div><h4>⚔️ Armas</h4><p>Armas e equipamentos do Dragon War.</p><button class="dw-btn primary" onclick="dwTryOpenNormalShop('Armas')">Abrir</button></div>
+   <div class="dw-card"><div class="dw-avatar">🧙</div><h4>🧙 Personagens</h4><p>Personagens e skins.</p><button class="dw-btn primary" onclick="dwTryOpenNormalShop('Personagens')">Abrir</button></div>
+   <div class="dw-card"><div class="dw-avatar">🧪</div><h4>🧪 Poções</h4><p>Itens consumíveis para batalha.</p><button class="dw-btn primary" onclick="dwTryOpenNormalShop('Poções')">Abrir</button></div>
+   <div class="dw-card"><div class="dw-avatar">🔥</div><h4>🔥 Poderes</h4><p>Poderes e habilidades liberados pelo sistema.</p><button class="dw-btn primary" onclick="dwTryOpenNormalShop('Poderes')">Abrir</button></div>
+   <div class="dw-card dw-admin-only" id="dw-secret-store"><div class="dw-avatar adm">👑</div><h4>🔒 Cofre do ADM Gabriel</h4><p>Conteúdo secreto que não aparece para jogadores.</p><button class="dw-btn danger" onclick="dwOpenSecretAvatars()">Ver 5 exclusivos</button></div>
+  </div></section>
+  <section id="dw-inv" class="dw-section"><div style="padding:16px"><h3>🎒 Inventário / Avatares</h3><p style="color:#9fb0ca">Quando um avatar estiver equipado aparece <b>USANDO ESTE</b>. Os demais ficam como <b>LIVRE — USAR ESTE</b>.</p><div id="dw-avatar-grid" class="dw-grid"></div></div></section>
+  <section id="dw-chats" class="dw-section"><div class="dw-grid">
+   <div class="dw-card" style="grid-column:1/-1"><h3>💬 Chats</h3><p>🌎 Geral: todos • 🔒 Privê: somente contatos adicionados • 🏰 Guilda: somente membros da mesma guilda.</p></div>
+   <div class="dw-card"><h4>🌎 Chat Geral</h4><div id="dw-chat-global" class="dw-chat"></div><input id="dw-global-input" class="dw-input" placeholder="Mensagem no chat geral"><button class="dw-btn primary" onclick="dwSendGlobalChat()">Enviar</button></div>
+   <div class="dw-card"><h4>🔒 Chat Privê</h4><input id="dw-private-target" class="dw-input" placeholder="UID do jogador para conversar"><button class="dw-btn" onclick="dwAddContact()">➕ Adicionar</button><div id="dw-chat-private" class="dw-chat"></div><input id="dw-private-input" class="dw-input" placeholder="Mensagem privada"><button class="dw-btn primary" onclick="dwSendPrivateChat()">Enviar</button></div>
+   <div class="dw-card"><h4>🏰 Chat da Guilda</h4><div id="dw-chat-guild" class="dw-chat"></div><input id="dw-guild-chat-input" class="dw-input" placeholder="Mensagem para a guilda"><button class="dw-btn primary" onclick="dwSendGuildChat()">Enviar</button></div>
+   <div class="dw-card dw-admin-only"><h4>👑 Canal ADM</h4><p>Sem botão “Fale com ADM” aqui. Este canal mostra as notificações dos jogadores que tentarem chamar o ADM.</p><div id="dw-adm-requests" class="dw-chat"></div></div>
+  </div></section>
+  <section id="dw-ranks" class="dw-section"><div class="dw-grid"><div class="dw-card"><h3>🌎 Rank Geral</h3><div id="dw-rank-general">Carregando...</div></div><div class="dw-card"><h3>🏰 Rank de Guildas</h3><div id="dw-rank-guild">Carregando...</div></div></div></section>
+  <section id="dw-adm" class="dw-section"><div class="dw-grid">
+   <div class="dw-card" style="grid-column:1/-1"><h3>👑 Central do ADM</h3><p>Funções de gerenciamento do jogador: puxar elenco, ceder, atendimento, ADM, perfil, medalhas, recompensas, VIP, retirar tudo, iniciante, banir e desmanchar.</p><input id="dw-adm-player-uid" class="dw-input" placeholder="UID do jogador"><button class="dw-btn" onclick="dwLoadAdmPlayer()">🔎 Buscar jogador</button><div id="dw-adm-player-info"></div></div>
+   <div class="dw-card" style="grid-column:1/-1"><h4>⚙️ Ações do jogador</h4><button class="dw-btn" onclick="dwAdmAction('elenco')">👥 Puxar elenco</button><button class="dw-btn" onclick="dwAdmAction('ceder')">🔄 Ceder</button><button class="dw-btn" onclick="dwAdmAction('atendimento')">🎧 Puxar atendimento</button><button class="dw-btn primary" onclick="dwAdmAction('admin')">👑 Conceder/Remover ADM</button><button class="dw-btn" onclick="dwAdmAction('perfil')">✏️ Editar perfil</button><button class="dw-btn" onclick="dwAdmAction('medalha')">🏅 Bonificar medalhas</button><button class="dw-btn" onclick="dwAdmAction('bonus')">🎁 Bonificar</button><button class="dw-btn danger" onclick="dwAdmAction('retirarbonus')">❌ Tirar bonificação</button><button class="dw-btn" onclick="dwAdmAction('vip')">👑 Adicionar/Comprar VIP</button><button class="dw-btn danger" onclick="dwAdmAction('retirarvip')">🚫 Retirar VIP</button><button class="dw-btn danger" onclick="dwAdmAction('tudo')">🧹 Retirar tudo</button><button class="dw-btn" onclick="dwAdmAction('iniciante')">🌱 Deixar Iniciante</button><button class="dw-btn danger" onclick="dwAdmAction('banir')">🔨 Banir</button><button class="dw-btn green" onclick="dwAdmAction('desbanir')">♻️ Desbanir</button><button class="dw-btn danger" onclick="dwAdmAction('desmanchar')">🗑️ Desmanchar jogador</button></div>
+  </div></section>
+ </div>
+</div>
+<script>
+(function(){
+ const secretAvatars=["👑🐉","🔥👑","⚡👑","🌌👑","🐲💎"];
+ const publicAvatars=["⚔️","🧙","🐉","🌊","🌪️","❄️","🌲","⚡","😈","😇","🥷","🗡️","🌙","🪨","💎","🌋","💧","☯️","🛡️","🐲"];
+ window.dwOpenCentral=()=>{document.getElementById('dw-central')?.classList.remove('hidden');dwRefreshAll();};
+ window.dwCloseCentral=()=>document.getElementById('dw-central')?.classList.add('hidden');
+ window.dwTab=(id)=>{document.querySelectorAll('.dw-section').forEach(x=>x.classList.remove('active'));document.getElementById(id)?.classList.add('active');if(id==='dw-inv')dwRenderAvatars();if(id==='dw-chats')dwStartChats();if(id==='dw-ranks')dwLoadRanks();if(id==='dw-adm')dwStartAdm();};
+ function isAdm(){return !!(window.usuarioAtual?.isAdm===true || ['ADMINISTRADOR','SUPER_ADM'].includes(String(window.usuarioAtual?.role||'').toUpperCase()));}
+ function isMainAdm(){return String(window.usuarioAtual?.email||'').toLowerCase()==='groupsacabraldigital@gmail.com';}
+ function currentName(){try{return typeof nomeAtual==='function'?nomeAtual():(window.usuarioAtual?.displayName||'Jogador')}catch(e){return window.usuarioAtual?.displayName||'Jogador'}}
+ window.dwRefreshAll=()=>{let u=window.usuarioAtual||{};document.getElementById('dw-profile-summary').innerHTML=`<b>${escapeHtml(currentName())}</b><br>Nível ${u.level||1} • ${u.role||'USER'} • VIP ${u.vip||0}`;document.getElementById('dw-resource-summary').innerHTML=`💰 ${Number(u.coins||0).toLocaleString('pt-BR')} • 💎 ${Number(u.diamonds||0).toLocaleString('pt-BR')}<br>🏅 ${u.rank||'Iniciante'}`;document.getElementById('dw-guild-summary').textContent=u.guildName?`🏰 ${u.guildName} • ${u.guildRank||'Membro'}`:'Sem guilda';document.getElementById('dw-my-guild').textContent=u.guildName?`🏰 ${u.guildName} • ${u.guildRank||'Membro'}`:'Sem guilda';document.querySelectorAll('.dw-admin-only').forEach(x=>x.style.display=isAdm()?'block':'none');if(isAdm())document.getElementById('dw-central-open').style.display='block';};
+ window.dwCreateGuildNew=async()=>{if(!window.usuarioAtual?.uid)return alert('Faça login primeiro.');if(window.usuarioAtual.guildId)return alert('Você já está em uma guilda.');let n=document.getElementById('dw-guild-name').value.trim(),d=document.getElementById('dw-guild-desc').value.trim(),t=document.getElementById('dw-guild-type').value;if(n.length<3)return alert('O nome da guilda precisa ter pelo menos 3 caracteres.');try{if(typeof criarGuilda==='function'){let old=window.document.getElementById('guild-name');if(old){old.value=n;let od=document.getElementById('guild-desc');if(od)od.value=d;let ot=document.getElementById('guild-type');if(ot)ot.value=t;}await criarGuilda();}else{alert('O módulo de guilda do jogo não está disponível nesta versão.');}}catch(e){console.error(e);alert('Não foi possível criar a guilda.');}dwRefreshAll();};
+ window.dwRefreshGuild=()=>{try{carregarGuildaDoJogador();carregarGuildasDisponiveis();}catch(e){}dwRefreshAll();};
+ window.dwOpenExistingGuildShop=()=>{try{abrirLojaGuilda();}catch(e){alert('Abra primeiro a tela de guilda no jogo.')}};
+ window.dwOpenExistingGuildPanel=()=>{try{renderGuildaPainel();}catch(e){alert('Abra primeiro a tela de guilda no jogo.')}};
+ window.dwTryOpenNormalShop=(cat)=>{try{if(typeof trocarSecao==='function'){let el=[...document.querySelectorAll('.menu-item')].find(x=>(x.textContent||'').toLowerCase().includes('loja'));if(el)trocarSecao('loja',el);}alert('🛒 Categoria '+cat+' aberta na Loja principal.');}catch(e){alert('Abra a Loja principal pelo menu do jogo.')}};
+ window.dwRenderAvatars=()=>{let box=document.getElementById('dw-avatar-grid');if(!box)return;let u=window.usuarioAtual||{};let arr=publicAvatars.map((icon,i)=>({id:'avatar_'+(i+1),icon,secret:false}));if(isMainAdm())secretAvatars.forEach((icon,i)=>arr.push({id:'adm_secret_'+(i+1),icon,secret:true}));let current=u.avatar||'';box.innerHTML=arr.map(a=>{let using=current===a.id||current===a.icon;return `<div class="dw-card ${a.secret?'dw-secret':''}"><div class="dw-avatar ${a.secret?'adm':''}">${a.icon}</div><h4>${a.secret?'🔒 ADM Gabriel':'Avatar '+a.id.replace('avatar_','')}</h4><span class="dw-tag">${a.secret?'EXCLUSIVO ADM GABRIEL':'LOJA'}</span><p>${using?'<b>✅ USANDO ESTE</b>':'Livre para usar'}</p><button class="dw-btn ${using?'green':'primary'}" onclick="dwUseAvatar('${a.id}','${a.icon}')">${using?'USANDO ESTE':'USAR ESTE'}</button></div>`}).join('');};
+ window.dwUseAvatar=async(id,icon)=>{if(id.startsWith('adm_secret_')&&!isMainAdm())return alert('Acesso negado.');try{window.usuarioAtual.avatar=id;await updateDoc(doc(db,'jogadores_reais',window.usuarioAtual.uid),{avatar:id});dwRenderAvatars();if(typeof notificar==='function')notificar('🖼️ Avatar equipado!','success')}catch(e){console.error(e);alert('Não foi possível salvar o avatar.')}};
+ window.dwOpenSecretAvatars=()=>{if(!isMainAdm())return alert('Acesso exclusivo do ADM Gabriel.');dwTab('dw-inv');dwRenderAvatars();};
+ window.dwSendGlobalChat=async()=>{let i=document.getElementById('dw-global-input'),t=i.value.trim();if(!t)return;await addDoc(collection(db,'chat_global'),{senderUid:usuarioAtual.uid,senderName:isAdm()?'👑 ADM GABRIEL':currentName(),text:t,global:true,createdAt:serverTimestamp()});i.value='';};
+ window.dwAddContact=async()=>{let target=document.getElementById('dw-private-target').value.trim();if(!target||target===usuarioAtual.uid)return alert('Informe o UID de outro jogador.');try{await setDoc(doc(db,'contatos',usuarioAtual.uid,'lista',target),{uid:target,createdAt:serverTimestamp()});alert('👤 Jogador adicionado aos seus contatos.');}catch(e){console.error(e);alert('Não foi possível adicionar o contato.')}};
+ window.dwSendPrivateChat=async()=>{let target=document.getElementById('dw-private-target').value.trim(),i=document.getElementById('dw-private-input'),t=i.value.trim();if(!target||!t)return;await addDoc(collection(db,'chat_privado'),{from:usuarioAtual.uid,to:target,text:t,senderName:currentName(),createdAt:serverTimestamp()});i.value='';};
+ window.dwSendGuildChat=async()=>{if(!usuarioAtual.guildId)return alert('Você precisa estar em uma guilda.');let i=document.getElementById('dw-guild-chat-input'),t=i.value.trim();if(!t)return;await addDoc(collection(db,'chat_guilda'),{guildId:usuarioAtual.guildId,from:usuarioAtual.uid,senderName:currentName(),text:t,createdAt:serverTimestamp()});i.value='';};
+ window.dwStartChats=()=>{if(typeof onSnapshot!=='function')return;try{onSnapshot(query(collection(db,'chat_global'),orderBy('createdAt','asc')),snap=>{let b=document.getElementById('dw-chat-global');if(b)b.innerHTML=snap.docs.slice(-80).map(x=>{let d=x.data();return `<div class="dw-msg ${d.senderUid===usuarioAtual.uid?'me':''}"><b>${escapeHtml(d.senderName||'Jogador')}</b>: ${escapeHtml(d.text||'')}</div>`}).join('');if(b)b.scrollTop=b.scrollHeight});onSnapshot(query(collection(db,'chat_privado'),orderBy('createdAt','asc')),snap=>{let target=document.getElementById('dw-private-target')?.value.trim(),b=document.getElementById('dw-chat-private');if(!b)return;b.innerHTML=snap.docs.slice(-100).map(x=>{let d=x.data();if(!target||!((d.from===usuarioAtual.uid&&d.to===target)||(d.from===target&&d.to===usuarioAtual.uid)))return '';return `<div class="dw-msg"><b>${escapeHtml(d.senderName||'Jogador')}</b>: ${escapeHtml(d.text||'')}</div>`}).join('');b.scrollTop=b.scrollHeight});onSnapshot(query(collection(db,'chat_guilda'),orderBy('createdAt','asc')),snap=>{let b=document.getElementById('dw-chat-guild');if(!b)return;b.innerHTML=snap.docs.slice(-100).map(x=>{let d=x.data();if(!usuarioAtual.guildId||d.guildId!==usuarioAtual.guildId)return '';return `<div class="dw-msg"><b>${escapeHtml(d.senderName||'Jogador')}</b>: ${escapeHtml(d.text||'')}</div>`}).join('');b.scrollTop=b.scrollHeight});}catch(e){console.warn(e)}};
+ window.dwLoadRanks=async()=>{try{let s=await getDocs(collection(db,'jogadores_reais')),rows=s.docs.map(x=>({uid:x.id,...x.data()})).filter(x=>!x.isAdm&&String(x.role||'').toUpperCase()!=='ADMINISTRADOR').sort((a,b)=>Number(b.points||b.xp||0)-Number(a.points||a.xp||0)).slice(0,20);document.getElementById('dw-rank-general').innerHTML=rows.map((x,i)=>`<div class="dw-msg">#${i+1} <b>${escapeHtml(x.displayName||x.nome||'Jogador')}</b> — Nível ${x.level||1}</div>`).join('')||'Nenhum jogador ainda.';let g=await getDocs(collection(db,'guildas')),gs=g.docs.map(x=>x.data()).sort((a,b)=>Number(b.level||1)-Number(a.level||1));document.getElementById('dw-rank-guild').innerHTML=gs.map((x,i)=>`<div class="dw-msg">#${i+1} 🏰 <b>${escapeHtml(x.nome||'Guilda')}</b> — Nível ${x.level||1} • ${x.membros||0} membros</div>`).join('')||'Nenhuma guilda criada ainda.';}catch(e){console.error(e)}};
+ let admListenerStarted=false;
+ window.dwStartAdm=()=>{if(!isAdm())return;if(admListenerStarted)return;admListenerStarted=true;try{onSnapshot(query(collection(db,'solicitacoes_adm'),orderBy('createdAt','desc')),snap=>{let novos=snap.docs.filter(x=>(x.data().status||'nova')==='nova').slice(0,30),badge=document.getElementById('dw-adm-count'),box=document.getElementById('dw-adm-requests');if(badge)badge.textContent=String(novos.length);if(box)box.innerHTML=novos.map(x=>{let d=x.data();return `<div class="dw-msg"><b>📨 ${escapeHtml(d.nome||'Jogador')}</b><br>UID: ${escapeHtml(d.uid||d.id||'')}<br>${escapeHtml(d.motivo||'Sem motivo')}<br><button class="dw-btn primary" onclick="dwHandleRequest('${x.id}')">Atender</button></div>`}).join('')||'Nenhuma solicitação nova.';if(novos.length){let n=document.getElementById('dw-admin-alert');n.classList.add('show');setTimeout(()=>n.classList.remove('show'),5000)}})}catch(e){console.warn(e)}};
+ window.dwHandleRequest=async(id)=>{try{await updateDoc(doc(db,'solicitacoes_adm',id),{status:'em_atendimento',handledBy:usuarioAtual.uid,handledAt:serverTimestamp()});alert('🎧 Solicitação puxada para atendimento.');}catch(e){alert('Não foi possível assumir o atendimento.')}};
+ window.dwLoadAdmPlayer=async()=>{if(!isAdm())return alert('Acesso negado.');let uid=document.getElementById('dw-adm-player-uid').value.trim();if(!uid)return;let s=await getDoc(doc(db,'jogadores_reais',uid));let b=document.getElementById('dw-adm-player-info');if(!s.exists()){b.innerHTML='<p>Jogador não encontrado.</p>';return}let d=s.data();b.innerHTML=`<div class="dw-card"><b>${escapeHtml(d.displayName||d.nome||'Jogador')}</b><br>UID: ${escapeHtml(uid)}<br>Role: ${escapeHtml(d.role||'USER')} • VIP ${d.vip||0}<br>💰 ${d.coins||0} • 💎 ${d.diamonds||0}<br>Status: ${d.banned?'BANIDO':'Ativo'}</div>`};
+ window.dwAdmAction=async(action)=>{if(!isAdm())return alert('Acesso negado.');let uid=document.getElementById('dw-adm-player-uid').value.trim();if(!uid)return alert('Informe o UID do jogador.');if(uid===usuarioAtual.uid&&['admin','desmanchar','tudo','retirarvip'].includes(action))return alert('O ADM Gabriel não pode remover seus próprios privilégios.');let ref=doc(db,'jogadores_reais',uid),s=await getDoc(ref);if(!s.exists())return alert('Jogador não encontrado.');let d=s.data(),u={};if(action==='admin'){u.role=String(d.role||'USER').toUpperCase()==='ADMINISTRADOR'?'USER':'ADMINISTRADOR';u.isAdm=u.role==='ADMINISTRADOR';}if(action==='vip'){let v=Number(prompt('Novo VIP (0 a 10):',String(d.vip||0)));if(!Number.isFinite(v))return;u.vip=Math.max(0,Math.min(10,Math.floor(v)));}if(action==='retirarvip')u.vip=0;if(action==='tudo')u={...u,coins:0,diamonds:0,achievements:[],inventory:[],vip:0};if(action==='iniciante')u={...u,level:1,xp:0,rank:'Iniciante'};if(action==='banir')u.banned=true;if(action==='desbanir')u.banned=false;if(action==='desmanchar')u={...u,desativado:true,banned:true,inventory:[],coins:0,diamonds:0};if(action==='bonus'){u.coins=Number(d.coins||0)+1000;u.diamonds=Number(d.diamonds||0)+100;}if(action==='retirarbonus'){u.coins=0;u.diamonds=0;}if(action==='perfil'){let n=prompt('Novo nome:',d.displayName||d.nome||'Jogador');if(n)u.displayName=n;}if(action==='atendimento'){await addDoc(collection(db,'salas_atendimento'),{playerUid:uid,playerName:d.displayName||d.nome||'Jogador',admUid:usuarioAtual.uid,status:'aberta',createdAt:serverTimestamp()});}if(action==='elenco')u.elencoPuxadoPor=usuarioAtual.uid;if(action==='ceder')u.cedidoPor=usuarioAtual.uid;if(action==='medalha'){let m=Array.isArray(d.medalhas)?d.medalhas:[];m.push({nome:'Medalha ADM',createdAt:Date.now()});u.medalhas=m;}await updateDoc(ref,u);if(typeof registrarLog==='function')await registrarLog('Ação ADM',action+' -> '+uid);alert('✅ Ação realizada.');dwLoadAdmPlayer();};
+ function escapeHtml(x){return String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+ window.addEventListener('input',e=>{if(e.target?.id==='dw-private-target')dwStartChats();});
+})();
 </script>
 </body>
 </html>
