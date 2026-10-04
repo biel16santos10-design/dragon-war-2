@@ -31,8 +31,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .btn-primary { background: linear-gradient(135deg, #ff6b00, #ff4500); color: #fff; }
 .btn-success { background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; }
 .btn-danger { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; }
-.btn-warning { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; }
-.btn-info { background: linear-gradient(135deg, #3b82f6, #1e40af); color: #fff; }
 
 .game-layout { display: flex; min-height: 100vh; }
 .sidebar { width: 200px; background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); border-right: 2px solid #334155; padding: 20px 0; position: fixed; height: 100vh; overflow-y: auto; }
@@ -59,9 +57,9 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .badge-muted { background: #64748b; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 0.7em; margin-left: 5px; }
 .text-admin { color: #c4b5fd; text-shadow: 0 0 10px rgba(196, 181, 253, 0.6); }
 
-.screen { display: none; }
-.screen.active { display: block; animation: fadeIn 0.3s; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.screen { display: none; animation: fadeIn 0.4s ease-out; }
+.screen.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 .screen-title { font-size: 2em; margin-bottom: 20px; color: #fbbf24; display: flex; align-items: center; gap: 10px; }
 
@@ -70,7 +68,8 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .boss-card { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 16px; padding: 20px; border: 2px solid #334155; position: relative; transition: all 0.3s; }
 .boss-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 .boss-rank { position: absolute; top: 15px; right: 15px; font-size: 2em; font-weight: 900; color: #fbbf24; text-shadow: 0 0 10px rgba(251, 191, 36, 0.6); }
-.boss-image { font-size: 100px; text-align: center; margin: 20px 0; }
+.boss-image { font-size: 100px; text-align: center; margin: 20px 0; animation: float 3s ease-in-out infinite; }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 .boss-name { font-size: 1.8em; font-weight: 900; text-align: center; margin-bottom: 5px; }
 .boss-title { text-align: center; color: #94a3b8; font-size: 0.9em; margin-bottom: 15px; }
 .boss-stats { display: flex; justify-content: space-around; margin-bottom: 15px; }
@@ -84,13 +83,15 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .reward-icon { font-size: 1.5em; }
 .btn-battle { width: 100%; padding: 18px; background: linear-gradient(135deg, #ff8c00, #ff4500); color: #fff; border: none; border-radius: 12px; font-size: 1.2em; font-weight: 900; cursor: pointer; text-transform: uppercase; }
 
-/* SHOP */
+/* SHOP WITH CATEGORIES */
 .shop-categories { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
 .category-btn { padding: 12px 20px; background: #1e293b; border: 2px solid #334155; border-radius: 8px; color: #fff; cursor: pointer; font-weight: bold; transition: all 0.3s; }
-.category-btn.active { background: #3b82f6; border-color: #3b82f6; }
+.category-btn:hover { border-color: #3b82f6; }
+.category-btn.active { background: #3b82f6; border-color: #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
 .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; }
 .shop-item { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 12px; padding: 15px; border: 2px solid #334155; transition: all 0.3s; }
 .shop-item:hover { transform: translateY(-5px); }
+.shop-item.hidden-item { display: none; }
 .rarity-legendary { border-color: #fbbf24; box-shadow: 0 0 15px rgba(251, 191, 36, 0.3); }
 .rarity-epic { border-color: #a855f7; box-shadow: 0 0 15px rgba(168, 85, 247, 0.3); }
 .rarity-rare { border-color: #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
@@ -116,7 +117,8 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 
 /* RESUMO */
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
-.stat-card { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 12px; padding: 20px; border: 1px solid #334155; text-align: center; }
+.stat-card { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 12px; padding: 20px; border: 1px solid #334155; text-align: center; transition: all 0.3s; }
+.stat-card:hover { transform: translateY(-3px); border-color: #3b82f6; }
 .stat-card .stat-icon { font-size: 2.5em; margin-bottom: 10px; }
 .stat-card .stat-value { font-size: 2em; font-weight: bold; color: #fbbf24; }
 .stat-card .stat-label { color: #94a3b8; font-size: 0.9em; margin-top: 5px; }
@@ -166,7 +168,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 
 /* MODAL */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(5px); }
-.modal-overlay.active { display: flex; }
+.modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
 .modal { background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid #3b82f6; border-radius: 20px; padding: 30px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(59, 130, 246, 0.4); }
 .modal h2 { color: #60a5fa; margin-bottom: 20px; font-size: 1.8em; display: flex; align-items: center; gap: 10px; }
 .modal-section { margin-bottom: 20px; padding: 15px; background: rgba(0, 0, 0, 0.3); border-radius: 12px; border: 1px solid #334155; }
@@ -181,7 +183,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .avatar-option.selected { border-color: #22c55e; box-shadow: 0 0 20px rgba(34, 197, 94, 0.6); }
 .btn-change-avatar { width: 100%; padding: 15px; background: linear-gradient(135deg, #3b82f6, #1e40af); color: #fff; border: none; border-radius: 12px; font-size: 1.1em; font-weight: bold; cursor: pointer; margin-top: 15px; }
 
-/* ADM ACTIONS MODAL */
+/* ADM ACTIONS */
 .adm-actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
 .adm-action-btn { padding: 15px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; transition: all 0.3s; display: flex; flex-direction: column; align-items: center; gap: 5px; }
 .adm-action-btn:hover { transform: translateY(-2px); }
@@ -195,7 +197,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .action-unban { background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; }
 .action-give { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
 .action-promote { background: linear-gradient(135deg, #a855f7, #7c3aed); color: #fff; }
-
 .ban-duration { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
 .ban-duration button { flex: 1; min-width: 100px; padding: 10px; background: #1e293b; border: 2px solid #334155; color: #fff; border-radius: 8px; cursor: pointer; }
 .ban-duration button:hover { border-color: #ef4444; background: rgba(239, 68, 68, 0.2); }
@@ -223,7 +224,37 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .chat-input { flex: 1; padding: 10px 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #fff; font-size: 0.85em; margin: 0; }
 .chat-send { width: auto; padding: 10px 16px; background: linear-gradient(135deg, #3b82f6, #1e40af); border-radius: 8px; margin: 0; font-size: 0.85em; }
 
-#toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.9); border: 2px solid #ff6b00; color: #fff; padding: 15px 30px; border-radius: 12px; display: none; z-index: 9999; font-weight: bold; box-shadow: 0 0 30px rgba(255, 107, 0, 0.6); }
+/* BATTLE ANIMATION */
+.battle-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 2000; flex-direction: column; }
+.battle-overlay.active { display: flex; animation: fadeIn 0.3s; }
+.battle-scene { text-align: center; }
+.battle-player { font-size: 100px; animation: playerAttack 1s ease-in-out; display: inline-block; }
+.battle-enemy { font-size: 120px; animation: enemyHit 1s ease-in-out; display: inline-block; margin-left: 50px; }
+@keyframes playerAttack { 0% { transform: translateX(0); } 50% { transform: translateX(100px) rotate(15deg); } 100% { transform: translateX(0); } }
+@keyframes enemyHit { 0% { transform: translateX(0); opacity: 1; } 50% { transform: translateX(-30px); opacity: 0.5; } 100% { transform: translateX(0); opacity: 1; } }
+@keyframes dodge { 0% { transform: translateX(0); } 30% { transform: translateX(-80px) skewX(-15deg); } 60% { transform: translateX(40px) skewX(10deg); } 100% { transform: translateX(0); } }
+.dodging { animation: dodge 0.6s ease-out !important; }
+.battle-result { font-size: 2em; font-weight: bold; margin-top: 30px; }
+.battle-result.win { color: #22c55e; text-shadow: 0 0 20px rgba(34, 197, 94, 0.6); }
+.battle-result.lose { color: #ef4444; text-shadow: 0 0 20px rgba(239, 68, 68, 0.6); }
+.battle-actions { display: flex; gap: 20px; margin-top: 30px; }
+.battle-btn { padding: 15px 30px; font-size: 1.2em; border-radius: 12px; border: none; cursor: pointer; font-weight: bold; width: auto; }
+.btn-attack { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; }
+.btn-dodge { background: linear-gradient(135deg, #3b82f6, #1e40af); color: #fff; }
+.btn-flee { background: linear-gradient(135deg, #64748b, #475569); color: #fff; }
+
+/* MUSIC TOGGLE */
+.music-toggle { display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; margin-top: 10px; }
+.music-toggle label { cursor: pointer; flex: 1; }
+.toggle-switch { position: relative; width: 50px; height: 26px; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #64748b; border-radius: 26px; transition: 0.3s; }
+.toggle-slider:before { content: ""; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; }
+input:checked + .toggle-slider { background: #22c55e; }
+input:checked + .toggle-slider:before { transform: translateX(24px); }
+
+#toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.9); border: 2px solid #ff6b00; color: #fff; padding: 15px 30px; border-radius: 12px; display: none; z-index: 9999; font-weight: bold; box-shadow: 0 0 30px rgba(255, 107, 0, 0.6); animation: slideUp 0.3s; }
+@keyframes slideUp { from { transform: translateX(-50%) translateY(20px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
 .hidden { display: none !important; }
 
 @media (max-width: 768px) {
@@ -272,13 +303,13 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 <div id="gameView" class="hidden">
     <div class="game-layout">
         <div class="sidebar">
-            <div class="sidebar-item active" onclick="showScreen('combat', this)"><span class="icon">️</span><span class="label">JOGAR</span></div>
-            <div class="sidebar-item" onclick="showScreen('resumo', this)"><span class="icon"></span><span class="label">RESUMO</span></div>
+            <div class="sidebar-item active" onclick="showScreen('combat', this)"><span class="icon">⚔️</span><span class="label">JOGAR</span></div>
+            <div class="sidebar-item" onclick="showScreen('resumo', this)"><span class="icon">📊</span><span class="label">RESUMO</span></div>
             <div class="sidebar-item" onclick="showScreen('campanha', this)"><span class="icon">🏰</span><span class="label">CAMPANHA</span></div>
             <div class="sidebar-item" onclick="showScreen('dungeons', this)"><span class="icon">👁️</span><span class="label">DUNGEONS</span></div>
             <div class="sidebar-item" onclick="showScreen('arena', this)"><span class="icon">🏟️</span><span class="label">ARENA</span></div>
-            <div class="sidebar-item" onclick="showScreen('eventos', this)"><span class="icon"></span><span class="label">EVENTOS</span></div>
-            <div class="sidebar-item" onclick="showScreen('shop', this)"><span class="icon">🎒</span><span class="label">INVENTÁRIO</span></div>
+            <div class="sidebar-item" onclick="showScreen('eventos', this)"><span class="icon">📅</span><span class="label">EVENTOS</span></div>
+            <div class="sidebar-item" onclick="showScreen('shop', this)"><span class="icon"></span><span class="label">INVENTÁRIO</span></div>
             <div class="sidebar-item" onclick="showScreen('skills', this)"><span class="icon">✨</span><span class="label">PODERES</span></div>
         </div>
 
@@ -295,39 +326,37 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
                     <div class="resource"><span class="resource-icon">⚡</span><span class="resource-value" id="resEnergy">120/120</span></div>
                     <div class="resource"><span class="resource-icon">💰</span><span class="resource-value" id="resCoins">0</span></div>
                     <div class="resource"><span class="resource-icon">💎</span><span class="resource-value" id="resGems">0</span></div>
-                    <div class="resource"><span class="resource-icon"></span><span class="resource-value" id="resCrystals">0</span></div>
+                    <div class="resource"><span class="resource-icon">🔮</span><span class="resource-value" id="resCrystals">0</span></div>
                     <div class="resource"><span class="resource-icon">⭐</span><span class="resource-value" id="resPoints">0</span></div>
                     <button onclick="openSettings()" style="width:auto;padding:8px 15px;background:#3b82f6;color:#fff;border-radius:8px;margin:0;">⚙️ Config</button>
-                    <button id="btnOpenAdmin" class="hidden" style="width:auto;padding:8px 15px;background:#7c3aed;color:#fff;border-radius:8px;margin:0;" onclick="window.location.href='admin.html'">🛡️ ADM</button>
+                    <button id="btnOpenAdmin" class="hidden" style="width:auto;padding:8px 15px;background:#7c3aed;color:#fff;border-radius:8px;margin:0;" onclick="window.location.href='admin.html'">️ ADM</button>
                     <button id="logoutBtn" style="width:auto;padding:8px 15px;background:#ef4444;color:#fff;border-radius:8px;margin:0;">Sair</button>
                 </div>
             </div>
 
-            <!-- COMBAT SCREEN -->
             <div id="combatScreen" class="screen active">
                 <h2 class="screen-title">⚔️ SELEÇÃO DE BOSS</h2>
                 <div class="bosses-grid">
-                    <div class="boss-card"><div class="boss-rank">SSS</div><div class="boss-image"></div><div class="boss-name">KHALDRON</div><div class="boss-title">The Nightmare Dragon</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">80</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">2.5M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>500</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>5.000</span></div><div class="reward-item"><span class="reward-icon">🔮</span><span>100</span></div></div></div><button class="btn-battle" onclick="startBattle('Khaldrón', 5000, 500, 100)">️ ENTRAR NA BATALHA</button></div>
-                    <div class="boss-card"><div class="boss-rank">SS</div><div class="boss-image">👹</div><div class="boss-name">IGNEOUS</div><div class="boss-title">The Fire Demon</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">70</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">1.8M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>300</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>3.000</span></div><div class="reward-item"><span class="reward-icon">🔮</span><span>60</span></div></div></div><button class="btn-battle" onclick="startBattle('Igneous', 3000, 300, 60)">️ ENTRAR NA BATALHA</button></div>
-                    <div class="boss-card"><div class="boss-rank">S</div><div class="boss-image">⚔️</div><div class="boss-name">MALAKAI</div><div class="boss-title">The Shadow Warrior</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">60</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">1.2M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>200</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>2.000</span></div><div class="reward-item"><span class="reward-icon"></span><span>40</span></div></div></div><button class="btn-battle" onclick="startBattle('Malakai', 2000, 200, 40)">⚔️ ENTRAR NA BATALHA</button></div>
-                    <div class="boss-card"><div class="boss-rank">SSS</div><div class="boss-image">👑</div><div class="boss-name">DRAGON KING</div><div class="boss-title">The Ancient Ruler</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">100</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">5M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>1.000</span></div><div class="reward-item"><span class="reward-icon"></span><span>10.000</span></div><div class="reward-item"><span class="reward-icon">🔮</span><span>200</span></div></div></div><button class="btn-battle" onclick="startBattle('Dragon King', 10000, 1000, 200)">️ ENTRAR NA BATALHA</button></div>
-                    <div class="boss-card"><div class="boss-rank">SS</div><div class="boss-image">🧙</div><div class="boss-name">ARCHMAGE</div><div class="boss-title">The Dark Sorcerer</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">75</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">2M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>400</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>4.000</span></div><div class="reward-item"><span class="reward-icon">🔮</span><span>80</span></div></div></div><button class="btn-battle" onclick="startBattle('Archmage', 4000, 400, 80)">️ ENTRAR NA BATALHA</button></div>
-                    <div class="boss-card"><div class="boss-rank">S</div><div class="boss-image">🧛</div><div class="boss-name">VAMPIRE LORD</div><div class="boss-title">The Blood King</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">65</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">1.5M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>250</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>2.500</span></div><div class="reward-item"><span class="reward-icon">🔮</span><span>50</span></div></div></div><button class="btn-battle" onclick="startBattle('Vampire Lord', 2500, 250, 50)">⚔️ ENTRAR NA BATALHA</button></div>
+                    <div class="boss-card"><div class="boss-rank">SSS</div><div class="boss-image">🐉</div><div class="boss-name">KHALDRON</div><div class="boss-title">The Nightmare Dragon</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">80</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">2.5M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>500</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>5.000</span></div><div class="reward-item"><span class="reward-icon">🔮</span><span>100</span></div></div></div><button class="btn-battle" onclick="startBattle('Khaldrón', '🐉', 5000, 500, 100)">⚔️ ENTRAR NA BATALHA</button></div>
+                    <div class="boss-card"><div class="boss-rank">SS</div><div class="boss-image">👹</div><div class="boss-name">IGNEOUS</div><div class="boss-title">The Fire Demon</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">70</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">1.8M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>300</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>3.000</span></div><div class="reward-item"><span class="reward-icon">🔮</span><span>60</span></div></div></div><button class="btn-battle" onclick="startBattle('Igneous', '👹', 3000, 300, 60)">⚔️ ENTRAR NA BATALHA</button></div>
+                    <div class="boss-card"><div class="boss-rank">S</div><div class="boss-image">⚔️</div><div class="boss-name">MALAKAI</div><div class="boss-title">The Shadow Warrior</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">60</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">1.2M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>200</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>2.000</span></div><div class="reward-item"><span class="reward-icon">🔮</span><span>40</span></div></div></div><button class="btn-battle" onclick="startBattle('Malakai', '⚔️', 2000, 200, 40)">⚔️ ENTRAR NA BATALHA</button></div>
+                    <div class="boss-card"><div class="boss-rank">SSS</div><div class="boss-image"></div><div class="boss-name">DRAGON KING</div><div class="boss-title">The Ancient Ruler</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">100</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">5M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>1.000</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>10.000</span></div><div class="reward-item"><span class="reward-icon">🔮</span><span>200</span></div></div></div><button class="btn-battle" onclick="startBattle('Dragon King', '👑', 10000, 1000, 200)">⚔️ ENTRAR NA BATALHA</button></div>
+                    <div class="boss-card"><div class="boss-rank">SS</div><div class="boss-image"></div><div class="boss-name">ARCHMAGE</div><div class="boss-title">The Dark Sorcerer</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">75</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">2M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>400</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>4.000</span></div><div class="reward-item"><span class="reward-icon">🔮</span><span>80</span></div></div></div><button class="btn-battle" onclick="startBattle('Archmage', '🧙', 4000, 400, 80)">️ ENTRAR NA BATALHA</button></div>
+                    <div class="boss-card"><div class="boss-rank">S</div><div class="boss-image">🧛</div><div class="boss-name">VAMPIRE LORD</div><div class="boss-title">The Blood King</div><div class="boss-stats"><div class="boss-stat"><div class="boss-stat-label">Lv.</div><div class="boss-stat-value">65</div></div><div class="boss-stat"><div class="boss-stat-label">Poder</div><div class="boss-stat-value">1.5M</div></div></div><div class="rewards"><div class="rewards-title">RECOMPENSAS</div><div class="rewards-grid"><div class="reward-item"><span class="reward-icon">💎</span><span>250</span></div><div class="reward-item"><span class="reward-icon">💰</span><span>2.500</span></div><div class="reward-item"><span class="reward-icon">🔮</span><span>50</span></div></div></div><button class="btn-battle" onclick="startBattle('Vampire Lord', '🧛', 2500, 250, 50)">⚔️ ENTRAR NA BATALHA</button></div>
                 </div>
             </div>
 
-            <!-- RESUMO SCREEN -->
             <div id="resumoScreen" class="screen">
-                <h2 class="screen-title"> RESUMO DO JOGADOR</h2>
+                <h2 class="screen-title">📊 RESUMO DO JOGADOR</h2>
                 <div class="stats-grid">
-                    <div class="stat-card"><div class="stat-icon">⚔️</div><div class="stat-value" id="statWins">0</div><div class="stat-label">Vitórias</div></div>
+                    <div class="stat-card"><div class="stat-icon">️</div><div class="stat-value" id="statWins">0</div><div class="stat-label">Vitórias</div></div>
                     <div class="stat-card"><div class="stat-icon">💀</div><div class="stat-value" id="statLosses">0</div><div class="stat-label">Derrotas</div></div>
                     <div class="stat-card"><div class="stat-icon">🏆</div><div class="stat-value" id="statBattles">0</div><div class="stat-label">Batalhas Totais</div></div>
                     <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-value" id="statLevel">1</div><div class="stat-label">Nível</div></div>
                     <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-value" id="statCoins">0</div><div class="stat-label">Moedas</div></div>
                     <div class="stat-card"><div class="stat-icon">💎</div><div class="stat-value" id="statGems">0</div><div class="stat-label">Gemas</div></div>
                     <div class="stat-card"><div class="stat-icon">🔮</div><div class="stat-value" id="statCrystals">0</div><div class="stat-label">Cristais</div></div>
-                    <div class="stat-card"><div class="stat-icon">🎯</div><div class="stat-value" id="statWinRate">0%</div><div class="stat-label">Taxa de Vitória</div></div>
+                    <div class="stat-card"><div class="stat-icon"></div><div class="stat-value" id="statWinRate">0%</div><div class="stat-label">Taxa de Vitória</div></div>
                 </div>
                 <div class="modal-section">
                     <h3>📈 Progresso</h3>
@@ -338,62 +367,63 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
                 </div>
             </div>
 
-            <!-- CAMPANHA SCREEN -->
             <div id="campanhaScreen" class="screen">
                 <h2 class="screen-title">🏰 CAMPANHA</h2>
                 <div class="campaign-chapters" id="campaignChapters"></div>
             </div>
 
-            <!-- DUNGEONS SCREEN -->
             <div id="dungeonsScreen" class="screen">
                 <h2 class="screen-title">👁️ DUNGEONS</h2>
                 <div class="dungeon-grid">
-                    <div class="dungeon-card"><div class="dungeon-image">️</div><div class="dungeon-name">Caverna das Sombras</div><div class="dungeon-level">Nível Recomendado: 10+</div><div class="dungeon-info"><div class="boss-stat"><div class="boss-stat-label">Dificuldade</div><div class="boss-stat-value">⭐⭐</div></div><div class="boss-stat"><div class="boss-stat-label">Recompensa</div><div class="boss-stat-value">💰 800</div></div></div><button class="btn-dungeon" onclick="enterDungeon('Caverna das Sombras', 800, 100)">ENTRAR</button></div>
-                    <div class="dungeon-card"><div class="dungeon-image">🏚️</div><div class="dungeon-name">Mansão Amaldiçoada</div><div class="dungeon-level">Nível Recomendado: 25+</div><div class="dungeon-info"><div class="boss-stat"><div class="boss-stat-label">Dificuldade</div><div class="boss-stat-value">⭐⭐⭐</div></div><div class="boss-stat"><div class="boss-stat-label">Recompensa</div><div class="boss-stat-value">💰 2.000</div></div></div><button class="btn-dungeon" onclick="enterDungeon('Mansão Amaldiçoada', 2000, 250)">ENTRAR</button></div>
-                    <div class="dungeon-card"><div class="dungeon-image">🌋</div><div class="dungeon-name">Vulcão Infernal</div><div class="dungeon-level">Nível Recomendado: 50+</div><div class="dungeon-info"><div class="boss-stat"><div class="boss-stat-label">Dificuldade</div><div class="boss-stat-value">⭐⭐⭐⭐</div></div><div class="boss-stat"><div class="boss-stat-label">Recompensa</div><div class="boss-stat-value">💰 5.000</div></div></div><button class="btn-dungeon" onclick="enterDungeon('Vulcão Infernal', 5000, 500)">ENTRAR</button></div>
-                    <div class="dungeon-card"><div class="dungeon-image">🏯</div><div class="dungeon-name">Castelo do Dragão</div><div class="dungeon-level">Nível Recomendado: 75+</div><div class="dungeon-info"><div class="boss-stat"><div class="boss-stat-label">Dificuldade</div><div class="boss-stat-value">⭐⭐⭐⭐⭐</div></div><div class="boss-stat"><div class="boss-stat-label">Recompensa</div><div class="boss-stat-value">💰 10.000</div></div></div><button class="btn-dungeon" onclick="enterDungeon('Castelo do Dragão', 10000, 1000)">ENTRAR</button></div>
+                    <div class="dungeon-card"><div class="dungeon-image">🕯️</div><div class="dungeon-name">Caverna das Sombras</div><div class="dungeon-level">Nível Recomendado: 10+</div><div class="dungeon-info"><div class="boss-stat"><div class="boss-stat-label">Dificuldade</div><div class="boss-stat-value">⭐⭐</div></div><div class="boss-stat"><div class="boss-stat-label">Recompensa</div><div class="boss-stat-value">💰 800</div></div></div><button class="btn-dungeon" onclick="enterDungeon('Caverna das Sombras', 800, 10)">ENTRAR</button></div>
+                    <div class="dungeon-card"><div class="dungeon-image">🏚️</div><div class="dungeon-name">Mansão Amaldiçoada</div><div class="dungeon-level">Nível Recomendado: 25+</div><div class="dungeon-info"><div class="boss-stat"><div class="boss-stat-label">Dificuldade</div><div class="boss-stat-value">⭐⭐⭐</div></div><div class="boss-stat"><div class="boss-stat-label">Recompensa</div><div class="boss-stat-value">💰 2.000</div></div></div><button class="btn-dungeon" onclick="enterDungeon('Mansão Amaldiçoada', 2000, 25)">ENTRAR</button></div>
+                    <div class="dungeon-card"><div class="dungeon-image">🌋</div><div class="dungeon-name">Vulcão Infernal</div><div class="dungeon-level">Nível Recomendado: 50+</div><div class="dungeon-info"><div class="boss-stat"><div class="boss-stat-label">Dificuldade</div><div class="boss-stat-value">⭐⭐⭐⭐</div></div><div class="boss-stat"><div class="boss-stat-label">Recompensa</div><div class="boss-stat-value">💰 5.000</div></div></div><button class="btn-dungeon" onclick="enterDungeon('Vulcão Infernal', 5000, 50)">ENTRAR</button></div>
+                    <div class="dungeon-card"><div class="dungeon-image">🏯</div><div class="dungeon-name">Castelo do Dragão</div><div class="dungeon-level">Nível Recomendado: 75+</div><div class="dungeon-info"><div class="boss-stat"><div class="boss-stat-label">Dificuldade</div><div class="boss-stat-value">⭐⭐⭐⭐⭐</div></div><div class="boss-stat"><div class="boss-stat-label">Recompensa</div><div class="boss-stat-value">💰 10.000</div></div></div><button class="btn-dungeon" onclick="enterDungeon('Castelo do Dragão', 10000, 75)">ENTRAR</button></div>
                 </div>
             </div>
 
-            <!-- ARENA SCREEN -->
             <div id="arenaScreen" class="screen">
                 <h2 class="screen-title">🏟️ ARENA PVP</h2>
                 <p style="color:#94a3b8;margin-bottom:20px;">Desafie outros jogadores em batalhas PvP!</p>
                 <div class="arena-players" id="arenaPlayers"></div>
             </div>
 
-            <!-- EVENTOS SCREEN -->
             <div id="eventosScreen" class="screen">
-                <h2 class="screen-title">📅 EVENTOS</h2>
+                <h2 class="screen-title"> EVENTOS</h2>
                 <div class="events-list" id="eventsList"></div>
             </div>
 
-            <!-- SHOP SCREEN -->
             <div id="shopScreen" class="screen">
                 <h2 class="screen-title">🛒 LOJA DE ITENS</h2>
                 <div class="shop-categories">
-                    <button class="category-btn active">⚔️ Equipamentos</button>
-                    <button class="category-btn">🧪 Consumíveis</button>
-                    <button class="category-btn">📦 Materiais</button>
-                    <button class="category-btn">💎 Gemas</button>
+                    <button class="category-btn active" onclick="filterShop('all', this)"> Todos</button>
+                    <button class="category-btn" onclick="filterShop('equipment', this)">⚔️ Equipamentos</button>
+                    <button class="category-btn" onclick="filterShop('consumable', this)">🧪 Consumíveis</button>
+                    <button class="category-btn" onclick="filterShop('material', this)"> Materiais</button>
+                    <button class="category-btn" onclick="filterShop('gem', this)">💎 Gemas</button>
                 </div>
-                <div class="shop-grid">
-                    <div class="shop-item rarity-common"><div class="item-image">🗡️</div><div class="item-name">Espada de Ferro</div><div class="item-price">💰 100</div><button class="btn-buy" onclick="buyItem('Espada de Ferro', 100, 'coins')">COMPRAR</button></div>
-                    <div class="shop-item rarity-common"><div class="item-image">🛡️</div><div class="item-name">Escudo de Madeira</div><div class="item-price">💰 150</div><button class="btn-buy" onclick="buyItem('Escudo de Madeira', 150, 'coins')">COMPRAR</button></div>
-                    <div class="shop-item rarity-rare"><div class="item-image">⚔️</div><div class="item-name">Espada de Aço</div><div class="item-price"> 500</div><button class="btn-buy" onclick="buyItem('Espada de Aço', 500, 'coins')">COMPRAR</button></div>
-                    <div class="shop-item rarity-rare"><div class="item-image"></div><div class="item-name">Arco Élfico</div><div class="item-price">💰 800</div><button class="btn-buy" onclick="buyItem('Arco Élfico', 800, 'coins')">COMPRAR</button></div>
-                    <div class="shop-item rarity-epic"><div class="item-image">🗡️</div><div class="item-name">Lâmina do Dragão</div><div class="item-price">💰 3.000</div><button class="btn-buy" onclick="buyItem('Lâmina do Dragão', 3000, 'coins')">COMPRAR</button></div>
-                    <div class="shop-item rarity-epic"><div class="item-image">️</div><div class="item-name">Armadura Mágica</div><div class="item-price">💰 4.000</div><button class="btn-buy" onclick="buyItem('Armadura Mágica', 4000, 'coins')">COMPRAR</button></div>
-                    <div class="shop-item rarity-legendary"><div class="item-image">⚔️</div><div class="item-name">Espada Lendária</div><div class="item-price"> 500</div><button class="btn-buy" onclick="buyItem('Espada Lendária', 500, 'gems')">COMPRAR</button></div>
-                    <div class="shop-item rarity-legendary"><div class="item-image">👑</div><div class="item-name">Coroa do Rei</div><div class="item-price">💎 1.000</div><button class="btn-buy" onclick="buyItem('Coroa do Rei', 1000, 'gems')">COMPRAR</button></div>
-                    <div class="shop-item rarity-common"><div class="item-image">🧪</div><div class="item-name">Poção de Vida</div><div class="item-price">💰 50</div><button class="btn-buy" onclick="buyItem('Poção de Vida', 50, 'coins')">COMPRAR</button></div>
-                    <div class="shop-item rarity-rare"><div class="item-image">🧪</div><div class="item-name">Poção de Mana</div><div class="item-price">💰 200</div><button class="btn-buy" onclick="buyItem('Poção de Mana', 200, 'coins')">COMPRAR</button></div>
-                    <div class="shop-item rarity-epic"><div class="item-image">📜</div><div class="item-name">Pergaminho Raro</div><div class="item-price">🔮 50</div><button class="btn-buy" onclick="buyItem('Pergaminho Raro', 50, 'crystals')">COMPRAR</button></div>
-                    <div class="shop-item rarity-legendary"><div class="item-image">💎</div><div class="item-name">Cristal Místico</div><div class="item-price">🔮 200</div><button class="btn-buy" onclick="buyItem('Cristal Místico', 200, 'crystals')">COMPRAR</button></div>
+                <div class="shop-grid" id="shopGrid">
+                    <div class="shop-item rarity-common" data-category="equipment"><div class="item-image">🗡️</div><div class="item-name">Espada de Ferro</div><div class="item-price">💰 100</div><button class="btn-buy" onclick="buyItem('Espada de Ferro', 100, 'coins')">COMPRAR</button></div>
+                    <div class="shop-item rarity-common" data-category="equipment"><div class="item-image">🛡️</div><div class="item-name">Escudo de Madeira</div><div class="item-price">💰 150</div><button class="btn-buy" onclick="buyItem('Escudo de Madeira', 150, 'coins')">COMPRAR</button></div>
+                    <div class="shop-item rarity-rare" data-category="equipment"><div class="item-image">⚔️</div><div class="item-name">Espada de Aço</div><div class="item-price">💰 500</div><button class="btn-buy" onclick="buyItem('Espada de Aço', 500, 'coins')">COMPRAR</button></div>
+                    <div class="shop-item rarity-rare" data-category="equipment"><div class="item-image">🏹</div><div class="item-name">Arco Élfico</div><div class="item-price">💰 800</div><button class="btn-buy" onclick="buyItem('Arco Élfico', 800, 'coins')">COMPRAR</button></div>
+                    <div class="shop-item rarity-epic" data-category="equipment"><div class="item-image">🗡️</div><div class="item-name">Lâmina do Dragão</div><div class="item-price">💰 3.000</div><button class="btn-buy" onclick="buyItem('Lâmina do Dragão', 3000, 'coins')">COMPRAR</button></div>
+                    <div class="shop-item rarity-epic" data-category="equipment"><div class="item-image">🛡️</div><div class="item-name">Armadura Mágica</div><div class="item-price"> 4.000</div><button class="btn-buy" onclick="buyItem('Armadura Mágica', 4000, 'coins')">COMPRAR</button></div>
+                    <div class="shop-item rarity-legendary" data-category="equipment"><div class="item-image">⚔️</div><div class="item-name">Espada Lendária</div><div class="item-price">💎 500</div><button class="btn-buy" onclick="buyItem('Espada Lendária', 500, 'gems')">COMPRAR</button></div>
+                    <div class="shop-item rarity-legendary" data-category="equipment"><div class="item-image">👑</div><div class="item-name">Coroa do Rei</div><div class="item-price">💎 1.000</div><button class="btn-buy" onclick="buyItem('Coroa do Rei', 1000, 'gems')">COMPRAR</button></div>
+                    <div class="shop-item rarity-common" data-category="consumable"><div class="item-image">🧪</div><div class="item-name">Poção de Vida</div><div class="item-price">💰 50</div><button class="btn-buy" onclick="buyItem('Poção de Vida', 50, 'coins')">COMPRAR</button></div>
+                    <div class="shop-item rarity-rare" data-category="consumable"><div class="item-image">🧪</div><div class="item-name">Poção de Mana</div><div class="item-price">💰 200</div><button class="btn-buy" onclick="buyItem('Poção de Mana', 200, 'coins')">COMPRAR</button></div>
+                    <div class="shop-item rarity-epic" data-category="consumable"><div class="item-image">⚗️</div><div class="item-name">Elixir de Poder</div><div class="item-price">💰 1.500</div><button class="btn-buy" onclick="buyItem('Elixir de Poder', 1500, 'coins')">COMPRAR</button></div>
+                    <div class="shop-item rarity-legendary" data-category="consumable"><div class="item-image"></div><div class="item-name">Poção Lendária</div><div class="item-price">💎 300</div><button class="btn-buy" onclick="buyItem('Poção Lendária', 300, 'gems')">COMPRAR</button></div>
+                    <div class="shop-item rarity-common" data-category="material"><div class="item-image">🪵</div><div class="item-name">Madeira</div><div class="item-price">💰 20</div><button class="btn-buy" onclick="buyItem('Madeira', 20, 'coins')">COMPRAR</button></div>
+                    <div class="shop-item rarity-rare" data-category="material"><div class="item-image">🪨</div><div class="item-name">Pedra Rara</div><div class="item-price">💰 300</div><button class="btn-buy" onclick="buyItem('Pedra Rara', 300, 'coins')">COMPRAR</button></div>
+                    <div class="shop-item rarity-epic" data-category="material"><div class="item-image">📜</div><div class="item-name">Pergaminho Raro</div><div class="item-price">🔮 50</div><button class="btn-buy" onclick="buyItem('Pergaminho Raro', 50, 'crystals')">COMPRAR</button></div>
+                    <div class="shop-item rarity-legendary" data-category="material"><div class="item-image">💎</div><div class="item-name">Cristal Místico</div><div class="item-price">🔮 200</div><button class="btn-buy" onclick="buyItem('Cristal Místico', 200, 'crystals')">COMPRAR</button></div>
+                    <div class="shop-item rarity-rare" data-category="gem"><div class="item-image"></div><div class="item-name">Pacote de Gemas</div><div class="item-price">💰 5.000</div><button class="btn-buy" onclick="buyItem('Pacote de Gemas', 5000, 'coins')">COMPRAR</button></div>
+                    <div class="shop-item rarity-epic" data-category="gem"><div class="item-image"></div><div class="item-name">Caixa de Gemas</div><div class="item-price">🔮 100</div><button class="btn-buy" onclick="buyItem('Caixa de Gemas', 100, 'crystals')">COMPRAR</button></div>
                 </div>
             </div>
 
-            <!-- SKILLS SCREEN -->
             <div id="skillsScreen" class="screen">
                 <h2 class="screen-title">✨ PODERES</h2>
                 <div class="skills-container">
@@ -401,7 +431,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
                         <div class="skill-node unlocked" style="top: 50px; left: 50%; transform: translateX(-50%);" onclick="selectSkill('fire')">🔥</div>
                         <div class="skill-node unlocked" style="top: 150px; left: 30%;" onclick="selectSkill('lightning')">⚡</div>
                         <div class="skill-node" style="top: 150px; left: 70%;" onclick="selectSkill('ice')">❄️</div>
-                        <div class="skill-node locked" style="top: 250px; left: 50%; transform: translateX(-50%);" onclick="selectSkill('void')">🌌</div>
+                        <div class="skill-node locked" style="top: 250px; left: 50%; transform: translateX(-50%);" onclick="selectSkill('void')"></div>
                         <div class="skill-node unlocked" style="top: 350px; left: 20%;" onclick="selectSkill('slash')">⚔️</div>
                         <div class="skill-node" style="top: 350px; left: 80%;" onclick="selectSkill('serpent')">🐍</div>
                     </div>
@@ -416,10 +446,38 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     </div>
 </div>
 
+<!-- BATTLE OVERLAY -->
+<div class="battle-overlay" id="battleOverlay">
+    <div class="battle-scene">
+        <div style="display:flex;align-items:center;justify-content:center;gap:50px;">
+            <div class="battle-player" id="battlePlayer">🥷</div>
+            <div style="font-size:3em;">⚔️</div>
+            <div class="battle-enemy" id="battleEnemy">🐉</div>
+        </div>
+        <div class="battle-result" id="battleResult"></div>
+        <div class="battle-actions" id="battleActions">
+            <button class="battle-btn btn-attack" onclick="battleAttack()">⚔️ ATACAR</button>
+            <button class="battle-btn btn-dodge" onclick="battleDodge()"> ESQUIVAR</button>
+            <button class="battle-btn btn-flee" onclick="battleFlee()">🏃 FUGIR</button>
+        </div>
+    </div>
+</div>
+
 <!-- SETTINGS MODAL -->
 <div class="modal-overlay" id="settingsModal">
     <div class="modal">
-        <h2>⚙️ Configurações</h2>
+        <h2>️ Configurações</h2>
+        <div class="modal-section">
+            <h3>🎵 Música de Fundo</h3>
+            <div class="music-toggle">
+                <label for="musicToggle">Ativar/Desativar Música</label>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="musicToggle" onchange="toggleMusic()">
+                    <span class="toggle-slider"></span>
+                </div>
+            </div>
+            <p style="margin-top:10px;font-size:0.85em;">🎶 Música épica de fundo enquanto você joga</p>
+        </div>
         <div class="modal-section">
             <h3>✏️ Editar Nome</h3>
             <p>Altere o nome do seu personagem. Custo: 💰 1.000 moedas</p>
@@ -427,7 +485,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
             <button class="btn-primary" onclick="changeNick()">ALTERAR NOME</button>
         </div>
         <div class="modal-section">
-            <h3>📷 Alterar Avatar</h3>
+            <h3> Alterar Avatar</h3>
             <p>Escolha um avatar para o seu perfil. Custo: 💰 500 moedas</p>
             <button class="btn-change-avatar" onclick="openAvatarModal()">📷 ESCOLHER AVATAR</button>
         </div>
@@ -491,7 +549,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 <!-- CHAT -->
 <button class="chat-toggle" id="chatToggle" onclick="toggleChat()">💬<span class="notification hidden" id="chatNotif">0</span></button>
 <div class="chat-panel" id="chatPanel">
-    <div class="chat-header"><h3> Chat do Servidor</h3><button onclick="toggleChat()" style="width:auto;padding:5px 10px;background:#64748b;margin:0;">✕</button></div>
+    <div class="chat-header"><h3>💬 Chat do Servidor</h3><button onclick="toggleChat()" style="width:auto;padding:5px 10px;background:#64748b;margin:0;">✕</button></div>
     <div class="chat-tabs">
         <div class="chat-tab active" onclick="switchChatTab('global', this)">🌎 Global</div>
         <div class="chat-tab" onclick="switchChatTab('private', this)">🔒 Privado</div>
@@ -513,7 +571,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, setDoc, updateDoc, onSnapshot, serverTimestamp, collection, query, orderBy, limit, addDoc, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, updateDoc, onSnapshot, serverTimestamp, collection, query, orderBy, limit, addDoc, where, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
@@ -530,19 +588,19 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     const db = getFirestore(app);
     const SUPER_ADMIN_UIDS = ["DJ0865XZ51V7G5neeqVP2mr1h8T2"];
 
-    const AVATARS = ['🥷','🧙','🧝','🧛','🧟','','🦹','🧞','🧜','🧚','‍🚀','👨‍✈️','👨‍','👨‍🔬','‍💻','👨‍🏫','👨‍🍳','👨‍🌾','‍🏭','👨‍💼','👨‍⚕️','👨‍🚒','','🦊','🐯','🐻','🐨','','🐸','🦄','','🦖','🦕','🐲','👺','','👽','🤖','','👑','⚔️','🛡️','🏹','','🌟','💀','️','🦅','🐍'];
+    const AVATARS = ['🥷','','🧝','🧛','','🦸','🦹','🧞','🧜','','👨‍🚀','‍✈️','👨‍🎨','👨‍','👨‍💻','‍🏫','👨🍳','👨‍','👨‍🏭','‍💼','👨‍⚕️','👨‍','🦊','🐯','','🐨','🐼','','🦄','🐲','','🦕','🐍','👺','👹','','🤖','👑','️','🛡️','🏹','🌟','💀','🔥','🦅'];
 
     const CHAPTERS = [
         { num: 1, title: 'O Despertar', desc: 'Sua jornada começa aqui', rewards: '💰 500 💎 50', locked: false, completed: false },
         { num: 2, title: 'A Floresta Sombria', desc: 'Enfrente criaturas das trevas', rewards: '💰 1.000 💎 100', locked: false, completed: false },
         { num: 3, title: 'O Castelo Abandonado', desc: 'Descubra os segredos do castelo', rewards: '💰 2.000 💎 200', locked: false, completed: false },
-        { num: 4, title: 'A Montanha do Dragão', desc: 'O covil de Khaldrón', rewards: ' 5.000 💎 500', locked: true, completed: false },
+        { num: 4, title: 'A Montanha do Dragão', desc: 'O covil de Khaldrón', rewards: '💰 5.000 💎 500', locked: true, completed: false },
         { num: 5, title: 'O Reino das Sombras', desc: 'A batalha final se aproxima', rewards: '💰 10.000 💎 1.000', locked: true, completed: false }
     ];
 
     const EVENTS = [
-        { title: '🎉 Evento de Aniversário', desc: 'Comemore conosco e ganhe recompensas especiais!', timer: '2d 14h', active: true },
-        { title: '️ Torneio dos Campeões', desc: 'Lute contra os melhores jogadores e ganhe prêmios!', timer: '5d 8h', active: true },
+        { title: ' Evento de Aniversário', desc: 'Comemore conosco e ganhe recompensas especiais!', timer: '2d 14h', active: true },
+        { title: '⚔️ Torneio dos Campeões', desc: 'Lute contra os melhores jogadores e ganhe prêmios!', timer: '5d 8h', active: true },
         { title: '🎃 Halloween Especial', desc: 'Eventos temáticos com recompensas exclusivas', timer: '12d 3h', active: true }
     ];
 
@@ -550,12 +608,62 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     let heartbeatInterval = null, playerRef = null, chatOpen = false, unreadMessages = 0;
     let selectedAvatar = null, admTargetPlayer = null;
     let allPlayers = [];
-    let playerStats = { wins: 0, losses: 0, battles: 0 };
+    let musicEnabled = false;
+    let audioContext = null;
+    let currentBattle = null;
 
     const $ = id => document.getElementById(id);
     setTimeout(() => { $('loadingScreen').style.display = 'none'; }, 1000);
 
     window.showToast = (msg) => { const t = $('toast'); t.textContent = msg; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 3000); };
+
+    // MUSIC SYSTEM
+    function initAudio() {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+
+    function playEpicMusic() {
+        if (!musicEnabled || !audioContext) return;
+        
+        // Criar uma melodia épica simples
+        const notes = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63]; // C, E, G, C, G, E
+        let noteIndex = 0;
+        
+        function playNote() {
+            if (!musicEnabled) return;
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = notes[noteIndex];
+            oscillator.type = 'sine';
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+            
+            noteIndex = (noteIndex + 1) % notes.length;
+            setTimeout(playNote, 600);
+        }
+        
+        playNote();
+    }
+
+    window.toggleMusic = () => {
+        musicEnabled = $('musicToggle').checked;
+        if (musicEnabled) {
+            initAudio();
+            playEpicMusic();
+            showToast('🎵 Música ativada!');
+        } else {
+            showToast('🔇 Música desativada!');
+        }
+    };
 
     window.showScreen = (screenId, btn) => {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -591,7 +699,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
             const cred = await createUserWithEmailAndPassword(auth, email, pass);
             await updateProfile(cred.user, { displayName: nick });
             await setDoc(doc(db, "players", cred.user.uid), {
-                uid: cred.user.uid, nick, email, avatar: '🥷', coins: 1000, gems: 100, crystals: 50, points: 0, level: 1, xp: 0, hp: 100, maxHp: 100, energy: 120, role: "player", vipLevel: 0, banned: false, mutedUntil: 0, godMode: false, wins: 0, losses: 0, battles: 0, createdAt: serverTimestamp(), lastSeen: serverTimestamp()
+                uid: cred.user.uid, nick, email, avatar: '', coins: 1000, gems: 100, crystals: 50, points: 0, level: 1, xp: 0, hp: 100, maxHp: 100, energy: 120, role: "player", vipLevel: 0, banned: false, mutedUntil: 0, godMode: false, wins: 0, losses: 0, battles: 0, createdAt: serverTimestamp(), lastSeen: serverTimestamp()
             });
             showToast('🎉 Bem-vindo ao Dragon War, ' + nick + '!');
         } catch(e) { showToast('Erro: ' + e.message); }
@@ -650,40 +758,97 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
         }
     };
 
+    // SHOP FILTER
+    window.filterShop = (category, btn) => {
+        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const items = document.querySelectorAll('.shop-item');
+        items.forEach(item => {
+            if (category === 'all' || item.dataset.category === category) {
+                item.classList.remove('hidden-item');
+            } else {
+                item.classList.add('hidden-item');
+            }
+        });
+    };
+
     window.buyItem = async (name, price, currency) => {
         if (!currentUserData) return showToast('Carregando dados...');
         const currentAmount = currentUserData[currency] || 0;
-        if (currentAmount < price) { const currencyName = currency === 'coins' ? ' Moedas' : currency === 'gems' ? '💎 Gemas' : '🔮 Cristais'; return showToast(`❌ ${currencyName} insuficientes!`); }
+        if (currentAmount < price) { const currencyName = currency === 'coins' ? '💰 Moedas' : currency === 'gems' ? '💎 Gemas' : '🔮 Cristais'; return showToast(`❌ ${currencyName} insuficientes!`); }
         if (confirm(`Comprar ${name} por ${price.toLocaleString('pt-BR')} ${currency === 'coins' ? '💰' : currency === 'gems' ? '💎' : '🔮'}?`)) {
             try { await updateDoc(playerRef, { [currency]: currentAmount - price }); showToast('✅ ' + name + ' comprado!'); } catch(e) { showToast('Erro: ' + e.message); }
         }
     };
 
-    window.startBattle = async (bossName, rewardCoins, rewardGems, rewardCrystals) => {
+    // BATTLE SYSTEM WITH DODGE
+    window.startBattle = (bossName, bossEmoji, rewardCoins, rewardGems, rewardCrystals) => {
         if (!currentUserData) return showToast('Carregando dados...');
+        currentBattle = { bossName, bossEmoji, rewardCoins, rewardGems, rewardCrystals, playerDodged: false };
+        
+        $('battlePlayer').textContent = currentUserData.avatar || '🥷';
+        $('battleEnemy').textContent = bossEmoji;
+        $('battleResult').textContent = '';
+        $('battleResult').className = 'battle-result';
+        $('battleActions').style.display = 'flex';
+        $('battleOverlay').classList.add('active');
+    };
+
+    window.battleAttack = async () => {
+        if (!currentBattle) return;
         const win = Math.random() > 0.3;
+        $('battleActions').style.display = 'none';
+        
         if (win) {
-            const newCoins = (currentUserData.coins || 0) + rewardCoins;
-            const newGems = (currentUserData.gems || 0) + rewardGems;
-            const newCrystals = (currentUserData.crystals || 0) + rewardCrystals;
-            const newPoints = (currentUserData.points || 0) + 100;
-            const newWins = (currentUserData.wins || 0) + 1;
-            const newBattles = (currentUserData.battles || 0) + 1;
-            try {
-                await updateDoc(playerRef, { coins: newCoins, gems: newGems, crystals: newCrystals, points: newPoints, xp: (currentUserData.xp || 0) + 50, wins: newWins, battles: newBattles });
-                showToast(`⚔️ Vitória! +${rewardCoins}💰 +${rewardGems}💎 +${rewardCrystals}🔮`);
-            } catch(e) { showToast('Erro: ' + e.message); }
+            $('battleResult').textContent = `⚔️ VITÓRIA! +${currentBattle.rewardCoins}💰 +${currentBattle.rewardGems}💎 +${currentBattle.rewardCrystals}🔮`;
+            $('battleResult').className = 'battle-result win';
+            await updateDoc(playerRef, {
+                coins: (currentUserData.coins || 0) + currentBattle.rewardCoins,
+                gems: (currentUserData.gems || 0) + currentBattle.rewardGems,
+                crystals: (currentUserData.crystals || 0) + currentBattle.rewardCrystals,
+                points: (currentUserData.points || 0) + 100,
+                xp: (currentUserData.xp || 0) + 50,
+                wins: (currentUserData.wins || 0) + 1,
+                battles: (currentUserData.battles || 0) + 1
+            });
         } else {
-            const newLosses = (currentUserData.losses || 0) + 1;
-            const newBattles = (currentUserData.battles || 0) + 1;
-            await updateDoc(playerRef, { losses: newLosses, battles: newBattles });
-            showToast(`💀 Derrota contra ${bossName}! Tente novamente.`);
+            $('battleResult').textContent = `💀 DERROTA contra ${currentBattle.bossName}!`;
+            $('battleResult').className = 'battle-result lose';
+            await updateDoc(playerRef, {
+                losses: (currentUserData.losses || 0) + 1,
+                battles: (currentUserData.battles || 0) + 1
+            });
         }
+        
+        setTimeout(() => {
+            $('battleOverlay').classList.remove('active');
+            currentBattle = null;
+        }, 3000);
+    };
+
+    window.battleDodge = () => {
+        if (!currentBattle) return;
+        const player = $('battlePlayer');
+        player.classList.add('dodging');
+        currentBattle.playerDodged = true;
+        showToast('💨 Esquiva bem-sucedida!');
+        setTimeout(() => {
+            player.classList.remove('dodging');
+            battleAttack();
+        }, 600);
+    };
+
+    window.battleFlee = () => {
+        if (!currentBattle) return;
+        $('battleOverlay').classList.remove('active');
+        currentBattle = null;
+        showToast('🏃 Você fugiu da batalha!');
     };
 
     window.enterDungeon = async (name, reward, levelReq) => {
         if (!currentUserData) return showToast('Carregando dados...');
-        if (currentUserData.level < levelReq) return showToast(` Nível insuficiente! Requer nível ${levelReq}`);
+        if (currentUserData.level < levelReq) return showToast(`❌ Nível insuficiente! Requer nível ${levelReq}`);
         const win = Math.random() > 0.4;
         if (win) {
             await updateDoc(playerRef, { coins: (currentUserData.coins || 0) + reward, points: (currentUserData.points || 0) + 50, wins: (currentUserData.wins || 0) + 1, battles: (currentUserData.battles || 0) + 1 });
@@ -696,11 +861,11 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 
     window.selectSkill = (skill) => {
         const skills = {
-            fire: { name: ' Fôlego de Fogo', damage: '680% + 120%', mp: 120, cooldown: '18s', points: 3, description: 'Libera uma onda de fogo que causa dano massivo em área.' },
+            fire: { name: '🔥 Fôlego de Fogo', damage: '680% + 120%', mp: 120, cooldown: '18s', points: 3, description: 'Libera uma onda de fogo que causa dano massivo em área.' },
             lightning: { name: '⚡ Raio Espiritual', damage: '520% + 80%', mp: 90, cooldown: '12s', points: 2, description: 'Invoca um raio que atinge inimigos em linha reta.' },
             ice: { name: '❄️ Nova Glacial', damage: '450% + 60%', mp: 75, cooldown: '15s', points: 2, description: 'Congela todos os inimigos próximos por 3 segundos.' },
             void: { name: '🌌 Torrente do Vazio', damage: '800% + 150%', mp: 150, cooldown: '25s', points: 5, description: 'Libera uma onda de energia do vazio que causa dano enorme.' },
-            slash: { name: '️ Mestre da Espada', damage: '300% + 50%', mp: 50, cooldown: '8s', points: 1, description: 'Ataque rápido com a espada que causa dano físico.' },
+            slash: { name: '⚔️ Mestre da Espada', damage: '300% + 50%', mp: 50, cooldown: '8s', points: 1, description: 'Ataque rápido com a espada que causa dano físico.' },
             serpent: { name: '🐍 Golpe da Serpente', damage: '400% + 70%', mp: 65, cooldown: '10s', points: 2, description: 'Ataque venenoso que causa dano ao longo do tempo.' }
         };
         const s = skills[skill];
@@ -736,7 +901,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
                 <div class="chapter-title">${ch.title}</div>
                 <div class="chapter-desc">${ch.desc}</div>
                 <div class="chapter-rewards">${ch.rewards}</div>
-                ${ch.locked ? '<p style="color:#ef4444;margin-top:10px;font-size:0.85em;">🔒 Bloqueado</p>' : ch.completed ? '<p style="color:#22c55e;margin-top:10px;font-size:0.85em;">✅ Completo</p>' : '<p style="color:#3b82f6;margin-top:10px;font-size:0.85em;">▶ Jogar</p>'}
+                ${ch.locked ? '<p style="color:#ef4444;margin-top:10px;font-size:0.85em;"> Bloqueado</p>' : ch.completed ? '<p style="color:#22c55e;margin-top:10px;font-size:0.85em;">✅ Completo</p>' : '<p style="color:#3b82f6;margin-top:10px;font-size:0.85em;">▶ Jogar</p>'}
             </div>
         `).join('');
     }
@@ -747,7 +912,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
         const rewards = [500, 1000, 2000, 5000, 10000][num - 1] || 500;
         if (win) {
             await updateDoc(playerRef, { coins: (currentUserData.coins || 0) + rewards, points: (currentUserData.points || 0) + 100, wins: (currentUserData.wins || 0) + 1, battles: (currentUserData.battles || 0) + 1 });
-            showToast(`✅ Capítulo ${num} completo! +${rewards}`);
+            showToast(`✅ Capítulo ${num} completo! +${rewards}💰`);
         } else {
             await updateDoc(playerRef, { losses: (currentUserData.losses || 0) + 1, battles: (currentUserData.battles || 0) + 1 });
             showToast(`💀 Falhou no capítulo ${num}!`);
@@ -811,7 +976,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
         const isBanned = player.banned;
         const isMuted = player.mutedUntil && player.mutedUntil > Date.now();
         const isAdmin = player.role === 'admin' || SUPER_ADMIN_UIDS.includes(player.uid);
-        $('admTargetStatus').innerHTML = `${isBanned ? '🚫 BANIDO' : '✅ Ativo'} ${isMuted ? '🔇 MUTADO' : ''} ${isAdmin ? '👑 ADM' : ''}`;
+        $('admTargetStatus').innerHTML = `${isBanned ? ' BANIDO' : '✅ Ativo'} ${isMuted ? '🔇 MUTADO' : ''} ${isAdmin ? '👑 ADM' : ''}`;
         $('admPromoteLabel').textContent = isAdmin ? 'Remover ADM' : 'Dar ADM';
         $('admActionsModal').classList.add('active');
     };
@@ -820,11 +985,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     window.admMute = async (minutes) => {
         if (!admTargetPlayer || !isUserAdmin) return;
         const mutedUntil = Date.now() + (minutes * 60 * 1000);
-        try {
-            await updateDoc(doc(db, "players", admTargetPlayer.uid), { mutedUntil });
-            showToast(`✅ ${admTargetPlayer.nick} mutado por ${minutes} minutos.`);
-            closeAdmActions();
-        } catch(e) { showToast('Erro: ' + e.message); }
+        try { await updateDoc(doc(db, "players", admTargetPlayer.uid), { mutedUntil }); showToast(`✅ ${admTargetPlayer.nick} mutado por ${minutes} minutos.`); closeAdmActions(); } catch(e) { showToast('Erro: ' + e.message); }
     };
 
     window.showTempBanOptions = () => $('tempBanOptions').classList.toggle('hidden');
@@ -832,30 +993,18 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     window.admTempBan = async (minutes) => {
         if (!admTargetPlayer || !isUserAdmin) return;
         const banUntil = Date.now() + (minutes * 60 * 1000);
-        try {
-            await updateDoc(doc(db, "players", admTargetPlayer.uid), { banned: true, banUntil });
-            showToast(`⏰ ${admTargetPlayer.nick} banido por ${minutes} minutos.`);
-            closeAdmActions();
-        } catch(e) { showToast('Erro: ' + e.message); }
+        try { await updateDoc(doc(db, "players", admTargetPlayer.uid), { banned: true, banUntil }); showToast(`⏰ ${admTargetPlayer.nick} banido por ${minutes} minutos.`); closeAdmActions(); } catch(e) { showToast('Erro: ' + e.message); }
     };
 
     window.admPermBan = async () => {
         if (!admTargetPlayer || !isUserAdmin) return;
         if (!confirm(`Banir PERMANENTEMENTE ${admTargetPlayer.nick}?`)) return;
-        try {
-            await updateDoc(doc(db, "players", admTargetPlayer.uid), { banned: true, banUntil: null });
-            showToast(`🚫 ${admTargetPlayer.nick} banido permanentemente.`);
-            closeAdmActions();
-        } catch(e) { showToast('Erro: ' + e.message); }
+        try { await updateDoc(doc(db, "players", admTargetPlayer.uid), { banned: true, banUntil: null }); showToast(` ${admTargetPlayer.nick} banido permanentemente.`); closeAdmActions(); } catch(e) { showToast('Erro: ' + e.message); }
     };
 
     window.admUnban = async () => {
         if (!admTargetPlayer || !isUserAdmin) return;
-        try {
-            await updateDoc(doc(db, "players", admTargetPlayer.uid), { banned: false, banUntil: null, mutedUntil: 0 });
-            showToast(`✅ ${admTargetPlayer.nick} desbanido.`);
-            closeAdmActions();
-        } catch(e) { showToast('Erro: ' + e.message); }
+        try { await updateDoc(doc(db, "players", admTargetPlayer.uid), { banned: false, banUntil: null, mutedUntil: 0 }); showToast(`✅ ${admTargetPlayer.nick} desbanido.`); closeAdmActions(); } catch(e) { showToast('Erro: ' + e.message); }
     };
 
     window.admOpenChat = () => {
@@ -873,7 +1022,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
         try {
             const current = (await getDoc(doc(db, "players", admTargetPlayer.uid))).data();
             await updateDoc(doc(db, "players", admTargetPlayer.uid), { coins: (current.coins || 0) + Number(amount) });
-            showToast(`🎁 ${amount} moedas enviadas para ${admTargetPlayer.nick}.`);
+            showToast(` ${amount} moedas enviadas para ${admTargetPlayer.nick}.`);
             closeAdmActions();
         } catch(e) { showToast('Erro: ' + e.message); }
     };
@@ -883,11 +1032,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
         const isAdmin = admTargetPlayer.role === 'admin' || SUPER_ADMIN_UIDS.includes(admTargetPlayer.uid);
         const newRole = isAdmin ? 'player' : 'admin';
         if (!confirm(`${isAdmin ? 'Remover' : 'Dar'} ADM de ${admTargetPlayer.nick}?`)) return;
-        try {
-            await updateDoc(doc(db, "players", admTargetPlayer.uid), { role: newRole });
-            showToast(`✅ ${admTargetPlayer.nick} agora é ${newRole === 'admin' ? 'ADMINISTRADOR' : 'JOGADOR'}.`);
-            closeAdmActions();
-        } catch(e) { showToast('Erro: ' + e.message); }
+        try { await updateDoc(doc(db, "players", admTargetPlayer.uid), { role: newRole }); showToast(`✅ ${admTargetPlayer.nick} agora é ${newRole === 'admin' ? 'ADMINISTRADOR' : 'JOGADOR'}.`); closeAdmActions(); } catch(e) { showToast('Erro: ' + e.message); }
     };
 
     // CHAT
@@ -904,13 +1049,10 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
         const text = input.value.trim();
         if (!text) return;
         if (text.length > 200) return showToast('Mensagem muito longa!');
-        
-        // Verifica se está mutado
         if (currentUserData.mutedUntil && currentUserData.mutedUntil > Date.now()) {
             const remaining = Math.ceil((currentUserData.mutedUntil - Date.now()) / 60000);
             return showToast(`🔇 Você está mutado. Aguarde ${remaining} minutos.`);
         }
-        
         try {
             await addDoc(collection(db, "chatMessages"), {
                 type: "global", text, authorUid: currentUserId, authorNick: currentUserData.nick,
@@ -949,7 +1091,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
         if (!text || !targetUid) return;
         try {
             const chatId = [currentUserId, targetUid].sort().join('_');
-            await addDoc(collection(db, "privateMessages"), { chatId, text, fromUid: currentUserId, fromNick: currentUserData.nick, toUid: targetUid, toNick: targetNick, createdAt: serverTimestamp() });
+            await addDoc(collection(db, "privateMessages"), { chatId, text, fromUid: currentUserId, fromNick: currentUserData.nick, toUid: targetUid, toNick: targetNick, createdAt: serverTimestamp });
             input.value = '';
         } catch(e) { showToast('Erro: ' + e.message); }
     };
@@ -963,13 +1105,11 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
             container.innerHTML = messages.map(msg => {
                 const isAdmin = msg.authorRole === "admin" || SUPER_ADMIN_UIDS.includes(msg.authorUid);
                 const isOwn = msg.authorUid === currentUserId;
-                const isMuted = msg.mutedUntil && msg.mutedUntil > Date.now();
                 const time = msg.createdAt?.toDate ? msg.createdAt.toDate().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'}) : '';
                 let badges = '';
-                if (isAdmin) badges += '<span class="badge-adm">👑 ADM</span>';
+                if (isAdmin) badges += '<span class="badge-adm"> ADM</span>';
                 if (msg.authorVip > 0) badges += `<span class="badge-vip">VIP ${msg.authorVip}</span>`;
-                if (isMuted) badges += '<span class="badge-muted">🔇 MUTADO</span>';
-                return `<div class="message ${isOwn ? 'own' : ''} ${isMuted ? 'muted-user' : ''}"><div class="message-header"><span style="font-size:1.5em;margin-right:5px;">${msg.authorAvatar || '🥷'}</span><span class="message-author" style="${isAdmin ? 'color:#c4b5fd;' : ''}">${msg.authorNick}</span><span class="badge-adm" style="font-size:0.6em;padding:1px 5px;">Lv.${msg.authorLevel || 1}</span>${badges}<span class="message-uid">ID: ${msg.authorUid.substring(0, 8)}</span><span class="message-time">${time}</span></div><div class="message-text">${escapeHtml(msg.text)}</div></div>`;
+                return `<div class="message ${isOwn ? 'own' : ''}"><div class="message-header"><span style="font-size:1.5em;margin-right:5px;">${msg.authorAvatar || '🥷'}</span><span class="message-author" style="${isAdmin ? 'color:#c4b5fd;' : ''}">${msg.authorNick}</span><span class="badge-adm" style="font-size:0.6em;padding:1px 5px;">Lv.${msg.authorLevel || 1}</span>${badges}<span class="message-uid">ID: ${msg.authorUid.substring(0, 8)}</span><span class="message-time">${time}</span></div><div class="message-text">${escapeHtml(msg.text)}</div></div>`;
             }).join('');
             container.scrollTop = container.scrollHeight;
             if (!chatOpen && messages.length > 0) {
@@ -1003,7 +1143,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
             const data = snap.data();
             currentUserData = data;
             
-            // Verifica ban temporário
             if (data.banned && data.banUntil && data.banUntil < Date.now()) {
                 await updateDoc(playerRef, { banned: false, banUntil: null });
             } else if (data.banned) {
@@ -1013,10 +1152,10 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
             }
 
             isUserAdmin = SUPER_ADMIN_UIDS.includes(user.uid) || (data.role === "admin");
-            const avatar = data.avatar || '🥷';
+            const avatar = data.avatar || '';
             $('playerAvatar').textContent = avatar;
             let nameHtml = `<span class="${isUserAdmin ? 'text-admin' : ''}">${data.nick || 'Jogador'}</span>`;
-            if (isUserAdmin) { nameHtml += ` <span class="badge-adm"> ADM</span><span class="badge-vip">VIP 10</span>`; $('btnOpenAdmin').classList.remove('hidden'); }
+            if (isUserAdmin) { nameHtml += ` <span class="badge-adm">👑 ADM</span><span class="badge-vip">VIP 10</span>`; $('btnOpenAdmin').classList.remove('hidden'); }
             else { if (data.vipLevel && data.vipLevel > 0) nameHtml += ` <span class="badge-vip">VIP ${data.vipLevel}</span>`; $('btnOpenAdmin').classList.add('hidden'); }
             if (data.mutedUntil && data.mutedUntil > Date.now()) nameHtml += ` <span class="badge-muted">🔇 MUTADO</span>`;
             $('playerNameDisplay').innerHTML = nameHtml;
