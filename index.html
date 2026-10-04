@@ -2,105 +2,799 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Dragon War — Painel ADM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dragon War - Rise of Power | Servidor Oficial</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#050812;color:#edf4ff;font-family:Arial,sans-serif}.hidden{display:none!important}
-button,input,select,textarea{font:inherit}button{cursor:pointer}.login{min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at top,#21133d,#050812 55%)}
-.box{width:min(460px,100%);background:#0b1020;border:1px solid #6234a6;border-radius:18px;padding:28px;box-shadow:0 20px 70px #0008}.crown{font-size:48px}.title{font-size:27px;font-weight:800}.muted{color:#91a0b8}.red{color:#ff4b55}.gold{color:#ffd34d}
-input,select,textarea{width:100%;background:#070c17;color:#fff;border:1px solid #263452;border-radius:10px;padding:12px;margin:6px 0 12px;outline:none}textarea{min-height:90px;resize:vertical}.btn{border:0;border-radius:10px;padding:11px 14px;background:#6234a6;color:white;font-weight:700;margin:4px}.btn:hover{filter:brightness(1.15)}.green{background:#16834b}.danger{background:#a92735}.blue{background:#245d9f}.gray{background:#334155}.goldbtn{background:#9b7310}
-#app{min-height:100vh}.top{position:sticky;top:0;z-index:20;background:#090d18ee;border-bottom:1px solid #222c42;backdrop-filter:blur(10px);padding:12px 18px;display:flex;justify-content:space-between;align-items:center}.brand{font-weight:800}.brand small{display:block;color:#8391a8;font-weight:400;margin-top:3px}.adminName{color:#ff3947;font-weight:900}.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 67px)}.side{border-right:1px solid #202a40;background:#080d18;padding:12px;display:flex;flex-direction:column;gap:7px}.side button{text-align:left;background:#0e1524;color:#dce7fa;border:1px solid #18243a;padding:12px;border-radius:10px}.side button.active,.side button:hover{background:#322052;border-color:#7345a8}.logout{margin-top:auto!important;background:#4b1620!important}
-main{padding:20px;max-width:1300px;width:100%}.section{display:none}.section.active{display:block}.head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.head h2{margin:0 0 4px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:15px 0}.card{background:#0b1220;border:1px solid #202d45;border-radius:14px;padding:15px}.stat{font-size:28px;font-weight:900}.table{overflow:auto;border:1px solid #202d45;border-radius:12px}.row{display:grid;grid-template-columns:1.3fr .7fr .7fr .8fr 1.8fr;gap:8px;align-items:center;padding:12px;border-bottom:1px solid #19243a;min-width:760px}.row:last-child{border:0}.th{color:#91a0b8;font-size:12px;text-transform:uppercase}.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:800;background:#263148}.online{color:#35e58a}.offline{color:#8793a6}.badgeAdm{background:#4b1018;color:#ff6670}.badgeMod{background:#173d50;color:#66d8ff}.badgeVip{background:#503d0d;color:#ffd95c}.mini{font-size:12px;color:#8290a8}.actions{display:flex;flex-wrap:wrap;gap:4px}.modal{position:fixed;inset:0;background:#000b;display:none;place-items:center;padding:18px;z-index:50}.modal.show{display:grid}.modalBox{width:min(720px,100%);max-height:90vh;overflow:auto;background:#0b1220;border:1px solid #5c3590;border-radius:16px;padding:18px}.msg{padding:10px;border-radius:10px;margin:7px 0}.ok{background:#062d1c;border:1px solid #167447}.err{background:#3b1017;border:1px solid #8c2835}.chat{height:300px;overflow:auto;background:#060b14;border:1px solid #202d45;border-radius:10px;padding:10px}.chatMsg{padding:8px;border-bottom:1px solid #172137}.supportHeader{color:#9ca9be;margin-bottom:8px}.dangerText{color:#ff6470}.notice{background:#101b30;border-left:3px solid #7041a5;padding:12px;border-radius:8px}.search{max-width:420px}
-@media(max-width:800px){.layout{grid-template-columns:1fr}.side{border-right:0;border-bottom:1px solid #202a40;display:grid;grid-template-columns:repeat(2,1fr)}.logout{margin-top:0!important}.top{align-items:flex-start}.row{grid-template-columns:1fr}.th{display:none}main{padding:12px}}
+:root{--bg-color:#0b0f19;--panel-bg:#131b2e;--panel-border:#1e293b;--accent-color:#f59e0b;--adm-color:#ef4444;--diamond-color:#38bdf8;--text-color:#f8fafc}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+body{background-color:var(--bg-color);color:var(--text-color);height:100vh;display:flex;overflow:hidden}
+.screen{width:100%;height:100%;display:flex;justify-content:center;align-items:center;position:absolute;top:0;left:0;background:radial-gradient(circle,#1e293b 0%,#0b0f19 100%);z-index:10}
+.hidden{display:none!important}
+.card{background:var(--panel-bg);padding:30px;border-radius:12px;width:380px;box-shadow:0 10px 25px rgba(0,0,0,.8);border:2px solid var(--accent-color);text-align:center}
+.card img.logo-login{width:100%;max-height:90px;object-fit:contain;margin-bottom:20px;border-radius:6px}
+.card h2{margin-bottom:20px;color:var(--accent-color);font-size:20px;text-transform:uppercase;letter-spacing:1px}
+.input-group{margin-bottom:15px;text-align:left}.input-group label{display:block;margin-bottom:5px;font-size:14px;color:#94a3b8}
+.input-group input{width:100%;padding:10px;border-radius:6px;border:1px solid var(--panel-border);background:#070a12;color:white}
+.btn{width:100%;padding:10px;background:linear-gradient(90deg,#f59e0b,#d97706);border:none;color:#000;font-weight:bold;border-radius:6px;cursor:pointer;transition:.2s;text-transform:uppercase}
+.btn:hover{opacity:.9;transform:translateY(-1px)}.btn-adm{background:linear-gradient(90deg,#ef4444,#b91c1c);color:white;margin-top:10px}
+.btn-blue{background:linear-gradient(90deg,#38bdf8,#0284c7);color:#000}
+.btn-green{background:linear-gradient(90deg,#10b981,#059669);color:white}
+.btn-purple{background:linear-gradient(90deg,#8b5cf6,#6d28d9);color:white}
+.btn-gray{background:#334155;color:white}
+.auth-switch{margin-top:15px;font-size:13px;color:#94a3b8;cursor:pointer}.auth-switch:hover{color:var(--accent-color);text-decoration:underline}
+#game-container{display:flex;width:100%;height:100%;background:linear-gradient(rgba(11,15,25,.85),rgba(11,15,25,.95)),url('89097.png') no-repeat center center;background-size:cover;position:relative}
+sidebar{width:260px;background:rgba(19,27,46,.95);border-right:1px solid var(--panel-border);display:flex;flex-direction:column;padding:20px;backdrop-filter:blur(5px)}
+.server-banner{width:100%;height:75px;background:linear-gradient(145deg,#0b1730,#132b4d);border-radius:6px;margin-bottom:15px;border:1px solid var(--accent-color);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;text-align:center;overflow:hidden}.server-banner b{font-size:18px;letter-spacing:2px;color:#fff}.server-banner span{font-size:10px;letter-spacing:3px;color:#f59e0b;font-weight:900}
+.user-profile{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-bottom:15px;border-bottom:1px solid var(--panel-border)}
+.user-avatar{width:45px;height:45px;background:var(--accent-color);color:#000;border-radius:50%;display:flex;justify-content:center;align-items:center;font-weight:bold;font-size:18px;border:2px solid white;object-fit:cover}
+.menu-list{list-style:none;display:flex;flex-direction:column;gap:8px;flex-grow:1;overflow-y:auto}
+.menu-item{padding:10px 15px;border-radius:6px;cursor:pointer;background:rgba(255,255,255,.03);transition:.2s;font-size:14px;font-weight:600;border-left:3px solid transparent}
+.menu-item:hover{background:rgba(255,255,255,.08)}.menu-item.active{background:rgba(245,158,11,.15);color:var(--accent-color);border-left:3px solid var(--accent-color)}
+main{flex-grow:1;display:flex;flex-direction:column;position:relative;padding-bottom:60px}
+header{padding:15px 25px;background:rgba(19,27,46,.9);border-bottom:1px solid var(--panel-border);display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(5px)}
+.content-area{flex-grow:1;padding:25px;overflow-y:auto;position:relative}.panel-section{display:none}.panel-section.active{display:block}
+.tag{display:inline-block;padding:5px 9px;border-radius:999px;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.25);font-size:11px;color:#bae6fd}.adm-tag{color:var(--adm-color);font-weight:bold}
+.dragon-rainbow-name{background:linear-gradient(90deg,#ef4444,#f59e0b,#10b981,#3b82f6,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900;font-size:15px}
+.global-chat-bar{position:absolute;bottom:0;left:0;width:100%;height:55px;background:rgba(2,6,23,.95);border-top:1px solid var(--panel-border);display:flex;align-items:center;padding:0 15px;gap:10px;z-index:50;backdrop-filter:blur(5px)}
+.global-chat-bar span{font-size:12px;color:var(--accent-color);font-weight:bold;white-space:nowrap;text-transform:uppercase}
+.global-chat-bar input{flex-grow:1;padding:8px 12px;border-radius:4px;border:1px solid var(--panel-border);background:#070a12;color:white;font-size:13px}
+.global-chat-bar button{padding:8px 15px;background:var(--adm-color);border:none;color:white;font-weight:bold;border-radius:4px;cursor:pointer;text-transform:uppercase;font-size:12px}
+.chat-box{height:130px;background:rgba(2,6,23,.8);border:1px solid var(--panel-border);border-radius:6px;padding:10px;overflow-y:auto;font-size:13px;display:flex;flex-direction:column;gap:5px;margin-top:10px}
+.chat-msg{background:rgba(255,255,255,.05);padding:5px 8px;border-radius:4px}.chat-msg.global{border-left:3px solid var(--adm-color);background:rgba(239,68,68,.15)}
+.grid-boxes{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:15px}.box-item{background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:8px;padding:15px;text-align:center}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px}th,td{padding:10px;border-bottom:1px solid var(--panel-border);text-align:left}
+th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spacing:1px}
+.form-control{width:100%;padding:8px;margin-top:5px;margin-bottom:15px;background:#070a12;border:1px solid var(--panel-border);color:white;border-radius:4px}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);display:flex;justify-content:center;align-items:center;z-index:100}
+.modal-card{background:var(--panel-bg);border:2px solid var(--accent-color);padding:25px;border-radius:10px;width:450px;max-height:90vh;overflow:auto;box-shadow:0 10px 30px rgba(0,0,0,.9);position:relative}
+.close-modal{position:absolute;top:10px;right:15px;background:none;border:none;color:white;font-size:20px;cursor:pointer}
+.shop-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.shop-tabs button{width:auto;padding:7px 12px}
+.shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-height:520px;overflow-y:auto}
+.item-card{background:var(--panel-bg);border:1px solid var(--panel-border);padding:12px;border-radius:8px}.item-card h4{color:var(--accent-color);font-size:14px}
+.item-card p{font-size:11px;color:#94a3b8;margin:5px 0}.price{color:#f59e0b;font-weight:bold;font-size:12px}
+.badge{display:inline-block;padding:3px 7px;border-radius:20px;font-size:10px;font-weight:bold;background:#334155;margin:2px}
+.badge.online{background:#14532d;color:#86efac}.badge.offline{background:#334155;color:#cbd5e1}.badge.adm{background:#7f1d1d;color:#fecaca}.badge.vip{background:#78350f;color:#fde68a}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:15px}.stat{background:var(--panel-bg);border:1px solid var(--panel-border);padding:14px;border-radius:8px;text-align:center}.stat b{font-size:22px;color:var(--accent-color);display:block}
+.support-chat{height:260px;background:#020617;border:1px solid var(--panel-border);border-radius:7px;padding:10px;overflow-y:auto;display:flex;flex-direction:column;gap:7px;margin:10px 0}
+.support-msg{max-width:80%;padding:8px;border-radius:8px;background:#172033;font-size:13px}.support-msg.me{align-self:flex-end;background:#713f12}.support-msg.adm{border-left:3px solid var(--adm-color)}
+.progress{height:7px;background:#1e293b;border-radius:5px;overflow:hidden;margin-top:5px}.progress>div{height:100%;background:var(--accent-color)}
+#notificacoes-box{position:fixed;top:15px;right:15px;width:min(360px,calc(100vw - 30px));z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}.dw-notificacao{background:rgba(15,23,42,.97);border:1px solid var(--panel-border);border-left:4px solid var(--accent-color);color:#fff;padding:10px 12px;border-radius:8px;box-shadow:0 10px 25px rgba(0,0,0,.45);font-size:12px}.dw-notificacao.success{border-left-color:#10b981}.dw-notificacao.danger{border-left-color:#ef4444}.dw-notificacao.info{border-left-color:#38bdf8}
+@media(max-width:900px){sidebar{width:210px}.grid-boxes,.shop-grid{grid-template-columns:repeat(2,1fr)}.stat-grid{grid-template-columns:repeat(2,1fr)}header{gap:8px;flex-wrap:wrap}.content-area{padding:15px}}
+@media(max-width:650px){sidebar{width:175px;padding:10px}.server-banner{height:55px}.menu-item{font-size:11px;padding:8px}.grid-boxes,.shop-grid{grid-template-columns:1fr}.modal-card{width:92%}.chat-tools{right:8px;bottom:8px;gap:5px}.chat-toggle,.adm-contact-btn{font-size:11px;padding:0 10px}.chat-window{right:8px;width:calc(100% - 16px)}}
+
+.chat-tools{position:absolute;right:14px;bottom:8px;display:flex;align-items:center;gap:8px;z-index:80}.chat-toggle{height:38px;padding:0 14px;border:1px solid var(--accent-color);border-radius:20px;background:rgba(19,27,46,.98);color:#fff;font-weight:800;cursor:pointer;z-index:60;box-shadow:0 5px 18px rgba(0,0,0,.35)}
+.chat-window{position:absolute;right:14px;bottom:60px;width:min(380px,calc(100% - 28px));height:330px;background:rgba(7,10,18,.98);border:1px solid var(--accent-color);border-radius:10px;z-index:70;display:flex;flex-direction:column;box-shadow:0 12px 35px rgba(0,0,0,.65);overflow:hidden}
+
+.adm-contact-btn{height:38px;padding:0 14px;border:1px solid #ef4444;border-radius:20px;background:rgba(19,27,46,.98);color:#fff;font-weight:800;cursor:pointer;z-index:60;box-shadow:0 5px 18px rgba(0,0,0,.35)}
+.adm-contact-card{width:min(480px,92vw)}
+.adm-contact-note{font-size:12px;color:#94a3b8;line-height:1.5;margin:8px 0 15px}
+.adm-name-top{font-weight:900;font-size:14px;letter-spacing:.3px}
+.chat-window.hidden{display:none!important}.chat-window-head{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;background:rgba(19,27,46,.98);border-bottom:1px solid var(--panel-border)}
+.chat-close{border:0;background:transparent;color:#fff;font-size:22px;cursor:pointer;line-height:1}.chat-window .chat-box{height:auto;flex:1;margin:0;border:0;border-radius:0;background:#020617}.chat-compose{display:flex;gap:7px;padding:8px;border-top:1px solid var(--panel-border)}.chat-compose input{flex:1;min-width:0;padding:9px;background:#070a12;color:#fff;border:1px solid var(--panel-border);border-radius:6px}.chat-compose button{width:auto;padding:9px 12px}
+.avatar-gallery{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:10px 0}.avatar-option{position:relative;border:1px solid var(--panel-border);background:#070a12;border-radius:8px;padding:6px;cursor:pointer;text-align:center;color:#cbd5e1;transition:.15s}.avatar-option:hover{border-color:#38bdf8;transform:translateY(-1px)}.avatar-option img{width:100%;aspect-ratio:1;border-radius:6px;object-fit:cover;display:block}.avatar-option.selected{border-color:var(--accent-color);box-shadow:0 0 0 2px rgba(245,158,11,.25),0 0 14px rgba(245,158,11,.15)}.avatar-use{display:none;margin-top:5px;width:100%;padding:5px 4px;border:0;border-radius:6px;background:var(--accent-color);color:#07111f;font-weight:900;font-size:10px}.avatar-option.selected .avatar-use{display:block}.avatar-selected-mark{display:none;position:absolute;top:5px;right:5px;background:#10b981;color:#04120a;border-radius:12px;padding:2px 5px;font-size:9px;font-weight:900}.avatar-option.selected .avatar-selected-mark{display:block}
+.profile-rank{display:inline-flex;gap:6px;align-items:center;padding:5px 9px;border-radius:20px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35);color:#fbbf24;font-weight:800;font-size:11px;margin:5px 0 10px}.avatar-help{font-size:11px;color:#94a3b8;margin:-8px 0 10px}
+.battle-resource{font-size:11px;color:#94a3b8;margin-top:6px}.battle-cost{font-size:10px;opacity:.85;margin-left:5px}
+.skin-shop-img{width:100%;aspect-ratio:1;border-radius:8px;object-fit:cover;background:#020617;border:1px solid var(--panel-border);margin-bottom:8px}.rank-me-card{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid rgba(245,158,11,.35);background:linear-gradient(135deg,rgba(245,158,11,.10),rgba(15,23,42,.8));border-radius:10px}.rank-me-avatar{width:58px;height:58px;border-radius:50%;object-fit:cover;border:2px solid var(--accent-color)}.rank-me-name{font-weight:900;font-size:16px}.rank-reward-box{margin-top:12px;padding:14px;border:1px solid var(--panel-border);border-radius:10px;background:rgba(2,6,23,.45)}
 </style>
 </head>
 <body>
-<div id="login" class="login">
-  <div class="box">
-    <div class="crown">👑</div>
-    <div class="title">Dragon War — Painel ADM</div>
-    <p class="muted">Acesso administrativo. Quem receber o cargo <b>ADMINISTRADOR</b> terá o painel liberado automaticamente.</p>
-    <label>E-mail</label><input id="email" type="email" autocomplete="username" placeholder="seu@email.com">
-    <label>Senha</label><input id="senha" type="password" autocomplete="current-password" placeholder="••••••••">
-    <button class="btn" style="width:100%;margin:0" onclick="entrar()">👑 Entrar no Painel ADM</button>
-    <div id="loginMsg" class="mini" style="margin-top:12px"></div>
-  </div>
+<div id="notificacoes-box"></div>
+
+<div id="login-screen" class="screen">
+<div class="card">
+<img src="89097.png" alt="Dragon War Logo" class="logo-login">
+<h2 id="auth-title">Dragon War: Rise of Power</h2>
+<div style="font-size:12px;color:#94a3b8;margin:-10px 0 16px">Digite seu e-mail e senha. O sistema abrirá automaticamente o ambiente da sua conta.</div>
+<div class="input-group"><label>E-mail:</label><input type="email" id="auth-email" placeholder="seuemail@dominio.com"></div>
+<div class="input-group"><label>Senha:</label><input type="password" id="auth-pass" placeholder="******"></div>
+<button class="btn" id="auth-btn-action" onclick="realizarAutenticacao()">Entrar na Partida</button>
+<div class="auth-switch" id="auth-switch-mode" onclick="alternarModoAuth()">Não tem conta? Cadastre-se com ID Real</div>
+</div></div>
+
+<div id="game-container" class="hidden">
+<sidebar>
+<div class="server-banner" title="Dragon War - Rise of Power"><b>DRAGON WAR</b><span>RISE OF POWER</span></div>
+<div class="user-profile">
+<img src="" id="sidebar-avatar-img" class="user-avatar" style="display:none">
+<div class="user-avatar" id="sidebar-avatar-txt">U</div>
+<div><div id="sidebar-name" style="font-weight:bold;font-size:15px">Usuário</div><div style="font-size:11px;color:#94a3b8" id="sidebar-role">Jogador Real</div></div>
+</div>
+<ul class="menu-list" id="menu-list"></ul>
+<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--panel-border);flex-shrink:0"><button class="btn btn-gray" onclick="sairDaConta()" style="width:100%;font-size:12px;border:1px solid #64748b">🚪 SAIR DA CONTA</button></div>
+</sidebar>
+
+<main>
+<header>
+<h3 id="current-page-title" style="text-transform:uppercase;font-size:16px;letter-spacing:1px">Painel</h3>
+<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+<div id="header-player-identity" class="adm-name-top">Usuário</div>
+<div style="font-size:13px;background:rgba(0,0,0,.4);padding:5px 10px;border-radius:20px">Moedas: <span id="user-coins" style="color:#f59e0b;font-weight:bold">10000</span> 🪙</div>
+<div style="font-size:13px;background:rgba(0,0,0,.4);padding:5px 10px;border-radius:20px">Diamantes: <span id="user-diamonds" style="color:#38bdf8;font-weight:bold">0</span> 💎</div>
+<div style="font-size:13px;background:rgba(0,0,0,.4);padding:5px 10px;border-radius:20px">Nível: <span id="user-level" style="color:#10b981;font-weight:bold">1</span> ⚡</div>
+<div style="font-size:13px;background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.28);padding:5px 10px;border-radius:20px">Patente: <span id="header-player-rank" style="color:#fbbf24;font-weight:bold">🌱 Iniciante</span></div>
+</div></header>
+
+<div class="content-area">
+
+<div id="section-jogar" class="panel-section">
+<h2>Modo Batalha - Sistema de Fases</h2>
+<p style="color:#94a3b8;margin-top:5px">Progressão salva por jogador no Firestore.</p>
+<div id="battle-mode-selection" style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-top:20px">
+<div class="box-item" style="cursor:pointer" onclick="iniciarFases('normal')"><h3 style="color:var(--accent-color)">⚔️ Fácil — 30 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Níveis 1–10 tranquilos • 11–24 intermediários • 25–30 difíceis e com recompensas maiores.</p><div style="font-size:11px;color:#f59e0b;margin-top:8px">🎁 Recompensa aumenta a partir do nível 25</div></div>
+<div class="box-item" style="cursor:pointer" onclick="iniciarFases('dificil')"><h3 style="color:var(--accent-color)">💀 Difícil — 30 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Requer nível 10 • inimigos mais fortes e recompensas maiores.</p><div style="font-size:11px;color:#f59e0b;margin-top:8px">🎁 Nível 25+ = recompensa Elite</div></div>
+<div class="box-item" style="cursor:pointer" onclick="iniciarFases('avancada')"><h3 style="color:var(--accent-color)">🔥 Avançado — 25 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Requer nível 16 • alta resistência e grande recompensa.</p><div style="font-size:11px;color:#f59e0b;margin-top:8px">👑 Nível 25 = Elite</div></div>
+<div class="box-item" style="cursor:pointer;border-color:var(--adm-color)" onclick="iniciarFases('hardcore')"><h3 style="color:var(--adm-color)">☠️ Hardcore Elite — 25 níveis</h3><p style="font-size:12px;color:#94a3b8;margin-top:5px">Requer nível 25 • dificuldade máxima e recompensas especiais.</p><div style="font-size:11px;color:#f59e0b;margin-top:8px">💎 Recompensa especial</div></div>
+</div>
+<div id="arena-fases-container" class="hidden" style="margin-top:20px;background:var(--panel-bg);padding:20px;border-radius:8px;border:1px solid var(--panel-border)">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3 id="fases-titulo-cat" style="color:var(--accent-color)">Fase Ativa</h3><button class="btn btn-gray" style="width:auto;padding:7px 12px" onclick="voltarSelecaoFases()">✕ Voltar</button></div>
+<p id="fases-etapa-info" style="font-size:14px;color:#94a3b8;margin:10px 0">Nível 1</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px">
+<div style="background:#070a12;padding:12px;border-radius:6px"><div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px"><span>Sua Vida:</span><span id="player-hp-txt" style="color:#10b981;font-weight:bold">100/100</span></div><div style="width:100%;background:#1e293b;height:8px;border-radius:4px;overflow:hidden"><div id="player-hp-bar" style="width:100%;background:#10b981;height:100%"></div></div></div>
+<div style="background:#070a12;padding:12px;border-radius:6px"><div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px"><span>🔥 Mana:</span><span id="player-mp-txt" style="color:var(--accent-color);font-weight:bold">100/100</span></div><div style="width:100%;background:#1e293b;height:8px;border-radius:4px;overflow:hidden"><div id="player-mp-bar" style="width:100%;background:var(--accent-color);height:100%"></div></div></div>
+</div>
+<div style="background:#070a12;padding:15px;border-radius:6px;margin-bottom:15px"><div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px"><span id="inimigo-alvo-nome">Inimigo</span><span id="movel-hp" style="color:var(--adm-color);font-weight:bold">100%</span></div><div style="width:100%;background:#1e293b;height:10px;border-radius:5px;overflow:hidden"><div id="movel-hp-bar" style="width:100%;background:var(--adm-color);height:100%"></div></div></div>
+<div id="log-batalha" style="background:#020617;padding:10px;border-radius:6px;font-size:12px;color:#94a3b8;height:70px;overflow-y:auto;margin-bottom:15px">Início da batalha!</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<button class="btn" style="width:auto;padding:10px 15px" onclick="batalhaAcao('atacar')">⚔️ Atacar <span class="battle-cost">-5 Mana</span></button>
+<button class="btn btn-blue" style="width:auto;padding:10px 15px" onclick="batalhaAcao('defender')">🛡️ Defender <span class="battle-cost">-8 Mana</span></button>
+<button class="btn btn-purple" style="width:auto;padding:10px 15px" onclick="batalhaAcao('poder')">🔥 Usar Poder <span class="battle-cost">-30 Mana</span></button>
+<button class="btn btn-green" style="width:auto;padding:10px 15px" onclick="batalhaAcao('habilidade')">✨ Usar Habilidade <span class="battle-cost">-20 Mana</span></button>
+<button class="btn btn-gray" style="width:auto;padding:10px 15px" onclick="batalhaAcao('curar')">🧪 Usar Poção <span class="battle-cost">1 poção</span></button>
+<button class="btn btn-adm" style="width:auto;padding:10px 15px" onclick="batalhaAcao('fugir')">🏃 Fugir</button>
+</div></div>
 </div>
 
-<div id="app" class="hidden">
-<header class="top"><div class="brand">🐉 Dragon War <small>PAINEL ADMINISTRATIVO</small></div><div><span class="adminName">👑 <span id="topName">ADM</span></span> <span class="badge badgeAdm">ADMINISTRADOR</span></div></header>
-<div class="layout">
-<aside class="side">
-<button data-sec="dashboard" onclick="abrirSec('dashboard')">🏠 Visão geral</button>
-<button data-sec="jogadores" onclick="abrirSec('jogadores')">👥 Jogadores</button>
-<button data-sec="eventos" onclick="abrirSec('eventos')">🎉 Eventos</button>
-<button data-sec="tickets" onclick="abrirSec('tickets')">🎫 Tickets</button>
-<button data-sec="discussao" onclick="abrirSec('discussao')">💬 Canal de discussão</button>
-<button data-sec="logs" onclick="abrirSec('logs')">📋 Logs</button>
-<button class="logout" onclick="sair()">🚪 Sair</button>
-</aside>
-<main>
-<section id="dashboard" class="section active">
-<div class="head"><div><h2>👑 Visão geral</h2><div class="muted">Controle do Dragon War em tempo real.</div></div></div>
-<div class="grid"><div class="card"><div class="mini">JOGADORES</div><div id="statPlayers" class="stat">0</div></div><div class="card"><div class="mini">ONLINE</div><div id="statOnline" class="stat online">0</div></div><div class="card"><div class="mini">ADM</div><div id="statAdm" class="stat red">0</div></div><div class="card"><div class="mini">VIP</div><div id="statVip" class="stat gold">0</div></div><div class="card"><div class="mini">TICKETS</div><div id="statTickets" class="stat">0</div></div></div>
-<div class="notice">🔐 <b>Permissões:</b> este painel só abre para contas autenticadas com <b>role: admin</b> ou <b>role: administrador</b>. A conta principal do ADM Gabriel fica protegida.</div>
-</section>
+<div id="section-loja" class="panel-section">
+<h2>🛒 Loja de Dragon War</h2><p style="color:#94a3b8;margin-top:5px">Tudo comprado vai automaticamente para o inventário.</p>
+<div id="adm-loja-controls" class="hidden" style="margin-top:15px;background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)">
+<h4>👑 Criar conteúdo da Loja</h4><select id="new-item-category" class="form-control"><option value="weapon">Arma</option><option value="skin">Skin</option><option value="potion">Poção</option><option value="power">Poder</option></select>
+<input type="text" id="new-item-name" class="form-control" placeholder="Nome"><input type="number" id="new-item-price" class="form-control" placeholder="Preço em moedas">
+<input type="number" id="new-item-damage" class="form-control" placeholder="Dano/Bônus" value="50">
+<button class="btn" onclick="adicionarItemCatalogo()">Salvar no Catálogo Global</button></div>
+<div class="shop-tabs">
+<button class="btn" onclick="mudarCategoriaLoja('all')">🔥 Todos</button><button class="btn btn-blue" onclick="mudarCategoriaLoja('weapon')">⚔️ Armas 50+</button>
+<button class="btn btn-purple" onclick="mudarCategoriaLoja('skin')">🧙 Skins 50+</button><button class="btn btn-green" onclick="mudarCategoriaLoja('potion')">🧪 Poções 20+</button><button class="btn btn-adm" onclick="mudarCategoriaLoja('power')">⚡ Poderes 50+</button>
+</div><div id="loja-grid" class="shop-grid"></div></div>
 
-<section id="jogadores" class="section"><div class="head"><div><h2>👥 Jogadores</h2><div class="muted">Cargo, VIP, nome, banimento, mute e permissões.</div></div><input id="busca" class="search" oninput="renderPlayers()" placeholder="🔎 Nome, e-mail ou UID"></div><div id="playersBox" class="table" style="margin-top:14px"></div></section>
+<div id="section-poderes" class="panel-section">
+<h2>⚡ Catálogo de Poderes</h2><p style="color:#94a3b8;margin-top:5px">Poderes oficiais e poderes publicados pelo ADM. O jogador pode apenas visualizar e comprar.</p>
+<div id="player-power-admin-note" class="box-item hidden" style="margin-top:15px;border-left:3px solid #8b5cf6"><b>👑 Criação de poderes — ADM</b><p style="font-size:12px;color:#94a3b8;margin-top:5px">A criação e publicação de poderes é exclusiva do ADM.</p></div>
+<div id="lista-mais-de-50-poderes" class="shop-grid" style="margin-top:15px"></div></div>
 
-<section id="eventos" class="section"><h2>🎉 Eventos</h2><div class="card"><input id="evNome" placeholder="Nome do evento"><textarea id="evDesc" placeholder="Descrição"></textarea><div class="grid"><input id="evFim" type="datetime-local"><input id="evReward" type="number" min="0" value="100" placeholder="Recompensa em pontos"></div><button class="btn green" onclick="criarEvento()">➕ Publicar evento</button></div><div id="eventsBox" class="grid"></div></section>
+<div id="section-guildas" class="panel-section">
+<h2>🛡️ Guildas</h2>
+<p style="color:#94a3b8;margin-top:5px">Crie sua própria guilda ou entre em uma guilda disponível.</p>
+<div id="guilda-resumo" style="margin-top:15px"></div>
+<div id="guilda-acoes" class="box-item" style="margin-top:15px">
+<h3>🏰 Criar ou entrar</h3>
+<p style="font-size:12px;color:#94a3b8;margin-top:5px">Criar uma guilda custa <b style="color:#38bdf8">500 💎</b>. Entrar em uma guilda aberta custa <b style="color:#38bdf8">50 💎</b>.</p>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+<button class="btn" style="width:auto" onclick="abrirCriacaoGuilda()">🏰 Criar Guilda — 500 💎</button>
+<button class="btn btn-blue" style="width:auto" onclick="carregarGuildasDisponiveis()">🔎 Ver Guildas Disponíveis</button>
+</div>
+<div id="form-criar-guilda" class="hidden" style="margin-top:15px;padding:15px;background:rgba(0,0,0,.18);border-radius:8px;border:1px solid var(--panel-border)">
+<input id="guilda-nome" class="form-control" placeholder="Nome da guilda">
+<input id="guilda-descricao" class="form-control" placeholder="Descrição da guilda">
+<select id="guilda-tipo" class="form-control"><option value="aberta">🔓 Guilda Aberta</option><option value="fechada">🔒 Guilda Fechada</option></select>
+<button class="btn" style="width:auto" onclick="criarGuilda()">✅ Criar Guilda</button>
+</div>
+</div>
+<div id="guildas-disponiveis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:15px"></div>
+<div id="guilda-painel" class="hidden" style="margin-top:15px"></div>
+</div>
 
-<section id="tickets" class="section"><h2>🎫 Tickets / Atendimento</h2><div id="ticketsBox" class="grid"></div></section>
+<div id="section-inventario" class="panel-section">
+<h2>🎒 Seu Inventário</h2><p style="color:#94a3b8;margin-top:5px">Itens comprados e recompensas ficam salvos na sua conta.</p><div id="inventario-itens" style="margin-top:15px;display:flex;gap:15px;flex-wrap:wrap"></div></div>
 
-<section id="discussao" class="section"><h2>💬 Canal de discussão</h2><p class="muted">Canal administrativo para comunicação com outras pessoas autorizadas.</p><div id="discussion" class="chat"></div><div style="display:flex;gap:8px;margin-top:8px"><input id="discInput" style="margin:0" placeholder="Escreva uma mensagem..." onkeydown="if(event.key==='Enter')enviarDiscussao()"><button class="btn" onclick="enviarDiscussao()">Enviar</button></div></section>
+<div id="section-rank" class="panel-section">
+<h2>🏆 Rankings, Atividades e Achievements</h2>
+<div id="rank-me-card" style="margin-top:12px"></div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;margin-bottom:15px">
+<button class="btn" style="width:auto;padding:6px 15px" onclick="mudarTabRank('global')">🌎 Ranking Global</button><button class="btn btn-green" style="width:auto;padding:6px 15px" onclick="mudarTabRank('online')">🟢 Atividades</button><button class="btn btn-purple" style="width:auto;padding:6px 15px" onclick="mudarTabRank('achievements')">🏅 Achievements</button><button class="btn btn-gray" style="width:auto;padding:6px 15px" onclick="mostrarBaúsRank()">🎁 Baú / Recompensas de Rank</button>
+</div><div id="rank-content"></div></div>
 
-<section id="logs" class="section"><h2>📋 Logs administrativos</h2><div id="logsBox" class="grid"></div></section>
-</main></div></div>
+<div id="section-config-jogador" class="panel-section">
+<h2>⚙️ Meu Perfil</h2><div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+<div style="background:var(--panel-bg);padding:20px;border-radius:8px;border:1px solid var(--panel-border)">
+<h4>👤 Identidade Real</h4><label style="margin-top:10px;display:block">Firebase UID:</label><input type="text" id="player-real-id" class="form-control" readonly style="color:var(--accent-color);font-weight:bold;font-family:monospace">
+<label>Nome exibido:</label><input type="text" id="player-edit-name" class="form-control">
+<label>E-mail:</label><input type="text" id="player-edit-email" class="form-control" readonly>
+<label>URL do Avatar personalizado:</label><input type="text" id="player-edit-avatar" class="form-control" placeholder="https://...">
+<div class="avatar-help">Ou escolha uma das 20 fotos de perfil oficiais do Dragon War.</div>
+<div id="avatar-gallery" class="avatar-gallery"></div>
+<div id="perfil-rank" class="profile-rank">⭐ Iniciante</div>
+<div id="perfil-recursos" style="margin:5px 0 12px;color:#94a3b8"></div><div id="perfil-vida" class="profile-rank" style="margin-bottom:12px">❤️ Vida restaurada</div><div id="perfil-guilda" class="profile-rank" style="margin-bottom:12px">🛡️ Sem guilda</div><div id="perfil-save-status" style="font-size:11px;color:#94a3b8;margin:8px 0">💾 Salvamento automático ativado</div><button class="btn" onclick="salvarPerfilJogador()">Salvar Alterações</button>
+</div>
+<div style="background:var(--panel-bg);padding:20px;border-radius:8px;border:1px solid var(--panel-border)">
+<h4>🔊 Sistema de Som</h4><label>Volume da Música:</label><input type="range" min="0" max="100" value="60" class="form-control" id="vol-musica" oninput="atualizarVolume()">
+<label>Volume dos Efeitos:</label><input type="range" min="0" max="100" value="80" class="form-control" id="vol-efeitos">
+<button class="btn btn-blue" onclick="alternarSom()">🔊 Ligar/Desligar Música</button>
+<p style="font-size:11px;color:#94a3b8;margin-top:10px">Coloque um arquivo chamado <b>music.mp3</b> na mesma pasta do HTML.</p></div></div></div>
 
-<div id="playerModal" class="modal"><div class="modalBox"><button class="btn gray" style="float:right" onclick="fecharModal()">✕</button><h2>👤 Gerenciar jogador</h2><div id="playerDetail"></div></div></div>
-<div id="ticketModal" class="modal"><div class="modalBox"><button class="btn gray" style="float:right" onclick="fecharTicket()">✕</button><h2>🎫 Atendimento</h2><div id="ticketHead" class="supportHeader"></div><div id="ticketChat" class="chat"></div><div style="display:flex;gap:8px;margin-top:8px"><input id="ticketInput" style="margin:0" placeholder="Responder ticket..." onkeydown="if(event.key==='Enter')responderTicket()"><button class="btn" onclick="responderTicket()">Enviar</button></div></div></div>
+<div id="section-jogadores" class="panel-section">
+<h2>👥 Jogadores Reais do Servidor</h2><div class="stat-grid"><div class="stat"><b id="adm-total">0</b>Total</div><div class="stat"><b id="adm-online">0</b>Online</div><div class="stat"><b id="adm-adms">0</b>ADMs</div><div class="stat"><b id="adm-banidos">0</b>Banidos</div></div>
+<table><thead><tr><th>UID</th><th>Nome/E-mail</th><th>Status</th><th>Cargo</th><th>Ação</th></tr></thead><tbody id="tabela-jogadores-server"></tbody></table></div>
+
+<div id="section-evento" class="panel-section">
+<h2>🎉 Eventos & Recompensa Diária</h2>
+<div style="background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border);margin-top:10px">
+<h4>🎁 Recompensa Diária</h4><p style="font-size:14px;color:#94a3b8;margin-top:5px">Disponível uma vez por dia. O próximo resgate libera automaticamente à meia-noite.</p>
+<button id="daily-btn" class="btn" style="margin-top:10px;width:auto" onclick="resgatarRecompensaDiaria()">🎁 Resgatar +100 🪙 +5 💎</button><div id="daily-countdown" style="margin-top:8px;color:#94a3b8"></div></div>
+<div id="adm-evento-controls" class="hidden" style="margin-top:15px;background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)">
+<h4>👑 Criar Evento Global</h4><input type="text" id="novo-evento-titulo" class="form-control" placeholder="Título"><input type="text" id="novo-evento-desc" class="form-control" placeholder="Descrição"><input type="number" id="novo-evento-reward" class="form-control" placeholder="Recompensa em moedas" value="100"><button class="btn btn-purple" onclick="criarEventoGlobal()">Publicar Evento</button></div>
+<div id="lista-eventos-criados" style="margin-top:15px"></div></div>
+
+<div id="section-painel-adm" class="panel-section">
+<h2>👑 Painel ADM — Admin Gabriel</h2><div class="stat-grid"><div class="stat"><b id="adm-total2">0</b>Jogadores</div><div class="stat"><b id="adm-online2">0</b>Online</div><div class="stat"><b>VIP 10</b>👑 Principal</div><div class="stat"><b id="adm-chatrooms">0</b>Atendimentos</div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:15px">
+<div style="background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)">
+<h4>📢 Mensagem Global</h4><input id="global-msg-adm" class="form-control" placeholder="Mensagem para todos"><button class="btn btn-adm" onclick="enviarMensagemGlobalAdm()">Publicar</button></div>
+<div style="background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)">
+<h4>💬 Puxar jogador</h4><input id="target-player" class="form-control" placeholder="UID ou e-mail"><button class="btn btn-purple" onclick="abrirAtendimentoPorBusca()">Abrir Sala de Atendimento</button></div>
+<div style="background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)">
+<h4>🎁 Recompensa</h4><input id="reward-target" class="form-control" placeholder="UID do jogador"><input id="reward-coins" class="form-control" type="number" placeholder="Moedas" value="100"><button class="btn" onclick="darRecompensaAdm()">Enviar Recompensa</button></div>
+<div style="background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)">
+<h4>⚙️ Configuração VIP</h4><button class="btn btn-gray" onclick="alert('Sistema VIP: Em desenvolvimento')">Adicionar VIP</button><button class="btn btn-gray" onclick="alert('Sistema VIP: Em desenvolvimento')">Comprar VIP</button></div>
+</div>
+<div style="margin-top:15px;background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)"><h4>📨 Mensagens para ADM</h4><div id="adm-solicitacoes" class="chat-box"></div></div>
+<div style="margin-top:15px;background:var(--panel-bg);padding:15px;border-radius:6px;border:1px solid var(--panel-border)"><h4>📝 Logs Administrativos</h4><div id="adm-logs" class="chat-box"></div></div>
+</div>
+
+<div style="margin-top:30px;border-top:1px solid var(--panel-border);padding-top:15px"><h4>Histórico do Chat Global</h4><div class="chat-box" id="adm-chat-history"></div></div>
+</div></main>
+
+<div class="chat-tools" aria-label="Comunicação">
+  <button id="adm-contact-toggle" class="adm-contact-btn" onclick="abrirContatoAdm()">👑 FALAR COM ADM</button>
+  <button id="chat-toggle" class="chat-toggle" onclick="alternarChatGlobal()">💬 CHAT</button>
+</div>
+<div id="modal-contato-adm" class="modal-overlay hidden">
+  <div class="modal-card adm-contact-card">
+    <button class="close-modal" onclick="fecharContatoAdm()">✕</button>
+    <h3 style="color:#ef4444;margin-bottom:4px">👑 ADM GABRIEL</h3>
+    <p class="adm-contact-note">Envie uma solicitação diretamente para o administrador. Preencha seu nome, seu ID e o motivo da mensagem.</p>
+    <label>Seu nome</label>
+    <input id="adm-msg-nome" class="form-control" placeholder="Nome do jogador">
+    <label>Seu ID / UID</label>
+    <input id="adm-msg-id" class="form-control" placeholder="ID do jogador">
+    <label>Motivo da mensagem</label>
+    <textarea id="adm-msg-motivo" class="form-control" rows="5" placeholder="Explique o motivo da mensagem..."></textarea>
+    <button class="btn btn-adm" onclick="enviarSolicitacaoAdm()">📨 ENVIAR PARA ADM</button>
+  </div>
+</div>
+<div id="chat-window" class="chat-window hidden">
+  <div class="chat-window-head"><b>🤖 CHAT • DRAGON WAR</b><button class="chat-close" title="Fechar chat" onclick="fecharChatGlobal()">✕</button></div>
+  <div class="chat-box" id="chat-container"></div>
+  <div class="chat-compose"><input type="text" id="footer-chat-input" placeholder="Digite sua mensagem..."><button class="btn" onclick="enviarMensagemRodape()">Enviar</button></div>
+</div>
+</div>
+
+<div id="modal-jogador" class="modal-overlay hidden"><div class="modal-card"><button class="close-modal" onclick="fecharModalJogador()">&times;</button>
+<h3 style="color:var(--accent-color);margin-bottom:15px">🛡️ Gestão do Jogador</h3><div style="font-size:14px;display:flex;flex-direction:column;gap:8px;margin-bottom:15px">
+<div><strong>UID:</strong> <span id="m-id" style="color:#f59e0b;font-family:monospace"></span></div><div><strong>Nome:</strong> <span id="m-nome"></span></div><div><strong>Status:</strong> <span id="m-status"></span></div></div>
+<button class="btn btn-purple" onclick="abrirAtendimentoSelecionado()">💬 Puxar para Atendimento</button>
+<button class="btn" onclick="atribuirSubAdm()">👑 Conceder/Remover ADM</button>
+<button class="btn btn-adm" onclick="alternarBanSelecionado()">🚫 Banir/Desbanir</button></div></div>
+
+<div id="modal-atendimento" class="modal-overlay hidden"><div class="modal-card" style="width:600px"><button class="close-modal" onclick="fecharAtendimento()">&times;</button>
+<h3 style="color:var(--adm-color);margin-bottom:4px">💬 Sala de Atendimento</h3><div id="support-header" style="font-size:12px;color:#94a3b8;margin-bottom:8px"></div>
+<div id="support-messages" class="support-chat"></div>
+<div style="display:flex;gap:8px"><input id="support-input" class="form-control" style="margin:0" placeholder="Digite sua mensagem..." onkeydown="if(event.key==='Enter')enviarMensagemAtendimento()"><button class="btn btn-adm" style="width:110px;margin:0" onclick="enviarMensagemAtendimento()">Enviar</button></div>
+<button class="btn btn-gray" style="margin-top:10px" onclick="fecharAtendimento()">Fechar janela</button></div></div>
+
+<audio id="bg-music" loop src="music.mp3"></audio>
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import{getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import{getFirestore,doc,getDoc,setDoc,updateDoc,addDoc,collection,getDocs,query,orderBy,onSnapshot,serverTimestamp,limit}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import{getFirestore,doc,setDoc,getDoc,getDocs,updateDoc,addDoc,collection,query,orderBy,onSnapshot,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-const firebaseConfig={apiKey:"AIzaSyDgooL-9qUyYUyUaa7u0BvXg9i9gvXoZMOYc",authDomain:"dragon-war-rise-of-power-2a9f1.firebaseapp.com",projectId:"dragon-war-rise-of-power-2a9f1",storageBucket:"dragon-war-rise-of-power-2a9f1.firebasestorage.app",messagingSenderId:"115455691167",appId:"1:115455691167:web:ff3638f67b66c17c5515aa",measurementId:"G-S7XE2EN9CL"};
+const firebaseConfig={apiKey:"AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",authDomain:"dragon-war-rise-of-power-2a9f1.firebaseapp.com",projectId:"dragon-war-rise-of-power-2a9f1",storageBucket:"dragon-war-rise-of-power-2a9f1.firebasestorage.app",messagingSenderId:"115455691167",appId:"1:115455691167:web:ff3638f67b66c17c5515aa",measurementId:"G-S7XE2EN9CL"};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
-const ADMIN_EMAIL="groupsacabraldigital@gmail.com";
-let me=null,players=[],selected=null,currentTicket=null,unsubs=[];
-const $=id=>document.getElementById(id); const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-function msg(t,ok=true){$('loginMsg').textContent=t;$('loginMsg').className=ok?'mini ok':'mini err'}
-window.entrar=async()=>{try{msg('🔄 Entrando...');await signInWithEmailAndPassword(auth,$('email').value.trim(),$('senha').value)}catch(e){msg('❌ E-mail ou senha inválidos, ou conta sem acesso.',false)}};
-window.sair=()=>signOut(auth);
-window.abrirSec=id=>{document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.side button[data-sec]').forEach(b=>b.classList.toggle('active',b.dataset.sec===id));if(id==='eventos')carregarEventos();if(id==='tickets')carregarTickets();if(id==='logs')carregarLogs();if(id==='discussao')carregarDiscussao()};
+const EMAIL_ADMIN="groupsacabraldigital@gmail.com";
+let modoCadastro=false, unsubscribeGlobal=null, unsubscribeSupport=null, heartbeatTimer=null, modoSistema="jogador";
+let categoriaLoja="all", jogadorSelecionadoModal={id:"",nome:"",data:{}}, salaAtualId="";
+let usuarioAtual={uid:"",email:"",displayName:"",avatar:"",isAdm:false,isSubAdm:false,role:"USER",vip:0,coins:10000,diamonds:0,level:1,xp:0,inventory:[],phaseProgress:{normal:1,dificil:1,avancada:1,hardcore:1},achievements:[],dailyRewardLastClaim:0,dailyRewardCount:0,dailyRewardDay:"",currentHp:100,mana:100,maxMana:100,banned:false,guildId:"",guildName:"",guildRank:""};
+let faseAtualInfo={categoria:"",etapa:1,hpMovel:100,maxHp:100,playerHp:100,playerMp:100,defend:false};
 
-async function isAdmin(user){if(user.email===ADMIN_EMAIL)return true;const u=await getDoc(doc(db,'users',user.uid));const d=u.exists()?u.data():{};return d.role==='admin'||d.role==='administrador'||d.isAdm===true}
-async function logAction(action,target='',details=''){if(!me)return;try{await addDoc(collection(db,'logs_adm'),{adminUid:me.uid,adminEmail:me.email,action,target,details,createdAt:serverTimestamp()})}catch(e){console.warn(e)}}
-async function loadPlayers(){const s=await getDocs(collection(db,'jogadores_reais'));players=s.docs.map(d=>({uid:d.id,...d.data()}));renderPlayers();stats()}
-function stats(){$('statPlayers').textContent=players.length;$('statOnline').textContent=players.filter(p=>p.online===true||Date.now()-Number(p.lastSeen||0)<60000).length;$('statAdm').textContent=players.filter(p=>['admin','administrador'].includes(String(p.role||'').toLowerCase())||p.isAdm).length;$('statVip').textContent=players.filter(p=>Number(p.vip||0)>0).length}
-function cargo(p){if(p.uid===me?.uid&&me?.email===ADMIN_EMAIL)return '<span class="badge badgeAdm">👑 SUPER ADM</span>';let r=String(p.role||'user').toLowerCase();if(r==='admin'||r==='administrador')return '<span class="badge badgeAdm">👑 ADMIN</span>';if(r==='moderador')return '<span class="badge badgeMod">🛡️ MODERADOR</span>';return '<span class="badge">👤 USER</span>'}
-function vip(p){const n=Math.max(0,Math.min(10,Number(p.vip||0)));return n?`<span class="badge badgeVip">VIP ${n} ${'🐉'.repeat(Math.max(1,Math.ceil(n/2)))}</span>`:'<span class="mini">VIP 0</span>'}
-function online(p){return (p.online===true||Date.now()-Number(p.lastSeen||0)<60000)?'<span class="online">● Online</span>':'<span class="offline">● Offline</span>'}
-window.renderPlayers=()=>{const q=$('busca').value.toLowerCase();const arr=players.filter(p=>`${p.displayName||p.nome||''} ${p.email||''} ${p.uid}`.toLowerCase().includes(q));$('playersBox').innerHTML='<div class="row th"><div>Jogador</div><div>Status</div><div>Cargo</div><div>VIP</div><div>Ações</div></div>'+arr.map(p=>`<div class="row"><div><b>${esc(p.displayName||p.nome||'Sem nome')}</b><div class="mini">${esc(p.email||'')}<br>${esc(p.uid)}</div></div><div>${online(p)}</div><div>${cargo(p)}</div><div>${vip(p)}</div><div class="actions"><button class="btn" onclick="abrirPlayer('${p.uid}')">Gerenciar</button></div></div>`).join('')||'<div style="padding:15px">Nenhum jogador encontrado.</div>'}
-window.abrirPlayer=uid=>{selected=players.find(p=>p.uid===uid);if(!selected)return;const protectedMain=selected.email===ADMIN_EMAIL; $('playerDetail').innerHTML=`<div class="card"><p><b>Nome:</b> ${esc(selected.displayName||selected.nome||'')}</p><p><b>UID:</b> ${esc(selected.uid)}</p><p><b>E-mail:</b> ${esc(selected.email||'')}</p><p><b>Status:</b> ${online(selected)}</p><p><b>Cargo:</b> ${cargo(selected)}</p><p><b>VIP:</b> ${vip(selected)}</p><p><b>Insígnia:</b> ${protectedMain?'👑 ADM GABRIEL (FIXA)':esc(selected.badge||'Nenhuma')}</p></div><label>Nome do jogador</label><input id="editNome" value="${esc(selected.displayName||selected.nome||'')}"><label>Cargo</label><select id="editRole" ${protectedMain?'disabled':''}><option value="user" ${String(selected.role||'user')==='user'?'selected':''}>USER</option><option value="moderador" ${selected.role==='moderador'?'selected':''}>MODERADOR</option><option value="admin" ${['admin','administrador'].includes(selected.role)?'selected':''}>ADMINISTRADOR</option></select><label>VIP</label><select id="editVip" ${protectedMain?'disabled':''}>${Array.from({length:11},(_,i)=>`<option value="${i}" ${Number(selected.vip||0)===i?'selected':''}>VIP ${i}</option>`).join('')}</select><div class="actions"><button class="btn green" onclick="salvarPlayer()">💾 Salvar</button><button class="btn goldbtn" onclick="darMoedas()">🪙 +1000 Moedas</button><button class="btn blue" onclick="darGemas()">💎 +100 Gemas</button><button class="btn" onclick="darXP()">⭐ +500 XP</button><button class="btn ${selected.muted?'green':'gray'}" onclick="toggleMute()">🔇 ${selected.muted?'Desmutar':'Mutar'}</button><button class="btn danger" onclick="toggleBan()">🚫 ${selected.banned?'Desbanir':'Banir'}</button></div>${protectedMain?'<div class="notice" style="margin-top:12px">🔒 Conta principal protegida: nome, cargo, insígnia e VIP não podem ser alterados por este painel.</div>':''}`;$('playerModal').classList.add('show')}
-window.fecharModal=()=>{$('playerModal').classList.remove('show');selected=null}
-window.salvarPlayer=async()=>{if(!selected)return;const protectedMain=selected.email===ADMIN_EMAIL;const data={displayName:$('editNome').value.trim()||selected.displayName||selected.nome};if(!protectedMain){data.role=$('editRole').value;data.isAdm=data.role==='admin';data.vip=Number($('editVip').value);data.badge=data.role==='admin'?'👑 ADM':data.role==='moderador'?'🛡️ MOD':'Nenhuma'}else data.displayName='ADM Gabriel';await updateDoc(doc(db,'jogadores_reais',selected.uid),data);await logAction('editar_jogador',selected.uid,JSON.stringify(data));await loadPlayers();abrirPlayer(selected.uid)}
-async function addNum(field,n){if(!selected)return;const v=Number(selected[field]||0)+n;await updateDoc(doc(db,'jogadores_reais',selected.uid),{[field]:v});await logAction('dar_recurso',selected.uid,`${field} +${n}`);await loadPlayers();abrirPlayer(selected.uid)}
-window.darMoedas=()=>addNum('coins',1000);window.darGemas=()=>addNum('diamonds',100);window.darXP=()=>addNum('xp',500);
-window.toggleMute=async()=>{if(!selected)return;const v=!selected.muted;await updateDoc(doc(db,'jogadores_reais',selected.uid),{muted:v});await logAction(v?'mutar':'desmutar',selected.uid);await loadPlayers();abrirPlayer(selected.uid)};
-window.toggleBan=async()=>{if(!selected)return;const v=!selected.banned;await updateDoc(doc(db,'jogadores_reais',selected.uid),{banned:v});await logAction(v?'banir':'desbanir',selected.uid);await loadPlayers();abrirPlayer(selected.uid)};
-window.criarEvento=async()=>{const nome=$('evNome').value.trim();if(!nome)return alert('Digite o nome do evento.');await addDoc(collection(db,'events'),{title:nome,description:$('evDesc').value.trim(),endAt:$('evFim').value||null,rewardXP:Number($('evReward').value||0),active:true,createdAt:serverTimestamp(),createdBy:me.uid});await logAction('criar_evento','',nome);$('evNome').value='';$('evDesc').value='';carregarEventos()}
-async function carregarEventos(){const s=await getDocs(query(collection(db,'events'),orderBy('createdAt','desc'))).catch(async()=>await getDocs(collection(db,'events')));$('eventsBox').innerHTML=s.docs.map(d=>{const e=d.data();return `<div class="card"><h3>🎉 ${esc(e.title||e.nome)}</h3><p>${esc(e.description||e.descricao||'')}</p><p class="mini">XP: ${Number(e.rewardXP||0)} • ${e.active===false?'DESATIVADO':'ATIVO'}</p><button class="btn ${e.active===false?'green':'gray'}" onclick="toggleEvent('${d.id}',${e.active===false})">${e.active===false?'Ativar':'Desativar'}</button></div>`}).join('')||'<div class="card">Nenhum evento.</div>'}
-window.toggleEvent=async(id,v)=>{await updateDoc(doc(db,'events',id),{active:v});await logAction(v?'ativar_evento':'desativar_evento',id);carregarEventos()}
-async function carregarTickets(){const s=await getDocs(collection(db,'solicitacoes_adm'));const arr=s.docs.map(d=>({id:d.id,...d.data()}));$('statTickets').textContent=arr.filter(x=>x.status!=='fechado').length;$('ticketsBox').innerHTML=arr.map(t=>`<div class="card"><h3>🎫 ${esc(t.reason||t.assunto||'Atendimento')}</h3><p><b>${esc(t.name||t.displayName||'Jogador')}</b></p><p class="mini">UID: ${esc(t.uid||'')}</p><p>Status: ${esc(t.status||'aberto')}</p><button class="btn" onclick="abrirTicket('${t.id}')">💬 Responder</button></div>`).join('')||'<div class="card">Nenhum ticket.</div>'}
-window.abrirTicket=async id=>{currentTicket=id;const d=await getDoc(doc(db,'solicitacoes_adm',id));const t=d.data()||{};$('ticketHead').textContent=`👑 ADM GABRIEL ↔ 👤 ${t.name||t.displayName||'Jogador'} • ${t.reason||t.assunto||''}`;await renderTicket();$('ticketModal').classList.add('show')}
-async function renderTicket(){if(!currentTicket)return;const s=await getDocs(query(collection(db,'solicitacoes_adm',currentTicket,'mensagens'),orderBy('createdAt','asc'))).catch(async()=>await getDocs(collection(db,'salas_atendimento',currentTicket,'mensagens')));$('ticketChat').innerHTML=s.docs.map(d=>{const m=d.data();return `<div class="chatMsg"><b>${m.senderRole==='admin'?'👑 ADM':'👤 '+esc(m.senderName||'Jogador')}</b><br>${esc(m.text||m.mensagem||'')}</div>`}).join('')||'<div class="mini">Nenhuma mensagem ainda.</div>'}
-window.responderTicket=async()=>{const text=$('ticketInput').value.trim();if(!text||!currentTicket)return;await addDoc(collection(db,'solicitacoes_adm',currentTicket,'mensagens'),{text,senderRole:'admin',senderName:me.email===ADMIN_EMAIL?'ADM Gabriel':me.email,createdAt:serverTimestamp()});await updateDoc(doc(db,'solicitacoes_adm',currentTicket),{status:'em_atendimento'});$('ticketInput').value='';await logAction('responder_ticket',currentTicket,text);renderTicket()};window.fecharTicket=()=>{$('ticketModal').classList.remove('show');currentTicket=null}
-async function carregarDiscussao(){const s=await getDocs(query(collection(db,'canal_discussao'),orderBy('createdAt','asc'))).catch(async()=>await getDocs(collection(db,'canal_discussao')));$('discussion').innerHTML=s.docs.map(d=>{const m=d.data();return `<div class="chatMsg"><b>${esc(m.name||'ADM')}</b> <span class="mini">${m.role==='admin'?'👑':''}</span><br>${esc(m.text||'')}</div>`}).join('')||'<div class="mini">Canal vazio.</div>';$('discussion').scrollTop=$('discussion').scrollHeight}
-window.enviarDiscussao=async()=>{const text=$('discInput').value.trim();if(!text)return;await addDoc(collection(db,'canal_discussao'),{text,name:me.email===ADMIN_EMAIL?'ADM Gabriel':me.email,role:'admin',createdAt:serverTimestamp()});$('discInput').value='';carregarDiscussao()}
-async function carregarLogs(){const s=await getDocs(query(collection(db,'logs_adm'),orderBy('createdAt','desc'),limit(50))).catch(async()=>await getDocs(collection(db,'logs_adm')));$('logsBox').innerHTML=s.docs.map(d=>{const x=d.data();return `<div class="card"><b>${esc(x.action||'ação')}</b><div class="mini">${esc(x.target||'')} • ${esc(x.adminEmail||'')}</div><div>${esc(x.details||'')}</div></div>`}).join('')||'<div class="card">Nenhum log.</div>'}
+const categorias={
+ normal:{nome:"Fácil",max:30,mult:1,hp:100,requisito:1},
+ dificil:{nome:"Difícil",max:30,mult:1.6,hp:180,requisito:10},
+ avancada:{nome:"Avançado",max:25,mult:2.5,hp:300,requisito:16},
+ hardcore:{nome:"Hardcore Elite",max:25,mult:4,hp:500,requisito:25}
+};
 
-onAuthStateChanged(auth,async user=>{unsubs.forEach(f=>f&&f());unsubs=[];if(!user){$('login').classList.remove('hidden');$('app').classList.add('hidden');return}try{const ok=await isAdmin(user);if(!ok){$('login').classList.remove('hidden');$('app').classList.add('hidden');msg('❌ Esta conta ainda é USER/MOD/VIP e não possui painel ADM.',false);await signOut(auth);return}me=user;$('topName').textContent=user.email===ADMIN_EMAIL?'ADM Gabriel':(user.email||'Administrador');$('login').classList.add('hidden');$('app').classList.remove('hidden');await loadPlayers();abrirSec('dashboard')}catch(e){console.error(e);msg('❌ Não foi possível validar as permissões.',false)}});
+function faixaBatalha(etapa){
+ if(etapa>=25)return {nome:"ELITE",fatorInimigo:1.9,recompensa:3.2,xp:2.2};
+ if(etapa>=11)return {nome:"INTERMEDIÁRIO",fatorInimigo:1.35,recompensa:1.7,xp:1.35};
+ return {nome:"INICIAL",fatorInimigo:1,recompensa:1,xp:1};
+}
+function dadosNivelBatalha(cat,etapa){
+ const c=categorias[cat],faixa=faixaBatalha(etapa);
+ const hp=Math.round(c.hp*(1+(etapa-1)*0.78)*c.mult*faixa.fatorInimigo);
+ const dano=Math.max(8,Math.round((10+etapa*1.7)*c.mult*faixa.fatorInimigo));
+ const moedas=Math.round((45+etapa*12)*c.mult*faixa.recompensa);
+ const diamantes=etapa>=25?Math.max(3,Math.round(c.mult*faixa.recompensa)):Math.max(1,Math.floor(c.mult));
+ const xp=Math.round((25+etapa*5)*faixa.xp);
+ return {hp,dano,moedas,diamantes,xp,faixa:faixa.nome};
+}
+const alvos={normal:["Goblin de Cinzas","Cadeira de Ferro","Lobo Sombrio","Guardião de Madeira","Dragão Jovem"],dificil:["Orc de Aço","Golem Pesado","Cavaleiro Negro","Dragão de Gelo","Guardião Real"],avancada:["Titã Arcano","Golem Mítico","Dragão Ancião","Rei Sombrio","Colosso"],hardcore:["Elite Infernal","Titã do Caos","Dragão Supremo","Rei Demônio","Monarca do Abismo"]};
+
+const achievementsCatalog=[
+["first_login","👋 Primeiro Acesso","Entre no servidor pela primeira vez."],["first_purchase","🛒 Primeira Compra","Compre seu primeiro item."],["five_battles","⚔️ Guerreiro","Conclua 5 níveis."],["ten_battles","🔥 Veterano","Conclua 10 níveis."],["level10","⚡ Nível 10","Chegue ao nível 10."],["level25","👑 Elite","Chegue ao nível 25."],["collector10","🎒 Colecionador","Tenha 10 itens."],["power10","✨ Mestre dos Poderes","Tenha 10 poderes."],["skin5","🧙 Estiloso","Tenha 5 skins."],["weapon10","⚔️ Arsenal","Tenha 10 armas."],["easy30","🏆 Fácil Completo","Complete o modo Fácil."],["hard30","💀 Difícil Completo","Complete o modo Difícil."],["advanced25","🌋 Avançado Completo","Complete o modo Avançado."],["hardcore25","☠️ Hardcore Completo","Complete Hardcore Elite."],["daily7","🎁 Constante","Resgate 7 recompensas diárias."],["rich","💰 Rico","Tenha 10.000 moedas."],["diamond","💎 Guardião","Tenha 500 diamantes."],["admin","👑 Administrador","Possua permissão ADM."]];
+
+function gerarCatalogo(){
+ let arr=[];const elements=["Fogo","Gelo","Raio","Sombra","Luz","Caos","Terra","Vento","Plasma","Inferno"];
+ for(let i=1;i<=60;i++)arr.push({id:"weapon_"+i,nome:["Espada","Machado","Lança","Arco","Adaga","Martelo"][i%6]+" "+elements[i%10]+" #"+i,category:"weapon",price:100+i*20,stat:20+i*4,desc:"Dano +"+(20+i*4)});
+ for(let i=1;i<=60;i++)arr.push({id:"skin_"+i,nome:"Skin "+elements[i%10]+" "+i,category:"skin",price:150+i*25,stat:5+i,desc:"Vida +"+(5+i)+" • Dano +"+Math.floor(i/2)});
+ for(let i=1;i<=25;i++)arr.push({id:"potion_"+i,nome:"Poção "+["de Vida","de Mana","Suprema","de Fúria","de Defesa"][i%5]+" #"+i,category:"potion",price:40+i*5,stat:20+i*3,desc:"Efeito +"+(20+i*3)});
+ for(let i=1;i<=60;i++)arr.push({id:"power_"+i,nome:"Poder "+elements[i%10]+" "+["Lâmina","Garra","Sopro","Meteoro","Escudo","Esfera"][i%6]+" #"+i,category:"power",price:180+i*30,stat:50+i*10,desc:"Poder +"+(50+i*10)});
+ return arr;
+}
+let catalogo=gerarCatalogo();
+
+function atualizarMoedasDiamantesUI(){
+ document.getElementById("user-coins").textContent=Number(usuarioAtual.coins||0).toLocaleString("pt-BR");
+ document.getElementById("user-diamonds").textContent=Number(usuarioAtual.diamonds||0).toLocaleString("pt-BR");
+ document.getElementById("user-level").textContent=Number(usuarioAtual.level||1);
+ const rankEl=document.getElementById("header-player-rank"); if(rankEl)rankEl.textContent=patenteAtual(usuarioAtual.level);
+}
+function nomeAtual(){return usuarioAtual.displayName||usuarioAtual.email.split("@")[0]}
+function identidadeHTML(){if(usuarioAtual.isAdm)return '<span class="adm-tag">👑 ADM GABRIEL</span> <span class="badge vip">VIP 10</span>'; if(usuarioAtual.isSubAdm)return '<span class="adm-tag">🛡️ MODERADOR</span>'; return escapeHtml(nomeAtual())}
+function patenteAtual(level){level=Number(level)||1;if(level>=100)return "👑 Lendário";if(level>=75)return "💎 Mestre";if(level>=50)return "🔥 Profissional";if(level>=25)return "⚔️ Intermediário";return "🌱 Iniciante"}
+const temasAvatares=[
+ {nome:"Guerreiro do Fogo",simbolo:"🔥",a:"#ff3d00",b:"#ffb300"},
+ {nome:"Guardião Marinho",simbolo:"🌊",a:"#0066ff",b:"#00e5ff"},
+ {nome:"Mestre do Vento",simbolo:"🌪️",a:"#7dd3fc",b:"#e0f2fe"},
+ {nome:"Dragão Sombrio",simbolo:"🐉",a:"#4c1d95",b:"#a855f7"},
+ {nome:"Cavaleiro do Gelo",simbolo:"❄️",a:"#38bdf8",b:"#e0f2fe"},
+ {nome:"Mago Arcano",simbolo:"🔮",a:"#7c3aed",b:"#ec4899"},
+ {nome:"Caçador da Floresta",simbolo:"🌿",a:"#15803d",b:"#84cc16"},
+ {nome:"Guerreiro do Trovão",simbolo:"⚡",a:"#facc15",b:"#38bdf8"},
+ {nome:"Demônio Rubro",simbolo:"😈",a:"#991b1b",b:"#ef4444"},
+ {nome:"Serafim Celestial",simbolo:"✨",a:"#f8fafc",b:"#f59e0b"},
+ {nome:"Ninja da Névoa",simbolo:"🌫️",a:"#334155",b:"#94a3b8"},
+ {nome:"Samurai Carmesim",simbolo:"⚔️",a:"#b91c1c",b:"#fb7185"},
+ {nome:"Feiticeira Lunar",simbolo:"🌙",a:"#312e81",b:"#818cf8"},
+ {nome:"Guardião da Terra",simbolo:"🪨",a:"#78350f",b:"#a3a3a3"},
+ {nome:"Dragão de Cristal",simbolo:"💎",a:"#0891b2",b:"#67e8f9"},
+ {nome:"Rei do Vulcão",simbolo:"🌋",a:"#7f1d1d",b:"#f97316"},
+ {nome:"Oráculo das Águas",simbolo:"💧",a:"#0369a1",b:"#5eead4"},
+ {nome:"Guardião do Caos",simbolo:"☯",a:"#111827",b:"#f43f5e"},
+ {nome:"Paladino Dourado",simbolo:"🛡️",a:"#92400e",b:"#fde68a"},
+ {nome:"Lorde dos Dragões",simbolo:"👑",a:"#581c87",b:"#f59e0b"}
+];
+function criarAvatarDragonWar(t,i){
+ const id=`dw${i}`;
+ const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+ <defs><radialGradient id="${id}bg"><stop offset="0" stop-color="${t.b}"/><stop offset=".48" stop-color="${t.a}"/><stop offset="1" stop-color="#030712"/></radialGradient><linearGradient id="${id}armor" x1="0" x2="1"><stop stop-color="${t.a}"/><stop offset="1" stop-color="${t.b}"/></linearGradient></defs>
+ <rect width="160" height="160" rx="26" fill="url(#${id}bg)"/>
+ <circle cx="80" cy="76" r="58" fill="none" stroke="${t.b}" stroke-opacity=".45" stroke-width="3"/>
+ <path d="M25 150 Q30 105 58 101 L80 116 102 101 Q130 105 135 150Z" fill="#0b1020" stroke="${t.b}" stroke-width="3"/>
+ <path d="M48 72 Q44 30 80 25 Q116 30 112 72 L104 99 Q80 116 56 99Z" fill="#e5c4a8" stroke="#111827" stroke-width="4"/>
+ <path d="M48 69 Q47 29 80 27 Q113 29 112 69 Q101 49 80 49 Q59 49 48 69Z" fill="#111827"/>
+ <path d="M58 43 L48 22 L68 34 M102 43 L112 22 L92 34" fill="${t.a}" stroke="${t.b}" stroke-width="3" stroke-linejoin="round"/>
+ <path d="M27 143 Q12 116 29 100 Q42 110 49 128 M133 143 Q148 116 131 100 Q118 110 111 128" fill="none" stroke="${t.b}" stroke-width="6" stroke-linecap="round" opacity=".75"/>
+ <path d="M58 78 Q67 72 75 78 M85 78 Q93 72 102 78" fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round"/>
+ <circle cx="67" cy="80" r="3" fill="${t.b}"/><circle cx="93" cy="80" r="3" fill="${t.b}"/>
+ <path d="M67 93 Q80 101 93 93" fill="none" stroke="#7f1d1d" stroke-width="3" stroke-linecap="round"/>
+ <path d="M58 108 L80 121 102 108 112 150 48 150Z" fill="url(#${id}armor)" opacity=".92"/>
+ <text x="80" y="143" text-anchor="middle" font-size="25" font-family="Arial">${t.simbolo}</text>
+ </svg>`;
+ return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+}
+const avataresOficiais=temasAvatares.map((t,i)=>criarAvatarDragonWar(t,i));
+catalogo.filter(x=>x.category==="skin").forEach((x,i)=>{x.avatarIndex=i%avataresOficiais.length});
+function renderizarGaleriaAvatares(){const g=document.getElementById("avatar-gallery");if(!g)return;g.innerHTML=avataresOficiais.map((url,i)=>{const sel=usuarioAtual.avatar===url;return `<button type="button" class="avatar-option ${sel?"selected":""}" title="${temasAvatares[i].nome}" onclick="selecionarAvatarOficial(${i})"><span class="avatar-selected-mark">✓ USANDO</span><img src="${url}" alt="${temasAvatares[i].nome}"><span style="display:block;color:#cbd5e1;font-size:9px;margin-top:4px;line-height:1.1">${temasAvatares[i].nome}</span><span class="avatar-use">${sel?"✓ USAR ESTE":"USAR"}</span></button>`}).join("")}
+window.selecionarAvatarOficial=async i=>{
+ const avatar=avataresOficiais[i];
+ if(!avatar)return;
+ usuarioAtual.avatar=avatar;
+ const campo=document.getElementById("player-edit-avatar");
+ if(campo)campo.value=avatar;
+ renderizarGaleriaAvatares();
+ atualizarPerfilUI();
+ await salvarProgressoCompleto(false);
+ notificar(`🖼️ ${temasAvatares[i].nome} selecionado e salvo.`,"success");
+};
+
+function atualizarPerfilUI(){
+ const img=document.getElementById("sidebar-avatar-img"),txt=document.getElementById("sidebar-avatar-txt");
+ if(usuarioAtual.isAdm){document.getElementById("sidebar-name").innerHTML='<span class="dragon-rainbow-name">ADM GABRIEL</span> <span class="adm-tag">[👑 ADM]</span>';document.getElementById("header-player-identity").innerHTML='<span class="dragon-rainbow-name">ADM GABRIEL</span> <span class="adm-tag">👑</span>';document.getElementById("sidebar-role").innerText="SUPER ADM • VIP 10";img.src=usuarioAtual.avatar||"89097.png";img.style.display="block";txt.style.display="none"}
+ else{document.getElementById("sidebar-name").innerHTML=nomeAtual()+(usuarioAtual.isSubAdm?' <span style="color:#f59e0b">[MOD]</span>':"");document.getElementById("header-player-identity").innerHTML=escapeHtml(nomeAtual())+(usuarioAtual.isSubAdm?' <span style="color:#f59e0b">[MOD]</span>':"");document.getElementById("sidebar-role").innerText=usuarioAtual.isSubAdm?"Moderador":"Aventureiro Real";if(usuarioAtual.avatar){img.src=usuarioAtual.avatar;img.style.display="block";txt.style.display="none"}else{txt.innerText=nomeAtual().charAt(0).toUpperCase();txt.style.display="flex";img.style.display="none"}}
+ atualizarMoedasDiamantesUI();
+ document.getElementById("player-real-id").value=usuarioAtual.uid;
+ document.getElementById("player-edit-name").value=usuarioAtual.displayName||nomeAtual();
+ document.getElementById("player-edit-email").value=usuarioAtual.email;
+ document.getElementById("player-edit-avatar").value=usuarioAtual.avatar||"";
+ document.getElementById("perfil-recursos").innerHTML=`Nível ${usuarioAtual.level} • ${patenteAtual(usuarioAtual.level)} • XP ${usuarioAtual.xp}`;document.getElementById("perfil-rank").innerText=patenteAtual(usuarioAtual.level);const vidaEl=document.getElementById("perfil-vida");if(vidaEl)vidaEl.innerHTML=`❤️ Vida: ${Math.max(0,Number(usuarioAtual.currentHp??100))}/100`;renderPerfilGuilda();renderizarGaleriaAvatares();
+}
+function montarMenuLateral(){
+ const m=document.getElementById("menu-list");m.innerHTML="";
+ let itens;
+ if(modoSistema==="admin" && usuarioAtual.isAdm){
+  itens=[{id:"painel-adm",label:"👑 Dashboard ADM"},{id:"jogadores",label:"👥 Jogadores"},{id:"evento",label:"🎉 Eventos"},{id:"config-jogador",label:"⚙ Configurações"}];
+ }else{
+  itens=[{id:"jogar",label:"🎮 Modo Batalha"},{id:"loja",label:"🛒 Loja & Itens"},{id:"poderes",label:"⚡ Poderes (50+)"},{id:"guildas",label:"🛡️ Guildas"},{id:"inventario",label:"🎒 Inventário"},{id:"rank",label:"🏆 Rankings"},{id:"config-jogador",label:"⚙ Meu Perfil"},{id:"evento",label:"🎉 Eventos"}];
+ }
+ itens.forEach((x,i)=>{let li=document.createElement("li");li.className="menu-item"+(i===0?" active":"");li.innerText=x.label;li.onclick=()=>trocarSecao(x.id,li);m.appendChild(li)});
+ trocarSecao(itens[0].id,m.children[0]);
+}
+window.trocarSecao=(id,el)=>{document.querySelectorAll(".panel-section").forEach(x=>x.classList.remove("active"));document.getElementById("section-"+id)?.classList.add("active");document.querySelectorAll(".menu-item").forEach(x=>x.classList.remove("active"));if(el)el.classList.add("active");document.getElementById("current-page-title").innerText=el?el.innerText:id;if(id==="jogar"){document.getElementById("arena-fases-container")?.classList.add("hidden");document.getElementById("battle-mode-selection")?.classList.remove("hidden")}if(id==="jogadores"&&usuarioAtual.isAdm)carregarJogadoresReaisDoBanco();if(id==="loja")renderLoja();if(id==="inventario")atualizarInventarioUI();if(id==="rank"){renderMeuRankTopo();mudarTabRank("global")}if(id==="guildas")carregarGuildaDoJogador();if(id==="config-jogador")renderPerfilGuilda()};
+
+async function carregarJogador(){
+ const ref=doc(db,"jogadores_reais",auth.currentUser.uid),snap=await getDoc(ref),existe=snap.exists(),base=existe?snap.data():{};
+ const email=String(auth.currentUser.email||"").toLowerCase();
+ const role=String(base.role||((base.isAdm||email===EMAIL_ADMIN)?"ADMINISTRADOR":(base.isSubAdm?"MODERADOR":"USER"))).toUpperCase();
+ const isAdm=role==="ADMINISTRADOR"||role==="SUPER_ADM"||base.isAdm===true||email===EMAIL_ADMIN;
+ const novoJogador={role:"USER",vip:0,coins:10000,diamonds:0,level:1,xp:0,inventory:[],phaseProgress:{normal:1,dificil:1,avancada:1,hardcore:1},achievements:[],dailyRewardLastClaim:0,dailyRewardCount:0,dailyRewardDay:"",currentHp:100,mana:100,maxMana:100,banned:false,guildId:"",guildName:"",guildRank:""};
+ usuarioAtual={...usuarioAtual,...(existe?base:novoJogador),uid:auth.currentUser.uid,email:auth.currentUser.email,role,isAdm,isSubAdm:!!base.isSubAdm,displayName:base.displayName||auth.currentUser.email.split("@")[0],mana:Number(base.mana??100),maxMana:Number(base.maxMana??100),inventory:Array.isArray(base.inventory)?base.inventory:[],phaseProgress:base.phaseProgress||novoJogador.phaseProgress,achievements:Array.isArray(base.achievements)?base.achievements:[],dailyRewardCount:Number(base.dailyRewardCount||0),guildId:base.guildId||"",guildName:base.guildName||"",guildRank:base.guildRank||"",vip:Number(base.vip??base.vipLevel??0)};
+ if(!existe){Object.assign(usuarioAtual,novoJogador)}
+ if(isAdm){usuarioAtual.role=(email===EMAIL_ADMIN?"SUPER_ADM":role);usuarioAtual.isAdm=true;usuarioAtual.coins=Math.max(Number(usuarioAtual.coins||0),999999);usuarioAtual.diamonds=Math.max(Number(usuarioAtual.diamonds||0),99999);usuarioAtual.level=Math.max(Number(usuarioAtual.level||1),100);usuarioAtual.vip=10;}
+ if(usuarioAtual.banned){await signOut(auth);throw new Error("CONTA_BANIDA")}
+ const bs=base.battleState;
+ if(bs&&bs.categoria&&categorias[bs.categoria])faseAtualInfo={categoria:bs.categoria,etapa:Number(bs.etapa||1),hpMovel:Number(bs.hpMovel||0),maxHp:Number(bs.maxHp||0),playerHp:Number(bs.playerHp!=null?bs.playerHp:(usuarioAtual.currentHp!=null?usuarioAtual.currentHp:100)),playerMp:Number(bs.playerMp!=null?bs.playerMp:(usuarioAtual.mana!=null?usuarioAtual.mana:100)),defend:!!bs.defend};
+ else faseAtualInfo={categoria:"",etapa:1,hpMovel:100,maxHp:100,playerHp:Number(usuarioAtual.currentHp??100),playerMp:Number(usuarioAtual.mana??100),defend:false};
+ await setDoc(ref,{...montarEstadoPersistente(),uid:usuarioAtual.uid,email:usuarioAtual.email,role:usuarioAtual.role,vip:usuarioAtual.vip,isAdm:usuarioAtual.isAdm,isSubAdm:usuarioAtual.isSubAdm,lastSeen:serverTimestamp(),status:"Online",updatedAt:serverTimestamp()},{merge:true});
+ modoSistema=isAdm?"admin":"jogador";
+ atualizarPerfilUI();montarMenuLateral();renderLoja();renderizarPoderes();atualizarInventarioUI();renderizarEventos();atualizarDailyUI();iniciarHeartbeat();assinarChatGlobal();verificarAchievements();
+ if(isAdm){carregarJogadoresReaisDoBanco();document.getElementById("adm-loja-controls")?.classList.remove("hidden");document.getElementById("adm-poderes-controls")?.classList.remove("hidden");document.getElementById("adm-evento-controls")?.classList.remove("hidden");document.getElementById("player-power-admin-note")?.classList.remove("hidden");}
+}
+window.alternarModoAuth=()=>{modoCadastro=!modoCadastro;document.getElementById("auth-title").innerText=modoCadastro?"Criar Conta Real":"Entrar no Servidor";document.getElementById("auth-btn-action").innerText=modoCadastro?"Registrar e Gerar ID":"Entrar na Partida";document.getElementById("auth-switch-mode").innerText=modoCadastro?"Já tem conta? Faça login":"Não tem conta? Cadastre-se com ID Real"};
+window.realizarAutenticacao=async()=>{
+ const email=document.getElementById("auth-email").value.trim(),pass=document.getElementById("auth-pass").value.trim();if(!email||!pass)return alert("Preencha o e-mail e a senha!");
+ try{if(modoCadastro)await createUserWithEmailAndPassword(auth,email,pass);else await signInWithEmailAndPassword(auth,email,pass)}catch(e){alert("Erro na autenticação: "+e.message)}
+};
+
+function iniciarHeartbeat(){clearInterval(heartbeatTimer);heartbeatTimer=setInterval(async()=>{if(auth.currentUser)await updateDoc(doc(db,"jogadores_reais",auth.currentUser.uid),{lastSeen:serverTimestamp(),status:"Online"})},30000)}
+window.addEventListener("beforeunload",()=>{if(auth.currentUser)updateDoc(doc(db,"jogadores_reais",auth.currentUser.uid),{status:"Offline"}).catch(()=>{})});
+
+window.salvarPerfilJogador=async()=>{
+ const nome=document.getElementById("player-edit-name").value.trim(),avatar=document.getElementById("player-edit-avatar").value.trim();
+ if(!nome)return alert("Informe um nome.");
+ usuarioAtual.displayName=nome;
+ usuarioAtual.avatar=avatar;
+ await salvarProgressoCompleto(false);
+ atualizarPerfilUI();
+ notificar("💾 Perfil, avatar, nível, diamantes e demais informações foram salvos.","success");
+};
+
+window.iniciarFases=async(cat)=>{
+ const c=categorias[cat];
+ if(!c)return;
+ if(usuarioAtual.level<c.requisito){
+   return alert(`🔒 ${c.nome} requer nível ${c.requisito}. Seu nível atual é ${usuarioAtual.level}.`);
+ }
+ const progresso=Number(usuarioAtual.phaseProgress?.[cat]||1);
+ faseAtualInfo.categoria=cat;
+ faseAtualInfo.etapa=Math.min(Math.max(1,progresso),c.max);
+ const nivel=dadosNivelBatalha(cat,faseAtualInfo.etapa);
+ faseAtualInfo.maxHp=nivel.hp;
+ faseAtualInfo.hpMovel=nivel.hp;
+ faseAtualInfo.playerHp=Number(usuarioAtual.currentHp??100);
+ faseAtualInfo.playerMp=Math.max(0,Number(usuarioAtual.mana??usuarioAtual.maxMana??100));
+ faseAtualInfo.defend=false;
+ document.getElementById("fases-titulo-cat").innerText=`${c.nome.toUpperCase()} • ${nivel.faixa}`;
+ atualizarBatalhaUI();
+ document.getElementById("battle-mode-selection").classList.add("hidden");
+ document.getElementById("arena-fases-container").classList.remove("hidden");
+ document.getElementById("log-batalha").innerHTML="Início da batalha!<div>> Ataque inicial preparado.</div>";
+ adicionarLogBatalha(`Nível ${faseAtualInfo.etapa} iniciado • ${nivel.faixa} • ❤️ ${nivel.hp} HP`);
+};
+window.desistirBatalha=()=>{if(confirm("Desistir da batalha? Seu progresso já concluído continua salvo."))voltarSelecaoFases()};
+window.voltarSelecaoFases=()=>{document.getElementById("arena-fases-container").classList.add("hidden");document.getElementById("battle-mode-selection").classList.remove("hidden")};
+function atualizarBatalhaUI(){
+ let c=categorias[faseAtualInfo.categoria],nivel=dadosNivelBatalha(faseAtualInfo.categoria,faseAtualInfo.etapa),nome=alvos[faseAtualInfo.categoria][(faseAtualInfo.etapa-1)%5],p=Math.max(0,faseAtualInfo.hpMovel/faseAtualInfo.maxHp*100);
+ document.getElementById("fases-titulo-cat").innerText=`${c.nome.toUpperCase()} • ${nivel.faixa}`;
+ document.getElementById("fases-etapa-info").innerText=`Nível ${faseAtualInfo.etapa}/${c.max} • ${nivel.faixa} • Alvo: ${nome} • 🎁 ${nivel.moedas} 🪙 + ${nivel.diamantes} 💎`;
+ document.getElementById("inimigo-alvo-nome").innerText=nome;
+ document.getElementById("movel-hp").innerText=Math.round(p)+"%";
+ document.getElementById("movel-hp-bar").style.width=p+"%";
+ document.getElementById("player-hp-txt").innerText=`${faseAtualInfo.playerHp}/100`;
+ document.getElementById("player-hp-bar").style.width=faseAtualInfo.playerHp+"%";
+ document.getElementById("player-mp-txt").innerText=`${faseAtualInfo.playerMp}/${usuarioAtual.maxMana||100}`;
+ document.getElementById("player-mp-bar").style.width=Math.min(100,(faseAtualInfo.playerMp/(usuarioAtual.maxMana||100))*100)+"%";
+}
+function adicionarLogBatalha(t){let x=document.getElementById("log-batalha");x.innerHTML+="<div>> "+t+"</div>";x.scrollTop=x.scrollHeight}
+function notificar(msg,tipo="info"){const box=document.getElementById("notificacoes-box");if(!box)return;const n=document.createElement("div");n.className="dw-notificacao "+tipo;n.textContent=msg;box.appendChild(n);setTimeout(()=>n.remove(),4500)}
+function calcularDanoBase(){return 30+(Number(usuarioAtual.level)||1)*3}
+async function iniciarProximaFase(){
+ const cat=categorias[faseAtualInfo.categoria];
+ const atual=faseAtualInfo.etapa;
+ const nivelAtual=dadosNivelBatalha(faseAtualInfo.categoria,atual);
+ if(atual>=cat.max){
+   usuarioAtual.coins+=nivelAtual.moedas;
+   usuarioAtual.diamonds+=nivelAtual.diamantes;
+   usuarioAtual.xp+=nivelAtual.xp;
+   usuarioAtual.level=Math.max(usuarioAtual.level,Math.floor(usuarioAtual.xp/100)+5);
+   await salvarProgresso();
+   notificar(`🏆 ${cat.nome} concluído! +${nivelAtual.moedas} moedas • +${nivelAtual.diamantes} 💎 • +${nivelAtual.xp} XP.` ,"success");
+   voltarSelecaoFases();
+   return false;
+ }
+ usuarioAtual.coins+=nivelAtual.moedas;
+ usuarioAtual.diamonds+=nivelAtual.diamantes;
+ usuarioAtual.xp+=nivelAtual.xp;
+ faseAtualInfo.etapa=atual+1;
+ usuarioAtual.phaseProgress[faseAtualInfo.categoria]=faseAtualInfo.etapa;
+ usuarioAtual.level=Math.max(usuarioAtual.level,Math.floor(usuarioAtual.xp/100)+5);
+ const proximo=dadosNivelBatalha(faseAtualInfo.categoria,faseAtualInfo.etapa);
+ faseAtualInfo.maxHp=proximo.hp;
+ faseAtualInfo.hpMovel=proximo.hp;
+ faseAtualInfo.playerHp=Number(usuarioAtual.currentHp??100);
+ faseAtualInfo.playerMp=Math.max(0,Number(usuarioAtual.mana??usuarioAtual.maxMana??100));
+ faseAtualInfo.defend=false;
+ await salvarProgresso();
+ atualizarBatalhaUI();
+ adicionarLogBatalha(`🏆 Vitória! +${nivelAtual.moedas} 🪙 +${nivelAtual.diamantes} 💎 +${nivelAtual.xp} XP.`);
+ adicionarLogBatalha(`➡️ Próximo nível: ${faseAtualInfo.etapa} • ${proximo.faixa} • ❤️ ${proximo.hp} HP.`);
+ notificar(`🏆 Vitória! Você avançou para o nível ${faseAtualInfo.etapa}. +${nivelAtual.moedas} 🪙 +${nivelAtual.diamantes} 💎`,"success");
+ return true;
+}
+window.batalhaAcao=async acao=>{
+ if(!faseAtualInfo.categoria||faseAtualInfo.playerHp<=0)return;
+ let dano=0;
+ const nivel=dadosNivelBatalha(faseAtualInfo.categoria,faseAtualInfo.etapa);
+ const consumirMana=(q)=>{if(faseAtualInfo.playerMp<q){notificar(`🔥 Mana insuficiente. Necessário: ${q}.`,'danger');return false}faseAtualInfo.playerMp-=q;return true};
+ if(acao==="fugir"){notificar("🏃 Você saiu da batalha. Seu nível já concluído continua salvo.","danger");voltarSelecaoFases();return}
+ if(acao==="atacar"){if(!consumirMana(5))return;dano=calcularDanoBase();faseAtualInfo.hpMovel=Math.max(0,faseAtualInfo.hpMovel-dano);adicionarLogBatalha(`⚔️ Você causou ${dano} de dano. -5 Mana`);notificar(`⚔️ Ataque: -${dano} HP no inimigo. -5 Mana`)}
+ else if(acao==="defender"){if(!consumirMana(8))return;faseAtualInfo.defend=true;adicionarLogBatalha("🛡️ Defesa ativada. -8 Mana");notificar("🛡️ Defesa ativada! -8 Mana","info")}
+ else if(acao==="poder"){if(!consumirMana(30))return;dano=calcularDanoBase()+35;faseAtualInfo.hpMovel=Math.max(0,faseAtualInfo.hpMovel-dano);adicionarLogBatalha(`🔥 Poder usado: ${dano} de dano. -30 Mana`);notificar(`🔥 Poder usado: -${dano} HP. -30 Mana`)}
+ else if(acao==="habilidade"){if(!consumirMana(20))return;dano=calcularDanoBase()+20;faseAtualInfo.hpMovel=Math.max(0,faseAtualInfo.hpMovel-dano);faseAtualInfo.playerHp=Math.min(100,faseAtualInfo.playerHp+10);adicionarLogBatalha(`✨ Habilidade usada: ${dano} de dano e +10 vida. -20 Mana`);notificar(`✨ Habilidade ativada! -${dano} HP e +10 Vida. -20 Mana`)}
+ else if(acao==="curar"){
+   const idx=usuarioAtual.inventory.findIndex(x=>x.category==="potion");
+   if(idx<0){notificar("🧪 Você não tem poções. Compre uma na Loja.","danger");return}
+   const pocao=usuarioAtual.inventory[idx];usuarioAtual.inventory.splice(idx,1);
+   const valor=Number(pocao.stat)||40;
+   if(/mana/i.test(pocao.nome)){faseAtualInfo.playerMp=Math.min(Number(usuarioAtual.maxMana||100),faseAtualInfo.playerMp+valor);adicionarLogBatalha(`🧪 ${pocao.nome} usada: +${valor} Mana.`);notificar(`🧪 Poção de Mana! +${valor} Mana.` ,"success")}
+   else{faseAtualInfo.playerHp=Math.min(100,faseAtualInfo.playerHp+valor);adicionarLogBatalha(`🧪 ${pocao.nome} usada: +${valor} Vida.`);notificar(`🧪 Poção de Vida! +${valor} Vida.` ,"success")}
+   usuarioAtual.mana=faseAtualInfo.playerMp;await salvarProgresso();
+ }
+ usuarioAtual.mana=faseAtualInfo.playerMp;
+ if(faseAtualInfo.hpMovel<=0){const avancou=await iniciarProximaFase();if(!avancou)return;atualizarMoedasDiamantesUI();return}
+ const danoInimigo=faseAtualInfo.defend?Math.max(4,Math.round(nivel.dano*0.35)):nivel.dano;
+ faseAtualInfo.defend=false;
+ faseAtualInfo.playerHp=Math.max(0,faseAtualInfo.playerHp-danoInimigo);usuarioAtual.currentHp=faseAtualInfo.playerHp;
+ adicionarLogBatalha(`👹 O inimigo contra-atacou causando ${danoInimigo} de dano.`);
+ notificar(`👹 Inimigo contra-atacou: -${danoInimigo} Vida.` ,"danger");
+ if(faseAtualInfo.playerHp<=0){
+   faseAtualInfo.playerHp=100;
+   usuarioAtual.currentHp=100;
+   faseAtualInfo.playerMp=Number(usuarioAtual.maxMana||100);
+   usuarioAtual.mana=faseAtualInfo.playerMp;
+   faseAtualInfo.hpMovel=faseAtualInfo.maxHp;
+   faseAtualInfo.defend=false;
+   await salvarProgresso();
+   atualizarBatalhaUI();
+   notificar("💀 Você perdeu a batalha. ❤️ Vida e 🔥 Mana foram restauradas!","danger");
+   adicionarLogBatalha("💚 Batalha perdida: recursos de batalha restaurados.");
+   voltarSelecaoFases();
+   return;
+ }
+ atualizarBatalhaUI();atualizarMoedasDiamantesUI();
+};
+
+function montarEstadoPersistente(){
+ return {
+  displayName:usuarioAtual.displayName||"",avatar:usuarioAtual.avatar||"",role:usuarioAtual.role||"USER",vip:Number(usuarioAtual.vip||0),
+  coins:Number(usuarioAtual.coins||0),diamonds:Number(usuarioAtual.diamonds||0),
+  level:Number(usuarioAtual.level||1),xp:Number(usuarioAtual.xp||0),
+  inventory:Array.isArray(usuarioAtual.inventory)?usuarioAtual.inventory:[],
+  phaseProgress:usuarioAtual.phaseProgress||{normal:1,dificil:1,avancada:1,hardcore:1},
+  achievements:Array.isArray(usuarioAtual.achievements)?usuarioAtual.achievements:[],
+  mana:Number(usuarioAtual.mana??100),maxMana:Number(usuarioAtual.maxMana??100),currentHp:Number(usuarioAtual.currentHp??100),
+  dailyRewardDay:usuarioAtual.dailyRewardDay||"",dailyRewardLastClaim:usuarioAtual.dailyRewardLastClaim||0,dailyRewardCount:Number(usuarioAtual.dailyRewardCount||0),
+  guildId:usuarioAtual.guildId||"",guildName:usuarioAtual.guildName||"",guildRank:usuarioAtual.guildRank||"",
+  isSubAdm:!!usuarioAtual.isSubAdm,banned:!!usuarioAtual.banned,
+  battleState:{categoria:faseAtualInfo.categoria||"",etapa:Number(faseAtualInfo.etapa||1),hpMovel:Number(faseAtualInfo.hpMovel||0),maxHp:Number(faseAtualInfo.maxHp||0),playerHp:Number(faseAtualInfo.playerHp??usuarioAtual.currentHp??100),playerMp:Number(faseAtualInfo.playerMp??usuarioAtual.mana??100),defend:!!faseAtualInfo.defend},
+  updatedAt:serverTimestamp()
+ };
+}
+let salvamentoEmAndamento=false;
+async function salvarProgressoCompleto(atualizarUI=true){
+ if(!usuarioAtual.uid||!auth.currentUser)return false;
+ const estado=montarEstadoPersistente();
+ try{
+  salvamentoEmAndamento=true;
+  await setDoc(doc(db,"jogadores_reais",usuarioAtual.uid),estado,{merge:true});
+  try{localStorage.setItem("dragonWar:lastState:"+usuarioAtual.uid,JSON.stringify({...estado,updatedAt:Date.now()}));}catch(e){}
+  if(atualizarUI)atualizarMoedasDiamantesUI();
+  return true;
+ }catch(e){
+  try{localStorage.setItem("dragonWar:lastState:"+usuarioAtual.uid,JSON.stringify({...estado,updatedAt:Date.now()}));}catch(x){}
+  console.warn("Falha ao salvar no Firestore; cópia local mantida.",e);
+  return false;
+ }finally{salvamentoEmAndamento=false;}
+}
+async function salvarProgresso(){return salvarProgressoCompleto(true)}
+async function salvarAutomaticamente(){if(auth.currentUser&&usuarioAtual.uid&&!salvamentoEmAndamento)await salvarProgressoCompleto(false)}
+setInterval(salvarAutomaticamente,10000);
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")salvarAutomaticamente()});
+window.addEventListener("pagehide",()=>{try{if(usuarioAtual.uid){const estado=montarEstadoPersistente();localStorage.setItem("dragonWar:lastState:"+usuarioAtual.uid,JSON.stringify({...estado,updatedAt:Date.now()}));}}catch(e){}});
+
+function renderLoja(){let g=document.getElementById("loja-grid");let arr=categoriaLoja==="all"?catalogo:catalogo.filter(x=>x.category===categoriaLoja);g.innerHTML=arr.map((i,n)=>{const skinImg=i.category==="skin"?avataresOficiais[(Number(i.avatarIndex??n))%avataresOficiais.length]:"";return `<div class="item-card">${skinImg?`<img class="skin-shop-img" src="${skinImg}" alt="${escapeHtml(i.nome)}">`:""}<h4>${icone(i.category)} ${escapeHtml(i.nome)}</h4><p>${escapeHtml(i.desc||"")}</p><div class="price">${i.price} 🪙</div><button class="btn" style="padding:6px;margin-top:7px;font-size:11px" onclick="comprarItem('${i.id}')">${i.category==="skin"?"Comprar Skin":"Comprar"}</button></div>`}).join("")}
+function icone(c){return c==="weapon"?"⚔️":c==="skin"?"🧙":c==="potion"?"🧪":"⚡"}
+window.mudarCategoriaLoja=c=>{categoriaLoja=c;renderLoja()};
+window.comprarItem=async id=>{let i=catalogo.find(x=>x.id===id);if(!i)return;if(usuarioAtual.coins<i.price)return alert("Moedas insuficientes.");usuarioAtual.coins-=i.price;usuarioAtual.inventory.push({...i,purchasedAt:Date.now()});await salvarProgresso();alert(`Compra realizada: ${i.nome}. Foi para seu inventário.`);renderLoja();atualizarInventarioUI()};
+function atualizarInventarioUI(){let c=document.getElementById("inventario-itens");if(!usuarioAtual.inventory.length){c.innerHTML='<div class="box-item">Seu inventário está vazio.</div>';return}c.innerHTML=usuarioAtual.inventory.map((i,n)=>{const skinImg=i.category==="skin"?avataresOficiais[(Number(i.avatarIndex??n))%avataresOficiais.length]:"";return `<div class="item-card" style="width:170px">${skinImg?`<img class="skin-shop-img" src="${skinImg}" alt="${escapeHtml(i.nome)}">`:""}<h4>${icone(i.category)} ${escapeHtml(i.nome)}</h4><p>${escapeHtml(i.desc||"Item Dragon War")}</p><button class="btn btn-blue" style="padding:5px;font-size:10px" onclick="usarItemInventario(${n})">Usar / Equipar</button></div>`}).join("")}
+window.usarItemInventario=async n=>{let i=usuarioAtual.inventory[n];if(!i)return;if(i.category==="potion"){usuarioAtual.coins+=0;alert(`🧪 ${i.nome} usado.`)}else alert(`${icone(i.category)} ${i.nome} equipado.`);await salvarProgresso()};
+function renderizarPoderes(){let c=document.getElementById("lista-mais-de-50-poderes");c.innerHTML=catalogo.filter(x=>x.category==="power").map(p=>`<div class="item-card"><h4>${p.nome}</h4><p>${p.desc}</p><div class="price">${p.price} 🪙</div><button class="btn" style="padding:5px;font-size:10px" onclick="comprarItem('${p.id}')">Comprar</button></div>`).join("")}
+/* ===================== GUILDAS ===================== */
+const guildaBase=[]; // Somente guildas reais criadas no servidor aparecem como disponíveis.
+
+function renderPerfilGuilda(){
+ const el=document.getElementById("perfil-guilda"); if(!el)return;
+ if(usuarioAtual.guildId) el.innerHTML=`🛡️ Guilda: <b>${usuarioAtual.guildName||"Guilda"}</b> • ${usuarioAtual.guildRank||"Membro"}`;
+ else el.innerHTML="🛡️ Sem guilda";
+}
+function renderGuildaResumo(g){
+ const el=document.getElementById("guilda-resumo"); if(!el)return;
+ if(!g){el.innerHTML=`<div class="box-item"><h3>👤 Você ainda não está em uma guilda</h3><p style="color:#94a3b8;margin-top:5px">Escolha uma guilda disponível ou crie a sua.</p></div>`;return;}
+ el.innerHTML=`<div class="box-item" style="border-left:4px solid ${g.cor||"#38bdf8"}"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><div><h3>🛡️ ${g.nome}</h3><p style="color:#94a3b8;margin-top:5px">${g.descricao||"Guilda Dragon War"}</p></div><div style="text-align:right"><b style="color:#f59e0b">Nível ${g.level||1}</b><br><span style="font-size:12px;color:#94a3b8">${g.membros||1} membros</span></div></div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><span class="tag">${g.tipo==="fechada"?"🔒 Fechada":"🔓 Aberta"}</span><span class="tag">🪙 ${g.guildCoins||0} moedas de guilda</span><span class="tag">👤 ${usuarioAtual.guildRank||"Membro"}</span></div></div>`;
+}
+function abrirCriacaoGuilda(){document.getElementById("form-criar-guilda")?.classList.toggle("hidden");}
+async function carregarGuildasDisponiveis(){
+ const box=document.getElementById("guildas-disponiveis"); if(!box)return;
+ box.innerHTML='<div class="box-item">🔄 Procurando guildas reais criadas no servidor...</div>';
+ let lista=[];
+ try{
+  const snap=await getDocs(collection(db,"guildas"));
+  snap.forEach(d=>lista.push({...d.data(),id:d.id}));
+ }catch(e){console.warn("Não foi possível carregar guildas:",e)}
+ if(!lista.length){
+  box.innerHTML='<div class="box-item"><h3>🛡️ Nenhuma guilda disponível</h3><p style="color:#94a3b8;margin-top:6px">Ainda não existe nenhuma guilda criada no servidor. Crie a primeira por 500 💎.</p></div>';
+  return;
+ }
+ box.innerHTML=lista.map(g=>`<div class="item-card"><h3>🛡️ ${escapeHtml(g.nome||"Guilda")}</h3><p style="font-size:12px;color:#94a3b8;margin:6px 0">${escapeHtml(g.descricao||"Guilda Dragon War")}</p><div style="font-size:12px">${g.tipo==="fechada"?"🔒 Guilda Fechada":"🔓 Guilda Aberta"}</div><div style="font-size:12px;margin-top:5px">👥 ${g.membros||1} membros • ⚔️ Nv. ${g.level||1}</div><div style="font-size:12px;margin-top:5px;color:#38bdf8">Entrada: ${g.tipo==="fechada"?"Convite":"50 💎"}</div><button class="btn btn-blue" style="margin-top:10px" onclick="entrarNaGuilda('${g.id}')">${g.tipo==="fechada"?"📨 Solicitar entrada":"🛡️ Entrar — 50 💎"}</button></div>`).join("");
+}
+async function criarGuilda(){
+ if(!auth.currentUser)return alert("Faça login primeiro."); if(usuarioAtual.guildId)return alert("Você já está em uma guilda.");
+ const nome=document.getElementById("guilda-nome").value.trim(); const descricao=document.getElementById("guilda-descricao").value.trim(); const tipo=document.getElementById("guilda-tipo").value;
+ if(nome.length<3)return alert("Digite um nome de guilda com pelo menos 3 caracteres."); if(Number(usuarioAtual.diamonds||0)<500)return alert("Você precisa de 500 💎 para criar uma guilda.");
+ const id="guilda_"+Date.now(); const g={nome,descricao:descricao||"Guilda criada no Dragon War.",tipo,membros:1,level:1,guildCoins:0,ownerUid:usuarioAtual.uid,ownerName:nomeAtual(),cor:"#38bdf8",createdAt:serverTimestamp()};
+ try{await setDoc(doc(db,"guildas",id),g);usuarioAtual.diamonds-=500;usuarioAtual.guildId=id;usuarioAtual.guildName=nome;usuarioAtual.guildRank="Líder";await salvarProgresso();renderGuildaResumo(g);renderPerfilGuilda();document.getElementById("form-criar-guilda")?.classList.add("hidden");carregarGuildasDisponiveis();alert(`🛡️ Guilda ${nome} criada com sucesso!`);}catch(e){console.error(e);alert("Não foi possível criar a guilda agora.");}
+}
+async function entrarNaGuilda(id){
+ if(usuarioAtual.guildId)return alert("Você já está em uma guilda.");
+ let g=guildaBase.find(x=>x.id===id); try{const snap=await getDoc(doc(db,"guildas",id));if(snap.exists())g={...snap.data(),id};}catch(e){}
+ if(!g)return alert("Guilda não encontrada.");
+ if(g.tipo==="fechada")return alert("🔒 Essa guilda é fechada. O líder precisa convidar você.");
+ if(Number(usuarioAtual.diamonds||0)<50)return alert("Você precisa de 50 💎 para entrar.");
+ try{usuarioAtual.diamonds-=50;usuarioAtual.guildId=id;usuarioAtual.guildName=g.nome;usuarioAtual.guildRank="Membro";await salvarProgresso();if(!String(id).startsWith("guilda_" )||!guildaBase.some(x=>x.id===id)){await updateDoc(doc(db,"guildas",id),{membros:(Number(g.membros)||0)+1});}else{try{await updateDoc(doc(db,"guildas",id),{membros:(Number(g.membros)||0)+1});}catch(e){}}renderGuildaResumo({...g,membros:(Number(g.membros)||0)+1});renderPerfilGuilda();carregarGuildasDisponiveis();alert(`🛡️ Você entrou na guilda ${g.nome}!`);}catch(e){console.error(e);alert("Não foi possível entrar na guilda.");}
+}
+async function carregarGuildaDoJogador(){
+ if(!usuarioAtual.guildId){renderGuildaResumo(null);carregarGuildasDisponiveis();return;}
+ let g=null; try{const snap=await getDoc(doc(db,"guildas",usuarioAtual.guildId));if(snap.exists())g={...snap.data(),id:snap.id};}catch(e){}
+ if(!g)g=guildaBase.find(x=>x.id===usuarioAtual.guildId)||{id:usuarioAtual.guildId,nome:usuarioAtual.guildName,descricao:"Sua guilda",tipo:"aberta",membros:1,level:1,guildCoins:0};
+ renderGuildaResumo(g); renderGuildaPainel(g); renderPerfilGuilda();
+}
+function renderGuildaPainel(g){
+ const el=document.getElementById("guilda-painel"); if(!el)return; el.classList.remove("hidden");
+ el.innerHTML=`<div class="box-item"><h3>🏰 ${g.nome}</h3><p style="color:#94a3b8;margin-top:4px">${g.descricao||"Guilda Dragon War"}</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px"><div class="stat"><b>${g.guildCoins||0}</b>Moedas de Guilda</div><div class="stat"><b>${g.membros||1}</b>Membros</div><div class="stat"><b>${g.level||1}</b>Nível da Guilda</div><div class="stat"><b>${usuarioAtual.guildRank||"Membro"}</b>Seu cargo</div></div></div>
+ <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:12px"><div class="item-card"><h3>🐉 Loot contra Dragão</h3><p>Participe de batalhas da guilda para ganhar moedas de guilda e recursos.</p><button class="btn" onclick="simularLootGuilda()">⚔️ Atacar Dragão</button></div><div class="item-card"><h3>🛒 Loja da Guilda</h3><p>Use suas moedas de guilda para comprar recursos exclusivos.</p><button class="btn btn-blue" onclick="abrirLojaGuilda()">🛍️ Ver Recursos</button></div><div class="item-card"><h3>🧙 Personagens da Guilda</h3><p>Personagens e bônus especiais para membros da guilda.</p><button class="btn btn-purple" onclick="abrirPersonagensGuilda()">👥 Ver Personagens</button></div><div class="item-card"><h3>🏳️ Insígnia da Guilda</h3><p>Escolha a identidade visual da sua guilda.</p><button class="btn btn-green" onclick="escolherInsigniaGuilda()">🏳️ Alterar Insígnia</button></div></div><div id="guilda-subconteudo" style="margin-top:12px"></div>`;
+}
+async function simularLootGuilda(){if(!usuarioAtual.guildId)return;let ganho=25+Math.floor(Math.random()*76);let g=await getDoc(doc(db,"guildas",usuarioAtual.guildId)).catch(()=>null);let atual=g&&g.exists()?Number(g.data().guildCoins||0):0;try{await updateDoc(doc(db,"guildas",usuarioAtual.guildId),{guildCoins:atual+ganho});}catch(e){}alert(`🐉 Vitória contra o Dragão! Sua guilda recebeu +${ganho} moedas de guilda.`);carregarGuildaDoJogador();}
+function abrirLojaGuilda(){const el=document.getElementById("guilda-subconteudo");if(!el)return;const itens=[['Poção de Vida da Guilda',100,'🧪'],['Fragmento de Dragão',250,'💎'],['Insígnia Rara',500,'🏳️'],['Cristal de Energia',750,'🔷'],['Baú do Dragão',1000,'🎁']];el.innerHTML=`<div class="box-item"><h3>🛒 Loja de Recursos da Guilda</h3><p style="color:#94a3b8">Preços em moedas de guilda.</p><div class="shop-grid" style="margin-top:12px">${itens.map(i=>`<div class="item-card"><h4>${i[2]} ${i[0]}</h4><div class="price">${i[1]} 🛡️</div><button class="btn" onclick="comprarRecursoGuilda('${i[0]}',${i[1]})">Comprar</button></div>`).join('')}</div></div>`;}
+async function comprarRecursoGuilda(nome,preco){if(!usuarioAtual.guildId)return;if(!confirm(`Comprar ${nome} por ${preco} moedas de guilda?`))return;const ref=doc(db,"guildas",usuarioAtual.guildId);const snap=await getDoc(ref);const g=snap.exists()?snap.data():null;if(!g||Number(g.guildCoins||0)<preco)return alert("Moedas de guilda insuficientes.");await updateDoc(ref,{guildCoins:Number(g.guildCoins||0)-preco});alert(`🛒 ${nome} comprado para a guilda.`);carregarGuildaDoJogador();}
+function abrirPersonagensGuilda(){const el=document.getElementById("guilda-subconteudo");if(!el)return;el.innerHTML=`<div class="box-item"><h3>🧙 Personagens de Guilda</h3><p style="color:#94a3b8">Personagens especiais ficam disponíveis conforme a guilda evolui.</p><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><span class="tag">🛡️ Guardião da Guilda</span><span class="tag">🐉 Caçador de Dragões</span><span class="tag">🌊 Mago das Marés</span><span class="tag">🌪️ Mestre dos Ventos</span></div></div>`;}
+function escolherInsigniaGuilda(){const el=document.getElementById("guilda-subconteudo");if(!el)return;const ins=['🐉','⚔️','🛡️','🔥','🌊','🌪️','❄️','👑'];el.innerHTML=`<div class="box-item"><h3>🏳️ Insígnia da Guilda</h3><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">${ins.map(x=>`<button class="btn" style="width:auto;font-size:24px" onclick="alert('Insígnia ${x} selecionada para sua guilda.')">${x}</button>`).join('')}</div></div>`;}
+window.criarPoder=async()=>{if(!usuarioAtual.isAdm)return alert("Acesso negado.");let n=document.getElementById("poder-nome").value.trim(),d=Number(document.getElementById("poder-dano").value)||500;if(!n)return alert("Informe o nome.");let item={id:"custom_"+Date.now(),nome:n,category:"power",price:500,stat:d,desc:"Poder criado pelo ADM • +"+d};catalogo.push(item);await setDoc(doc(db,"catalogo",item.id),item);renderizarPoderes();renderLoja();alert("Poder criado e salvo.");};
+
+window.adicionarItemCatalogo=async()=>{if(!usuarioAtual.isAdm)return alert("Acesso negado.");let cat=document.getElementById("new-item-category").value,n=document.getElementById("new-item-name").value.trim(),price=Number(document.getElementById("new-item-price").value),stat=Number(document.getElementById("new-item-damage").value)||50;if(!n||!price)return alert("Preencha nome e preço.");let item={id:"custom_"+Date.now(),nome:n,category:cat,price,stat,desc:"Conteúdo criado pelo ADM"};catalogo.push(item);await setDoc(doc(db,"catalogo",item.id),item);renderLoja();renderizarPoderes();alert("Item adicionado ao catálogo global.");};
+
+async function carregarCatalogoCustom(){try{let s=await getDocs(collection(db,"catalogo"));s.forEach(d=>{let x=d.data();if(!catalogo.some(i=>i.id===x.id))catalogo.push(x)});renderLoja();renderizarPoderes()}catch(e){}}
+
+async function verificarAchievements(){let a=new Set(usuarioAtual.achievements||[]),total=usuarioAtual.inventory.length,niveis=Object.values(usuarioAtual.phaseProgress||{}).reduce((s,x)=>s+x-1,0);const checks={first_login:true,first_purchase:total>0,five_battles:niveis>=5,ten_battles:niveis>=10,level10:usuarioAtual.level>=10,level25:usuarioAtual.level>=25,collector10:total>=10,power10:usuarioAtual.inventory.filter(x=>x.category==="power").length>=10,skin5:usuarioAtual.inventory.filter(x=>x.category==="skin").length>=5,weapon10:usuarioAtual.inventory.filter(x=>x.category==="weapon").length>=10,easy30:(usuarioAtual.phaseProgress?.normal||1)>30,hard30:(usuarioAtual.phaseProgress?.dificil||1)>30,advanced25:(usuarioAtual.phaseProgress?.avancada||1)>25,hardcore25:(usuarioAtual.phaseProgress?.hardcore||1)>25,rich:usuarioAtual.coins>=10000,diamond:usuarioAtual.diamonds>=500,admin:usuarioAtual.isAdm};let changed=false;Object.keys(checks).forEach(k=>{if(checks[k]&&!a.has(k)){a.add(k);changed=true}});if(changed){usuarioAtual.achievements=[...a];await updateDoc(doc(db,"jogadores_reais",usuarioAtual.uid),{achievements:usuarioAtual.achievements})}}
+function renderMeuRankTopo(){const c=document.getElementById("rank-me-card");if(!c)return;const nome=usuarioAtual.isAdm?"ADM GABRIEL":nomeAtual();const avatar=usuarioAtual.avatar||avataresOficiais[19];const cargo=usuarioAtual.isAdm?"👑 SUPER ADM • VIP 10":patenteAtual(usuarioAtual.level);c.innerHTML=`<div class="rank-me-card"><img class="rank-me-avatar" src="${avatar}" alt="Avatar"><div style="flex:1"><div class="rank-me-name">${usuarioAtual.isAdm?'<span class="dragon-rainbow-name">ADM GABRIEL</span> 👑':escapeHtml(nome)}</div><div style="color:#fbbf24;font-size:12px;margin-top:3px">Nível ${usuarioAtual.level} • ${cargo}</div><div style="color:#94a3b8;font-size:11px;margin-top:3px">Seu perfil aparece aqui, mas ${usuarioAtual.isAdm?'não entra no ranking geral.':'acompanha sua posição entre os jogadores.'}</div></div><div style="text-align:right"><div style="font-size:22px">🎁</div><b style="font-size:11px">Recompensas de Rank</b></div></div>`}
+function mostrarBaúsRank(){const c=document.getElementById("rank-content");if(!c)return;const l=Number(usuarioAtual.level||1);const premio=l>=100?"Baú Lendário":l>=75?"Baú Mestre":l>=50?"Baú Profissional":l>=25?"Baú Intermediário":"Baú Iniciante";c.innerHTML=`<div class="rank-reward-box"><h3>🎁 Recompensas de Rank</h3><p style="color:#94a3b8;margin-top:6px">Sua patente atual: <b style="color:#fbbf24">${patenteAtual(l)}</b></p><div class="item-card" style="margin-top:12px"><div style="font-size:38px">🧰</div><h3>${premio}</h3><p>Recompensas vinculadas ao nível e à patente do seu próprio jogador.</p><span class="badge vip">${usuarioAtual.isAdm?'ADM • fora do ranking':'Perfil do jogador'}</span></div></div>`}
+window.mudarTabRank=async tipo=>{let c=document.getElementById("rank-content");renderMeuRankTopo();if(tipo==="achievements"){c.innerHTML="<h3>🏅 Achievements de "+(usuarioAtual.isAdm?"ADM GABRIEL":escapeHtml(nomeAtual()))+"</h3>"+achievementsCatalog.map(a=>`<div class="item-card" style="margin-top:8px"><b>${a[1]}</b> ${usuarioAtual.achievements.includes(a[0])?'<span class="badge online">DESBLOQUEADO</span>':'<span class="badge">BLOQUEADO</span>'}<p>${a[2]}</p></div>`).join("");return}let snap=await getDocs(collection(db,"jogadores_reais")),rows=[];snap.forEach(d=>{const x=d.data();if(!x.isAdm)rows.push(x)});rows.sort((a,b)=>(b.level||0)-(a.level||0));if(tipo==="online")rows=rows.filter(x=>x.lastSeen&&x.lastSeen.toMillis?Date.now()-x.lastSeen.toMillis()<90000:(x.status==="Online"));c.innerHTML=`<h3 style="margin-bottom:8px">${tipo==="online"?'🟢 Atividades dos jogadores':'🌎 Ranking Global'}</h3><table><tr><th>#</th><th>Jogador</th><th>Nível</th><th>Patente</th><th>Status</th></tr>`+rows.slice(0,50).map((x,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(x.displayName||x.email||x.uid)}</td><td>${x.level||1}</td><td>${patenteAtual(x.level||1)}</td><td>${x.status==="Online"?"🟢 Online":"⚫ Offline"}</td></tr>`).join("")+"</table>"};
+
+function chaveDiaAtual(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function proximaMeiaNoite(){const d=new Date();d.setHours(24,0,0,0);return d}
+window.resgatarRecompensaDiaria=async()=>{
+ const hoje=chaveDiaAtual();
+ let ultimoDia=String(usuarioAtual.dailyRewardDay||"");
+ if(!ultimoDia){const rawLast=usuarioAtual.dailyRewardLastClaim,last=Number(rawLast?.toMillis?rawLast.toMillis():rawLast||0);if(last>0){const d=new Date(last);ultimoDia=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}}
+ if(ultimoDia===hoje){atualizarDailyUI();notificar("🎁 A recompensa de hoje já foi resgatada. Você poderá pegar outra quando der meia-noite.","info");return}
+ const now=Date.now();usuarioAtual.coins+=100;usuarioAtual.diamonds+=5;usuarioAtual.dailyRewardLastClaim=now;usuarioAtual.dailyRewardDay=hoje;usuarioAtual.dailyRewardCount=Number(usuarioAtual.dailyRewardCount||0)+1;
+ await salvarProgresso();atualizarDailyUI();notificar("🎁 Recompensa diária resgatada: +100 moedas e +5 diamantes! Próxima recompensa à meia-noite.","success");
+};
+function atualizarDailyUI(){
+ const b=document.getElementById("daily-btn"),c=document.getElementById("daily-countdown");if(!b||!c)return;
+ const hoje=chaveDiaAtual();let ultimoDia=String(usuarioAtual.dailyRewardDay||"");if(!ultimoDia){const rawLast=usuarioAtual.dailyRewardLastClaim,last=Number(rawLast?.toMillis?rawLast.toMillis():rawLast||0);if(last>0){const d=new Date(last);ultimoDia=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}}
+ if(ultimoDia===hoje){const r=proximaMeiaNoite().getTime()-Date.now();b.disabled=true;b.style.opacity=".5";b.style.cursor="not-allowed";let h=Math.floor(r/3600000),m=Math.floor(r%3600000/60000),s=Math.floor(r%60000/1000);c.innerText=`Próximo resgate à meia-noite • ${h}h ${m}m ${s}s`}else{b.disabled=false;b.style.opacity="1";b.style.cursor="pointer";c.innerText="🎁 Recompensa disponível agora!"}
+}
+setInterval(atualizarDailyUI,1000);
+
+window.criarEventoGlobal=async()=>{if(!usuarioAtual.isAdm)return alert("Acesso negado.");let titulo=document.getElementById("novo-evento-titulo").value.trim(),desc=document.getElementById("novo-evento-desc").value.trim()||"Evento criado pelo ADM",reward=Number(document.getElementById("novo-evento-reward").value)||100;if(!titulo)return alert("Digite o título.");await addDoc(collection(db,"eventos"),{titulo,desc,reward,createdBy:usuarioAtual.uid,createdAt:serverTimestamp(),active:true});document.getElementById("novo-evento-titulo").value="";document.getElementById("novo-evento-desc").value="";renderizarEventos();alert("Evento publicado para o servidor.")};
+async function renderizarEventos(){let c=document.getElementById("lista-eventos-criados");try{let s=await getDocs(collection(db,"eventos"));let arr=[];s.forEach(d=>arr.push(d.data()));if(!arr.length)arr=[{titulo:"Ascensão dos Dragões",desc:"Batalhe nas fases para ganhar bônus!",reward:100}];c.innerHTML="<h4>Eventos ativos:</h4>"+arr.map(e=>`<div class="item-card" style="margin-top:8px"><b>🌟 ${e.titulo}</b><p>${e.desc}</p><span class="badge">+${e.reward||0} 🪙</span></div>`).join("")}catch(e){c.innerHTML="<p>Ascensão dos Dragões — evento padrão.</p>"}}
+
+async function carregarJogadoresReaisDoBanco(){let t=document.getElementById("tabela-jogadores-server");if(!t)return;t.innerHTML="<tr><td colspan=5>Carregando...</td></tr>";try{let s=await getDocs(collection(db,"jogadores_reais")),arr=[];s.forEach(d=>arr.push(d.data()));let online=0,adms=0,ban=0;arr.forEach(x=>{let isOn=x.lastSeen?.toMillis?Date.now()-x.lastSeen.toMillis()<90000:x.status==="Online";if(isOn)online++;if(x.isAdm)adms++;if(x.banned)ban++});document.getElementById("adm-total").innerText=arr.length;document.getElementById("adm-online").innerText=online;document.getElementById("adm-adms").innerText=adms;document.getElementById("adm-banidos").innerText=ban;document.getElementById("adm-total2").innerText=arr.length;document.getElementById("adm-online2").innerText=online;t.innerHTML="";arr.forEach(x=>{let on=x.lastSeen?.toMillis?Date.now()-x.lastSeen.toMillis()<90000:x.status==="Online";let tr=document.createElement("tr");tr.innerHTML=`<td style="font-family:monospace;color:var(--accent-color);font-size:11px">${x.uid||""}</td><td>${x.displayName||x.email||""} ${x.isAdm?'<span class="badge adm">ADM</span>':""}</td><td>${on?'<span class="badge online">🟢 Online</span>':'<span class="badge offline">⚫ Offline</span>'}</td><td>${x.isAdm?"ADM":x.isSubAdm?"MOD":"Jogador"}</td><td><button class="btn" style="padding:4px 8px;width:auto;font-size:10px" onclick="abrirPainelJogador('${x.uid}','${String(x.displayName||x.email||"Jogador").replace(/'/g,"")}')">Selecionar</button></td>`;t.appendChild(tr)})}catch(e){t.innerHTML="<tr><td colspan=5>Erro ao carregar jogadores.</td></tr>"}}
+
+window.abrirPainelJogador=async(id,nome)=>{let s=await getDoc(doc(db,"jogadores_reais",id)),d=s.exists()?s.data():{};jogadorSelecionadoModal={id,nome,data:d};document.getElementById("m-id").innerText=id;document.getElementById("m-nome").innerText=nome;document.getElementById("m-status").innerText=d.banned?"BANIDO":d.status||"Offline";document.getElementById("modal-jogador").classList.remove("hidden")};
+window.fecharModalJogador=()=>document.getElementById("modal-jogador").classList.add("hidden");
+window.atribuirSubAdm=async()=>{if(!usuarioAtual.isAdm)return alert("Apenas o ADM principal.");let d=jogadorSelecionadoModal.data,newVal=!d.isSubAdm;await updateDoc(doc(db,"jogadores_reais",jogadorSelecionadoModal.id),{isSubAdm:newVal});alert(newVal?"Moderador concedido.":"Moderador removido.");fecharModalJogador();carregarJogadoresReaisDoBanco()};
+window.alternarBanSelecionado=async()=>{if(!usuarioAtual.isAdm)return alert("Acesso negado.");let d=jogadorSelecionadoModal.data,newVal=!d.banned;await updateDoc(doc(db,"jogadores_reais",jogadorSelecionadoModal.id),{banned:newVal,status:newVal?"Banido":"Offline"});await registrarLog(newVal?"Banimento":"Desbanimento",jogadorSelecionadoModal.id);alert(newVal?"Jogador banido.":"Jogador desbanido.");fecharModalJogador();carregarJogadoresReaisDoBanco()};
+window.acaoAdm=async tipo=>{let target=document.getElementById("target-player").value.trim();if(!target)return alert("Informe UID/e-mail.");if(tipo==="banir")alert("Use a lista de jogadores para banir com segurança.")};
+
+window.abrirAtendimentoSelecionado=async()=>{if(!jogadorSelecionadoModal.id)return;await abrirSalaAtendimento(jogadorSelecionadoModal.id,jogadorSelecionadoModal.nome)};
+window.abrirAtendimentoPorBusca=async()=>{let target=document.getElementById("target-player").value.trim();if(!target)return alert("Informe UID ou e-mail.");let s=await getDocs(collection(db,"jogadores_reais")),found=null;s.forEach(d=>{let x=d.data();if(x.uid===target||x.email===target)found={id:d.id,data:x}});if(!found)return alert("Jogador não encontrado.");await abrirSalaAtendimento(found.id,found.data.displayName||found.data.email)};
+async function abrirSalaAtendimento(playerId,playerName){let q=query(collection(db,"salas_atendimento"),orderBy("createdAt","desc"));let snap=await getDocs(q),room=null;snap.forEach(d=>{let x=d.data();if(!room&&x.playerUid===playerId&&x.status==="aberta")room={id:d.id,data:x}});if(!room){let r=await addDoc(collection(db,"salas_atendimento"),{playerUid:playerId,playerName,admUid:usuarioAtual.uid,admName:"ADM GABRIEL",status:"aberta",createdAt:serverTimestamp()});room={id:r.id,data:{playerUid:playerId,playerName,status:"aberta"}}}salaAtualId=room.id;document.getElementById("support-header").innerText=`👑 ADM GABRIEL ↔ 👤 ${playerName}`;document.getElementById("modal-atendimento").classList.remove("hidden");assinarMensagensSala()};
+function assinarMensagensSala(){if(unsubscribeSupport)unsubscribeSupport();if(!salaAtualId)return;let q=query(collection(db,"salas_atendimento",salaAtualId,"mensagens"),orderBy("createdAt","asc"));unsubscribeSupport=onSnapshot(q,s=>{let c=document.getElementById("support-messages");c.innerHTML="";s.forEach(d=>{let x=d.data(),me=x.senderUid===usuarioAtual.uid,div=document.createElement("div");div.className="support-msg "+(me?"me":"adm");div.innerHTML=`<b>${x.senderName||"Usuário"}</b><br>${escapeHtml(x.text||"")}`;c.appendChild(div)});c.scrollTop=c.scrollHeight})}
+window.enviarMensagemAtendimento=async()=>{let input=document.getElementById("support-input"),text=input.value.trim();if(!text||!salaAtualId)return;await addDoc(collection(db,"salas_atendimento",salaAtualId,"mensagens"),{senderUid:usuarioAtual.uid,senderName:nomeAtual(),text,createdAt:serverTimestamp()});input.value="";};
+window.fecharAtendimento=()=>{document.getElementById("modal-atendimento").classList.add("hidden");if(unsubscribeSupport){unsubscribeSupport();unsubscribeSupport=null}};
+async function registrarLog(acao,target){if(!usuarioAtual.isAdm)return;await addDoc(collection(db,"logs_adm"),{acao,target,adminUid:usuarioAtual.uid,adminName:"ADM GABRIEL",createdAt:serverTimestamp()});carregarLogs()};
+async function carregarSolicitacoesAdm(){
+ const c=document.getElementById("adm-solicitacoes");
+ if(!c||!usuarioAtual.isAdm)return;
+ try{
+  const s=await getDocs(query(collection(db,"solicitacoes_adm"),orderBy("createdAt","desc")));
+  const arr=s.docs.slice(0,30);
+  c.innerHTML=arr.length?"":"<div class=\"chat-msg\">Nenhuma mensagem recebida.</div>";
+  arr.forEach(d=>{const x=d.data();const data=x.createdAt?.toDate?x.createdAt.toDate().toLocaleString("pt-BR"):"Agora";const div=document.createElement("div");div.className="chat-msg";div.innerHTML=`<b>👤 ${escapeHtml(x.nome||"Jogador")}</b> <span class=\"badge\">ID: ${escapeHtml(x.id||x.uid||"-")}</span><br><span style=\"color:#94a3b8;font-size:11px\">${data}</span><br><span style=\"display:block;margin-top:5px\">${escapeHtml(x.motivo||"")}</span>`;c.appendChild(div)});
+ }catch(e){c.innerHTML="<div class=\"chat-msg\">Não foi possível carregar as mensagens.</div>"}
+}
+
+async function carregarLogs(){let c=document.getElementById("adm-logs");if(!c)return;try{let s=await getDocs(query(collection(db,"logs_adm"),orderBy("createdAt","desc")));c.innerHTML="";s.forEach(d=>{let x=d.data();c.innerHTML+=`<div class="chat-msg"><b>${x.adminName||"ADM"}:</b> ${x.acao} → ${x.target||""}</div>`})}catch(e){}}
+window.abrirContatoAdm=()=>{
+ const m=document.getElementById("modal-contato-adm");
+ if(!m)return;
+ document.getElementById("adm-msg-nome").value=usuarioAtual.displayName||nomeAtual();
+ document.getElementById("adm-msg-id").value=usuarioAtual.uid||"";
+ document.getElementById("adm-msg-motivo").value="";
+ m.classList.remove("hidden");
+ document.getElementById("adm-msg-motivo")?.focus();
+};
+window.fecharContatoAdm=()=>document.getElementById("modal-contato-adm")?.classList.add("hidden");
+window.enviarSolicitacaoAdm=async()=>{
+ const nome=document.getElementById("adm-msg-nome").value.trim();
+ const id=document.getElementById("adm-msg-id").value.trim();
+ const motivo=document.getElementById("adm-msg-motivo").value.trim();
+ if(!nome||!id||!motivo)return alert("Preencha nome, ID e motivo da mensagem.");
+ if(usuarioAtual.isAdm)return alert("O ADM principal não precisa abrir uma solicitação para si mesmo.");
+ try{
+   await addDoc(collection(db,"solicitacoes_adm"),{nome,id,uid:usuarioAtual.uid,email:usuarioAtual.email||"",motivo,status:"nova",createdAt:serverTimestamp()});
+   notificar("📨 Mensagem enviada para o ADM Gabriel!","success");
+   fecharContatoAdm();
+ }catch(e){console.error(e);alert("Não foi possível enviar a mensagem. Verifique sua conexão com o Firebase.");}
+};
+
+window.enviarMensagemGlobalAdm=async()=>{if(!usuarioAtual.isAdm)return alert("Acesso negado.");let i=document.getElementById("global-msg-adm"),text=i.value.trim();if(!text)return;await addDoc(collection(db,"chat_global"),{senderUid:usuarioAtual.uid,senderName:"👑 ADM GABRIEL",text,global:true,createdAt:serverTimestamp()});await registrarLog("Mensagem global",text);i.value="";};
+window.enviarMensagemRodape=async()=>{let i=document.getElementById("footer-chat-input"),text=i.value.trim();if(!text)return;await addDoc(collection(db,"chat_global"),{senderUid:usuarioAtual.uid,senderName:nomeAtual(),text,global:false,createdAt:serverTimestamp()});i.value=""};
+window.alternarChatGlobal=()=>{const w=document.getElementById("chat-window");w.classList.toggle("hidden");if(!w.classList.contains("hidden")){document.getElementById("footer-chat-input")?.focus()}};
+window.fecharChatGlobal=()=>document.getElementById("chat-window")?.classList.add("hidden");
+function assinarChatGlobal(){if(unsubscribeGlobal)unsubscribeGlobal();let q=query(collection(db,"chat_global"),orderBy("createdAt","asc"));unsubscribeGlobal=onSnapshot(q,s=>{let c=document.getElementById("chat-container"),h=document.getElementById("adm-chat-history");if(c)c.innerHTML="";if(h)h.innerHTML="";s.docs.slice(-80).forEach(d=>{let x=d.data(),html=`<strong>${escapeHtml(x.senderName||"Jogador")}:</strong> ${escapeHtml(x.text||"")}`;if(c){let div=document.createElement("div");div.className="chat-msg"+(x.global?" global":"");div.innerHTML=html;c.appendChild(div)}if(h){let div2=document.createElement("div");div2.className="chat-msg"+(x.global?" global":"");div2.innerHTML=html;h.appendChild(div2)}});if(c)c.scrollTop=c.scrollHeight;if(h)h.scrollTop=h.scrollHeight})}
+window.darRecompensaAdm=async()=>{if(!usuarioAtual.isAdm)return alert("Acesso negado.");let uid=document.getElementById("reward-target").value.trim(),coins=Number(document.getElementById("reward-coins").value)||0;if(!uid||coins<=0)return alert("Informe UID e recompensa.");let r=doc(db,"jogadores_reais",uid),s=await getDoc(r);if(!s.exists())return alert("Jogador não encontrado.");let d=s.data();await updateDoc(r,{coins:Number(d.coins||0)+coins});await registrarLog("Recompensa enviada",uid+" +"+coins+" moedas");alert("Recompensa enviada.");};
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+
+window.atualizarVolume=()=>{document.getElementById("bg-music").volume=Number(document.getElementById("vol-musica").value)/100};
+window.alternarSom=async()=>{let a=document.getElementById("bg-music");if(a.paused){a.volume=Number(document.getElementById("vol-musica").value)/100;try{await a.play()}catch(e){alert("O navegador bloqueou o áudio. Clique novamente após interagir com a página.")}}else a.pause()};
+
+window.sairDaConta=async()=>{try{if(heartbeatTimer)clearInterval(heartbeatTimer);if(unsubscribeGlobal)unsubscribeGlobal();if(unsubscribeSupport)unsubscribeSupport();if(auth.currentUser)await updateDoc(doc(db,"jogadores_reais",auth.currentUser.uid),{status:"Offline",lastSeen:serverTimestamp()});await signOut(auth)}catch(e){console.error(e)}finally{document.getElementById("game-container").classList.add("hidden");document.getElementById("login-screen").classList.remove("hidden");document.getElementById("auth-email").value="";document.getElementById("auth-pass").value="";notificar("🚪 Conta desconectada. Faça login novamente.","info")}};
+
+onAuthStateChanged(auth,async user=>{
+ if(!user){modoSistema="jogador";document.getElementById("game-container").classList.add("hidden");document.getElementById("login-screen").classList.remove("hidden");return;}
+ try{
+  await carregarJogador();
+  document.getElementById("login-screen").classList.add("hidden");
+  document.getElementById("game-container").classList.remove("hidden");
+  const roleLabel=usuarioAtual.isAdm?"👑 SUPER ADM • VIP 10":usuarioAtual.isSubAdm?"🛡️ MODERADOR":"👤 Jogador";
+  document.getElementById("sidebar-role").innerText=roleLabel;
+  if(usuarioAtual.isAdm){
+    document.getElementById("current-page-title").innerText="Dashboard ADM";
+    const first=document.querySelector("#menu-list .menu-item");
+    trocarSecao("painel-adm",first);
+    carregarSolicitacoesAdm();carregarLogs();carregarJogadoresReaisDoBanco();
+  }else{
+    const first=document.querySelector("#menu-list .menu-item");
+    trocarSecao("jogar",first);
+  }
+  try{document.getElementById("bg-music").volume=.6}catch(e){}
+ }catch(e){
+  console.error(e);
+  if(e.message!=="CONTA_BANIDA")alert("Não foi possível carregar sua conta. Verifique o cadastro no Firebase.");
+  document.getElementById("game-container").classList.add("hidden");document.getElementById("login-screen").classList.remove("hidden");
+ }
+});
 </script>
-</body></html>
+</body>
+</html>
