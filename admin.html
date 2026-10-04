@@ -42,13 +42,13 @@
         .table-custom th, .table-custom td { padding: 12px; text-align: left; border-bottom: 1px solid #1f2937; font-size: 13px; }
         .table-custom th { color: #ef4444; background: #0f172a; }
 
-        /* SEU NOME COLORIDO E LOGO EXCLUSIVA */
+        /* NOME COLORIDO E LOGO EXCLUSIVA */
         .nome-colorido-fundador {
             background: linear-gradient(90deg, #ff007f, #7928ca, #ffb800, #00dfd8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 900;
-            font-size: 16px;
+            font-size: 15px;
             text-shadow: 0 0 10px rgba(255,0,127,0.3);
         }
         .badge-logo-adm {
@@ -61,6 +61,7 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            margin-top: 4px;
         }
 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -152,7 +153,6 @@
                 <div class="grid-2">
                     <div class="card-box">
                         <h3>Adicionar Novo ADM</h3>
-                        <p style="color: #94a3b8; font-size: 13px; margin-bottom: 10px;">O usuário promovido receberá automaticamente acesso às funções básicas de moderação pelo painel.</p>
                         <input type="email" id="novo-adm-email" class="form-control" placeholder="E-mail do usuário para promover">
                         <button class="btn-adm" onclick="promoverParaAdm()">PROMOVER A ADM AUTOMATICAMENTE</button>
                     </div>
@@ -220,7 +220,7 @@
         const db = firebase.firestore();
 
         let admAtualEmail = null;
-        const EMAIL_FUNDADOR = "markivus25@gmail.com"; // Seu e-mail principal com nome colorido exclusivo
+        const EMAIL_FUNDADOR = "markivus25@gmail.com";
 
         function loginAdm(event) {
             event.preventDefault();
@@ -230,11 +230,9 @@
             auth.signInWithEmailAndPassword(email, senha).then(cred => {
                 admAtualEmail = cred.user.email;
 
-                // Verifica se é o fundador ou um ADM cadastrado
                 if (admAtualEmail === EMAIL_FUNDADOR) {
                     liberarPainelCompleto("Gabriel (Fundador)", true);
                 } else {
-                    // Checa se consta na coleção de staff
                     db.collection("staff_adms").where("email", "==", admAtualEmail).get().then(snapshot => {
                         if (!snapshot.empty) {
                             liberarPainelCompleto("Administrador", false);
@@ -258,7 +256,6 @@
             } else {
                 nomeDisplay.innerText = nomeExibicao;
                 nomeDisplay.style.color = "#f59e0b";
-                // ADMs normais não gerenciam outros staff por segurança básica
                 document.getElementById('menu-tab-staff').style.display = 'none';
             }
 
@@ -285,7 +282,7 @@
                     
                     tbody.innerHTML += `
                         <tr>
-                            <td><b>[ADM/Player] ${d.nome || 'Guerreiro'}</b></td>
+                            <td><b>${d.nome || 'Guerreiro'}</b><br><small style="color:#64748b;">ID: ${doc.id}</small></td>
                             <td>Nível ${d.nivel || 1}</td>
                             <td>🪙 ${d.ouro || 0}</td>
                             <td>💎 ${d.gemas || 0}</td>
@@ -335,11 +332,8 @@
             db.collection("config_jogo").doc("eventos_ativos").get().then(doc => {
                 let lista = doc.exists && doc.data().lista ? doc.data().lista : [];
                 lista.push({ titulo, descricao, recompensa, data: "Hoje" });
-                db.collection("config_jogo").doc("eventos_ativos").set({ lista }).then(() => {
-                    alert("Evento publicado e sincronizado!");
-                    document.getElementById('ev-titulo').value = "";
-                    document.getElementById('ev-desc').value = "";
-                    document.getElementById('ev-recompensa').value = "";
+                db.collection("config_jogo").doc("config_jogo").set({ lista }, { merge: true }).then(() => {
+                    alert("Evento publicado!");
                 });
             });
         }
@@ -347,9 +341,8 @@
         function promoverParaAdm() {
             let email = document.getElementById('novo-adm-email').value.trim();
             if(!email) return;
-            // Salva na coleção staff_adms permitindo acesso automático imediato
             db.collection("staff_adms").add({ email, promovidoPor: admAtualEmail, data: Date.now() }).then(() => {
-                alert(`Usuário ${email} promovido a ADM com sucesso! Ele já pode acessar o painel com as funções básicas.`);
+                alert(`Usuário ${email} promovido a ADM com sucesso!`);
                 document.getElementById('novo-adm-email').value = "";
             });
         }
@@ -373,7 +366,7 @@
             db.collection("config_jogo").doc("loja_global").get().then(doc => {
                 let armas = doc.exists && doc.data().armas ? doc.data().armas : [];
                 armas.push({ nome, preco });
-                db.collection("config_jogo").doc("loja_global").update({ armas }).then(() => {
+                db.collection("config_jogo").doc("loja_global").set({ armas }, { merge: true }).then(() => {
                     alert("Item adicionado na loja global!");
                 });
             });
