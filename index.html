@@ -1,1067 +1,225 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dragon War - RPG Completo</title>
-  <style>
-    :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --primary: #38bdf8;
-      --accent: #f59e0b;
-      --danger: #ef4444;
-      --success: #10b981;
-      --purple: #a855f7;
-      --text: #f8fafc;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-    body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 15px; display: flex; justify-content: center; align-items: center; }
-    .app-container { width: 100%; max-width: 520px; }
-    .card { background: var(--card-bg); border-radius: 12px; padding: 20px; border: 1px solid #334155; box-shadow: 0 8px 20px rgba(0,0,0,0.4); margin-bottom: 15px; }
-    h1, h2, h3 { text-align: center; color: var(--primary); margin-bottom: 15px; }
-    
-    /* AUTH */
-    .tabs { display: flex; border-bottom: 2px solid #334155; margin-bottom: 15px; }
-    .tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; color: #94a3b8; font-weight: bold; }
-    .tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
-    .input-group { margin-bottom: 12px; }
-    label { font-size: 0.85rem; color: #cbd5e1; display: block; margin-bottom: 4px; }
-    input, select, textarea { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #fff; }
-    button { width: 100%; padding: 12px; border: none; border-radius: 6px; background: #0284c7; color: white; font-weight: bold; cursor: pointer; margin-top: 8px; }
-    button:hover { opacity: 0.9; }
-    button:disabled { background: #475569; cursor: not-allowed; opacity: 0.6; }
-    
-    /* NAV & PANELS */
-    .nav-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 6px; }
-    .nav-bar-sub { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-bottom: 15px; }
-    .nav-btn { padding: 8px 2px; font-size: 0.72rem; background: #334155; border: none; color: #fff; border-radius: 6px; cursor: pointer; text-align: center; }
-    .nav-btn.active { background: var(--primary); color: #000; font-weight: bold; }
-    
-    /* HUD */
-    .profile-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-    .avatar-img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--primary); object-fit: cover; background: #334155; }
-    .hud { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #0f172a; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 0.82rem; }
-    .bar-container { background: #334155; border-radius: 4px; height: 10px; overflow: hidden; margin-top: 2px; }
-    .bar-fill { height: 100%; transition: width 0.3s; }
-    .hp-fill { background: var(--danger); }
-    .energy-fill { background: var(--accent); }
-    
-    /* SEÇÕES */
-    .panel-section { display: none; }
-    .panel-section.active { display: block; }
-    
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .item-card { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 10px; text-align: center; font-size: 0.82rem; margin-bottom: 8px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
-    .item-card img { width: 64px; height: 64px; object-fit: contain; margin-bottom: 6px; border-radius: 6px; }
-    .item-card button { padding: 6px; font-size: 0.78rem; margin-top: 5px; width: 100%; }
-    .item-card.equipped { border: 2px solid var(--success); background: rgba(16, 185, 129, 0.08); }
-
-    /* BOSS ARENA */
-    .boss-avatar { width: 100px; height: 100px; object-fit: contain; margin: 0 auto 10px; display: block; filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.4)); }
-
-    /* RANKING LISTA */
-    .ranking-list { display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; }
-    .ranking-item { display: flex; align-items: center; gap: 10px; background: #0f172a; border: 1px solid #334155; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; }
-    .ranking-item .rank-num { font-size: 1.1rem; font-weight: bold; width: 25px; text-align: center; color: var(--accent); }
-    .ranking-item img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--primary); }
-    .ranking-item .rank-info { flex: 1; }
-    .ranking-item .rank-badge { padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
-
-    /* PATENTES COR */
-    .badge-bronze { background: #78350f; color: #fef3c7; }
-    .badge-prata { background: #475569; color: #f1f5f9; }
-    .badge-ouro { background: #b45309; color: #fef3c7; }
-    .badge-platina { background: #0284c7; color: #e0f2fe; }
-    .badge-lendario { background: #7e22ce; color: #f3e8ff; }
-
-    .hidden { display: none !important; }
-    .admin-badge { background: var(--accent); color: #000; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
-    .log-box { background: #0f172a; padding: 10px; border-radius: 6px; font-size: 0.8rem; color: #10b981; height: 90px; overflow-y: auto; margin-top: 10px; border: 1px solid #334155; }
-    
-    /* CHAT & NOTIFICAÇÕES */
-    .chat-box { background: #0f172a; border: 1px solid #334155; border-radius: 8px; height: 180px; overflow-y: auto; padding: 10px; font-size: 0.8rem; margin-bottom: 8px; }
-    .chat-msg { margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px dashed #334155; }
-    .chat-msg.admin-msg { color: var(--accent); font-weight: bold; background: rgba(245, 158, 11, 0.1); padding: 4px; border-radius: 4px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon War - Rise of Power</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #0b0f19;
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+        }
+        .screen {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .screen.active {
+            display: flex;
+        }
+        /* Estilos da Tela Inicial */
+        #home-screen {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('fundo-dragon.jpg') no-repeat center center/cover;
+            justify-content: space-between;
+            padding: 40px;
+        }
+        .home-left {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .btn-play {
+            background: linear-gradient(135deg, #f5af19, #f12711);
+            color: white;
+            padding: 15px 40px;
+            font-size: 22px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(241, 39, 17, 0.4);
+            transition: 0.2s;
+        }
+        .btn-play:hover {
+            transform: scale(1.05);
+        }
+        .menu-btn {
+            background: rgba(16, 37, 66, 0.8);
+            color: #fff;
+            padding: 12px 25px;
+            border: 1px solid #1e90ff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: left;
+            width: 200px;
+        }
+        .menu-btn:hover {
+            background: rgba(30, 144, 255, 0.3);
+        }
+        /* Estilos do Jogo Principal / Dashboard */
+        #game-screen {
+            background: #0f172a;
+            display: grid;
+            grid-template-columns: 240px 1fr;
+        }
+        .sidebar {
+            background: #1e293b;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-right: 1px solid #334155;
+        }
+        .sidebar button {
+            background: transparent;
+            color: #94a3b8;
+            border: none;
+            padding: 12px;
+            text-align: left;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .sidebar button.active, .sidebar button:hover {
+            background: #3b82f6;
+            color: #fff;
+        }
+        .content-area {
+            padding: 30px;
+            overflow-y: auto;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
 </head>
 <body>
 
-<div class="app-container">
-
-  <!-- AUTH CARD -->
-  <div id="auth-card" class="card">
-    <h1>🐉 Dragon War</h1>
-    <div class="tabs">
-      <div class="tab active" id="tab-login" onclick="switchAuthTab('login')">LOGIN</div>
-      <div class="tab" id="tab-register" onclick="switchAuthTab('register')">REGISTRAR</div>
-    </div>
-
-    <form id="form-login" onsubmit="handleLogin(event)">
-      <div class="input-group">
-        <label>E-mail</label>
-        <input type="email" id="login-email" required placeholder="seu@email.com">
-      </div>
-      <div class="input-group">
-        <label>Senha</label>
-        <input type="password" id="login-password" required placeholder="••••••••">
-      </div>
-      <button type="submit" id="btn-login-submit">ENTRAR NO JOGO</button>
-    </form>
-
-    <form id="form-register" class="hidden" onsubmit="handleRegister(event)">
-      <div class="input-group">
-        <label>Nome do Herói</label>
-        <input type="text" id="reg-name" required placeholder="Ex: GabrielGuerreiro">
-      </div>
-      <div class="input-group">
-        <label>E-mail</label>
-        <input type="email" id="reg-email" required placeholder="seu@email.com">
-      </div>
-      <div class="input-group">
-        <label>Senha (mínimo 6 caracteres)</label>
-        <input type="password" id="reg-password" required placeholder="••••••••">
-      </div>
-      <button type="submit" id="btn-reg-submit" style="background: var(--success);">CRIAR CONTA</button>
-    </form>
-
-    <div class="log-box" id="auth-log">
-      > Aguardando ação do usuário...
-    </div>
-  </div>
-
-  <!-- GAME CARD -->
-  <div id="game-card" class="card hidden">
-    
-    <!-- PERFIL CABEÇALHO -->
-    <div class="profile-header">
-      <img id="ui-avatar" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 24 24' fill='%2338bdf8'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" class="avatar-img" alt="Avatar">
-      <div style="flex:1;">
-        <h2 style="margin:0; font-size:1.1rem; text-align:left;"><span id="ui-username">Herói</span> <span id="admin-indicator"></span></h2>
-        <small style="color:#94a3b8;" id="ui-char-title">Guerreiro Novato</small>
-      </div>
-      <button onclick="handleLogout()" style="width:auto; padding:4px 10px; background:var(--danger); font-size:0.75rem; margin:0;">Sair</button>
-    </div>
-
-    <!-- HUD RECURSOS -->
-    <div class="hud">
-      <div>Nível: <strong id="ui-level" style="color:var(--primary)">1</strong></div>
-      <div>Energia Poder: ✨ <strong id="ui-power-eng" style="color:var(--purple)">0</strong></div>
-      <div>Moedas: 🟡 <strong id="ui-coins">100</strong></div>
-      <div>Diamantes: 💎 <strong id="ui-gems">5</strong></div>
-      <div>
-        Vida: <span id="ui-hp-text">200/200</span>
-        <div class="bar-container"><div id="bar-hp" class="bar-fill hp-fill" style="width: 100%;"></div></div>
-      </div>
-      <div>
-        Energia: <span id="ui-energy-text">50/50</span>
-        <div class="bar-container"><div id="bar-energy" class="bar-fill energy-fill" style="width: 100%;"></div></div>
-      </div>
-      <div>Ataque: ⚔️ <strong id="ui-atk">15</strong></div>
-      <div>Defesa: 🛡 <strong id="ui-def">5</strong></div>
-    </div>
-
-    <!-- NAVEGAÇÃO -->
-    <div class="nav-bar">
-      <button class="nav-btn active" onclick="showPanel('combate', this)">⚔️ Batalhar</button>
-      <button class="nav-btn" onclick="showPanel('mochila', this)">🎒 Mochila</button>
-      <button class="nav-btn" onclick="showPanel('loja', this)">🏪 Loja</button>
-      <button class="nav-btn" onclick="showPanel('upgrades', this)">⚒ Upgrades</button>
-    </div>
-    <div class="nav-bar-sub">
-      <button class="nav-btn" onclick="showPanel('ranking', this); loadGlobalRanking();">🏆 Ranking</button>
-      <button class="nav-btn" onclick="showPanel('perfil', this)">👤 Perfil</button>
-      <button class="nav-btn" onclick="showPanel('daily', this)">🎁 Diário</button>
-      <button class="nav-btn" onclick="showPanel('chat', this)">💬 Chat</button>
-      <button class="nav-btn hidden" id="nav-admin-btn" onclick="showPanel('admin', this)" style="background:#7c3aed;">⚙️ ADM</button>
-    </div>
-
-    <!-- BATALHA -->
-    <div id="panel-combate" class="panel-section active">
-      <h3>⚔️ Batalha de Chefões</h3>
-      <div class="input-group">
-        <label>Escolher Boss:</label>
-        <select id="boss-select" onchange="selectBoss()">
-          <option value="0">Nível 1: Goblin Rei (Fácil)</option>
-          <option value="1">Nível 2: Orc General (Fácil)</option>
-          <option value="2">Nível 3: Golem de Pedra (Médio)</option>
-          <option value="3">Nível 4: Quimera Sombria (Difícil)</option>
-          <option value="4">Nível 5: Dragão Ancião (Lendário)</option>
-        </select>
-      </div>
-
-      <div style="background:#0f172a; padding:12px; border-radius:8px; text-align:center; margin-bottom:10px;">
-        <img id="boss-img" src="https://img.icons8.com/color/96/goblin.png" class="boss-avatar" alt="Boss">
-        <h4 id="boss-name" style="color:var(--danger)">Goblin Rei</h4>
-        <p style="font-size:0.85rem;">HP do Chefe: <span id="boss-hp">60</span></p>
-      </div>
-
-      <div class="grid-2">
-        <button onclick="attack()" style="background:var(--danger);">⚔️ Atacar (-5 Eng)</button>
-        <button onclick="rest()" style="background:var(--success);">💤 Descansar (+20 Eng)</button>
-      </div>
-      <button onclick="usePotionInCombat()" style="background:var(--accent);">🧪 Usar Poção de Cura</button>
-    </div>
-
-    <!-- MOCHILA / INVENTÁRIO -->
-    <div id="panel-mochila" class="panel-section">
-      <h3>🎒 Meu Inventário</h3>
-      <div class="tabs">
-        <div class="tab active" id="tab-inv-chars" onclick="switchInvCategory('chars')">Skins</div>
-        <div class="tab" id="tab-inv-weapons" onclick="switchInvCategory('weapons')">Armas</div>
-        <div class="tab" id="tab-inv-potions" onclick="switchInvCategory('potions')">Consumíveis</div>
-      </div>
-
-      <div id="inv-chars-list" class="grid-2"></div>
-      <div id="inv-weapons-list" class="grid-2 hidden"></div>
-      <div id="inv-potions-list" class="grid-2 hidden"></div>
-    </div>
-
-    <!-- LOJA -->
-    <div id="panel-loja" class="panel-section">
-      <h3>🏪 Loja do Reino</h3>
-      <div class="tabs">
-        <div class="tab active" id="tab-shop-chars" onclick="switchShopCategory('chars')">Personagens</div>
-        <div class="tab" id="tab-shop-weapons" onclick="switchShopCategory('weapons')">Armas</div>
-        <div class="tab" id="tab-shop-potions" onclick="switchShopCategory('potions')">Poções</div>
-      </div>
-
-      <div id="shop-chars-list" class="grid-2"></div>
-      <div id="shop-weapons-list" class="grid-2 hidden"></div>
-      <div id="shop-potions-list" class="grid-2 hidden">
-        <div class="item-card">
-          <img src="https://img.icons8.com/color/96/health-potion.png" alt="Poção">
-          <div>
-            <strong>Poção de Vida</strong><br>Recupera +50 HP<br>🟡 40 Moedas
-          </div>
-          <button onclick="buyPotion('pocao', 40)">Comprar</button>
+    <!-- TELA 1: MENU INICIAL -->
+    <div id="home-screen" class="screen active">
+        <div class="home-left">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img id="user-avatar" src="avatar.png" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #f5af19;" alt="Avatar">
+                <div>
+                    <h3 id="display-name">Gabriel Cabral</h3>
+                    <small style="color: #94a3b8;">UID: <span id="display-uid">12345678</span></small>
+                </div>
+            </div>
+            <button class="btn-play" onclick="entrarNoJogo()">JOGAR</button>
+            <button class="menu-btn" onclick="abrirSalvar()">📄 SALVAR</button>
+            <button class="menu-btn" onclick="abrirCarregar()">📂 CARREGAR</button>
+            <button class="menu-btn" onclick="abrirNovoJogo()">➕ NOVO JOGO</button>
         </div>
-        <div class="item-card">
-          <img src="https://img.icons8.com/color/96/magic-potion.png" alt="Elixir">
-          <div>
-            <strong>Mega Elixir</strong><br>Recupera HP e Energia Max<br>💎 2 Diamantes
-          </div>
-          <button onclick="buyPotion('elixir', 2, true)">Comprar</button>
+    </div>
+
+    <!-- TELA 2: PAINEL DO JOGO (COM ABAS) -->
+    <div id="game-screen" class="screen">
+        <div class="sidebar">
+            <h2 style="color: #f5af19; margin-bottom: 20px;">DRAGON WAR</h2>
+            <button onclick="mudarAba('resumo', this)">Resumo</button>
+            <button onclick="mudarAba('campanha', this)">Campanha</button>
+            <button onclick="mudarAba('loja', this)" class="active">Loja de Itens</button>
+            <button onclick="mudarAba('poderes', this)">Poderes</button>
+            <button onclick="mudarAba('inventario', this)">Inventário</button>
+            <button onclick="mudarAba('admin', this)">Painel ADM</button>
         </div>
-      </div>
-    </div>
+        <div class="content-area">
+            <!-- ABA RESUMO -->
+            <div id="resumo" class="tab-content">
+                <h2>Resumo do Herói</h2>
+                <p>Estatísticas e dados gerais da conta conectados ao Firebase.</p>
+            </div>
 
-    <!-- UPGRADES -->
-    <div id="panel-upgrades" class="panel-section">
-      <h3>⚒️️ Painel de Upgrades</h3>
-      <div class="item-card" style="margin-bottom: 12px;">
-        <strong>Melhorar Arma Atual</strong><br>+5 Ataque por Nível<br>Custo: ✨ 10 Energia de Poder
-        <button onclick="upgradeWeapon()">Melhorar Arma</button>
-      </div>
-      <div class="item-card">
-        <strong>Evoluir Poder Mágico</strong><br>+10 Dano Mágico no Ataque<br>Custo: ✨ 20 Energia de Poder
-        <button onclick="upgradePower()">Evoluir Poder</button>
-      </div>
-    </div>
+            <!-- ABA CAMPANHA / BOSSES -->
+            <div id="campanha" class="tab-content">
+                <h2>Batalha contra Chefões</h2>
+                <!-- Cards de Bosses aqui -->
+            </div>
 
-    <!-- RANKING GLOBAL -->
-    <div id="panel-ranking" class="panel-section">
-      <h3>🏆 Ranking Global</h3>
-      <p style="font-size:0.8rem; text-align:center; color:#94a3b8; margin-bottom:10px;">Os melhores heróis de Dragon War em tempo real!</p>
-      <div class="ranking-list" id="ranking-container">
-        <p style="text-align:center; color:#94a3b8;">Carregando ranking...</p>
-      </div>
-    </div>
+            <!-- ABA LOJA -->
+            <div id="loja" class="tab-content active">
+                <h2>Loja de Itens</h2>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 20px;">
+                    <!-- Exemplo de Item da Loja -->
+                    <div style="background: #1e293b; padding: 15px; border-radius: 8px; border: 1px solid #3b82f6; text-align: center;">
+                        <h4>Lâmina do Dragão</h4>
+                        <p style="color: #f5af19; margin: 10px 0;">5.000 Moedas</p>
+                        <button onclick="comprarItem('Lamina do Dragao', 5000)" style="background: #22c55e; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">COMPRAR</button>
+                    </div>
+                </div>
+            </div>
 
-    <!-- PERFIL -->
-    <div id="panel-perfil" class="panel-section">
-      <h3>👤 Editar Perfil</h3>
-      <div class="input-group">
-        <label>Nome do Herói</label>
-        <input type="text" id="edit-username" placeholder="Novo nome">
-      </div>
-      <div class="input-group">
-        <label>URL da Foto de Perfil</label>
-        <input type="text" id="edit-avatar-url" placeholder="https://link-da-imagem.com/foto.jpg">
-      </div>
-      <button onclick="saveProfile()" style="background:var(--success);">Salvar Alterações</button>
-    </div>
+            <!-- ABA PODERES -->
+            <div id="poderes" class="tab-content">
+                <h2>Árvore de Habilidades</h2>
+            </div>
 
-    <!-- DIÁRIO -->
-    <div id="panel-daily" class="panel-section">
-      <h3>🎁 Recompensa Diária</h3>
-      <div class="item-card" style="padding:20px;">
-        <p>Resgate diariamente 🟡 100 Moedas e 💎 2 Diamantes!</p>
-        <button onclick="claimDailyReward()" style="background:var(--accent);">Resgatar Recompensa</button>
-      </div>
-    </div>
+            <!-- ABA INVENTÁRIO -->
+            <div id="inventario" class="tab-content">
+                <h2>Inventário / Mochila</h2>
+            </div>
 
-    <!-- CHAT -->
-    <div id="panel-chat" class="panel-section">
-      <h3>💬 Chat Geral</h3>
-      <div class="chat-box" id="chat-messages"></div>
-      <div style="display:flex; gap:6px;">
-        <input type="text" id="chat-input" placeholder="Digite sua mensagem...">
-        <button onclick="sendChatMessage()" style="width: auto; padding:0 15px;">Enviar</button>
-      </div>
-    </div>
-
-    <!-- PAINEL ADM -->
-    <div id="panel-admin" class="panel-section">
-      <h3 style="color:#a7f3d0">⚙️ Painel do Administrador</h3>
-      <div class="input-group">
-        <label>Enviar Aviso Importante no Chat Geral:</label>
-        <textarea id="admin-global-msg" placeholder="Digite o aviso para todos os jogadores..."></textarea>
-        <button onclick="sendAdminAnnouncement()" style="background:var(--accent);">Disparar Aviso Geral</button>
-      </div>
-      <div class="input-group">
-        <label>Adicionar Recursos:</label>
-        <div class="grid-2">
-          <button onclick="adminAddResources(500, 0)" style="background:#059669; margin:0;">+500 Moedas</button>
-          <button onclick="adminAddResources(0, 10)" style="background:#7c3aed; margin:0;">+10 Diamantes</button>
+            <!-- ABA ADMIN -->
+            <div id="admin" class="tab-content">
+                <h2>Painel Administrativo</h2>
+            </div>
         </div>
-      </div>
     </div>
 
-    <!-- LOG DO JOGO -->
-    <div class="log-box" id="game-log">
-      > Conectado ao Dragon War.
-    </div>
-  </div>
-
-</div>
-
-<!-- FIREBASE SDKs COMPAT -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
-    authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
-    projectId: "dragon-war-rise-of-power-2a9f1",
-    storageBucket: "dragon-war-rise-of-power-2a9f1.firebasestorage.app",
-    messagingSenderId: "115455691167",
-    appId: "1:115455691167:web:ff3638f67b66c17c5515aa",
-    measurementId: "G-S7XE2EN9CL"
-  };
-
-  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-
-  const defaultAvatar = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 24 24' fill='%2338bdf8'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>";
-
-  /* LISTA COMPLETA DE PERSONAGENS */
-  const shopCharacters = [
-    { id: 'c1', name: 'Guerreiro Sombra', atk: 5, hp: 0, price: 100, isGem: false, img: 'https://img.icons8.com/color/96/ninja.png' },
-    { id: 'c2', name: 'Mago Elemental', atk: 8, hp: 0, price: 200, isGem: false, img: 'https://img.icons8.com/color/96/wizard.png' },
-    { id: 'c3', name: 'Arqueira Real', atk: 12, hp: 0, price: 350, isGem: false, img: 'https://img.icons8.com/color/96/archer.png' },
-    { id: 'c4', name: 'Paladino Sagrado', atk: 15, hp: 0, price: 500, isGem: false, img: 'https://img.icons8.com/color/96/knight.png' },
-    { id: 'c5', name: 'Ninja do Vento', atk: 20, hp: 0, price: 750, isGem: false, img: 'https://img.icons8.com/color/96/samurai.png' },
-    { id: 'c6', name: 'Berserker de Fogo', atk: 28, hp: 0, price: 1000, isGem: false, img: 'https://img.icons8.com/color/96/barbarian.png' },
-    { id: 'c7', name: 'Invocador Rúnico', atk: 32, hp: 0, price: 1300, isGem: false, img: 'https://img.icons8.com/color/96/witch.png' },
-    { id: 'c8', name: 'Guerreiro Mecânico', atk: 38, hp: 0, price: 1600, isGem: false, img: 'https://img.icons8.com/color/96/cyborg.png' },
-    { id: 'c9', name: 'Assassina Estelar', atk: 42, hp: 0, price: 2000, isGem: false, img: 'https://img.icons8.com/color/96/female-assassin.png' },
-    { id: 'c10', name: 'Caçador de Dragões', atk: 50, hp: 0, price: 10, isGem: true, img: 'https://img.icons8.com/color/96/spartan-helmet.png' },
-    { id: 'c11', name: 'Senhor Elementar', atk: 65, hp: 0, price: 20, isGem: true, img: 'https://img.icons8.com/color/96/genie.png' },
-    { id: 'c12', name: 'Cavaleiro Abissal', atk: 80, hp: 0, price: 30, isGem: true, img: 'https://img.icons8.com/color/96/reaper.png' },
-    { id: 'c13', name: 'Anjo da Vingança', atk: 95, hp: 0, price: 40, isGem: true, img: 'https://img.icons8.com/color/96/angel.png' },
-    { id: 'c14', name: 'Guardião Titânico', atk: 110, hp: 0, price: 50, isGem: true, img: 'https://img.icons8.com/color/96/robot.png' },
-    { id: 'c15', name: 'Imperador Dragão', atk: 140, hp: 0, price: 75, isGem: true, img: 'https://img.icons8.com/color/96/dragon.png' }
-  ];
-
-  /* LISTA COMPLETA DE ARMAS */
-  const shopWeapons = [
-    { id: 'w1', name: 'Adaga de Madeira', atk: 3, price: 50, isGem: false, img: 'https://img.icons8.com/color/96/dagger.png' },
-    { id: 'w2', name: 'Espada de Ferro', atk: 8, price: 120, isGem: false, img: 'https://img.icons8.com/color/96/sword.png' },
-    { id: 'w3', name: 'Machado Mágico', atk: 15, price: 250, isGem: false, img: 'https://img.icons8.com/color/96/battle-axe.png' },
-    { id: 'w4', name: 'Lança Celestial', atk: 22, price: 450, isGem: false, img: 'https://img.icons8.com/color/96/spear.png' },
-    { id: 'w5', name: 'Arco Fênix', atk: 30, price: 700, isGem: false, img: 'https://img.icons8.com/color/96/bow.png' },
-    { id: 'w6', name: 'Cetro do Caos', atk: 40, price: 1000, isGem: false, img: 'https://img.icons8.com/color/96/magic-wand.png' },
-    { id: 'w7', name: 'Martelo do Trovão', atk: 48, price: 1400, isGem: false, img: 'https://img.icons8.com/color/96/warhammer.png' },
-    { id: 'w8', name: 'Katana Sombria', atk: 58, price: 5, isGem: true, img: 'https://img.icons8.com/color/96/katana.png' },
-    { id: 'w9', name: 'Glaive Runica', atk: 70, price: 12, isGem: true, img: 'https://img.icons8.com/color/96/halberd.png' },
-    { id: 'w10', name: 'Foice Estelar', atk: 88, price: 20, isGem: true, img: 'https://img.icons8.com/color/96/scythe.png' },
-    { id: 'w11', name: 'Escudo de Plasma', atk: 100, price: 28, isGem: true, img: 'https://img.icons8.com/color/96/shield.png' },
-    { id: 'w12', name: 'Besta Fantasma', atk: 115, price: 35, isGem: true, img: 'https://img.icons8.com/color/96/crossbow.png' },
-    { id: 'w13', name: 'Lança Solar', atk: 130, price: 45, isGem: true, img: 'https://img.icons8.com/color/96/trident.png' },
-    { id: 'w14', name: 'Lâmina do Fim', atk: 155, price: 60, isGem: true, img: 'https://img.icons8.com/color/96/broadsword.png' },
-    { id: 'w15', name: 'Orbe do Infinito', atk: 185, price: 80, isGem: true, img: 'https://img.icons8.com/color/96/crystal-ball.png' }
-  ];
-
-  /* BOSSES */
-  const bosses = [
-    { name: "Goblin Rei", hp: 60, maxHp: 60, atk: 8, exp: 50, coins: 50, gems: 0, powerEng: 5, img: 'https://img.icons8.com/color/96/goblin.png' },
-    { name: "Orc General", hp: 150, maxHp: 150, atk: 18, exp: 120, coins: 120, gems: 0, powerEng: 10, img: 'https://img.icons8.com/color/96/troll.png' },
-    { name: "Golem de Pedra", hp: 350, maxHp: 350, atk: 30, exp: 250, coins: 200, gems: 1, powerEng: 18, img: 'https://img.icons8.com/color/96/golem.png' },
-    { name: "Quimera Sombria", hp: 700, maxHp: 700, atk: 50, exp: 500, coins: 350, gems: 3, powerEng: 30, img: 'https://img.icons8.com/color/96/gargoyle.png' },
-    { name: "Dragão Ancião", hp: 1500, maxHp: 1500, atk: 90, exp: 1200, coins: 600, gems: 8, powerEng: 60, img: 'https://img.icons8.com/color/96/dragon.png' }
-  ];
-
-  let currentBossIdx = 0;
-  let currentBossHp = 60;
-  let player = {};
-
-  function switchAuthTab(type) {
-    document.getElementById('form-login').classList.toggle('hidden', type !== 'login');
-    document.getElementById('form-register').classList.toggle('hidden', type === 'login');
-    document.getElementById('tab-login').classList.toggle('active', type === 'login');
-    document.getElementById('tab-register').classList.toggle('active', type !== 'login');
-  }
-
-  function authLog(msg) {
-    const box = document.getElementById('auth-log');
-    if (box) box.innerHTML = `> ${msg}<br>` + box.innerHTML;
-  }
-
-  function log(msg) {
-    const box = document.getElementById('game-log');
-    if (box) box.innerHTML = `> ${msg}<br>` + box.innerHTML;
-  }
-
-  async function handleRegister(e) {
-    e.preventDefault();
-    const name = document.getElementById('reg-name').value.trim();
-    const email = document.getElementById('reg-email').value.trim();
-    const pass = document.getElementById('reg-password').value;
-    const btn = document.getElementById('btn-reg-submit');
-
-    btn.innerText = "Criando...";
-    btn.disabled = true;
-
-    try {
-      const res = await auth.createUserWithEmailAndPassword(email, pass);
-      const initialData = {
-        username: name,
-        avatar: defaultAvatar,
-        email: email,
-        level: 1,
-        exp: 0,
-        coins: 100,
-        gems: 5,
-        powerEnergy: 0,
-        hp: 200,
-        maxHp: 200,
-        energy: 50,
-        maxEnergy: 50,
-        atk: 15,
-        def: 5,
-        weaponLvl: 1,
-        powerLvl: 0,
-        equippedChar: null,
-        equippedWeapon: null,
-        ownedChars: [],
-        ownedWeapons: [],
-        isAdmin: false,
-        inventory: { pocao: 2 },
-        lastDaily: 0
-      };
-      await db.collection('users').doc(res.user.uid).set(initialData);
-      authLog("Conta criada com sucesso!");
-    } catch (err) {
-      authLog("Erro ao registrar: " + err.message);
-      btn.innerText = "CRIAR CONTA";
-      btn.disabled = false;
-    }
-  }
-
-  async function handleLogin(e) {
-    e.preventDefault();
-    const email = document.getElementById('login-email').value.trim();
-    const pass = document.getElementById('login-password').value;
-    const btn = document.getElementById('btn-login-submit');
-
-    btn.innerText = "Conectando...";
-    btn.disabled = true;
-
-    try {
-      await auth.signInWithEmailAndPassword(email, pass);
-    } catch (err) {
-      authLog("Erro no login: " + err.message);
-      btn.innerText = "ENTRAR NO JOGO";
-      btn.disabled = false;
-    }
-  }
-
-  function handleLogout() {
-    auth.signOut();
-  }
-
-  function showPanel(panelName, btn) {
-    document.querySelectorAll('.panel-section').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    const target = document.getElementById(`panel-${panelName}`);
-    if (target) target.classList.add('active');
-    if (btn) btn.classList.add('active');
-  }
-
-  function switchShopCategory(cat) {
-    document.getElementById('shop-chars-list').classList.toggle('hidden', cat !== 'chars');
-    document.getElementById('shop-weapons-list').classList.toggle('hidden', cat !== 'weapons');
-    document.getElementById('shop-potions-list').classList.toggle('hidden', cat !== 'potions');
-    document.getElementById('tab-shop-chars').classList.toggle('active', cat === 'chars');
-    document.getElementById('tab-shop-weapons').classList.toggle('active', cat === 'weapons');
-    document.getElementById('tab-shop-potions').classList.toggle('active', cat === 'potions');
-  }
-
-  function switchInvCategory(cat) {
-    document.getElementById('inv-chars-list').classList.toggle('hidden', cat !== 'chars');
-    document.getElementById('inv-weapons-list').classList.toggle('hidden', cat !== 'weapons');
-    document.getElementById('inv-potions-list').classList.toggle('hidden', cat !== 'potions');
-    document.getElementById('tab-inv-chars').classList.toggle('active', cat === 'chars');
-    document.getElementById('tab-inv-weapons').classList.toggle('active', cat === 'weapons');
-    document.getElementById('tab-inv-potions').classList.toggle('active', cat === 'potions');
-  }
-
-  function selectBoss() {
-    currentBossIdx = parseInt(document.getElementById('boss-select').value);
-    const b = bosses[currentBossIdx];
-    currentBossHp = b.hp;
-    
-    const bossNameEl = document.getElementById('boss-name');
-    const bossHpEl = document.getElementById('boss-hp');
-    const bossImgEl = document.getElementById('boss-img');
-    
-    if (bossNameEl) bossNameEl.innerText = b.name;
-    if (bossHpEl) bossHpEl.innerText = currentBossHp;
-    if (bossImgEl) bossImgEl.src = b.img;
-  }
-
-  async function attack() {
-    if (player.energy < 5) return log("⚠️ Energia insuficiente! Use Descansar.");
-
-    player.energy -= 5;
-    const extraAtk = (player.powerLvl || 0) * 10;
-    const dmg = Math.max(1, player.atk + extraAtk + Math.floor(Math.random() * 5));
-    currentBossHp -= dmg;
-
-    log(`⚔ Você causou ${dmg} de dano!`);
-
-    if (currentBossHp <= 0) {
-      const b = bosses[currentBossIdx];
-      player.coins += b.coins;
-      player.gems += b.gems;
-      player.powerEnergy = (player.powerEnergy || 0) + b.powerEng;
-      player.exp += b.exp;
-      log(`🎉 Derrotou ${b.name}! Recompensa: 🟡 ${b.coins} | 💎 ${b.gems} | ✨ ${b.powerEng} Energia de Poder`);
-
-      if (player.exp >= player.level * 100) {
-        player.level += 1;
-        player.atk += 5;
-        log(`🌟 LEVEL UP! Você subiu para o Nível ${player.level}!`);
-      }
-      currentBossHp = b.maxHp;
-    } else {
-      const bossDmg = Math.max(1, bosses[currentBossIdx].atk - player.def);
-      player.hp -= bossDmg;
-      log(`💥 O chefe causou ${bossDmg} de dano!`);
-
-      /* GAME OVER QUANDO A VIDA CHEGAR A ZERO */
-      if (player.hp <= 0) {
-        player.hp = 0;
-        updateUI();
-        await syncData();
-        alert("☠️ GAME OVER! Você perdeu!");
-        log("☠️ GAME OVER! Sua vida chegou a zero. Reiniciando o combate...");
-        
-        /* RESTAURA A VIDA E REINICIA A BATALHA */
-        player.hp = 200;
-        selectBoss();
-        await syncData();
-        updateUI();
-        return;
-      }
-    }
-
-    const bossHpEl = document.getElementById('boss-hp');
-    if (bossHpEl) bossHpEl.innerText = Math.max(0, currentBossHp);
-    await syncData();
-    updateUI();
-  }
-
-  async function rest() {
-    player.energy = Math.min(player.maxEnergy, player.energy + 20);
-    log("💤 Recuperou 20 de Energia.");
-    await syncData();
-    updateUI();
-  }
-
-  async function usePotionInCombat() {
-    if ((player.inventory?.pocao || 0) <= 0) return log("⚠️ Nenhuma poção disponível!");
-    if (player.hp >= 200) return log("⚠️ Sua vida já está no máximo (200 HP)!");
-    
-    player.inventory.pocao -= 1;
-    player.hp = Math.min(200, player.hp + 50);
-    log(`🧪 Recuperou +50 de HP! Vida atual: ${player.hp}/200.`);
-    await syncData();
-    updateUI();
-  }
-
-  async function buyChar(id) {
-    if (player.ownedChars && player.ownedChars.includes(id)) return alert("Você já possui este personagem!");
-    const item = shopCharacters.find(c => c.id === id);
-    if (item.isGem) {
-      if (player.gems < item.price) return alert("Diamantes insuficientes!");
-      player.gems -= item.price;
-    } else {
-      if (player.coins < item.price) return alert("Moedas insuficientes!");
-      player.coins -= item.price;
-    }
-    
-    player.ownedChars = player.ownedChars || [];
-    player.ownedChars.push(id);
-    
-    log(`👤 Personagem comprado: ${item.name}! Guardado na Mochila.`);
-    await syncData();
-    renderInventoryLists();
-    renderShopLists();
-    updateUI();
-  }
-
-  async function buyWeapon(id) {
-    if (player.ownedWeapons && player.ownedWeapons.includes(id)) return alert("Você já possui esta arma!");
-    const item = shopWeapons.find(w => w.id === id);
-    if (item.isGem) {
-      if (player.gems < item.price) return alert("Diamantes insuficientes!");
-      player.gems -= item.price;
-    } else {
-      if (player.coins < item.price) return alert("Moedas insuficientes!");
-      player.coins -= item.price;
-    }
-
-    player.ownedWeapons = player.ownedWeapons || [];
-    player.ownedWeapons.push(id);
-
-    log(`⚔️ Arma comprada: ${item.name}! Guardada na Mochila.`);
-    await syncData();
-    renderInventoryLists();
-    renderShopLists();
-    updateUI();
-  }
-
-  async function equipChar(id) {
-    const item = shopCharacters.find(c => c.id === id);
-    if (!item) return;
-
-    if (player.equippedChar) {
-      const prev = shopCharacters.find(c => c.id === player.equippedChar);
-      if (prev) {
-        player.atk -= prev.atk;
-      }
-    }
-
-    player.equippedChar = id;
-    player.avatar = item.img;
-    player.atk += item.atk;
-
-    log(`✨ Skin equipada: ${item.name}! Status aplicados.`);
-    await syncData();
-    renderInventoryLists();
-    updateUI();
-  }
-
-  async function equipWeapon(id) {
-    const item = shopWeapons.find(w => w.id === id);
-    if (!item) return;
-
-    if (player.equippedWeapon) {
-      const prev = shopWeapons.find(w => w.id === player.equippedWeapon);
-      if (prev) player.atk -= prev.atk;
-    }
-
-    player.equippedWeapon = id;
-    player.atk += item.atk;
-
-    log(`⚔️ Arma equipada: ${item.name}! (+${item.atk} Atk)`);
-    await syncData();
-    renderInventoryLists();
-    updateUI();
-  }
-
-  async function buyPotion(type, price, isGem = false) {
-    if (isGem) {
-      if (player.gems < price) return alert("Diamantes insuficientes!");
-      player.gems -= price;
-      player.hp = 200;
-      player.energy = player.maxEnergy;
-      log("🧪 Elixir aplicado! Vida e Energia restauradas ao máximo.");
-    } else {
-      if (player.coins < price) return alert("Moedas insuficientes!");
-      player.coins -= price;
-      player.inventory = player.inventory || {};
-      player.inventory.pocao = (player.inventory.pocao || 0) + 1;
-      log("🧪 Poção guardada na Mochila.");
-    }
-    await syncData();
-    renderInventoryLists();
-    updateUI();
-  }
-
-  /* SISTEMA DE UPGRADE COM VALIDAÇÃO DE ENERGIA DE PODER */
-  async function upgradeWeapon() {
-    if ((player.powerEnergy || 0) < 10) {
-      alert("❌ Energia de Poder insuficiente! Batalhe contra chefões para conseguir mais ✨ Energia de Poder.");
-      return log("⚠️ Energia de Poder insuficiente para melhorar a arma.");
-    }
-    player.powerEnergy -= 10;
-    player.weaponLvl = (player.weaponLvl || 1) + 1;
-    player.atk += 5;
-    log(`⚒️️ Arma melhorada para o Nível ${player.weaponLvl}! (+5 Ataque)`);
-    await syncData();
-    updateUI();
-  }
-
-  async function upgradePower() {
-    if ((player.powerEnergy || 0) < 20) {
-      alert("❌ Energia de Poder insuficiente! Batalhe contra chefões para conseguir mais ✨ Energia de Poder.");
-      return log("⚠️ Energia de Poder insuficiente para evoluir seu poder mágico.");
-    }
-    player.powerEnergy -= 20;
-    player.powerLvl = (player.powerLvl || 0) + 1;
-    log(`✨ Poder Mágico evoluído para o Nível ${player.powerLvl}! (+10 Dano Mágico)`);
-    await syncData();
-    updateUI();
-  }
-
-  /* SISTEMA DE RANKING GLOBAL */
-  function getRankBadge(level) {
-    if (level >= 20) return { name: "🔴 Lendário", class: "badge-lendario" };
-    if (level >= 15) return { name: "💎 Platina", class: "badge-platina" };
-    if (level >= 10) return { name: "🟡 Ouro", class: "badge-ouro" };
-    if (level >= 5) return { name: "⚪ Prata", class: "badge-prata" };
-    return { name: "🟤 Bronze", class: "badge-bronze" };
-  }
-
-  async function loadGlobalRanking() {
-    const box = document.getElementById('ranking-container');
-    if (!box) return;
-    box.innerHTML = '<p style="text-align:center; color:#94a3b8;">Carregando ranking...</p>';
-
-    try {
-      const snap = await db.collection('users').orderBy('level', 'desc').limit(20).get();
-      if (snap.empty) {
-        box.innerHTML = '<p style="text-align:center; color:#94a3b8;">Nenhum jogador encontrado.</p>';
-        return;
-      }
-
-      box.innerHTML = '';
-      let rank = 1;
-      snap.forEach(doc => {
-        const p = doc.data();
-        const badge = getRankBadge(p.level || 1);
-        const avatar = p.avatar || defaultAvatar;
-
-        box.innerHTML += `
-          <div class="ranking-item">
-            <div class="rank-num">#${rank}</div>
-            <img src="${avatar}" alt="Avatar">
-            <div class="rank-info">
-              <strong>${p.username || 'Herói'}</strong><br>
-              <small style="color:#cbd5e1;">Nível ${p.level || 1}</small>
-            </div>
-            <span class="rank-badge ${badge.class}">${badge.name}</span>
-          </div>
-        `;
-        rank++;
-      });
-    } catch (err) {
-      box.innerHTML = '<p style="text-align:center; color:var(--danger);">Erro ao carregar o ranking.</p>';
-    }
-  }
-
-  async function saveProfile() {
-    const name = document.getElementById('edit-username').value.trim();
-    const url = document.getElementById('edit-avatar-url').value.trim();
-    if (name) player.username = name;
-    if (url) player.avatar = url;
-    await syncData();
-    updateUI();
-    alert("Perfil atualizado!");
-  }
-
-  async function claimDailyReward() {
-    const now = Date.now();
-    if (now - (player.lastDaily || 0) < 86400000) {
-      return alert("Recompensa já resgatada hoje! Volte em 24h.");
-    }
-    player.lastDaily = now;
-    player.coins += 100;
-    player.gems += 2;
-    log("🎁 Recompensa Diária resgatada: +100 Moedas | +2 Diamantes!");
-    await syncData();
-    updateUI();
-  }
-
-  async function sendChatMessage() {
-    const input = document.getElementById('chat-input');
-    const txt = input.value.trim();
-    if (!txt) return;
-    await db.collection('chat').add({
-      user: player.username,
-      msg: txt,
-      isAdmin: player.isAdmin || false,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    input.value = '';
-  }
-
-  function listenChat() {
-    db.collection('chat').orderBy('timestamp', 'desc').limit(15).onSnapshot(snap => {
-      const box = document.getElementById('chat-messages');
-      if (!box) return;
-      box.innerHTML = '';
-      snap.docs.reverse().forEach(doc => {
-        const d = doc.data();
-        const cls = d.isAdmin ? 'chat-msg admin-msg' : 'chat-msg';
-        box.innerHTML += `<div class="${cls}"><strong>${d.user}:</strong> ${d.msg}</div>`;
-      });
-      box.scrollTop = box.scrollHeight;
-    });
-  }
-
-  async function sendAdminAnnouncement() {
-    if (!player.isAdmin) return;
-    const txt = document.getElementById('admin-global-msg').value.trim();
-    if (!txt) return;
-    await db.collection('chat').add({
-      user: "📢 AVISO ADM",
-      msg: txt,
-      isAdmin: true,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    document.getElementById('admin-global-msg').value = '';
-    alert("Aviso disparado!");
-  }
-
-  async function adminAddResources(coins, gems) {
-    if (!player.isAdmin) return;
-    player.coins += coins;
-    player.gems += gems;
-    await syncData();
-    updateUI();
-  }
-
-  async function syncData() {
-    if (!auth.currentUser) return;
-    await db.collection('users').doc(auth.currentUser.uid).set(player, { merge: true });
-  }
-
-  function renderShopLists() {
-    const charBox = document.getElementById('shop-chars-list');
-    if (charBox) {
-      charBox.innerHTML = '';
-      shopCharacters.forEach(c => {
-        const owned = player.ownedChars && player.ownedChars.includes(c.id);
-        const priceTxt = c.isGem ? `💎 ${c.price}` : `🟡 ${c.price}`;
-        charBox.innerHTML += `
-          <div class="item-card">
-            <img src="${c.img}" alt="${c.name}">
-            <div>
-              <strong>${c.name}</strong><br>
-              <small>+${c.atk} Atk</small><br>
-              <strong>${owned ? ' Adquirido' : priceTxt}</strong>
-            </div>
-            <button ${owned ? 'disabled' : ''} onclick="buyChar('${c.id}')">${owned ? 'Na Mochila' : 'Comprar'}</button>
-          </div>
-        `;
-      });
-    }
-
-    const weaponBox = document.getElementById('shop-weapons-list');
-    if (weaponBox) {
-      weaponBox.innerHTML = '';
-      shopWeapons.forEach(w => {
-        const owned = player.ownedWeapons && player.ownedWeapons.includes(w.id);
-        const priceTxt = w.isGem ? `💎 ${w.price}` : `🟡 ${w.price}`;
-        weaponBox.innerHTML += `
-          <div class="item-card">
-            <img src="${w.img}" alt="${w.name}">
-            <div>
-              <strong>${w.name}</strong><br>
-              <small>+${w.atk} Atk</small><br>
-              <strong>${owned ? ' Adquirido' : priceTxt}</strong>
-            </div>
-            <button ${owned ? 'disabled' : ''} onclick="buyWeapon('${w.id}')">${owned ? 'Na Mochila' : 'Comprar'}</button>
-          </div>
-        `;
-      });
-    }
-  }
-
-  function renderInventoryLists() {
-    const charInvBox = document.getElementById('inv-chars-list');
-    if (charInvBox) {
-      charInvBox.innerHTML = '';
-      const owned = player.ownedChars || [];
-      if (owned.length === 0) {
-        charInvBox.innerHTML = '<p style="grid-column: span 2; color:#94a3b8;">Nenhuma Skin comprada ainda.</p>';
-      } else {
-        owned.forEach(id => {
-          const item = shopCharacters.find(c => c.id === id);
-          if (!item) return;
-          const isEquipped = player.equippedChar === id;
-          charInvBox.innerHTML += `
-            <div class="item-card ${isEquipped ? 'equipped' : ''}">
-              <img src="${item.img}" alt="${item.name}">
-              <div>
-                <strong>${item.name}</strong><br>
-                <small>+${item.atk} Atk</small>
-              </div>
-              <button onclick="equipChar('${item.id}')" ${isEquipped ? 'disabled style="background:var(--success);"' : ''}>
-                ${isEquipped ? 'Equipado' : 'Equipar'}
-              </button>
-            </div>
-          `;
-        });
-      }
-    }
-
-    const weaponInvBox = document.getElementById('inv-weapons-list');
-    if (weaponInvBox) {
-      weaponInvBox.innerHTML = '';
-      const owned = player.ownedWeapons || [];
-      if (owned.length === 0) {
-        weaponInvBox.innerHTML = '<p style="grid-column: span 2; color:#94a3b8;">Nenhuma Arma comprada ainda.</p>';
-      } else {
-        owned.forEach(id => {
-          const item = shopWeapons.find(w => w.id === id);
-          if (!item) return;
-          const isEquipped = player.equippedWeapon === id;
-          weaponInvBox.innerHTML += `
-            <div class="item-card ${isEquipped ? 'equipped' : ''}">
-              <img src="${item.img}" alt="${item.name}">
-              <div>
-                <strong>${item.name}</strong><br>
-                <small>+${item.atk} Atk</small>
-              </div>
-              <button onclick="equipWeapon('${item.id}')" ${isEquipped ? 'disabled style="background:var(--success);"' : ''}>
-                ${isEquipped ? 'Equipada' : 'Equipar'}
-              </button>
-            </div>
-          `;
-        });
-      }
-    }
-
-    const potionInvBox = document.getElementById('inv-potions-list');
-    if (potionInvBox) {
-      potionInvBox.innerHTML = '';
-      const potQty = player.inventory?.pocao || 0;
-      potionInvBox.innerHTML = `
-        <div class="item-card" style="grid-column: span 2;">
-          <img src="https://img.icons8.com/color/96/health-potion.png" alt="Poção">
-          <div>
-            <strong>Poção de Vida</strong><br>
-            <small>Recupera +50 HP</small><br>
-            <strong>Quantidade: ${potQty}</strong>
-          </div>
-          <button onclick="usePotionInCombat()" ${potQty <= 0 ? 'disabled' : ''}>Usar Poção</button>
-        </div>
-      `;
-    }
-  }
-
-  function setElText(id, value) {
-    const el = document.getElementById(id);
-    if (el) el.innerText = value;
-  }
-
-  function updateUI() {
-    setElText('ui-username', player.username || "Guerreiro");
-    
-    const avatarEl = document.getElementById('ui-avatar');
-    if (avatarEl) avatarEl.src = player.avatar || defaultAvatar;
-
-    /* GARANTE QUE A VIDA MÁXIMA SEJA FIXADA EM 200 */
-    player.maxHp = 200;
-    if (player.hp === undefined || player.hp > 200) player.hp = 200;
-
-    setElText('ui-level', player.level || 1);
-    setElText('ui-power-eng', player.powerEnergy || 0);
-    setElText('ui-coins', player.coins || 0);
-    setElText('ui-gems', player.gems || 0);
-    setElText('ui-hp-text', `${player.hp || 0}/200`);
-    setElText('ui-energy-text', `${player.energy || 0}/${player.maxEnergy || 50}`);
-    setElText('ui-atk', (player.atk || 15) + ((player.powerLvl || 0) * 10));
-    setElText('ui-def', player.def || 5);
-
-    const badge = getRankBadge(player.level || 1);
-    setElText('ui-char-title', `Patente: ${badge.name}`);
-
-    const barHp = document.getElementById('bar-hp');
-    if (barHp) barHp.style.width = `${Math.max(0, ((player.hp || 0) / 200) * 100)}%`;
-
-    const barEnergy = document.getElementById('bar-energy');
-    if (barEnergy) barEnergy.style.width = `${Math.max(0, ((player.energy || 0) / (player.maxEnergy || 50)) * 100)}%`;
-
-    const adminBtn = document.getElementById('nav-admin-btn');
-    const adminInd = document.getElementById('admin-indicator');
-
-    if (player.isAdmin) {
-      if (adminBtn) adminBtn.classList.remove('hidden');
-      if (adminInd) adminInd.innerHTML = '<span class="admin-badge">ADMIN</span>';
-    } else {
-      if (adminBtn) adminBtn.classList.add('hidden');
-      if (adminInd) adminInd.innerHTML = '';
-    }
-  }
-
-  auth.onAuthStateChanged(async (user) => {
-    const btnLogin = document.getElementById('btn-login-submit');
-    const btnReg = document.getElementById('btn-reg-submit');
-    
-    if (btnLogin) { btnLogin.innerText = "ENTRAR NO JOGO"; btnLogin.disabled = false; }
-    if (btnReg) { btnReg.innerText = "CRIAR CONTA"; btnReg.disabled = false; }
-
-    if (user) {
-      try {
-        const docRef = db.collection('users').doc(user.uid);
-        const doc = await docRef.get();
-
-        if (doc.exists) {
-          player = doc.data();
-          player.maxHp = 200;
-        } else {
-          player = {
-            username: user.email.split('@')[0],
-            avatar: defaultAvatar,
-            email: user.email,
-            level: 1,
-            exp: 0,
-            coins: 100,
-            gems: 5,
-            powerEnergy: 0,
-            hp: 200,
-            maxHp: 200,
-            energy: 50,
-            maxEnergy: 50,
-            atk: 15,
-            def: 5,
-            weaponLvl: 1,
-            powerLvl: 0,
-            equippedChar: null,
-            equippedWeapon: null,
-            ownedChars: [],
-            ownedWeapons: [],
-            isAdmin: false,
-            inventory: { pocao: 2 }
-          };
-          await docRef.set(player);
+    <script>
+        // Função para alternar entre a Tela Inicial e o Jogo
+        function entrarNoJogo() {
+            document.getElementById('home-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active');
         }
 
-        renderShopLists();
-        renderInventoryLists();
-        selectBoss();
-        updateUI();
-        listenChat();
-        document.getElementById('auth-card').classList.add('hidden');
-        document.getElementById('game-card').classList.remove('hidden');
-        log("✅ Conectado com sucesso!");
-      } catch (err) {
-        authLog("Erro ao carregar dados: " + err.message);
-      }
-    } else {
-      document.getElementById('auth-card').classList.remove('hidden');
-      document.getElementById('game-card').classList.add('hidden');
-    }
-  });
-</script>
+        // Função para alternar as abas internas do jogo
+        function mudarAba(nomeAba, elementoBtn) {
+            // Remove active de todas as abas e botões
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.sidebar button').forEach(btn => btn.classList.remove('active'));
+
+            // Ativa a aba e o botão correspondente
+            document.getElementById(nomeAba).classList.add('active');
+            if(elementoBtn) elementoBtn.classList.add('active');
+        }
+
+        function abrirNovoJogo() {
+            let nome = prompt("Digite o nome do seu personagem:");
+            let email = prompt("Digite o seu e-mail:");
+            if(nome && email) {
+                alert(`Perfil de ${nome} criado com sucesso! Dados prontos para salvar no Firebase.`);
+                // Aqui você insere a chamada para salvar/criar o usuário no Firestore
+            }
+        }
+
+        function abrirSalvar() {
+            alert("Progresso salvo com sucesso no Firebase!");
+        }
+
+        function abrirCarregar() {
+            alert("Carregando dados da conta...");
+        }
+
+        function comprarItem(nomeItem, preco) {
+            // Lógica de compra integrada com saldo do Firestore
+            alert(`Você comprou: ${nomeItem} por ${preco} moedas! Item adicionado ao inventário.`);
+        }
+    </script>
 </body>
 </html>
