@@ -92,6 +92,19 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
   .global-chat-bar button{padding:8px 10px}
   #notificacoes-box{top:8px;right:8px;width:calc(100vw - 16px)}
 }
+
+/* UPDATE 2.0 — Vida, personagens e interface mobile */
+.character-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:15px}
+.character-card{background:linear-gradient(180deg,#0d1628,#070b14);border:1px solid var(--panel-border);border-radius:12px;padding:12px;overflow:hidden}
+.character-card img{width:100%;height:190px;object-fit:cover;border-radius:9px;background:#111827;display:block}
+.character-card h3{margin:10px 0 5px;font-size:16px}
+.character-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0}
+.character-stat{background:#070a12;border-radius:7px;padding:7px;font-size:11px;color:#cbd5e1}
+.life-panel{background:linear-gradient(135deg,#0b1220,#101827);border:1px solid var(--panel-border);border-radius:12px;padding:14px;margin-top:12px}
+.life-big{font-size:20px;font-weight:800}
+.life-bar{height:12px;background:#1e293b;border-radius:99px;overflow:hidden;margin-top:7px}.life-fill{height:100%;width:100%;background:#22c55e;transition:width .25s}
+@media(max-width:700px){.character-grid{grid-template-columns:1fr 1fr}.character-card img{height:150px}.character-card{padding:9px}.battle-actions{display:grid!important;grid-template-columns:1fr 1fr}.battle-actions .btn{width:100%!important}.shop-tabs{overflow-x:auto;flex-wrap:nowrap!important}.shop-tabs .btn{white-space:nowrap}.modal-card{width:calc(100vw - 24px)!important;max-height:90vh;overflow-y:auto}.content-area{padding:12px!important}.panel-section{width:100%;overflow:hidden}}
+@media(max-width:430px){.character-grid{grid-template-columns:1fr}.character-card img{height:210px}.battle-actions{grid-template-columns:1fr 1fr}.battle-actions .btn{font-size:11px!important;padding:9px 6px!important}}
 </style>
 </head>
 <body>
@@ -128,6 +141,11 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <div style="font-size:13px;background:rgba(0,0,0,.4);padding:5px 10px;border-radius:20px">Nível: <span id="user-level" style="color:#10b981;font-weight:bold">5</span> ⚡</div>
 </div></header>
 
+<div id="player-life-summary" class="life-panel" style="margin:0 0 14px 0">
+<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><div><div style="font-size:11px;color:#94a3b8">❤️ VIDA DO PERSONAGEM</div><div class="life-big"><span id="life-current">100</span> / <span id="life-max">100</span></div></div><div id="character-active-name" style="font-weight:700;color:#38bdf8">Guerreiro</div></div>
+<div class="life-bar"><div id="life-summary-bar" class="life-fill"></div></div>
+<div id="life-stats-summary" style="font-size:11px;color:#94a3b8;margin-top:8px">⚔️ Ataque 30 • 🛡️ Defesa 10 • 🔥 Mana 100</div>
+</div>
 <div class="content-area">
 
 <div id="section-jogar" class="panel-section">
@@ -148,7 +166,7 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 </div>
 <div style="background:#070a12;padding:15px;border-radius:6px;margin-bottom:15px"><div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px"><span id="inimigo-alvo-nome">Inimigo</span><span id="movel-hp" style="color:var(--adm-color);font-weight:bold">100%</span></div><div style="width:100%;background:#1e293b;height:10px;border-radius:5px;overflow:hidden"><div id="movel-hp-bar" style="width:100%;background:var(--adm-color);height:100%"></div></div></div>
 <div id="log-batalha" style="background:#020617;padding:10px;border-radius:6px;font-size:12px;color:#94a3b8;height:70px;overflow-y:auto;margin-bottom:15px">Início da batalha! O ataque inicial será automático.</div>
-<div style="display:flex;gap:10px;flex-wrap:wrap">
+<div class="battle-actions" style="display:flex;gap:10px;flex-wrap:wrap">
 <button class="btn btn-gray" style="width:auto;padding:10px 15px" onclick="voltarSelecaoFases()">↩️ Modos</button>
 <button class="btn" style="width:auto;padding:10px 15px" onclick="batalhaAcao('atacar')">⚔️ Atacar</button>
 <button class="btn btn-blue" style="width:auto;padding:10px 15px" onclick="batalhaAcao('defender')">🛡️ Defender</button>
@@ -167,9 +185,9 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <input type="number" id="new-item-damage" class="form-control" placeholder="Dano/Bônus" value="50">
 <button class="btn" onclick="adicionarItemCatalogo()">Salvar no Catálogo Global</button></div>
 <div class="shop-tabs">
-<button class="btn" onclick="mudarCategoriaLoja('all')">🔥 Todos</button><button class="btn btn-blue" onclick="mudarCategoriaLoja('weapon')">⚔️ Armas 50+</button>
+<button class="btn btn-adm" onclick="mudarCategoriaLoja('character')">🧙 Personagens</button><button class="btn" onclick="mudarCategoriaLoja('all')">🔥 Todos</button><button class="btn btn-blue" onclick="mudarCategoriaLoja('weapon')">⚔️ Armas 50+</button>
 <button class="btn btn-purple" onclick="mudarCategoriaLoja('skin')">🧙 Skins 50+</button><button class="btn btn-green" onclick="mudarCategoriaLoja('potion')">🧪 Poções 20+</button><button class="btn btn-adm" onclick="mudarCategoriaLoja('power')">⚡ Poderes 50+</button>
-</div><div id="loja-grid" class="shop-grid"></div></div>
+</div><div id="personagens-loja" class="character-grid hidden"></div><div id="loja-grid" class="shop-grid"></div></div>
 
 <div id="section-poderes" class="panel-section">
 <h2>⚡ Catálogo de Poderes</h2><p style="color:#94a3b8;margin-top:5px">Poderes disponíveis e poderes criados pelo ADM.</p>
@@ -269,7 +287,7 @@ const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 const EMAIL_ADMIN="groupsacabraldigital@gmail.com";
 let modoCadastro=false, unsubscribeGlobal=null, unsubscribeSupport=null, unsubscribePlayerSupport=null, heartbeatTimer=null;
 let categoriaLoja="all", jogadorSelecionadoModal={id:"",nome:"",data:{}}, salaAtualId="";
-let usuarioAtual={uid:"",email:"",displayName:"",avatar:"",isAdm:false,isSubAdm:false,coins:150,diamonds:10,level:5,xp:0,inventory:[],phaseProgress:{normal:1,dificil:1,avancada:1,hardcore:1},achievements:[],dailyRewardLastClaim:0,banned:false};
+let usuarioAtual={uid:"",email:"",displayName:"",avatar:"",isAdm:false,isSubAdm:false,coins:150,diamonds:10,level:5,xp:0,inventory:[],phaseProgress:{normal:1,dificil:1,avancada:1,hardcore:1},achievements:[],dailyRewardLastClaim:0,banned:false,characterId:"warrior",health:100,maxHealth:100,mana:100,maxMana:100,attack:30,defense:10};
 let faseAtualInfo={categoria:"",etapa:1,hpMovel:100,maxHp:100,playerHp:100,playerMp:100,defend:false};
 
 const categorias={normal:{nome:"Fácil",max:30,mult:1,hp:100},dificil:{nome:"Difícil",max:30,mult:1.6,hp:180},avancada:{nome:"Avançado",max:25,mult:2.5,hp:300},hardcore:{nome:"Hardcore Elite",max:25,mult:4,hp:500}};
@@ -287,6 +305,17 @@ function gerarCatalogo(){
  return arr;
 }
 let catalogo=gerarCatalogo();
+let personagens=[
+{id:"warrior",nome:"Guerreiro",img:"personagens/guerreiro.png",price:0,health:1000,mana:100,attack:70,defense:45,desc:"Resistente e equilibrado. Personagem inicial."},
+{id:"mage",nome:"Mago Arcano",img:"personagens/mago.png",price:500,health:700,mana:220,attack:105,defense:25,desc:"Muito poder e mana, pouca defesa."},
+{id:"archer",nome:"Arqueiro",img:"personagens/arqueiro.png",price:650,health:820,mana:140,attack:95,defense:35,desc:"Ataques rápidos e precisos."},
+{id:"ninja",nome:"Ninja",img:"personagens/ninja.png",price:800,health:760,mana:160,attack:115,defense:40,desc:"Alta velocidade e dano crítico."},
+{id:"fire",nome:"Guerreiro de Fogo",img:"personagens/guerreiro-fogo.png",price:1200,health:1100,mana:180,attack:130,defense:50,desc:"Fogo aumenta o dano das habilidades."},
+{id:"ice",nome:"Mago de Gelo",img:"personagens/mago-gelo.png",price:1400,health:850,mana:260,attack:125,defense:45,desc:"Controle e grande reserva de mana."},
+{id:"dragon",nome:"Cavaleiro Dragão",img:"personagens/cavaleiro-dragao.png",price:3000,health:1600,mana:220,attack:170,defense:80,desc:"Personagem lendário de alto nível."}
+];
+let personagemAtivo=null;
+
 
 function atualizarMoedasDiamantesUI(){document.getElementById("user-coins").textContent=usuarioAtual.coins;document.getElementById("user-diamonds").textContent=usuarioAtual.diamonds;document.getElementById("user-level").textContent=usuarioAtual.level}
 function nomeAtual(){return usuarioAtual.displayName||usuarioAtual.email.split("@")[0]}
@@ -299,7 +328,8 @@ function atualizarPerfilUI(){
  document.getElementById("player-edit-name").value=usuarioAtual.displayName||nomeAtual();
  document.getElementById("player-edit-email").value=usuarioAtual.email;
  document.getElementById("player-edit-avatar").value=usuarioAtual.avatar||"";
- document.getElementById("perfil-recursos").innerHTML=`Nível ${usuarioAtual.level} • ${usuarioAtual.coins} 🪙 • ${usuarioAtual.diamonds} 💎 • XP ${usuarioAtual.xp}`;
+ document.getElementById("perfil-recursos").innerHTML=`Nível ${usuarioAtual.level} • ❤️ ${usuarioAtual.health}/${usuarioAtual.maxHealth} • ${usuarioAtual.coins} 🪙 • ${usuarioAtual.diamonds} 💎 • XP ${usuarioAtual.xp}`;
+ atualizarVidaUI();
 }
 function montarMenuLateral(){
  const m=document.getElementById("menu-list");m.innerHTML="";
@@ -312,7 +342,8 @@ window.trocarSecao=(id,el)=>{document.querySelectorAll(".panel-section").forEach
 
 async function carregarJogador(){
  const ref=doc(db,"jogadores_reais",auth.currentUser.uid),snap=await getDoc(ref),base=snap.exists()?snap.data():{};
- usuarioAtual={...usuarioAtual,...base,uid:auth.currentUser.uid,email:auth.currentUser.email,displayName:base.displayName||auth.currentUser.email.split("@")[0],isAdm:auth.currentUser.email.toLowerCase()===EMAIL_ADMIN||base.isAdm===true,inventory:Array.isArray(base.inventory)?base.inventory:[],phaseProgress:base.phaseProgress||{normal:1,dificil:1,avancada:1,hardcore:1},achievements:base.achievements||[]};
+ usuarioAtual={...usuarioAtual,...base,uid:auth.currentUser.uid,email:auth.currentUser.email,displayName:base.displayName||auth.currentUser.email.split("@")[0],isAdm:auth.currentUser.email.toLowerCase()===EMAIL_ADMIN||base.isAdm===true,inventory:Array.isArray(base.inventory)?base.inventory:[],phaseProgress:base.phaseProgress||{normal:1,dificil:1,avancada:1,hardcore:1},achievements:base.achievements||[],characterId:base.characterId||"warrior",health:Number(base.health??1000),maxHealth:Number(base.maxHealth??1000),mana:Number(base.mana??100),maxMana:Number(base.maxMana??100),attack:Number(base.attack??70),defense:Number(base.defense??45)};
+ personagemAtivo=personagens.find(x=>x.id===usuarioAtual.characterId)||personagens[0];
  if(usuarioAtual.isAdm){usuarioAtual.coins=Math.max(Number(usuarioAtual.coins||0),999999);usuarioAtual.diamonds=Math.max(Number(usuarioAtual.diamonds||0),99999);usuarioAtual.level=Math.max(Number(usuarioAtual.level||1),100)}
  await setDoc(ref,{...usuarioAtual,lastSeen:serverTimestamp(),status:"Online",updatedAt:serverTimestamp()},{merge:true});
  window._chatSessionStartedAt=Date.now();atualizarPerfilUI();montarMenuLateral();renderLoja();renderizarPoderes();atualizarInventarioUI();renderizarEventos();atualizarDailyUI();iniciarHeartbeat();assinarChatGlobal();verificarAchievements(); assinarSalaAtendimentoJogador();
@@ -339,8 +370,8 @@ window.iniciarFases=async(cat)=>{
  faseAtualInfo.etapa=Math.max(1,Math.min(Number(usuarioAtual.phaseProgress?.[cat]||1),categorias[cat].max));
  faseAtualInfo.maxHp=Math.round(categorias[cat].hp*faseAtualInfo.etapa*categorias[cat].mult);
  faseAtualInfo.hpMovel=faseAtualInfo.maxHp;
- faseAtualInfo.playerHp=100;
- faseAtualInfo.playerMp=100;
+ faseAtualInfo.playerHp=Math.max(1,Number(usuarioAtual.health||usuarioAtual.maxHealth||100));
+ faseAtualInfo.playerMp=Math.max(0,Number(usuarioAtual.mana||usuarioAtual.maxMana||100));
  faseAtualInfo.defend=false;
  faseAtualInfo.busy=false;
  faseAtualInfo.autoStarted=false;
@@ -372,7 +403,7 @@ function atualizarBatalhaUI(){
 }
 function adicionarLogBatalha(t){let x=document.getElementById("log-batalha");if(!x)return;let d=document.createElement("div");d.textContent="> "+t;x.appendChild(d);x.scrollTop=x.scrollHeight}
 function notificar(msg,tipo="info"){const box=document.getElementById("notificacoes-box");if(!box)return;const n=document.createElement("div");n.className="dw-notificacao "+tipo;n.textContent=msg;box.appendChild(n);setTimeout(()=>n.remove(),4500)}
-function calcularDanoBase(){return 30+(Number(usuarioAtual.level)||1)*3}
+function calcularDanoBase(){return Math.max(10,Number(usuarioAtual.attack||30)+Math.floor((Number(usuarioAtual.level)||1)*3))}
 function salvarBatalhaLocal(){try{localStorage.setItem("dragonwar_battle_"+usuarioAtual.uid,JSON.stringify({categoria:faseAtualInfo.categoria,etapa:faseAtualInfo.etapa,hpMovel:faseAtualInfo.hpMovel,maxHp:faseAtualInfo.maxHp,playerHp:faseAtualInfo.playerHp,playerMp:faseAtualInfo.playerMp,defend:faseAtualInfo.defend}))}catch(e){}}
 async function iniciarProximaFase(){
  const cat=categorias[faseAtualInfo.categoria];
@@ -392,8 +423,9 @@ async function iniciarProximaFase(){
  faseAtualInfo.etapa++;
  faseAtualInfo.maxHp=Math.round(cat.hp*faseAtualInfo.etapa*cat.mult);
  faseAtualInfo.hpMovel=faseAtualInfo.maxHp;
- faseAtualInfo.playerHp=100;
- faseAtualInfo.playerMp=100;
+ faseAtualInfo.playerHp=Math.max(1,Number(usuarioAtual.maxHealth||100));
+ faseAtualInfo.playerMp=Math.max(0,Number(usuarioAtual.maxMana||100));
+ usuarioAtual.health=faseAtualInfo.playerHp;usuarioAtual.mana=faseAtualInfo.playerMp;
  faseAtualInfo.defend=false;
  usuarioAtual.phaseProgress[faseAtualInfo.categoria]=faseAtualInfo.etapa;
  usuarioAtual.xp=Number(usuarioAtual.xp||0)+50;
@@ -444,20 +476,34 @@ window.batalhaAcao=async(acao,automatico=false)=>{
   }
   atualizarBatalhaUI();salvarBatalhaLocal();await salvarProgresso();
   if(faseAtualInfo.hpMovel<=0){await iniciarProximaFase();atualizarMoedasDiamantesUI();return}
-  const danoInimigo=faseAtualInfo.defend?Math.max(5,8+Math.floor(faseAtualInfo.etapa/3)):18+Math.floor(faseAtualInfo.etapa/2);
+  const brutoInimigo=faseAtualInfo.defend?Math.max(8,18+Math.floor(faseAtualInfo.etapa/2)):28+Math.floor(faseAtualInfo.etapa*1.5);
+  const danoInimigo=Math.max(2,brutoInimigo-Math.floor(Number(usuarioAtual.defense||0)/5));
   faseAtualInfo.defend=false;
   faseAtualInfo.playerHp=Math.max(0,faseAtualInfo.playerHp-danoInimigo);
   adicionarLogBatalha(`👹 O inimigo contra-atacou causando ${danoInimigo} de dano.`);
   notificar(`👹 O inimigo contra-atacou: -${danoInimigo} Vida.`,"danger");
-  atualizarBatalhaUI();salvarBatalhaLocal();await salvarProgresso();
+  atualizarBatalhaUI();salvarBatalhaLocal();usuarioAtual.health=faseAtualInfo.playerHp;usuarioAtual.mana=faseAtualInfo.playerMp;await salvarProgresso();
   if(faseAtualInfo.playerHp<=0){notificar("💀 Você perdeu a batalha.","danger");adicionarLogBatalha("💀 Você foi derrotado.");voltarSelecaoFases()}
  }catch(e){console.error(e);notificar("❌ Erro ao salvar/realizar a ação.","danger")}
  finally{faseAtualInfo.busy=false}
 };
 
-async function salvarProgresso(){await updateDoc(doc(db,"jogadores_reais",usuarioAtual.uid),{coins:usuarioAtual.coins,diamonds:usuarioAtual.diamonds,level:usuarioAtual.level,xp:usuarioAtual.xp,phaseProgress:usuarioAtual.phaseProgress,inventory:usuarioAtual.inventory,achievements:usuarioAtual.achievements,updatedAt:serverTimestamp()});atualizarMoedasDiamantesUI();verificarAchievements()}
+async function salvarProgresso(){await updateDoc(doc(db,"jogadores_reais",usuarioAtual.uid),{coins:usuarioAtual.coins,diamonds:usuarioAtual.diamonds,level:usuarioAtual.level,xp:usuarioAtual.xp,phaseProgress:usuarioAtual.phaseProgress,inventory:usuarioAtual.inventory,achievements:usuarioAtual.achievements,characterId:usuarioAtual.characterId,health:usuarioAtual.health,maxHealth:usuarioAtual.maxHealth,mana:usuarioAtual.mana,maxMana:usuarioAtual.maxMana,attack:usuarioAtual.attack,defense:usuarioAtual.defense,updatedAt:serverTimestamp()});atualizarMoedasDiamantesUI();atualizarVidaUI();verificarAchievements()}
 
-function renderLoja(){let g=document.getElementById("loja-grid");let arr=categoriaLoja==="all"?catalogo:catalogo.filter(x=>x.category===categoriaLoja);g.innerHTML=arr.map(i=>`<div class="item-card"><h4>${icone(i.category)} ${i.nome}</h4><p>${i.desc}</p><div class="price">${i.price} 🪙</div><button class="btn" style="padding:6px;margin-top:7px;font-size:11px" onclick="comprarItem('${i.id}')">Comprar</button></div>`).join("")}
+function renderLoja(){
+ let g=document.getElementById("loja-grid"),cg=document.getElementById("personagens-loja");
+ if(categoriaLoja==="character"){g.classList.add("hidden");cg.classList.remove("hidden");renderPersonagens();return}
+ g.classList.remove("hidden");cg.classList.add("hidden");
+ let arr=categoriaLoja==="all"?catalogo:catalogo.filter(x=>x.category===categoriaLoja);
+ g.innerHTML=arr.map(i=>`<div class="item-card"><h4>${icone(i.category)} ${i.nome}</h4><p>${i.desc}</p><div class="price">${i.price} 🪙</div><button class="btn" style="padding:6px;margin-top:7px;font-size:11px" onclick="comprarItem('${i.id}')">Comprar</button></div>`).join("");
+}
+function renderPersonagens(){
+ const c=document.getElementById("personagens-loja");
+ c.innerHTML=personagens.map(p=>{const ativo=usuarioAtual.characterId===p.id;const comprado=usuarioAtual.characterId===p.id||usuarioAtual.inventory.some(i=>i.category==="character"&&i.id===p.id);return `<div class="character-card"><img src="${p.img}" alt="${p.nome}" onerror="this.src='89097.png'"><h3>${p.nome} ${ativo?'⭐':''}</h3><p style="font-size:11px;color:#94a3b8">${p.desc}</p><div class="character-stats"><div class="character-stat">❤️ ${p.health} Vida</div><div class="character-stat">🔥 ${p.mana} Mana</div><div class="character-stat">⚔️ ${p.attack} Ataque</div><div class="character-stat">🛡️ ${p.defense} Defesa</div></div><div class="price">${p.price===0?'GRÁTIS':p.price+' 🪙'}</div><button class="btn ${ativo?'btn-green':''}" style="padding:7px;margin-top:8px" onclick="comprarOuSelecionarPersonagem('${p.id}')">${ativo?'✅ Equipado':comprado?'🎮 Usar':'🛒 Comprar'}</button></div>`}).join("");
+}
+window.comprarOuSelecionarPersonagem=async id=>{const p=personagens.find(x=>x.id===id);if(!p)return;const owned=usuarioAtual.inventory.some(i=>i.category==="character"&&i.id===id)||p.price===0;if(!owned){if(usuarioAtual.coins<p.price)return notificar("🪙 Moedas insuficientes.","danger");usuarioAtual.coins-=p.price;usuarioAtual.inventory.push({...p,category:"character",purchasedAt:Date.now()});notificar(`🛒 ${p.nome} comprado!`,'success')}usuarioAtual.characterId=p.id;personagemAtivo=p;usuarioAtual.maxHealth=p.health;usuarioAtual.health=Math.min(Number(usuarioAtual.health||p.health),p.health);if(!usuarioAtual.health||usuarioAtual.health<=0)usuarioAtual.health=p.health;usuarioAtual.maxMana=p.mana;usuarioAtual.mana=p.mana;usuarioAtual.attack=p.attack;usuarioAtual.defense=p.defense;await salvarProgresso();renderPersonagens();atualizarVidaUI();notificar(`🎮 ${p.nome} equipado!`,'info')};
+function atualizarVidaUI(){const hp=Math.max(0,Math.min(usuarioAtual.maxHealth,Number(usuarioAtual.health||0))),max=Math.max(1,Number(usuarioAtual.maxHealth||1));const m=Math.max(0,Math.min(usuarioAtual.maxMana,Number(usuarioAtual.mana||0))),mm=Math.max(1,Number(usuarioAtual.maxMana||1));const a=document.getElementById('life-current'),b=document.getElementById('life-max'),bar=document.getElementById('life-summary-bar'),nm=document.getElementById('character-active-name'),st=document.getElementById('life-stats-summary');if(a)a.textContent=Math.round(hp);if(b)b.textContent=Math.round(max);if(bar)bar.style.width=(hp/max*100)+'%';if(nm)nm.textContent=personagemAtivo?.nome||usuarioAtual.characterId||'Personagem';if(st)st.textContent=`⚔️ Ataque ${usuarioAtual.attack} • 🛡️ Defesa ${usuarioAtual.defense} • 🔥 Mana ${Math.round(m)}/${Math.round(mm)}`;const ph=document.getElementById('player-hp-txt'),pb=document.getElementById('player-hp-bar'),pm=document.getElementById('player-mp-txt'),pmb=document.getElementById('player-mp-bar');if(ph)ph.textContent=`${Math.round(faseAtualInfo.playerHp)}/${Math.round(max)}`;if(pb)pb.style.width=(Math.max(0,faseAtualInfo.playerHp)/max*100)+'%';if(pm)pm.textContent=`${Math.round(faseAtualInfo.playerMp)}/${Math.round(mm)}`;if(pmb)pmb.style.width=(Math.max(0,faseAtualInfo.playerMp)/mm*100)+'%';}
+
 function icone(c){return c==="weapon"?"⚔️":c==="skin"?"🧙":c==="potion"?"🧪":"⚡"}
 window.mudarCategoriaLoja=c=>{categoriaLoja=c;renderLoja()};
 window.comprarItem=async id=>{let i=catalogo.find(x=>x.id===id);if(!i)return;if(usuarioAtual.coins<i.price)return alert("Moedas insuficientes.");usuarioAtual.coins-=i.price;usuarioAtual.inventory.push({...i,purchasedAt:Date.now()});await salvarProgresso();alert(`Compra realizada: ${i.nome}. Foi para seu inventário.`);renderLoja();atualizarInventarioUI()};
