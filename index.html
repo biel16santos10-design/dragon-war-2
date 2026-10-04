@@ -75,7 +75,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .btn-primary { background: linear-gradient(135deg, #ff6b00, #ff4500); color: #fff; }
 .btn-success { background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; }
 
-/* GAME SCREEN - MAIN MENU */
+/* GAME SCREEN */
 #gameView {
     position: relative;
     width: 100vw;
@@ -109,7 +109,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     z-index: 10;
 }
 
-/* PLAYER PROFILE */
 .player-profile {
     display: flex;
     align-items: center;
@@ -148,11 +147,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .badge-adm { background: #7c3aed; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 0.7em; }
 .badge-vip { background: #ffd700; color: #000; padding: 2px 8px; border-radius: 10px; font-size: 0.7em; }
 
-/* LOGO */
-.game-logo {
-    text-align: center;
-    flex: 1;
-}
+.game-logo { text-align: center; flex: 1; }
 .logo-dragon {
     font-size: 4em;
     filter: drop-shadow(0 0 20px rgba(255, 107, 0, 0.8));
@@ -168,7 +163,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     background: linear-gradient(135deg, #ff6b00, #ff4500, #ffd700);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 30px rgba(255, 107, 0, 0.5);
     letter-spacing: 2px;
     line-height: 1;
 }
@@ -180,7 +174,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-/* CONFIG BUTTON */
 .config-btn {
     width: auto;
     padding: 10px 20px;
@@ -197,7 +190,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 }
 .config-btn:hover { border-color: #ff6b00; }
 
-/* MAIN CONTENT */
 .main-content {
     flex: 1;
     display: flex;
@@ -207,7 +199,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     position: relative;
 }
 
-/* LEFT BUTTONS */
 .left-buttons {
     display: flex;
     flex-direction: column;
@@ -227,12 +218,12 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     display: flex;
     align-items: center;
     gap: 15px;
-    box-shadow: 0 0 30px rgba(255, 107, 0, 0.6), inset 0 0 20px rgba(255, 215, 0, 0.3);
+    box-shadow: 0 0 30px rgba(255, 107, 0, 0.6);
     animation: pulse 2s ease-in-out infinite;
 }
 @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 30px rgba(255, 107, 0, 0.6), inset 0 0 20px rgba(255, 215, 0, 0.3); }
-    50% { box-shadow: 0 0 50px rgba(255, 107, 0, 0.9), inset 0 0 30px rgba(255, 215, 0, 0.5); }
+    0%, 100% { box-shadow: 0 0 30px rgba(255, 107, 0, 0.6); }
+    50% { box-shadow: 0 0 50px rgba(255, 107, 0, 0.9); }
 }
 .btn-play:hover { transform: scale(1.05); }
 
@@ -248,7 +239,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     display: flex;
     align-items: center;
     gap: 10px;
-    box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
 }
 
 .btn-load {
@@ -263,7 +253,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     display: flex;
     align-items: center;
     gap: 10px;
-    box-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
 }
 
 .btn-new {
@@ -278,10 +267,8 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     display: flex;
     align-items: center;
     gap: 10px;
-    box-shadow: 0 0 20px rgba(100, 116, 139, 0.5);
 }
 
-/* CENTER CHARACTER - FUNDO TRANSPARENTE */
 .center-character {
     position: absolute;
     left: 50%;
@@ -294,7 +281,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     font-size: 200px;
     filter: drop-shadow(0 0 40px rgba(59, 130, 246, 0.8));
     animation: glow 2s ease-in-out infinite;
-    background: transparent;
 }
 @keyframes glow {
     0%, 100% { filter: drop-shadow(0 0 40px rgba(59, 130, 246, 0.8)); }
@@ -311,12 +297,8 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     text-shadow: 0 0 20px rgba(59, 130, 246, 1);
 }
 
-/* RIGHT SIDE - EMPTY FOR NOW */
-.right-side {
-    width: 280px;
-}
+.right-side { width: 280px; }
 
-/* RESOURCES BAR */
 .resources-bar {
     position: absolute;
     top: 100px;
@@ -338,7 +320,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 .resource-icon { font-size: 1.5em; }
 .resource-value { font-size: 1.2em; font-weight: bold; color: #ffd700; }
 
-/* ADMIN BUTTON */
 .btn-admin {
     position: absolute;
     top: 180px;
@@ -367,6 +348,225 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     z-index: 10;
 }
 
+/* CHAT SYSTEM */
+.chat-toggle {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #1e40af);
+    border: 3px solid #60a5fa;
+    color: #fff;
+    font-size: 1.8em;
+    cursor: pointer;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+    transition: all 0.3s;
+}
+.chat-toggle:hover { transform: scale(1.1); }
+.chat-toggle .notification {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 0.5em;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.chat-panel {
+    position: fixed;
+    bottom: 90px;
+    left: 20px;
+    width: 380px;
+    height: 500px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 2px solid #3b82f6;
+    border-radius: 16px;
+    z-index: 100;
+    display: none;
+    flex-direction: column;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+}
+.chat-panel.active { display: flex; }
+
+.chat-header {
+    padding: 15px;
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    border-bottom: 2px solid #334155;
+    border-radius: 14px 14px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.chat-header h3 { color: #60a5fa; font-size: 1.1em; }
+.chat-tabs {
+    display: flex;
+    gap: 5px;
+    padding: 10px 15px;
+    background: #0f172a;
+}
+.chat-tab {
+    flex: 1;
+    padding: 8px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 0.85em;
+    font-weight: bold;
+    text-align: center;
+}
+.chat-tab.active {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: #fff;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.chat-messages::-webkit-scrollbar { width: 6px; }
+.chat-messages::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 3px; }
+
+.message {
+    background: rgba(30, 41, 59, 0.6);
+    padding: 10px 12px;
+    border-radius: 10px;
+    border-left: 3px solid #3b82f6;
+}
+.message.own {
+    border-left-color: #22c55e;
+    background: rgba(34, 197, 94, 0.1);
+}
+.message.system {
+    border-left-color: #fbbf24;
+    background: rgba(251, 191, 36, 0.1);
+    font-style: italic;
+}
+.message-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+    flex-wrap: wrap;
+}
+.message-author {
+    font-weight: bold;
+    font-size: 0.9em;
+}
+.message-uid {
+    font-size: 0.7em;
+    color: #64748b;
+}
+.message-time {
+    font-size: 0.7em;
+    color: #64748b;
+    margin-left: auto;
+}
+.message-text {
+    font-size: 0.9em;
+    color: #e2e8f0;
+    word-wrap: break-word;
+}
+
+.chat-input-area {
+    padding: 12px;
+    background: #0f172a;
+    border-top: 2px solid #334155;
+    border-radius: 0 0 14px 14px;
+    display: flex;
+    gap: 8px;
+}
+.chat-input {
+    flex: 1;
+    padding: 10px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.9em;
+    margin: 0;
+}
+.chat-input:focus { border-color: #3b82f6; outline: none; }
+.chat-send {
+    width: auto;
+    padding: 10px 18px;
+    background: #3b82f6;
+    border-radius: 8px;
+    margin: 0;
+}
+
+/* PLAYERS LIST (for private chat) */
+.players-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+.player-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(30, 41, 59, 0.6);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.player-item:hover { background: rgba(59, 130, 246, 0.2); }
+.player-item-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+.player-item-info { flex: 1; }
+.player-item-name { font-weight: bold; font-size: 0.9em; }
+.player-item-uid { font-size: 0.7em; color: #64748b; }
+.player-item-status {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #22c55e;
+}
+.player-item-status.offline { background: #64748b; }
+
+.private-chat-header {
+    padding: 10px 15px;
+    background: #1e293b;
+    border-bottom: 1px solid #334155;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.private-chat-header button {
+    width: auto;
+    padding: 5px 10px;
+    font-size: 0.8em;
+    margin: 0;
+    background: #64748b;
+}
+
 /* TOAST */
 #toast {
     position: fixed;
@@ -393,6 +593,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     .btn-save, .btn-load, .btn-new { width: 180px; font-size: 1em; }
     .character-silhouette { font-size: 120px; }
     .main-content { padding: 0 20px; }
+    .chat-panel { width: calc(100% - 40px); left: 20px; }
 }
 </style>
 </head>
@@ -436,9 +637,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 <div id="gameView" class="hidden">
     <div class="game-content">
         
-        <!-- TOP BAR -->
         <div class="top-bar">
-            <!-- PLAYER PROFILE -->
             <div class="player-profile">
                 <div class="player-avatar" id="playerAvatar">?</div>
                 <div class="player-info">
@@ -447,24 +646,21 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
                 </div>
             </div>
 
-            <!-- LOGO -->
             <div class="game-logo">
-                <div class="logo-dragon"></div>
+                <div class="logo-dragon">🐉</div>
                 <div class="logo-text">DRAGON WAR</div>
                 <div class="logo-subtitle">RISE OF POWER</div>
             </div>
 
-            <!-- CONFIG -->
-            <button class="config-btn" onclick="showToast('⚙️ Configurações')">
-                <span style="font-size: 1.5em;">⚙️</span>
+            <button class="config-btn" onclick="showToast('️ Configurações')">
+                <span style="font-size: 1.5em;">️</span>
                 <span>Config.</span>
             </button>
         </div>
 
-        <!-- RESOURCES -->
         <div class="resources-bar">
             <div class="resource-item">
-                <span class="resource-icon"></span>
+                <span class="resource-icon">💰</span>
                 <span class="resource-value" id="resCoins">0</span>
             </div>
             <div class="resource-item">
@@ -477,15 +673,12 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
             </div>
         </div>
 
-        <!-- ADMIN BUTTON -->
         <button id="btnOpenAdmin" class="btn-admin hidden" onclick="window.location.href='admin.html'">🛡️ MENU ADM</button>
 
-        <!-- MAIN CONTENT -->
         <div class="main-content">
-            <!-- LEFT BUTTONS -->
             <div class="left-buttons">
                 <button class="btn-play" onclick="showScreen('combatScreen')">
-                    <span style="font-size: 1.5em;">⚔️</span>
+                    <span style="font-size: 1.5em;">️</span>
                     JOGAR
                 </button>
                 <button class="btn-save" onclick="saveGame()">
@@ -496,13 +689,12 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
                     <span style="font-size: 1.3em;">📂</span>
                     CARREGAR
                 </button>
-                <button class="btn-new" onclick="if(confirm('Iniciar novo jogo? Todos os dados serão perdidos!'))newGame()">
+                <button class="btn-new" onclick="if(confirm('Iniciar novo jogo?'))newGame()">
                     <span style="font-size: 1.3em;">➕</span>
                     NOVO JOGO
                 </button>
             </div>
 
-            <!-- CENTER CHARACTER - FUNDO TRANSPARENTE -->
             <div class="center-character">
                 <div style="position: relative; display: inline-block;">
                     <div class="character-silhouette">🥷</div>
@@ -510,59 +702,56 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
                 </div>
             </div>
 
-            <!-- RIGHT SIDE -->
             <div class="right-side"></div>
         </div>
 
-        <!-- LOGOUT -->
         <button class="btn-logout" id="logoutBtn">Sair</button>
 
     </div>
 </div>
 
-<!-- COMBAT SCREEN -->
-<div id="combatScreen" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); z-index: 100; overflow-y: auto;">
-    <div style="padding: 40px 20px; max-width: 1400px; margin: 0 auto;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
-            <h1 style="font-size: 3em; color: #ef4444; text-shadow: 0 0 20px rgba(239, 68, 68, 0.6);">️ SELEÇÃO DE BOSS</h1>
-            <button onclick="showScreen('gameView')" style="width: auto; padding: 12px 24px; background: #ef4444; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">← Voltar</button>
+<!-- CHAT TOGGLE BUTTON -->
+<button class="chat-toggle" id="chatToggle" onclick="toggleChat()">
+    💬
+    <span class="notification hidden" id="chatNotif">0</span>
+</button>
+
+<!-- CHAT PANEL -->
+<div class="chat-panel" id="chatPanel">
+    <div class="chat-header">
+        <h3>💬 Chat do Servidor</h3>
+        <button onclick="toggleChat()" style="width:auto;padding:5px 12px;background:#64748b;margin:0;">✕</button>
+    </div>
+    
+    <div class="chat-tabs">
+        <div class="chat-tab active" onclick="switchChatTab('global', this)">🌎 Global</div>
+        <div class="chat-tab" onclick="switchChatTab('private', this)"> Privado</div>
+    </div>
+
+    <!-- GLOBAL CHAT -->
+    <div id="globalChatView" style="display:flex;flex-direction:column;flex:1;">
+        <div class="chat-messages" id="globalMessages"></div>
+        <div class="chat-input-area">
+            <input class="chat-input" id="globalInput" placeholder="Digite sua mensagem..." maxlength="200">
+            <button class="chat-send" onclick="sendGlobalMessage()">Enviar</button>
         </div>
+    </div>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;">
-            <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 20px; padding: 25px; border: 2px solid #334155; position: relative;">
-                <div style="position: absolute; top: 15px; right: 15px; font-size: 2.5em; font-weight: bold; color: #fbbf24;">SSS</div>
-                <div style="font-size: 120px; text-align: center; margin: 20px 0;">🐉</div>
-                <div style="font-size: 2em; font-weight: bold; text-align: center;">KHALDRON</div>
-                <div style="text-align: center; color: #94a3b8; margin-bottom: 20px;">The Nightmare Dragon</div>
-                <div style="display: flex; justify-content: space-around; margin-bottom: 20px;">
-                    <div style="text-align: center;"><div style="font-size: 0.85em; color: #94a3b8;">Nível</div><div style="font-size: 1.5em; font-weight: bold; color: #fbbf24;">80</div></div>
-                    <div style="text-align: center;"><div style="font-size: 0.85em; color: #94a3b8;">Poder</div><div style="font-size: 1.5em; font-weight: bold; color: #fbbf24;">2.5M</div></div>
+    <!-- PRIVATE CHAT -->
+    <div id="privateChatView" style="display:none;flex-direction:column;flex:1;">
+        <div id="playersListContainer" class="players-list"></div>
+        <div id="privateChatContainer" style="display:none;flex-direction:column;flex:1;">
+            <div class="private-chat-header">
+                <button onclick="backToPlayersList()">← Voltar</button>
+                <div>
+                    <div id="privateChatName" style="font-weight:bold;font-size:0.9em;"></div>
+                    <div id="privateChatUid" style="font-size:0.7em;color:#64748b;"></div>
                 </div>
-                <button onclick="startBattle('Khaldrón', 5000, 500)" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #ff8c00, #ff4500); color: #fff; border: none; border-radius: 12px; font-size: 1.2em; font-weight: bold; cursor: pointer;">⚔️ ENTRAR NA BATALHA</button>
             </div>
-
-            <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 20px; padding: 25px; border: 2px solid #334155; position: relative;">
-                <div style="position: absolute; top: 15px; right: 15px; font-size: 2.5em; font-weight: bold; color: #fbbf24;">SS</div>
-                <div style="font-size: 120px; text-align: center; margin: 20px 0;">👹</div>
-                <div style="font-size: 2em; font-weight: bold; text-align: center;">IGNEOUS</div>
-                <div style="text-align: center; color: #94a3b8; margin-bottom: 20px;">The Fire Demon</div>
-                <div style="display: flex; justify-content: space-around; margin-bottom: 20px;">
-                    <div style="text-align: center;"><div style="font-size: 0.85em; color: #94a3b8;">Nível</div><div style="font-size: 1.5em; font-weight: bold; color: #fbbf24;">70</div></div>
-                    <div style="text-align: center;"><div style="font-size: 0.85em; color: #94a3b8;">Poder</div><div style="font-size: 1.5em; font-weight: bold; color: #fbbf24;">1.8M</div></div>
-                </div>
-                <button onclick="startBattle('Igneous', 3000, 300)" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #ff8c00, #ff4500); color: #fff; border: none; border-radius: 12px; font-size: 1.2em; font-weight: bold; cursor: pointer;">️ ENTRAR NA BATALHA</button>
-            </div>
-
-            <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 20px; padding: 25px; border: 2px solid #334155; position: relative;">
-                <div style="position: absolute; top: 15px; right: 15px; font-size: 2.5em; font-weight: bold; color: #fbbf24;">S</div>
-                <div style="font-size: 120px; text-align: center; margin: 20px 0;">⚔️</div>
-                <div style="font-size: 2em; font-weight: bold; text-align: center;">MALAKAI</div>
-                <div style="text-align: center; color: #94a3b8; margin-bottom: 20px;">The Shadow Warrior</div>
-                <div style="display: flex; justify-content: space-around; margin-bottom: 20px;">
-                    <div style="text-align: center;"><div style="font-size: 0.85em; color: #94a3b8;">Nível</div><div style="font-size: 1.5em; font-weight: bold; color: #fbbf24;">60</div></div>
-                    <div style="text-align: center;"><div style="font-size: 0.85em; color: #94a3b8;">Poder</div><div style="font-size: 1.5em; font-weight: bold; color: #fbbf24;">1.2M</div></div>
-                </div>
-                <button onclick="startBattle('Malakai', 2000, 200)" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #ff8c00, #ff4500); color: #fff; border: none; border-radius: 12px; font-size: 1.2em; font-weight: bold; cursor: pointer;">⚔️ ENTRAR NA BATALHA</button>
+            <div class="chat-messages" id="privateMessages"></div>
+            <div class="chat-input-area">
+                <input class="chat-input" id="privateInput" placeholder="Mensagem privada..." maxlength="200">
+                <button class="chat-send" onclick="sendPrivateMessage()">Enviar</button>
             </div>
         </div>
     </div>
@@ -573,7 +762,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, setDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, updateDoc, onSnapshot, serverTimestamp, collection, query, orderBy, limit, addDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
@@ -592,9 +781,14 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
     const SUPER_ADMIN_UIDS = ["DJ0865XZ51V7G5neeqVP2mr1h8T2"];
 
     let currentUserData = null;
+    let currentUserId = null;
     let isUserAdmin = false;
     let heartbeatInterval = null;
     let playerRef = null;
+    let chatOpen = false;
+    let unreadMessages = 0;
+    let currentPrivateChat = null;
+    let allPlayers = [];
 
     const $ = id => document.getElementById(id);
 
@@ -609,11 +803,11 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
 
     window.showScreen = (screenId) => {
         if (screenId === 'gameView') {
-            $('combatScreen').classList.add('hidden');
+            $('combatScreen')?.classList.add('hidden');
             $('gameView').classList.remove('hidden');
         } else if (screenId === 'combatScreen') {
             $('gameView').classList.add('hidden');
-            $('combatScreen').classList.remove('hidden');
+            if ($('combatScreen')) $('combatScreen').classList.remove('hidden');
         }
     };
 
@@ -655,8 +849,8 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
                 uid: cred.user.uid,
                 nick: nick,
                 email: email,
-                coins: 0,
-                gems: 0,
+                coins: 1000,
+                gems: 100,
                 points: 0,
                 level: 1,
                 xp: 0,
@@ -673,7 +867,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
         }
     };
 
-    // SALVAR JOGO
     window.saveGame = async () => {
         if (!playerRef || !currentUserData) return showToast('Carregando dados...');
         try {
@@ -690,7 +883,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
         }
     };
 
-    // CARREGAR JOGO
     window.loadGame = async () => {
         if (!playerRef || !currentUserData) return showToast('Carregando dados...');
         try {
@@ -701,7 +893,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
                     level: currentUserData.savedLevel || 1,
                     points: currentUserData.savedPoints || 0
                 });
-                showToast('📂 Jogo carregado com sucesso!');
+                showToast(' Jogo carregado com sucesso!');
             } else {
                 showToast('Nenhum jogo salvo encontrado.');
             }
@@ -710,7 +902,6 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
         }
     };
 
-    // NOVO JOGO
     window.newGame = async () => {
         if (!playerRef) return showToast('Carregando dados...');
         try {
@@ -727,32 +918,229 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
         }
     };
 
-    // BATALHA
-    window.startBattle = async (bossName, rewardCoins, rewardGems) => {
-        if (!playerRef || !currentUserData) return showToast('Carregando dados...');
-        
-        const win = Math.random() > 0.3; // 70% de chance de ganhar
-        
-        if (win) {
-            const newCoins = (currentUserData.coins || 0) + rewardCoins;
-            const newGems = (currentUserData.gems || 0) + rewardGems;
-            const newPoints = (currentUserData.points || 0) + 100;
-            
-            try {
-                await updateDoc(playerRef, {
-                    coins: newCoins,
-                    gems: newGems,
-                    points: newPoints,
-                    xp: (currentUserData.xp || 0) + 50
-                });
-                showToast(`⚔️ Vitória contra ${bossName}! +${rewardCoins} moedas, +${rewardGems} gemas!`);
-            } catch(e) {
-                showToast('Erro: ' + e.message);
-            }
-        } else {
-            showToast(`💀 Derrota contra ${bossName}! Tente novamente.`);
+    // CHAT FUNCTIONS
+    window.toggleChat = () => {
+        chatOpen = !chatOpen;
+        $('chatPanel').classList.toggle('active', chatOpen);
+        if (chatOpen) {
+            unreadMessages = 0;
+            $('chatNotif').classList.add('hidden');
         }
     };
+
+    window.switchChatTab = (tab, btn) => {
+        document.querySelectorAll('.chat-tab').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        
+        if (tab === 'global') {
+            $('globalChatView').style.display = 'flex';
+            $('privateChatView').style.display = 'none';
+        } else {
+            $('globalChatView').style.display = 'none';
+            $('privateChatView').style.display = 'flex';
+            renderPlayersList();
+        }
+    };
+
+    window.sendGlobalMessage = async () => {
+        const input = $('globalInput');
+        const text = input.value.trim();
+        if (!text) return;
+        if (text.length > 200) return showToast('Mensagem muito longa!');
+        
+        try {
+            await addDoc(collection(db, "chatMessages"), {
+                type: "global",
+                text: text,
+                authorUid: currentUserId,
+                authorNick: currentUserData.nick,
+                authorRole: currentUserData.role || "player",
+                authorVip: currentUserData.vipLevel || 0,
+                createdAt: serverTimestamp()
+            });
+            input.value = '';
+        } catch(e) {
+            showToast('Erro ao enviar: ' + e.message);
+        }
+    };
+
+    window.sendPrivateMessage = async () => {
+        if (!currentPrivateChat) return;
+        const input = $('privateInput');
+        const text = input.value.trim();
+        if (!text) return;
+        
+        try {
+            const chatId = [currentUserId, currentPrivateChat.uid].sort().join('_');
+            await addDoc(collection(db, "privateMessages"), {
+                chatId: chatId,
+                text: text,
+                fromUid: currentUserId,
+                fromNick: currentUserData.nick,
+                toUid: currentPrivateChat.uid,
+                toNick: currentPrivateChat.nick,
+                createdAt: serverTimestamp()
+            });
+            input.value = '';
+        } catch(e) {
+            showToast('Erro ao enviar: ' + e.message);
+        }
+    };
+
+    window.backToPlayersList = () => {
+        currentPrivateChat = null;
+        $('playersListContainer').style.display = 'block';
+        $('privateChatContainer').style.display = 'none';
+    };
+
+    window.openPrivateChat = (player) => {
+        currentPrivateChat = player;
+        $('playersListContainer').style.display = 'none';
+        $('privateChatContainer').style.display = 'flex';
+        $('privateChatName').textContent = player.nick;
+        $('privateChatUid').textContent = 'UID: ' + player.uid.substring(0, 12) + '...';
+        loadPrivateMessages(player.uid);
+    };
+
+    function renderPlayersList() {
+        const container = $('playersListContainer');
+        const onlinePlayers = allPlayers.filter(p => p.uid !== currentUserId);
+        
+        if (onlinePlayers.length === 0) {
+            container.innerHTML = '<p style="text-align:center;color:#64748b;padding:20px;">Nenhum jogador online.</p>';
+            return;
+        }
+        
+        container.innerHTML = onlinePlayers.map(p => {
+            const lastSeen = p.lastSeen?.toDate ? p.lastSeen.toDate().getTime() : 0;
+            const isOnline = (Date.now() - lastSeen) < 60000;
+            const isAdmin = p.role === "admin" || SUPER_ADMIN_UIDS.includes(p.uid);
+            
+            return `
+                <div class="player-item" onclick="openPrivateChatWindow({uid:'${p.uid}',nick:'${p.nick}',role:'${p.role||'player'}'})">
+                    <div class="player-item-avatar">${p.nick.charAt(0).toUpperCase()}</div>
+                    <div class="player-item-info">
+                        <div class="player-item-name">${isAdmin ? '👑 ' : ''}${p.nick}</div>
+                        <div class="player-item-uid">UID: ${p.uid.substring(0, 10)}...</div>
+                    </div>
+                    <div class="player-item-status ${isOnline ? '' : 'offline'}"></div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    window.openPrivateChatWindow = (player) => {
+        currentPrivateChat = player;
+        $('playersListContainer').style.display = 'none';
+        $('privateChatContainer').style.display = 'flex';
+        $('privateChatName').textContent = player.nick;
+        $('privateChatUid').textContent = 'UID: ' + player.uid.substring(0, 12) + '...';
+        loadPrivateMessages(player.uid);
+    };
+
+    function loadPrivateMessages(otherUid) {
+        const chatId = [currentUserId, otherUid].sort().join('_');
+        const q = query(
+            collection(db, "privateMessages"),
+            where("chatId", "==", chatId),
+            orderBy("createdAt", "asc"),
+            limit(100)
+        );
+        
+        onSnapshot(q, (snap) => {
+            const container = $('privateMessages');
+            if (snap.empty) {
+                container.innerHTML = '<p style="text-align:center;color:#64748b;padding:20px;">Nenhuma mensagem ainda. Inicie a conversa!</p>';
+                return;
+            }
+            
+            container.innerHTML = snap.docs.map(d => {
+                const msg = d.data();
+                const isOwn = msg.fromUid === currentUserId;
+                const time = msg.createdAt?.toDate ? msg.createdAt.toDate().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'}) : '';
+                
+                return `
+                    <div class="message ${isOwn ? 'own' : ''}">
+                        <div class="message-header">
+                            <span class="message-author">${msg.fromNick}</span>
+                            <span class="message-time">${time}</span>
+                        </div>
+                        <div class="message-text">${escapeHtml(msg.text)}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.scrollTop = container.scrollHeight;
+        });
+    }
+
+    function loadGlobalMessages() {
+        const q = query(
+            collection(db, "chatMessages"),
+            where("type", "==", "global"),
+            orderBy("createdAt", "desc"),
+            limit(100)
+        );
+        
+        onSnapshot(q, (snap) => {
+            const container = $('globalMessages');
+            if (snap.empty) {
+                container.innerHTML = '<p style="text-align:center;color:#64748b;padding:20px;">Nenhuma mensagem ainda. Seja o primeiro!</p>';
+                return;
+            }
+            
+            const messages = snap.docs.map(d => ({id: d.id, ...d.data()})).reverse();
+            
+            container.innerHTML = messages.map(msg => {
+                const isAdmin = msg.authorRole === "admin" || SUPER_ADMIN_UIDS.includes(msg.authorUid);
+                const isOwn = msg.authorUid === currentUserId;
+                const time = msg.createdAt?.toDate ? msg.createdAt.toDate().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'}) : '';
+                
+                let badges = '';
+                if (isAdmin) badges += '<span class="badge-adm"> ADM</span>';
+                if (msg.authorVip > 0) badges += `<span class="badge-vip">VIP ${msg.authorVip}</span>`;
+                
+                return `
+                    <div class="message ${isOwn ? 'own' : ''}">
+                        <div class="message-header">
+                            <span class="message-author" style="${isAdmin ? 'color:#c4b5fd;' : ''}">${msg.authorNick}</span>
+                            ${badges}
+                            <span class="message-uid">UID: ${msg.authorUid.substring(0, 10)}...</span>
+                            <span class="message-time">${time}</span>
+                        </div>
+                        <div class="message-text">${escapeHtml(msg.text)}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.scrollTop = container.scrollHeight;
+            
+            if (!chatOpen && messages.length > 0) {
+                const lastMsg = messages[messages.length - 1];
+                if (lastMsg.authorUid !== currentUserId) {
+                    unreadMessages++;
+                    $('chatNotif').textContent = unreadMessages;
+                    $('chatNotif').classList.remove('hidden');
+                }
+            }
+        });
+    }
+
+    function loadAllPlayers() {
+        const q = query(collection(db, "players"), limit(200));
+        onSnapshot(q, (snap) => {
+            allPlayers = snap.docs.map(d => d.data());
+            if (chatOpen && $('privateChatView').style.display !== 'none') {
+                renderPlayersList();
+            }
+        });
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
 
     onAuthStateChanged(auth, async (user) => {
         if (heartbeatInterval) clearInterval(heartbeatInterval);
@@ -764,6 +1152,7 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
             return;
         }
 
+        currentUserId = user.uid;
         $('authView').classList.add('hidden');
         $('loadingScreen').style.display = 'none';
         $('gameView').classList.remove('hidden');
@@ -810,6 +1199,9 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
             }, 20000);
             try { await updateDoc(playerRef, { lastSeen: serverTimestamp() }); } catch(e){}
         });
+
+        loadGlobalMessages();
+        loadAllPlayers();
     });
 
     $('logoutBtn').onclick = () => {
@@ -818,7 +1210,15 @@ button:hover { transform: translateY(-2px); filter: brightness(1.2); }
             window.location.reload();
         });
     };
+
+    $('globalInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendGlobalMessage();
+    });
+
+    $('privateInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendPrivateMessage();
+    });
 </script>
 
 </body>
-    </html>
+</html>
