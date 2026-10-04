@@ -92,7 +92,7 @@
             </div>
             
             <ul class="menu-list" id="menu-list">
-                <!-- Itens injetados via Script dependendo se é ADM ou Player -->
+                <!-- Injetado via Script -->
             </ul>
         </sidebar>
 
@@ -104,14 +104,14 @@
 
             <div class="content-area">
                 
-                <!-- 1. MODO JOGO (Bloqueado para ADM) -->
+                <!-- 1. MODO JOGO -->
                 <div id="section-jogar" class="panel-section">
                     <h2>Modo de Jogo</h2>
                     <p>Entre em partidas e explore o mundo principal.</p>
                     <button class="btn" style="margin-top: 15px;" onclick="alert('Entrando na partida...')">Iniciar Partida</button>
                 </div>
 
-                <!-- 2. COMBATE (Bloqueado para ADM) -->
+                <!-- 2. COMBATE -->
                 <div id="section-combate" class="panel-section">
                     <h2>Arena de Combate</h2>
                     <p>Enfrente monstros e outros jogadores em tempo real.</p>
@@ -130,9 +130,7 @@
                     </div>
 
                     <h3 style="margin-top: 20px;">Caixas Diárias Épicas (6 Níveis)</h3>
-                    <div class="grid-boxes" id="epic-boxes-grid">
-                        <!-- Gerado via JS -->
-                    </div>
+                    <div class="grid-boxes" id="epic-boxes-grid"></div>
                 </div>
 
                 <!-- 4. PODERES & ARMAS -->
@@ -163,7 +161,7 @@
                     </div>
                 </div>
 
-                <!-- 6. RANKINGS (Global, Online, ADMs) -->
+                <!-- 6. RANKINGS -->
                 <div id="section-rank" class="panel-section">
                     <h2>Rankings do Servidor</h2>
                     <div style="display: flex; gap: 10px; margin-top: 10px; margin-bottom: 15px;">
@@ -171,9 +169,7 @@
                         <button class="btn" style="width: auto; padding: 5px 15px;" onclick="mudarTabRank('online')">Jogadores Online</button>
                         <button class="btn" style="width: auto; padding: 5px 15px;" onclick="mudarTabRank('adms')">Lista de ADMs</button>
                     </div>
-                    <div id="rank-content">
-                        <!-- Tabela injetada -->
-                    </div>
+                    <div id="rank-content"></div>
                 </div>
 
                 <!-- 7. EVENTOS & PESQUISA DIÁRIA -->
@@ -186,21 +182,26 @@
                     </div>
                 </div>
 
-                <!-- 8. PAINEL DE ADMINISTRAÇÃO EXCLUSIVO -->
+                <!-- 8. PAINEL DE ADMINISTRAÇÃO AVANÇADO -->
                 <div id="section-painel-adm" class="panel-section">
                     <h2>👑 Painel de Administração Avançado</h2>
                     <p style="color: var(--adm-color); margin-bottom: 15px;">Ferramentas exclusivas para controle global do jogo.</p>
                     
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                         <div style="background: var(--panel-bg); padding: 15px; border-radius: 6px;">
-                            <h4>Gerenciar Usuário (Ban / Mutar / Presentear)</h4>
+                            <h4>Gerenciamento de Jogador</h4>
                             <label style="margin-top:10px; display:block;">Nome do Jogador:</label>
                             <input type="text" id="target-player" class="form-control" placeholder="Nick do jogador">
-                            <div style="display: flex; gap: 5px;">
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 5px;">
                                 <button class="btn btn-adm" onclick="acaoAdm('banir')">Banir</button>
                                 <button class="btn" style="background:#d97706;" onclick="acaoAdm('mutar')">Mutar</button>
-                                <button class="btn" style="background:#16a34a;" onclick="acaoAdm('presentear')">Dar Presente</button>
                             </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 5px;">
+                                <button class="btn" style="background:#16a34a;" onclick="acaoAdm('dar_adm')">Dar ADM</button>
+                                <button class="btn" style="background:#dc2626;" onclick="acaoAdm('remover_adm')">Remover ADM</button>
+                            </div>
+                            <button class="btn" style="background:#8b5cf6; width:100%;" onclick="acaoAdm('liberar_loja')">🎁 Liberar Todos Avatares/Skins/Loja</button>
                         </div>
 
                         <div style="background: var(--panel-bg); padding: 15px; border-radius: 6px;">
@@ -212,7 +213,7 @@
                     </div>
                 </div>
 
-                <!-- CHAT GLOBAL FIXO NO RODAPÉ DA TELA DE CONTEÚDO -->
+                <!-- CHAT GLOBAL FIXO -->
                 <div style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 15px;">
                     <h4>Chat do Sistema / Global</h4>
                     <div class="chat-box" id="chat-container">
@@ -236,7 +237,6 @@
             usuarioAtual.isAdm = (email.toLowerCase() === EMAIL_ADMIN);
             usuarioAtual.nome = usuarioAtual.isAdm ? "Gabriel" : email.split('@')[0];
 
-            // Configurar interface baseada no usuário
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('game-container').classList.remove('hidden');
 
@@ -255,31 +255,22 @@
         function montarMenuLateral() {
             const menuList = document.getElementById('menu-list');
             menuList.innerHTML = "";
-
-            let itensMenu = [];
-
-            if (usuarioAtual.isAdm) {
-                // Menus permitidos para o ADM (Sem Jogar, Sem Combate)
-                itensMenu = [
-                    { id: 'loja', label: '🛒 Loja & Catálogo' },
-                    { id: 'poderes', label: '⚡ Criar Poderes' },
-                    { id: 'inventario', label: '🎒 Inventário' },
-                    { id: 'rank', label: '🏆 Rankings' },
-                    { id: 'evento', label: '🎉 Eventos & Caixas' },
-                    { id: 'painel-adm', label: '👑 Painel ADM' }
-                ];
-            } else {
-                // Menus para Jogador Normal
-                itensMenu = [
-                    { id: 'jogar', label: '🎮 Modo de Jogo' },
-                    { id: 'combate', label: '⚔️ Combate' },
-                    { id: 'loja', label: '🛒 Loja' },
-                    { id: 'poderes', label: '⚡ Poderes' },
-                    { id: 'inventario', label: '🎒 Inventário' },
-                    { id: 'rank', label: '🏆 Rankings' },
-                    { id: 'evento', label: '🎉 Eventos' }
-                ];
-            }
+            let itensMenu = usuarioAtual.isAdm ? [
+                { id: 'loja', label: '🛒 Loja & Catálogo' },
+                { id: 'poderes', label: '⚡ Criar Poderes' },
+                { id: 'inventario', label: '🎒 Inventário' },
+                { id: 'rank', label: '🏆 Rankings' },
+                { id: 'evento', label: '🎉 Eventos & Caixas' },
+                { id: 'painel-adm', label: '👑 Painel ADM' }
+            ] : [
+                { id: 'jogar', label: '🎮 Modo de Jogo' },
+                { id: 'combate', label: '⚔️️ Combate' },
+                { id: 'loja', label: '🛒 Loja' },
+                { id: 'poderes', label: '⚡ Poderes' },
+                { id: 'inventario', label: '🎒 Inventário' },
+                { id: 'rank', label: '🏆 Rankings' },
+                { id: 'evento', label: '🎉 Eventos' }
+            ];
 
             itensMenu.forEach((item, index) => {
                 const li = document.createElement('li');
@@ -289,7 +280,6 @@
                 menuList.appendChild(li);
             });
 
-            // Abrir primeira seção por padrão
             trocarSecao(itensMenu[0].id, menuList.children[0]);
         }
 
@@ -302,7 +292,6 @@
 
             document.getElementById('current-page-title').innerText = elementoLi ? elementoLi.innerText : idSecao;
 
-            // Mostrar controles ADM específicos se estiver na seção correspondente
             if(usuarioAtual.isAdm) {
                 if(idSecao === 'loja') document.getElementById('adm-loja-controls').classList.remove('hidden');
                 if(idSecao === 'poderes') document.getElementById('adm-poderes-controls').classList.remove('hidden');
@@ -312,7 +301,6 @@
         function construirCaixasEpicas() {
             const grid = document.getElementById('epic-boxes-grid');
             grid.innerHTML = "";
-            // 6 caixas misteriosas de preços crescentes com itens épicos
             const precosCaixas = [100, 250, 500, 1000, 2500, 5000];
             precosCaixas.forEach((preco, idx) => {
                 grid.innerHTML += `
@@ -349,9 +337,13 @@
         function acaoAdm(tipo) {
             const target = document.getElementById('target-player').value;
             if(!target) { alert('Digite o nome do jogador alvo!'); return; }
-            if(tipo === 'banir') alert(`O jogador ${target} foi banido pelo ADM Gabriel.`);
-            if(tipo === 'mutar') alert(`O jogador ${target} foi mutado por 24 horas.`);
-            if(tipo === 'presentear') alert(`Presente enviado com sucesso para ${target}!`);
+            
+            if(tipo === 'banir') alert(`O jogador ${target} foi banido pelo ADM.`);
+            if(tipo === 'mutar') alert(`O jogador ${target} foi mutado.`);
+            if(tipo === 'dar_adm') alert(`O jogador ${target} agora foi promovido a Administrador!`);
+            if(tipo === 'remover_adm') alert(`O cargo de Administrador de ${target} foi removido.`);
+            if(tipo === 'liberar_loja') alert(`Todos os avatares, skins e itens da loja foram liberados 100% para ${target}!`);
+            
             document.getElementById('target-player').value = "";
         }
 
@@ -372,27 +364,11 @@
         function mudarTabRank(tipo) {
             const container = document.getElementById('rank-content');
             if(tipo === 'global') {
-                container.innerHTML = `
-                    <table>
-                        <tr><th>Posição</th><th>Jogador</th><th>Nível</th></tr>
-                        <tr><td>1º</td><td>ShadowKilled</td><td>99</td></tr>
-                        <tr><td>2º</td><td>DragonSlayer</td><td>95</td></tr>
-                        <tr><td>3º</td><td>MageMaster</td><td>90</td></tr>
-                    </table>`;
+                container.innerHTML = `<table><tr><th>Posição</th><th>Jogador</th><th>Nível</th></tr><tr><td>1º</td><td>ShadowKilled</td><td>99</td></tr><tr><td>2º</td><td>DragonSlayer</td><td>95</td></tr></table>`;
             } else if(tipo === 'online') {
-                container.innerHTML = `
-                    <table>
-                        <tr><th>Jogador</th><th>Status</th></tr>
-                        <tr><td>Gabriel <span class="adm-tag">[ADM]</span></td><td>Online (Painel ADM)</td></tr>
-                        <tr><td>PlayerX</td><td>Online (Em Combate)</td></tr>
-                        <tr><td>Hero99</td><td>Online (Na Loja)</td></tr>
-                    </table>`;
+                container.innerHTML = `<table><tr><th>Jogador</th><th>Status</th></tr><tr><td>Gabriel <span class="adm-tag">[ADM]</span></td><td>Online (Painel ADM)</td></tr><tr><td>PlayerX</td><td>Online</td></tr></table>`;
             } else if(tipo === 'adms') {
-                container.innerHTML = `
-                    <table>
-                        <tr><th>Administrador</th><th>Cargo</th><th>Acesso</th></tr>
-                        <tr><td>Gabriel <span class="adm-tag">[ADM]</span></td><td>Fundador / Desenvolvedor</td><td>Total (Moderação/Catálogo)</td></tr>
-                    </table>`;
+                container.innerHTML = `<table><tr><th>Administrador</th><th>Cargo</th><th>Acesso</th></tr><tr><td>Gabriel <span class="adm-tag">[ADM]</span></td><td>Fundador / Desenvolvedor</td><td>Total</td></tr></table>`;
             }
         }
     </script>
