@@ -66,6 +66,7 @@
         .powers-wheel { position: relative; width: 380px; height: 380px; margin: 30px auto; border: 2px dashed #334155; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
         .power-node { position: absolute; width: 65px; height: 65px; background: #162032; border: 2px solid #3b82f6; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 22px; transition: 0.2s; box-shadow: 0 0 15px rgba(59,130,246,0.3); }
         .power-node:hover { transform: scale(1.15); border-color: #f97316; }
+        .power-node.locked-power { opacity: 0.4; filter: grayscale(1); border-color: #475569; }
 
         /* ARENA DE COMBATE INTERATIVA */
         .combat-arena-box { background: #0f172a; border: 2px solid #334155; border-radius: 12px; padding: 25px; display: none; text-align: center; }
@@ -77,8 +78,8 @@
         .combat-log { background: #0b0f19; border: 1px solid #334155; border-radius: 8px; padding: 15px; height: 120px; overflow-y: auto; text-align: left; font-size: 13px; color: #94a3b8; margin-top: 15px; }
 
         /* SELEÇÃO DE AVATARS NO PERFIL */
-        .avatar-grid { display: flex; gap: 15px; flex-wrap: wrap; margin: 15px 0; }
-        .avatar-option { width: 75px; height: 75px; border-radius: 50%; border: 3px solid #334155; cursor: pointer; object-fit: cover; transition: 0.2s; }
+        .avatar-grid { display: flex; gap: 15px; flex-wrap: wrap; margin: 15px 0; max-height: 220px; overflow-y: auto; padding: 5px; border: 1px solid #334155; border-radius: 8px; background: #0f172a; }
+        .avatar-option { width: 65px; height: 65px; border-radius: 50%; border: 3px solid #334155; cursor: pointer; object-fit: cover; transition: 0.2s; }
         .avatar-option.selected { border-color: #f97316; box-shadow: 0 0 15px rgba(249,115,22,0.5); }
         .avatar-option.locked { opacity: 0.4; filter: grayscale(1); cursor: not-allowed; }
 
@@ -189,7 +190,7 @@
                     <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Equipamentos e customizações completas.</p>
                     
                     <div class="sub-tabs">
-                        <button class="sub-tab-btn active-sub" onclick="trocarSubLoja('armas', this)">⚔️ Armas (16)</button>
+                        <button class="sub-tab-btn active-sub" onclick="trocarSubLoja('armas', this)">⚔️️ Armas (16)</button>
                         <button class="sub-tab-btn" onclick="trocarSubLoja('skins', this)">🎭 Skins</button>
                         <button class="sub-tab-btn" onclick="trocarSubLoja('suprimentos', this)">🧪 Suprimentos</button>
                     </div>
@@ -213,11 +214,8 @@
                     <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Melhore suas habilidades para causar mais dano nos combates (gasta 1 Ponto de Poder por melhoria).</p>
                     
                     <div class="card-box" style="text-align: center;">
-                        <div class="powers-wheel">
-                            <div class="power-node" style="top: 15px; left: 145px;" onclick="selecionarPoder('Sopro de Fogo', 35)">🔥</div>
-                            <div class="power-node" style="top: 100px; right: 15px;" onclick="selecionarPoder('Golpe de Raio', 50)">⚡</div>
-                            <div class="power-node" style="bottom: 40px; right: 45px;" onclick="selecionarPoder('Nova de Gelo', 60)">❄️</div>
-                            <div class="power-node" style="bottom: 40px; left: 45px;" onclick="selecionarPoder('Tormenta de Vento', 75)">🌪️</div>
+                        <div class="powers-wheel" id="container-arvore-poderes">
+                            <!-- Gerado dinamicamente via JS (Árvore com vários poderes desbloqueáveis) -->
                         </div>
                         <h3 id="poder-selecionado-titulo" style="margin-top: 15px;">Selecione um poder acima</h3>
                         <p id="poder-selecionado-desc" style="color: #94a3b8; font-size: 14px; margin-bottom: 15px;">Clique em um ícone circular para ver os detalhes e evoluir.</p>
@@ -231,31 +229,8 @@
                         <h2>Arena de Combate — Selecione o Inimigo</h2>
                         <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Escolha o nível de dificuldade ideal. Vencer garante Ouro, Nível e 1 Ponto de Poder!</p>
                         
-                        <div class="grid-cards">
-                            <div class="item-card" style="border-color: #16a34a;">
-                                <span style="font-size: 45px;">🟢</span>
-                                <h4 style="color: #16a34a; margin-top: 10px;">Modo Fácil</h4>
-                                <p style="font-size: 13px; color: #94a3b8; margin: 8px 0;">Goblin Selvagem (HP: 80)</p>
-                                <button class="btn-action" style="background: #16a34a;" onclick="iniciarCombate('facil')">ENTRAR NA BATALHA</button>
-                            </div>
-                            <div class="item-card" style="border-color: #3b82f6;">
-                                <span style="font-size: 45px;">🔵</span>
-                                <h4 style="color: #3b82f6; margin-top: 10px;">Modo Médio</h4>
-                                <p style="font-size: 13px; color: #94a3b8; margin: 8px 0;">Orc Guerreiro (HP: 150)</p>
-                                <button class="btn-action" onclick="iniciarCombate('medio')">ENTRAR NA BATALHA</button>
-                            </div>
-                            <div class="item-card" style="border-color: #eab308;">
-                                <span style="font-size: 45px;">🟡</span>
-                                <h4 style="color: #eab308; margin-top: 10px;">Modo Difícil</h4>
-                                <p style="font-size: 13px; color: #94a3b8; margin: 8px 0;">Golem de Pedra (HP: 250)</p>
-                                <button class="btn-action" style="background: #eab308; color: #000;" onclick="iniciarCombate('dificil')">ENTRAR NA BATALHA</button>
-                            </div>
-                            <div class="item-card" style="border-color: #dc2626;">
-                                <span style="font-size: 45px;">🔴</span>
-                                <h4 style="color: #dc2626; margin-top: 10px;">Modo Hard</h4>
-                                <p style="font-size: 13px; color: #94a3b8; margin: 8px 0;">Khaldron, O Dragão (HP: 400)</p>
-                                <button class="btn-action" style="background: #dc2626;" onclick="iniciarCombate('hard')">ENTRAR NA BATALHA</button>
-                            </div>
+                        <div class="grid-cards" id="container-lista-mobs">
+                            <!-- 9 Inimigos gerados dinamicamente (com bloqueios por nível/fase) -->
                         </div>
                     </div>
 
@@ -305,9 +280,11 @@
 
                 <!-- ABA: RANKING -->
                 <div id="tab-ranking" class="tab-panel">
-                    <h2>Ranking Global</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Os melhores guerreiros reais do servidor.</p>
-                    <div class="card-box" style="padding: 10px;">
+                    <h2>Ranking Global e Jogadores Online</h2>
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Os melhores guerreiros reais do servidor e lista de conexões ativas.</p>
+                    
+                    <div class="card-box" style="padding: 10px; margin-bottom: 25px;">
+                        <h3 style="padding: 10px 10px 0 10px; color: #f97316;">🏆 Top 10 Servidor</h3>
                         <table class="ranking-table">
                             <thead>
                                 <tr>
@@ -320,13 +297,28 @@
                             <tbody id="ranking-tabela-corpo"></tbody>
                         </table>
                     </div>
+
+                    <div class="card-box" style="padding: 10px;">
+                        <h3 style="padding: 10px 10px 0 10px; color: #38bdf8;">🟢 Jogadores Online no Servidor</h3>
+                        <table class="ranking-table">
+                            <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th>Jogador</th>
+                                    <th>Nível</th>
+                                    <th>Guilda</th>
+                                </tr>
+                            </thead>
+                            <tbody id="online-tabela-corpo"></tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <!-- ABA: EVENTOS -->
                 <div id="tab-eventos" class="tab-panel">
                     <h2>Eventos e Recompensas</h2>
-                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Participe dos eventos diários para ganhar bônus exclusivos.</p>
-                    <div class="grid-cards">
+                    <p style="color: #94a3b8; margin-top: 5px; margin-bottom: 20px;">Participe dos eventos diários e aleatórios para ganhar bônus exclusivos.</p>
+                    <div class="grid-cards" id="container-eventos-extras">
                         <div class="item-card">
                             <h3>Caixa Diária</h3>
                             <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Abra uma vez por dia para receber moedas ou gemas reais.</p>
@@ -382,9 +374,12 @@
                     
                     <div class="card-box">
                         <h3>Escolha seu Avatar</h3>
-                        <p style="color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Alguns avatares exigem nível superior para serem desbloqueados.</p>
+                        <p style="color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Escolha entre várias opções de avatares disponíveis.</p>
                         
                         <div class="avatar-grid" id="lista-avatares-perfil"></div>
+
+                        <label style="display:block; font-size:13px; color:#94a3b8; margin: 15px 0 5px 0;">ID do Jogador (Somente leitura):</label>
+                        <input type="text" id="input-id-jogador" class="form-control" style="max-width:350px; background:#0b0f19; color:#f97316; font-weight:bold;" readonly>
 
                         <label style="display:block; font-size:13px; color:#94a3b8; margin: 15px 0 5px 0;">Nome do jogador:</label>
                         <input type="text" id="input-novo-nome" class="form-control" style="max-width:350px;">
@@ -430,7 +425,8 @@
             pontos: 1250,
             avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=Warrior1",
             inventario: [], 
-            guildaNome: "" 
+            guildaNome: "",
+            poderesDesbloqueados: ["Sopro de Fogo"]
         };
 
         let chatCanalAtual = 'global';
@@ -475,13 +471,54 @@
             { id: 204, nome: "Elixir de Força Ancestral", preco: 1500 }
         ];
 
-        // AVATARES
+        // MUITAS OPÇÕES DE AVATAR (Expandido)
         const avataresDisponiveis = [
             { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Warrior1", nivelMinimo: 1 },
             { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Knight2", nivelMinimo: 1 },
-            { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Mage3", nivelMinimo: 3 },
-            { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Dragon4", nivelMinimo: 5 },
-            { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Titan5", nivelMinimo: 10 }
+            { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Mage3", nivelMinimo: 1 },
+            { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Dragon4", nivelMinimo: 1 },
+            { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Titan5", nivelMinimo: 1 },
+            { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Cyber6", nivelMinimo: 1 },
+            { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Phoenix7", nivelMinimo: 1 },
+            { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Shadow8", nivelMinimo: 1 },
+            { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Vortex9", nivelMinimo: 1 },
+            { url: "https://api.dicebear.com/7.x/bottts/svg?seed=Blaze10", nivelMinimo: 1 }
+        ];
+
+        // ÁRVORE DE PODERES (Várias seleções com desbloqueio progressivo)
+        const arvorePoderesLista = [
+            { id: 1, nome: "Sopro de Fogo", icone: "🔥", dano: 35, custoPonto: 1, nivelReq: 1 },
+            { id: 2, nome: "Golpe de Raio", icone: "⚡", dano: 50, custoPonto: 1, nivelReq: 2 },
+            { id: 3, nome: "Nova de Gelo", icone: "❄️", dano: 65, custoPonto: 1, nivelReq: 3 },
+            { id: 4, nome: "Tormenta de Vento", icone: "🌪️", dano: 80, custoPonto: 1, nivelReq: 4 },
+            { id: 5, nome: "Chama Sombria", icone: "🖤", dano: 100, custoPonto: 2, nivelReq: 5 },
+            { id: 6, nome: "Meteorito Estelar", icone: "☄️", dano: 130, custoPonto: 2, nivelReq: 6 },
+            { id: 7, nome: "Fúria do Trovão", icone: "⚡", dano: 160, custoPonto: 3, nivelReq: 7 },
+            { id: 8, nome: "Coração de Dragão", icone: "🐉", dano: 200, custoPonto: 3, nivelReq: 8 }
+        ];
+
+        // 9 INIMIGOS NA ARENA (Adicionados mais 5, alguns bloqueados por nível)
+        const listaInimigosArena = [
+            { id: 'facil', nome: "Goblin Selvagem", hp: 80, dano: 12, nivelReq: 1, cor: "#16a34a", icone: "🟢" },
+            { id: 'medio', nome: "Orc Guerreiro", hp: 150, dano: 22, nivelReq: 2, cor: "#3b82f6", icone: "🔵" },
+            { id: 'dificil', nome: "Golem de Pedra", hp: 250, dano: 35, nivelReq: 3, cor: "#eab308", icone: "🟡" },
+            { id: 'hard', nome: "Khaldron, O Dragão", hp: 400, dano: 55, nivelReq: 4, cor: "#dc2626", icone: "🔴" },
+            { id: 'chefe5', nome: "Lorde Sombrio", hp: 600, dano: 75, nivelReq: 5, cor: "#9333ea", icone: "🟣" },
+            { id: 'chefe6', nome: "Titã das Cavernas", hp: 850, dano: 95, nivelReq: 6, cor: "#ea580c", icon: "🌋" },
+            { id: 'chefe7', nome: "Besta Abissal", hp: 1100, dano: 120, nivelReq: 7, cor: "#0284c7", icone: "🌊" },
+            { id: 'chefe8', nome: "Fênix Cinzenta", hp: 1400, dano: 150, nivelReq: 8, cor: "#f43f5e", icone: "🐦" },
+            { id: 'chefe9', nome: "Deus Primordial do Caos", hp: 1800, dano: 190, nivelReq: 10, cor: "#64748b", icone: "💀" }
+        ];
+
+        // EVENTOS EXTRAS ALEATÓRIOS (Mais 5 eventos adicionados)
+        const eventosExtrasLista = [
+            { titulo: "Caixa Diária", desc: "Abra uma vez por dia para receber moedas ou gemas reais.", acao: "reclamarCaixaDiaria()", btnTexto: "ABRIR CAIXA" },
+            { titulo: "Tesouro Raro", desc: "Gemas acumuladas podem ser usadas para itens especiais na loja.", acao: "trocarTab('loja', document.querySelectorAll('.nav-menu li')[2])", btnTexto: "IR PARA LOJA" },
+            { titulo: "Bênção dos Deuses", desc: "Receba uma bonificação instantânea de 🪙 1.000 Ouro grátis!", acao: "reclamarBencaoDeuses()", btnTexto: "RESGATAR BÊNÇÃO" },
+            { titulo: "Desafio do Mercador", desc: "Teste sua sorte e ganhe 💎 10 Gemas puras.", acao: "reclamarDesafioMercador()", btnTexto: "ACEITAR DESAFIO" },
+            { titulo: "Torneio Relâmpago", desc: "Participe do torneio rápido e ganhe ⚡ 3 Pontos de Poder extra.", acao: "reclamarTorneioRelampago()", btnTexto: "COLETAR PONTOS" },
+            { titulo: "Poço da Fortuna", desc: "Jogue uma moeda no poço e receba recompensas misteriosas.", optBtn: "resgatarPocoFortuna()" },
+            { titulo: "Pergaminho Secreto", desc: "Decifre o pergaminho antigo para ganhar XP e Ouro em dobro.", optBtn: "resgatarPergaminho()" }
         ];
 
         function alternarModoAuth(modo) {
@@ -541,7 +578,8 @@
                         pontos: Number(dadosSalvos.pontos) || 1250,
                         avatar: dadosSalvos.avatar || "https://api.dicebear.com/7.x/bottts/svg?seed=Warrior1",
                         inventario: dadosSalvos.inventario || [],
-                        guildaNome: dadosSalvos.guildaNome || ""
+                        guildaNome: dadosSalvos.guildaNome || "",
+                        poderesDesbloqueados: dadosSalvos.poderesDesbloqueados || ["Sopro de Fogo"]
                     };
                 } else {
                     dadosJogador.nome = nomePadrao;
@@ -549,6 +587,7 @@
                 }
                 sincronizarInterface();
                 carregarRankingGlobal();
+                carregarListaJogadoresOnline();
                 document.getElementById('login-screen').classList.remove('active');
                 document.getElementById('game-screen').classList.add('active');
             });
@@ -578,9 +617,13 @@
 
             document.getElementById('badge-vida').innerText = `${dadosJogador.vida}/100`;
             document.getElementById('input-novo-nome').value = dadosJogador.nome;
+            document.getElementById('input-id-jogador').value = usuarioAtualId || "N/A";
 
             renderizarLoja();
             renderizarAvataresPerfil();
+            renderizarArvorePoderes();
+            renderizarInimigosArena();
+            renderizarEventosExtras();
 
             let invContainer = document.getElementById('lista-inventario');
             invContainer.innerHTML = "";
@@ -632,12 +675,9 @@
             let container = document.getElementById('lista-avatares-perfil');
             container.innerHTML = "";
             avataresDisponiveis.forEach(av => {
-                let bloqueado = dadosJogador.nivel < av.nivelMinimo;
                 let selecionado = dadosJogador.avatar === av.url ? "selected" : "";
-                let classeCss = `avatar-option ${selecionado} ${bloqueado ? 'locked' : ''}`;
-                
                 container.innerHTML += `
-                    <img src="${av.url}" class="${classeCss}" title="${bloqueado ? 'Requer Nível ' + av.nivelMinimo : 'Selecionar Avatar'}" onclick="${bloqueado ? 'alert(\'Avatar bloqueado! Requer Nível ' + av.nivelMinimo + '\')' : 'escolherAvatar(\'' + av.url + '\')'}">
+                    <img src="${av.url}" class="avatar-option ${selecionado}" title="Selecionar Avatar" onclick="escolherAvatar('${av.url}')">
                 `;
             });
         }
@@ -648,12 +688,82 @@
             sincronizarInterface();
         }
 
+        function renderizarArvorePoderes() {
+            let container = document.getElementById('container-arvore-poderes');
+            container.innerHTML = `
+                <div class="power-node" style="top: 15px; left: 145px;" onclick="selecionarPoder('Sopro de Fogo', 35)">🔥</div>
+                <div class="power-node" style="top: 80px; right: 40px;" onclick="selecionarPoder('Golpe de Raio', 50)">⚡</div>
+                <div class="power-node" style="top: 160px; right: 15px;" onclick="selecionarPoder('Nova de Gelo', 65)">❄️</div>
+                <div class="power-node" style="bottom: 50px; right: 60px;" onclick="selecionarPoder('Tormenta de Vento', 80)">🌪️</div>
+                <div class="power-node" style="bottom: 10px; left: 145px;" onclick="selecionarPoder('Chama Sombria', 100)">🖤</div>
+                <div class="power-node" style="bottom: 50px; left: 60px;" onclick="selecionarPoder('Meteorito Estelar', 130)">☄️</div>
+                <div class="power-node" style="top: 160px; left: 15px;" onclick="selecionarPoder('Fúria do Trovão', 160)">⚡</div>
+                <div class="power-node" style="top: 80px; left: 40px;" onclick="selecionarPoder('Coração de Dragão', 200)">🐉</div>
+            `;
+        }
+
+        function renderizarInimigosArena() {
+            let container = document.getElementById('container-lista-mobs');
+            container.innerHTML = "";
+            listaInimigosArena.forEach(mob => {
+                let bloqueado = dadosJogador.nivel < mob.nivelReq;
+                container.innerHTML += `
+                    <div class="item-card" style="border-color: ${mob.cor};">
+                        <span style="font-size: 45px;">${mob.icone || '⚔️'}</span>
+                        <h4 style="color: ${mob.cor}; margin-top: 10px;">${mob.nome}</h4>
+                        <p style="font-size: 13px; color: #94a3b8; margin: 8px 0;">HP: ${mob.hp} ${bloqueado ? '<br><span style="color:#ef4444;">Req. Nível ' + mob.nivelReq + '</span>' : ''}</p>
+                        <button class="btn-action" style="background: ${bloqueado ? '#475569' : mob.cor};" ${bloqueado ? 'disabled' : ''} onclick="iniciarCombatePorId('${mob.id}')">${bloqueado ? 'BLOQUEADO' : 'ENTRAR NA BATALHA'}</button>
+                    </div>`;
+            });
+        }
+
+        function renderizarEventosExtras() {
+            let container = document.getElementById('container-eventos-extras');
+            container.innerHTML = `
+                <div class="item-card">
+                    <h3>Caixa Diária</h3>
+                    <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Abra uma vez por dia para receber moedas ou gemas reais.</p>
+                    <button class="btn-action" onclick="reclamarCaixaDiaria()">ABRIR CAIXA</button>
+                </div>
+                <div class="item-card">
+                    <h3>Tesouro Raro</h3>
+                    <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Gemas acumuladas podem ser usadas para itens especiais na loja.</p>
+                    <button class="btn-action" onclick="trocarTab('loja', document.querySelectorAll('.nav-menu li')[2])">IR PARA LOJA</button>
+                </div>
+                <div class="item-card">
+                    <h3>Bênção dos Deuses</h3>
+                    <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Receba uma bonificação instantânea de 🪙 1.000 Ouro grátis!</p>
+                    <button class="btn-action" onclick="reclamarBencaoDeuses()">RESGATAR BÊNÇÃO</button>
+                </div>
+                <div class="item-card">
+                    <h3>Desafio do Mercador</h3>
+                    <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Teste sua sorte e ganhe 💎 10 Gemas puras.</p>
+                    <button class="btn-action" onclick="reclamarDesafioMercador()">ACEITAR DESAFIO</button>
+                </div>
+                <div class="item-card">
+                    <h3>Torneio Relâmpago</h3>
+                    <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Participe do torneio rápido e ganhe ⚡ 3 Pontos de Poder extra.</p>
+                    <button class="btn-action" onclick="reclamarTorneioRelampago()">COLETAR PONTOS</button>
+                </div>
+                <div class="item-card">
+                    <h3>Poço da Fortuna</h3>
+                    <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Jogue uma moeda no poço e receba recompensas misteriosas.</p>
+                    <button class="btn-action" onclick="resgatarPocoFortuna()">JOGAR MOEDA</button>
+                </div>
+                <div class="item-card">
+                    <h3>Pergaminho Secreto</h3>
+                    <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Decifre o pergaminho antigo para ganhar XP e Ouro em dobro.</p>
+                    <button class="btn-action" onclick="resgatarPergaminho()">DECIFRAR</button>
+                </div>
+            `;
+        }
+
         function trocarTab(tabId, element) {
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-menu li').forEach(l => l.classList.remove('active-tab'));
             document.getElementById('tab-' + tabId).classList.add('active');
             if(element) element.classList.add('active-tab');
-            if(tabId === 'ranking') carregarRankingGlobal();
+            if(tabId === 'ranking') { carregarRankingGlobal(); carregarListaJogadoresOnline(); }
         }
 
         function trocarSubLoja(subId, element) {
@@ -702,23 +812,16 @@
             alert(`Magia "${poderSelecionadoNome}" aprimorada com sucesso!`);
         }
 
-        function iniciarCombate(dificuldade) {
-            combateAtual.dificuldade = dificuldade;
+        function iniciarCombatePorId(mobId) {
+            let mobEncontrado = listaInimigosArena.find(m => m.id === mobId);
+            if(!mobEncontrado) return;
+
+            combateAtual.dificuldade = mobId;
             combateAtual.ativo = true;
-            
-            if(dificuldade === 'facil') {
-                combateAtual.mobNome = "Goblin Selvagem";
-                combateAtual.mobHp = 80; combateAtual.mobMaxHp = 80; combateAtual.mobDano = 12;
-            } else if(dificuldade === 'medio') {
-                combateAtual.mobNome = "Orc Guerreiro";
-                combateAtual.mobHp = 150; combateAtual.mobMaxHp = 150; combateAtual.mobDano = 22;
-            } else if(dificuldade === 'dificil') {
-                combateAtual.mobNome = "Golem de Pedra";
-                combateAtual.mobHp = 250; combateAtual.mobMaxHp = 250; combateAtual.mobDano = 35;
-            } else {
-                combateAtual.mobNome = "Khaldron, O Dragão";
-                combateAtual.mobHp = 400; combateAtual.mobMaxHp = 400; combateAtual.mobDano = 55;
-            }
+            combateAtual.mobNome = mobEncontrado.nome;
+            combateAtual.mobHp = mobEncontrado.hp; 
+            combateAtual.mobMaxHp = mobEncontrado.hp; 
+            combateAtual.mobDano = mobEncontrado.dano;
 
             document.getElementById('seletor-mobs-container').style.display = 'none';
             document.getElementById('painel-batalha-ativo').style.display = 'block';
@@ -727,7 +830,7 @@
             document.getElementById('label-nome-mob').innerText = combateAtual.mobNome;
             
             atualizarBarrasBatalha();
-            adicionarLogCombate(`Um ${combateAtual.mobNome} selvagem apareceu! Prepare-se para lutar.`);
+            adicionarLogCombate(`Um ${combateAtual.mobNome} feroz apareceu! Prepare-se para lutar.`);
         }
 
         function atualizarBarrasBatalha() {
@@ -788,10 +891,10 @@
         }
 
         function finalizarVitoriaCombate() {
-            let ouroPremio = combateAtual.dificuldade === 'facil' ? 150 : (combateAtual.dificuldade === 'medio' ? 400 : (combateAtual.dificuldade === 'dificil' ? 900 : 2000));
+            let ouroPremio = 300 * dadosJogador.nivel;
             dadosJogador.ouro += ouroPremio;
             dadosJogador.nivel += 1;
-            dadosJogador.pontosPoder += 1; // Ganha 1 Ponto de Poder por vitória
+            dadosJogador.pontosPoder += 1;
             salvarDadosNoBanco();
             sincronizarInterface();
             
@@ -837,12 +940,74 @@
             });
         }
 
+        function carregarListaJogadoresOnline() {
+            db.collection("jogadores").limit(15).get().then(snapshot => {
+                let tbody = document.getElementById('online-tabela-corpo');
+                tbody.innerHTML = "";
+                snapshot.forEach(doc => {
+                    let data = doc.data();
+                    let eMeu = doc.id === usuarioAtualId ? "style='background: rgba(56,189,248,0.1);'" : "";
+                    tbody.innerHTML += `
+                        <tr ${eMeu}>
+                            <td>🟢 Online</td>
+                            <td>${data.nome || 'Guerreiro'}</td>
+                            <td>Nível ${data.nivel || 1}</td>
+                            <td>${data.guildaNome || 'Sem Guilda'}</td>
+                        </tr>`;
+                });
+            }).catch(err => {
+                console.error("Erro ao carregar online:", err);
+            });
+        }
+
         function reclamarCaixaDiaria() {
             dadosJogador.ouro += 500;
             dadosJogador.gemas += 5;
             salvarDadosNoBanco();
             sincronizarInterface();
             alert("Você abriu a Caixa Diária e ganhou 🪙 500 Ouro e 💎 5 Gemas reais!");
+        }
+
+        function reclamarBencaoDeuses() {
+            dadosJogador.ouro += 1000;
+            salvarDadosNoBanco();
+            sincronizarInterface();
+            alert("Bênção recebida! +🪙 1.000 Ouro adicionados.");
+        }
+
+        function reclamarDesafioMercador() {
+            dadosJogador.gemas += 10;
+            salvarDadosNoBanco();
+            sincronizarInterface();
+            alert("Desafio concluído! +💎 10 Gemas adicionadas.");
+        }
+
+        function reclamarTorneioRelampago() {
+            dadosJogador.pontosPoder += 3;
+            salvarDadosNoBanco();
+            sincronizarInterface();
+            alert("Torneio concluído! +⚡ 3 Pontos de Poder adicionados.");
+        }
+
+        function resgatarPocoFortuna() {
+            let sorte = Math.random();
+            if(sorte > 0.5) {
+                dadosJogador.ouro += 750;
+                alert("O poço sorriu para você! +🪙 750 Ouro.");
+            } else {
+                dadosJogador.gemas += 8;
+                alert("Águas profundas trouxeram tesouros! +💎 8 Gemas.");
+            }
+            salvarDadosNoBanco();
+            sincronizarInterface();
+        }
+
+        function resgatarPergaminho() {
+            dadosJogador.nivel += 1;
+            dadosJogador.ouro += 1500;
+            salvarDadosNoBanco();
+            sincronizarInterface();
+            alert("Pergaminho decifrado! Subiu de Nível e ganhou +🪙 1.500 Ouro.");
         }
 
         function criarGuilda() {
@@ -879,6 +1044,7 @@
                 dadosJogador.nome = novoNome;
                 salvarDadosNoBanco();
                 carregarRankingGlobal();
+                carregarListaJogadoresOnline();
                 sincronizarInterface();
                 alert("Perfil alterado e salvo com sucesso!");
             }
