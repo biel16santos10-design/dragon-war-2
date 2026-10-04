@@ -62,19 +62,35 @@
         <!-- Conteúdo Principal -->
         <div class="content-area">
             
-            <!-- TELA DO JOGO (Visão padrão do Jogador) -->
+            <!-- TELA DO JOGO (Visão padrão do Jogador + Perfil) -->
             <div id="tab-jogo" class="tab-panel active">
                 <h1 style="font-size: 24px; margin-bottom: 5px;">DRAGON WAR: RISE OF POWER</h1>
                 <p style="color: #94a3b8; margin-bottom: 25px;">Sua jornada épica começa aqui.</p>
                 
-                <div class="card-box">
-                    <h3>ÁREA DE AVENTURA</h3>
-                    <p style="color: #94a3b8; margin-bottom: 15px;">Bem-vindo ao mundo de Dragen's Peak. Explore dungeons, lute contra monstros e evolua o seu personagem.</p>
-                    <div style="background: #1e293b; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
-                        <p><strong>Status do Personagem:</strong> <span id="lbl-nome-player" style="color: #38bdf8;">Carregando...</span></p>
-                        <p><strong>Nível:</strong> <span id="lbl-nivel-player">1</span> | <strong>Ouro:</strong> 🪙 <span id="lbl-ouro-player">0</span></p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <!-- Perfil do Jogador -->
+                    <div class="card-box">
+                        <h3>PERFIL DO PERSONAGEM</h3>
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                            <div style="width: 60px; height: 60px; background: #1e293b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; border: 2px solid #38bdf8;">👑</div>
+                            <div style="display: flex; flex-direction: column; gap: 4px; font-size: 14px;">
+                                <p><strong>Nome:</strong> <span id="lbl-nome-player" style="color: #38bdf8;">Gabriel</span></p>
+                                <p><strong>Nick:</strong> <span style="color: #94a3b8;">SrCabral / Sweett</span></p>
+                                <p style="font-size: 12px; color: #64748b;">Cabelo Cacheado | Olhos Castanhos Claros</p>
+                            </div>
+                        </div>
+                        <div style="background: #1e293b; padding: 12px; border-radius: 6px; font-size: 14px;">
+                            <p><strong>Nível:</strong> <span id="lbl-nivel-player">1</span></p>
+                            <p><strong>Dinheiro:</strong> 🪙 <span id="lbl-dinheiro-player">0</span></p>
+                        </div>
                     </div>
-                    <button onclick="realizarAcaoAventura()" style="background: #16a34a; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">Explorar Dungeon</button>
+
+                    <!-- Área de Aventura -->
+                    <div class="card-box">
+                        <h3>ÁREA DE AVENTURA</h3>
+                        <p style="color: #94a3b8; margin-bottom: 15px; font-size: 14px;">Explore dungeons e lute contra monstros para evoluir.</p>
+                        <button onclick="realizarAcaoAventura()" style="background: #16a34a; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%;">Explorar Dungeon</button>
+                    </div>
                 </div>
             </div>
 
@@ -97,7 +113,7 @@
                         <h3>AÇÕES RÁPIDAS</h3>
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             <button class="btn-action" onclick="adminSpawnBoss()">🐲 SPAWN DE BOSS</button>
-                            <button class="btn-action" style="background: #16a34a;" onclick="adminDarMoedas()">🪙 DAR OURO</button>
+                            <button class="btn-action" style="background: #16a34a;" onclick="adminDarDinheiro()">🪙 DAR DINHEIRO</button>
                             <button class="btn-action" style="background: #3b82f6;" onclick="adminModoDeus()">🛡️ MODO DEUS</button>
                         </div>
                     </div>
@@ -120,7 +136,7 @@
                             <tr>
                                 <th>NOME</th>
                                 <th>NÍVEL</th>
-                                <th>OURO</th>
+                                <th>DINHEIRO</th>
                                 <th>ESTADO</th>
                                 <th>AÇÕES</th>
                             </tr>
@@ -176,11 +192,11 @@
 
     <!-- Barra de Status Fixa -->
     <div class="status-bar">
-        <span id="status-usuario-logado">Sessão: Jogador Comum</span>
+        <span id="status-usuario-logado">Sessão: Carregando...</span>
         <span>Server: [BR-1] DRAGEN'S PEAK</span>
     </div>
 
-    <!-- Script de Integração e Regra de Acesso DM -->
+    <!-- Script de Integração Firebase e Segurança por UID -->
     <script>
         const firebaseConfig = {
             apiKey: "SUA_API_KEY",
@@ -199,14 +215,14 @@
 
         let usuarioAtualId = null;
         let isDM = false;
+        const DM_UID_FIXO = "DJ0865XZ51V7G5neeqVP2mr1h8T2";
 
-        // Monitor de Autenticação (Verifica automaticamente quem entrou)
         auth.onAuthStateChanged(user => {
             if (user) {
                 usuarioAtualId = user.uid;
                 
-                // VERIFICAÇÃO DE DM: Se o e-mail for o seu, libera o painel completo de DM
-                if (user.email === "groupsacabraldigital@gmail.com") {
+                // Validação de Super Admin por UID fixo ou e-mail
+                if (user.uid === DM_UID_FIXO || user.email === "groupsacabraldigital@gmail.com") {
                     isDM = true;
                     document.querySelectorAll('.menu-dm').forEach(el => el.classList.remove('dm-only'));
                     document.getElementById('status-usuario-logado').innerText = `Sessão: Gabriel (DM / Super Admin)`;
@@ -217,7 +233,6 @@
 
                 carregarDadosJogadorComum(user.uid);
             } else {
-                // Caso não esteja logado, faz login anônimo ou de teste para o jogo rodar
                 auth.signInAnonymously().catch(err => console.error("Erro auth:", err));
             }
         });
@@ -234,20 +249,25 @@
             if (tabId === 'logs' && isDM) carregarLogsAdmin();
         }
 
-        // Funções do Jogador Comum
         function carregarDadosJogadorComum(uid) {
             db.collection("jogadores").doc(uid).onSnapshot(doc => {
                 if (doc.exists) {
                     let data = doc.data();
-                    document.getElementById('lbl-nome-player').innerText = data.nome || "Guerreiro";
+                    document.getElementById('lbl-nome-player').innerText = data.nome || "Gabriel";
                     document.getElementById('lbl-nivel-player').innerText = data.nivel || 1;
-                    document.getElementById('lbl-ouro-player').innerText = data.ouro || 0;
+                    document.getElementById('lbl-dinheiro-player').innerText = data.dinheiro || 0;
+
+                    if ((data.cargo === "SUPER_ADMIN" || uid === DM_UID_FIXO) && !isDM) {
+                        isDM = true;
+                        document.querySelectorAll('.menu-dm').forEach(el => el.classList.remove('dm-only'));
+                        document.getElementById('status-usuario-logado').innerText = `Sessão: Gabriel (DM / Super Admin)`;
+                    }
                 } else {
-                    // Cria o documento inicial se não existir
                     db.collection("jogadores").doc(uid).set({
-                        nome: "Novo Herói",
+                        nome: "Gabriel",
                         nivel: 1,
-                        ouro: 100,
+                        dinheiro: 1500,
+                        cargo: uid === DM_UID_FIXO ? "SUPER_ADMIN" : "JOGADOR",
                         banido: false,
                         criadoEm: firebase.firestore.FieldValue.serverTimestamp()
                     });
@@ -260,15 +280,14 @@
             let ref = db.collection("jogadores").doc(usuarioAtualId);
             db.runTransaction(transaction => {
                 return transaction.get(ref).then(doc => {
-                    let ouroAtual = doc.data().ouro || 0;
-                    transaction.update(ref, { ouro: ouroAtual + 50 });
+                    let dinheiroAtual = doc.data().dinheiro || 0;
+                    transaction.update(ref, { dinheiro: dinheiroAtual + 50 });
                 });
             }).then(() => {
-                alert("Você explorou a dungeon e encontrou 🪙 50 de ouro!");
+                alert("Você explorou a dungeon e encontrou 🪙 50 de dinheiro!");
             }).catch(err => console.error(err));
         }
 
-        // Funções de DM (Painel Admin)
         function adminSpawnBoss() {
             if (!isDM) return;
             db.collection("servidor").doc("estadoGlobal").set({
@@ -280,15 +299,15 @@
             });
         }
 
-        function adminDarMoedas() {
+        function adminDarDinheiro() {
             if (!isDM || !usuarioAtualId) return;
-            let qtd = Number(prompt("Quantidade de ouro para adicionar:", "1000"));
+            let qtd = Number(prompt("Quantidade de dinheiro para adicionar:", "1000"));
             if (!qtd) return;
             db.collection("jogadores").doc(usuarioAtualId).update({
-                ouro: firebase.firestore.FieldValue.increment(qtd)
+                dinheiro: firebase.firestore.FieldValue.increment(qtd)
             }).then(() => {
-                registrarLogAdmin("DAR_OURO", `Adicionou ${qtd} de ouro.`);
-                alert("Ouro adicionado!");
+                registrarLogAdmin("DAR_DINHEIRO", `Adicionou ${qtd} de dinheiro.`);
+                alert("Dinheiro adicionado!");
             });
         }
 
@@ -329,7 +348,7 @@
         }
 
         function carregarJogadoresOnlineAdmin() {
-            db.collection("jogadores").where("banido", "!=", true).onSnapshot(snapshot => {
+            db.collection("jogadores").onSnapshot(snapshot => {
                 let tbody = document.querySelector('#tabela-jogadores-admin tbody');
                 if (!tbody) return;
                 tbody.innerHTML = "";
@@ -337,11 +356,12 @@
 
                 snapshot.forEach(doc => {
                     let data = doc.data();
+                    if (data.banido) return;
                     tbody.innerHTML += `
                         <tr>
                             <td>${data.nome || "Herói"}</td>
                             <td>${data.nivel || 1}</td>
-                            <td>🪙 ${data.ouro || 0}</td>
+                            <td>🪙 ${data.dinheiro || 0}</td>
                             <td style="color: #16a34a; font-weight: bold;">ONLINE</td>
                             <td>
                                 <button onclick="banirJogador('${doc.id}')" style="background: #dc2626; color: white; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px;">Banir</button>
@@ -419,6 +439,18 @@
                 link.click();
                 document.body.removeChild(link);
             });
+        }
+
+        function filtrarJogadoresAdmin() {
+            let filtro = document.getElementById('filtro-jogador').value.toLowerCase();
+            let linhas = document.getElementById('tabela-jogadores-admin').getElementsByTagName('tr');
+            for (let i = 1; i < linhas.length; i++) {
+                let coluna = linhas[i].getElementsByTagName('td')[0];
+                if (coluna) {
+                    let texto = coluna.textContent || coluna.innerText;
+                    linhas[i].style.display = texto.toLowerCase().indexOf(filtro) > -1 ? "" : "none";
+                }
+            }
         }
     </script>
 </body>
