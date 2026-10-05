@@ -371,26 +371,7 @@ const serverTimestamp=()=>firebase.firestore.FieldValue.serverTimestamp();
 window.firebaseProjetoPronto=true;
 window.firebaseProjetoId=firebaseConfig.projectId;
 </script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script>
-const firebaseConfig={apiKey:"AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",authDomain:"dragon-war-rise-of-power-2a9f1.firebaseapp.com",projectId:"dragon-war-rise-of-power-2a9f1",storageBucket:"dragon-war-rise-of-power-2a9f1.firebasestorage.app",messagingSenderId:"115455691167",appId:"1:115455691167:web:ff3638f67b66c17c5515aa",measurementId:"G-S7XE2EN9CL"};
-const app=firebase.initializeApp(firebaseConfig),auth=firebase.auth(),db=firebase.firestore();
-const createUserWithEmailAndPassword=(a,e,p)=>a.createUserWithEmailAndPassword(e,p);
-const signInWithEmailAndPassword=(a,e,p)=>a.signInWithEmailAndPassword(e,p);
-const onAuthStateChanged=(a,cb)=>a.onAuthStateChanged(cb);
-const signOut=(a)=>a.signOut();
-const doc=(d,...parts)=>d.doc(parts.join("/"));
-const collection=(d,...parts)=>d.collection(parts.join("/"));
-const query=(ref,...ops)=>ops.reduce((q,op)=>op(q),ref);
-const orderBy=(field,direction="asc")=>q=>q.orderBy(field,direction);
-const getDoc=ref=>ref.get();
-const getDocs=ref=>ref.get();
-const setDoc=(ref,data,opts)=>opts?.merge?ref.set(data,{merge:true}):ref.set(data);
-const updateDoc=(ref,data)=>ref.update(data);
-const addDoc=(ref,data)=>ref.add(data);
-const onSnapshot=(ref,cb,err)=>ref.onSnapshot(cb,err);
-const serverTimestamp=()=>firebase.firestore.FieldValue.serverTimestamp();
 const EMAIL_ADMIN="groupsacabraldigital@gmail.com";
 let modoCadastro=false, unsubscribeGlobal=null, unsubscribeSupport=null, heartbeatTimer=null;
 let categoriaLoja="all", jogadorSelecionadoModal={id:"",nome:"",data:{}}, salaAtualId="";
@@ -1079,6 +1060,7 @@ onAuthStateChanged(auth,user=>{
   });
 });
 
+
 </script>
 
 <style id="dw-extra-style">
@@ -1176,4 +1158,4 @@ window.addEventListener("online",()=>notificar("📡 Conexão restaurada.","succ
 
 </script>
 </body>
-  </html>
+                            </html>
