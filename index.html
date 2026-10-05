@@ -346,6 +346,33 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
+<script>
+const firebaseConfig={apiKey:"AIzaSyDgooD-L9qUyUaa7u0BvXg9i9gvXoZMOYc",authDomain:"dragon-war-rise-of-power-2a9f1.firebaseapp.com",projectId:"dragon-war-rise-of-power-2a9f1",storageBucket:"dragon-war-rise-of-power-2a9f1.firebasestorage.app",messagingSenderId:"115455691167",appId:"1:115455691167:web:ff3638f67b66c17c5515aa",measurementId:"G-S7XE2EN9CL"};
+const app=firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();
+const db=firebase.firestore();
+let analytics=null; try{analytics=firebase.analytics(app)}catch(e){console.warn("Analytics indisponível",e)}
+const createUserWithEmailAndPassword=(a,e,p)=>a.createUserWithEmailAndPassword(e,p);
+const signInWithEmailAndPassword=(a,e,p)=>a.signInWithEmailAndPassword(e,p);
+const onAuthStateChanged=(a,cb)=>a.onAuthStateChanged(cb);
+const signOut=(a)=>a.signOut();
+const doc=(d,...parts)=>d.doc(parts.join("/"));
+const collection=(d,...parts)=>d.collection(parts.join("/"));
+const query=(ref,...ops)=>ops.reduce((q,op)=>op(q),ref);
+const orderBy=(field,direction="asc")=>q=>q.orderBy(field,direction);
+const getDoc=ref=>ref.get();
+const getDocs=ref=>ref.get();
+const setDoc=(ref,data,opts)=>opts?.merge?ref.set(data,{merge:true}):ref.set(data);
+const updateDoc=(ref,data)=>ref.update(data);
+const addDoc=(ref,data)=>ref.add(data);
+const onSnapshot=(ref,cb,err)=>ref.onSnapshot(cb,err);
+const serverTimestamp=()=>firebase.firestore.FieldValue.serverTimestamp();
+window.firebaseProjetoPronto=true;
+window.firebaseProjetoId=firebaseConfig.projectId;
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script>
 const firebaseConfig={apiKey:"AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",authDomain:"dragon-war-rise-of-power-2a9f1.firebaseapp.com",projectId:"dragon-war-rise-of-power-2a9f1",storageBucket:"dragon-war-rise-of-power-2a9f1.firebasestorage.app",messagingSenderId:"115455691167",appId:"1:115455691167:web:ff3638f67b66c17c5515aa",measurementId:"G-S7XE2EN9CL"};
 const app=firebase.initializeApp(firebaseConfig),auth=firebase.auth(),db=firebase.firestore();
@@ -547,59 +574,30 @@ let autenticacaoEmAndamento=false;
 let authSessionToken=0;
 window.realizarAutenticacao=async()=>{
  if(autenticacaoEmAndamento)return;
- const email=document.getElementById("auth-email")?.value.trim().toLowerCase();
+ const email=(document.getElementById("auth-email")?.value||"").trim().toLowerCase();
  const pass=document.getElementById("auth-pass")?.value||"";
- const status=document.querySelector("#login-screen .auth-status");
- if(!email||!pass){ if(status)status.innerText="⚠️ Preencha o e-mail e a senha."; return; }
- if(pass.length<6){ if(status)status.innerText="⚠️ A senha precisa ter pelo menos 6 caracteres."; return; }
- const btn=document.getElementById("auth-btn-action"),titulo=document.getElementById("auth-title");
+ const status=document.querySelector(".auth-status");
+ if(!email||!pass){if(status)status.textContent="Digite o e-mail e a senha.";return;}
+ if(pass.length<6){if(status)status.textContent="A senha precisa ter pelo menos 6 caracteres.";return;}
+ const btn=document.getElementById("auth-btn-action");
  autenticacaoEmAndamento=true;
- if(btn){btn.disabled=true;btn.innerText=modoCadastro?"⏳ Criando conta...":"⏳ Entrando no jogo...";}
- if(status)status.innerText=modoCadastro?"⏳ Criando sua conta...":"⏳ Verificando e-mail e senha...";
+ if(btn){btn.disabled=true;btn.textContent="⏳ Entrando...";}
+ if(status)status.textContent="Conectando ao Firebase...";
  try{
-   // Mantém a autenticação no navegador.
-   try{await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);}catch(e){console.warn("Persistência:",e);}
-
-   let cred;
-   if(modoCadastro){
-     cred=await createUserWithEmailAndPassword(auth,email,pass);
-   }else{
-     cred=await signInWithEmailAndPassword(auth,email,pass);
-   }
-
-   if(!cred?.user)throw new Error("O Firebase não retornou a conta autenticada.");
-
-   // Abre o jogo IMEDIATAMENTE após o login. O Firestore será carregado depois.
-   prepararJogoBasico(cred.user);
-   abrirTelaDoJogoSeguro();
-   if(status)status.innerText="✅ Login realizado. Abrindo o jogo...";
-   notificar(modoCadastro?"✅ Conta criada! Entrando no jogo...":"🎮 Login realizado! Entrando no jogo...","success");
-
-   // O onAuthStateChanged continua responsável pela sincronização completa.
+   await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+   const cred=modoCadastro ? await auth.createUserWithEmailAndPassword(email,pass) : await auth.signInWithEmailAndPassword(email,pass);
+   if(!cred?.user)throw new Error("Usuário não retornado pelo Firebase.");
+   await abrirSessaoComSeguranca(cred.user);
+   if(status)status.textContent="✅ Login realizado!";
  }catch(e){
    console.error("Firebase Auth:",e);
-   const mapa={
-    "auth/invalid-credential":"E-mail ou senha incorretos.",
-    "auth/invalid-login-credentials":"E-mail ou senha incorretos.",
-    "auth/user-not-found":"Conta não encontrada.",
-    "auth/wrong-password":"Senha incorreta.",
-    "auth/invalid-password":"Senha incorreta.",
-    "auth/email-already-in-use":"Este e-mail já possui uma conta.",
-    "auth/weak-password":"A senha precisa ter pelo menos 6 caracteres.",
-    "auth/invalid-email":"Digite um e-mail válido.",
-    "auth/network-request-failed":"Falha de rede. Verifique a internet.",
-    "auth/too-many-requests":"Muitas tentativas. Aguarde alguns minutos e tente novamente.",
-    "auth/operation-not-allowed":"Login por e-mail/senha não está ativado no Firebase.",
-    "auth/app-not-authorized":"Este domínio não está autorizado no Firebase.",
-    "auth/api-key-not-valid.-please-pass-a-valid-api-key.":"A chave do Firebase está inválida.",
-    "auth/unauthorized-domain":"Este endereço do navegador não está autorizado no Firebase."
-   };
-   if(status)status.innerText="❌ "+(mapa[e.code]||e.message||"Não foi possível autenticar.");
-   alert("❌ "+(mapa[e.code]||e.message||"Não foi possível autenticar."));
+   const mapa={"auth/invalid-credential":"E-mail ou senha incorretos.","auth/invalid-login-credentials":"E-mail ou senha incorretos.","auth/user-not-found":"Conta não encontrada.","auth/wrong-password":"Senha incorreta.","auth/invalid-password":"Senha incorreta.","auth/email-already-in-use":"Este e-mail já possui uma conta.","auth/weak-password":"A senha precisa ter pelo menos 6 caracteres.","auth/invalid-email":"E-mail inválido.","auth/network-request-failed":"Falha de internet.","auth/too-many-requests":"Muitas tentativas. Aguarde alguns minutos.","auth/operation-not-allowed":"Ative E-mail/Senha em Authentication > Sign-in method no Firebase."};
+   const msg=mapa[e.code]||e.message||"Não foi possível entrar.";
+   if(status)status.textContent="❌ "+msg;
+   alert("❌ "+msg);
  }finally{
    autenticacaoEmAndamento=false;
-   if(btn){btn.disabled=false;btn.innerText=modoCadastro?"Registrar e Gerar ID":"Entrar na Partida";}
-   if(titulo)titulo.innerText=modoCadastro?"Criar Conta Real":"Dragon War: Rise of Power";
+   if(btn){btn.disabled=false;btn.textContent=modoCadastro?"Registrar e Gerar ID":"Entrar na Partida";}
  }
 };
 
@@ -1178,4 +1176,4 @@ window.addEventListener("online",()=>notificar("📡 Conexão restaurada.","succ
 
 </script>
 </body>
-</html>
+  </html>
