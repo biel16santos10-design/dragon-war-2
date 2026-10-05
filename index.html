@@ -549,24 +549,33 @@ window.realizarAutenticacao=async()=>{
  if(autenticacaoEmAndamento)return;
  const email=document.getElementById("auth-email")?.value.trim().toLowerCase();
  const pass=document.getElementById("auth-pass")?.value||"";
- if(!email||!pass)return alert("Preencha o e-mail e a senha.");
- if(pass.length<6)return alert("A senha precisa ter pelo menos 6 caracteres.");
+ const status=document.querySelector("#login-screen .auth-status");
+ if(!email||!pass){ if(status)status.innerText="⚠️ Preencha o e-mail e a senha."; return; }
+ if(pass.length<6){ if(status)status.innerText="⚠️ A senha precisa ter pelo menos 6 caracteres."; return; }
  const btn=document.getElementById("auth-btn-action"),titulo=document.getElementById("auth-title");
  autenticacaoEmAndamento=true;
  if(btn){btn.disabled=true;btn.innerText=modoCadastro?"⏳ Criando conta...":"⏳ Entrando no jogo...";}
- if(titulo)titulo.innerText=modoCadastro?"Criando sua conta...":"Conectando ao Dragon War...";
+ if(status)status.innerText=modoCadastro?"⏳ Criando sua conta...":"⏳ Verificando e-mail e senha...";
  try{
-   // Mantém a sessão no navegador e evita falhas intermitentes ao entrar.
-   try{ await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL); }catch(persistErr){ console.warn("Persistência LOCAL:",persistErr); }
+   // Mantém a autenticação no navegador.
+   try{await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);}catch(e){console.warn("Persistência:",e);}
+
+   let cred;
    if(modoCadastro){
-     const cred=await createUserWithEmailAndPassword(auth,email,pass);
-     if(cred?.user) await abrirSessaoComSeguranca(cred.user);
-     notificar("✅ Conta criada. Abrindo o jogo...","success");
+     cred=await createUserWithEmailAndPassword(auth,email,pass);
    }else{
-     const cred=await signInWithEmailAndPassword(auth,email,pass);
-     if(cred?.user) await abrirSessaoComSeguranca(cred.user);
+     cred=await signInWithEmailAndPassword(auth,email,pass);
    }
-   // A sessão já foi aberta; o listener continua responsável por restaurá-la ao recarregar.
+
+   if(!cred?.user)throw new Error("O Firebase não retornou a conta autenticada.");
+
+   // Abre o jogo IMEDIATAMENTE após o login. O Firestore será carregado depois.
+   prepararJogoBasico(cred.user);
+   abrirTelaDoJogoSeguro();
+   if(status)status.innerText="✅ Login realizado. Abrindo o jogo...";
+   notificar(modoCadastro?"✅ Conta criada! Entrando no jogo...":"🎮 Login realizado! Entrando no jogo...","success");
+
+   // O onAuthStateChanged continua responsável pela sincronização completa.
  }catch(e){
    console.error("Firebase Auth:",e);
    const mapa={
@@ -579,8 +588,13 @@ window.realizarAutenticacao=async()=>{
     "auth/weak-password":"A senha precisa ter pelo menos 6 caracteres.",
     "auth/invalid-email":"Digite um e-mail válido.",
     "auth/network-request-failed":"Falha de rede. Verifique a internet.",
-    "auth/too-many-requests":"Muitas tentativas. Aguarde alguns minutos e tente novamente."
+    "auth/too-many-requests":"Muitas tentativas. Aguarde alguns minutos e tente novamente.",
+    "auth/operation-not-allowed":"Login por e-mail/senha não está ativado no Firebase.",
+    "auth/app-not-authorized":"Este domínio não está autorizado no Firebase.",
+    "auth/api-key-not-valid.-please-pass-a-valid-api-key.":"A chave do Firebase está inválida.",
+    "auth/unauthorized-domain":"Este endereço do navegador não está autorizado no Firebase."
    };
+   if(status)status.innerText="❌ "+(mapa[e.code]||e.message||"Não foi possível autenticar.");
    alert("❌ "+(mapa[e.code]||e.message||"Não foi possível autenticar."));
  }finally{
    autenticacaoEmAndamento=false;
