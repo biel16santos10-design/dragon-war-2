@@ -406,7 +406,7 @@ const achievementsCatalog=[
 function gerarCatalogo(){
  let arr=[];const elements=["Fogo","Gelo","Raio","Sombra","Luz","Caos","Terra","Vento","Plasma","Inferno"];
  for(let i=1;i<=60;i++)arr.push({id:"weapon_"+i,nome:["Espada","Machado","Lança","Arco","Adaga","Martelo"][i%6]+" "+elements[i%10]+" #"+i,category:"weapon",price:100+i*20,stat:20+i*4,desc:"Dano +"+(20+i*4)});
- for(let i=1;i<=60;i++)arr.push({id:"skin_"+i,nome:"Skin "+elements[i%10]+" "+i,category:"skin",price:150+i*25,stat:5+i,avatarIndex:(i-1)%avataresOficiais.length,desc:"Vida +"+(5+i)+" • Dano +"+Math.floor(i/2)});
+ for(let i=1;i<=60;i++)arr.push({id:"skin_"+i,nome:"Skin "+elements[i%10]+" "+i,category:"skin",price:150+i*25,stat:5+i,avatarIndex:(i-1)%20,desc:"Vida +"+(5+i)+" • Dano +"+Math.floor(i/2)});
  for(let i=1;i<=25;i++)arr.push({id:"potion_"+i,nome:"Poção "+["de Vida","de Mana","Suprema","de Fúria","de Defesa"][i%5]+" #"+i,category:"potion",price:40+i*5,stat:20+i*3,desc:"Efeito +"+(20+i*3)});
  for(let i=1;i<=60;i++)arr.push({id:"power_"+i,nome:"Poder "+elements[i%10]+" "+["Lâmina","Garra","Sopro","Meteoro","Escudo","Esfera"][i%6]+" #"+i,category:"power",price:180+i*30,stat:50+i*10,desc:"Poder +"+(50+i*10)});
  return arr;
