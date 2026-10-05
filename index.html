@@ -864,7 +864,23 @@ window.abrirPerfilPublico=async uid=>{try{const snap=await getDoc(doc(db,"jogado
 window.fecharPerfilPublico=()=>document.getElementById("modal-perfil-publico")?.classList.add("hidden");
 window.mandarMensagemPerfilPublico=()=>{const d=perfilPublicoUid;if(!d)return;alert("💬 Sistema de mensagem: o perfil foi selecionado. A mensagem privada será vinculada a este jogador.")};
 
-window.abrirPainelJogador=async(id,nome)=>{let s=await getDoc(doc(db,"jogadores_reais",id)),d=s.exists()?s.data():{};jogadorSelecionadoModal={id,nome,data:d};document.getElementById("m-id").innerText=id;document.getElementById("m-nome").innerText=nome;document.getElementById("m-status").innerText=d.banned?"BANIDO":d.status||"Offline";document.getElementById("modal-jogador").classList.remove("hidden")};
+window.abrirPainelJogador=async(id,nome)=>{
+  jogadorSelecionadoModal={id,nome,data:{}};
+  const modal=document.getElementById("modal-jogador");
+  document.getElementById("m-id").innerText=id;
+  document.getElementById("m-nome").innerText=nome||"Jogador";
+  document.getElementById("m-status").innerText="Carregando...";
+  modal?.classList.remove("hidden");
+  try{
+    const s=await getDoc(doc(db,"jogadores_reais",id));
+    const d=s.exists()?s.data():{};
+    jogadorSelecionadoModal.data=d;
+    document.getElementById("m-status").innerText=d.banned?"BANIDO":d.status||"Offline";
+  }catch(e){
+    console.warn("Não foi possível carregar os dados do jogador:",e);
+    document.getElementById("m-status").innerText="Online/Offline — dados não carregados";
+  }
+};
 window.fecharModalJogador=()=>document.getElementById("modal-jogador").classList.add("hidden");
 window.alternarAdmSelecionado=async()=>{if(!usuarioAtual.isAdm||!jogadorSelecionadoModal?.id)return;if(jogadorSelecionadoModal.id===usuarioAtual.uid)return alert("O ADM Geral não pode remover seus próprios privilégios.");const d=jogadorSelecionadoModal.data||{};const novo=!d.isAdm;const u={isAdm:novo,role:novo?"ADMINISTRADOR":"USER",isSubAdm:false,lastAction:novo?"ADM CONCEDIDO":"ADM REMOVIDO",lastActionAt:Date.now()};await updateDoc(doc(db,"jogadores_reais",jogadorSelecionadoModal.id),u);await registrarLog(novo?"Conceder ADM":"Remover ADM",jogadorSelecionadoModal.id);alert(novo?"👑 ADM de servidor concedido.":"👤 ADM removido. Jogador voltou a USER.");fecharModalJogador();carregarJogadoresReaisDoBanco()};
 window.atribuirSubAdm=async()=>{if(!usuarioAtual.isAdm)return alert("Apenas o ADM principal.");let d=jogadorSelecionadoModal.data,newVal=!d.isSubAdm;await updateDoc(doc(db,"jogadores_reais",jogadorSelecionadoModal.id),{isSubAdm:newVal});alert(newVal?"Moderador concedido.":"Moderador removido.");fecharModalJogador();carregarJogadoresReaisDoBanco()};
@@ -1162,4 +1178,4 @@ window.addEventListener("online",()=>notificar("📡 Conexão restaurada.","succ
 
 </script>
 </body>
-  </html>
+</html>
