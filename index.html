@@ -556,13 +556,17 @@ window.realizarAutenticacao=async()=>{
  if(btn){btn.disabled=true;btn.innerText=modoCadastro?"⏳ Criando conta...":"⏳ Entrando no jogo...";}
  if(titulo)titulo.innerText=modoCadastro?"Criando sua conta...":"Conectando ao Dragon War...";
  try{
+   // Mantém a sessão no navegador e evita falhas intermitentes ao entrar.
+   try{ await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL); }catch(persistErr){ console.warn("Persistência LOCAL:",persistErr); }
    if(modoCadastro){
-     await createUserWithEmailAndPassword(auth,email,pass);
+     const cred=await createUserWithEmailAndPassword(auth,email,pass);
+     if(cred?.user) await abrirSessaoComSeguranca(cred.user);
      notificar("✅ Conta criada. Abrindo o jogo...","success");
    }else{
-     await signInWithEmailAndPassword(auth,email,pass);
+     const cred=await signInWithEmailAndPassword(auth,email,pass);
+     if(cred?.user) await abrirSessaoComSeguranca(cred.user);
    }
-   // onAuthStateChanged faz a abertura definitiva do jogo; não duplicamos a sessão aqui.
+   // A sessão já foi aberta; o listener continua responsável por restaurá-la ao recarregar.
  }catch(e){
    console.error("Firebase Auth:",e);
    const mapa={
@@ -976,6 +980,7 @@ function prepararJogoBasico(user){
 
 async function abrirSessaoComSeguranca(user){
   if(!user) return;
+  if(document.getElementById("game-container")?.classList.contains("active") && usuarioAtual?.uid===user.uid && !sessaoCarregando) return;
   const token=++sessaoNumero;
   if(sessaoCarregando) return;
   sessaoCarregando=true;
