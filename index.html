@@ -512,10 +512,31 @@ function atualizarInterfacePorCargo(){const adm=!!(usuarioAtual&&(usuarioAtual.i
 function montarMenuLateral(){
  const m=document.getElementById("menu-list");m.innerHTML="";
  const adm=!!(usuarioAtual.isAdm||usuarioAtual.isSubAdm);
- const itens=adm?[{id:"painel-adm",label:"👑 Painel ADM"},{id:"jogadores",label:"👥 Jogadores"},{id:"loja",label:"🛒 Loja & Catálogo"},{id:"guildas",label:"🛡️ Guildas ADM"},{id:"evento",label:"🎉 Eventos"},{id:"chats",label:"💬 Chats"},{id:"reclamacoes",label:"📨 Reclamações"},{id:"rank",label:"🏆 Rankings"},{id:"config-jogador",label:"⚙ Meu Perfil"}]:[{id:"jogar",label:"🎮 Modo Batalha"},{id:"jogadores-publicos",label:"👥 Jogadores"},{id:"loja",label:"🛒 Loja"},{id:"guildas",label:"🛡️ Guildas"},{id:"inventario",label:"🎒 Inventário"},{id:"evento",label:"🎉 Eventos"},{id:"chat-publico",label:"💬 Chat Geral"},{id:"reclamacao-publica",label:"📨 Reclamações"},{id:"rank",label:"🏆 Rankings"},{id:"config-jogador",label:"⚙ Meu Perfil"}];
+ // Menu separado: ADM entra somente no ambiente administrativo; jogador entra somente no ambiente do jogador.
+ const itens=adm
+   ? [
+      {id:"painel-adm",label:"👑 Página ADM"},
+      {id:"jogadores",label:"👥 Jogadores Online"},
+      {id:"loja",label:"🛒 Loja & Catálogo"},
+      {id:"evento",label:"🎉 Eventos"},
+      {id:"guildas",label:"🛡️ Guildas ADM"},
+      {id:"chats",label:"💬 Chat ADM"},
+      {id:"reclamacoes",label:"📨 Reclamações"},
+      {id:"rank",label:"🏆 Ranking dos Jogadores"}
+     ]
+   : [
+      {id:"jogar",label:"🎮 Jogar / Combate"},
+      {id:"loja",label:"🛒 Loja"},
+      {id:"evento",label:"🎉 Eventos"},
+      {id:"guildas",label:"🛡️ Guildas"},
+      {id:"chat-publico",label:"💬 Chat Geral"},
+      {id:"reclamacao-publica",label:"📨 Reclamações"},
+      {id:"rank",label:"🏆 Ranking dos Jogadores"},
+      {id:"jogadores-publicos",label:"👥 Jogadores Online"}
+     ];
  itens.forEach((x,i)=>{let li=document.createElement("li");li.className="menu-item"+(i===0?" active":"");li.innerText=x.label;li.onclick=()=>trocarSecao(x.id,li);m.appendChild(li)});
  atualizarInterfacePorCargo();
- trocarSecao(itens[0].id,m.children[0]);
+ if(itens[0]&&m.children[0])trocarSecao(itens[0].id,m.children[0]);
 }
 window.trocarSecao=(id,el)=>{
  const adm=acessoAdministracaoPermitido(usuarioAtual);
@@ -1049,8 +1070,9 @@ function prepararJogoBasico(user){
   try{ montarMenuLateral(); }catch(e){ console.warn("Menu inicial:",e); }
   try{
     const first=document.querySelector("#menu-list .menu-item");
-    if(first) trocarSecao("jogar",first);
-  }catch(e){ console.warn("Abertura da batalha:",e); }
+    const destino=acessoAdministracaoPermitido({email},usuarioAtual)?"painel-adm":"jogar";
+    if(first) trocarSecao(destino,first);
+  }catch(e){ console.warn("Abertura da área inicial:",e); }
 }
 
 async function abrirSessaoComSeguranca(user){
@@ -1079,7 +1101,7 @@ async function abrirSessaoComSeguranca(user){
       if(token!==sessaoNumero) return;
       try{ atualizarPerfilUI(); }catch(e){}
       try{ montarMenuLateral(); }catch(e){}
-      try{ const first=document.querySelector("#menu-list .menu-item"); if(first) trocarSecao("jogar",first); }catch(e){}
+      try{ const first=document.querySelector("#menu-list .menu-item"); const destino=usuarioAtual.isAdm||usuarioAtual.isSubAdm?"painel-adm":"jogar"; if(first) trocarSecao(destino,first); }catch(e){}
       notificar(usuarioAtual.isAdm?"👑 ADM Gabriel conectado.":"✅ Conta carregada com sucesso!","success");
 
       Promise.resolve().then(async()=>{
@@ -1139,6 +1161,7 @@ onAuthStateChanged(auth,user=>{
     sessaoCarregando=false;
     prepararJogoBasico(user);
     abrirTelaDoJogoSeguro();
+    try{ const first=document.querySelector("#menu-list .menu-item"); const destino=acessoAdministracaoPermitido(user,usuarioAtual)?"painel-adm":"jogar"; if(first) trocarSecao(destino,first); }catch(e){}
   });
 });
 
@@ -1240,4 +1263,4 @@ window.addEventListener("online",()=>notificar("📡 Conexão restaurada.","succ
 
 </script>
 </body>
-  </html>
+</html>
