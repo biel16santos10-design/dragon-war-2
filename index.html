@@ -115,7 +115,6 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 
 <div class="content-area">
 
-<div id="dw-game-entry-bar" class="dw-entry-actions" style="margin:12px 0 18px"><button class="dw-btn primary" onclick="dwOpenCentral()">⚡ Central</button><button class="dw-btn" onclick="abrirContatoAdm()">🛟 Falar com Suporte</button></div>
 <div id="section-jogar" class="panel-section">
 <h2>Modo Batalha - Sistema de Fases</h2>
 <p style="color:#94a3b8;margin-top:5px">Progressão salva por jogador no Firestore.</p>
@@ -250,7 +249,29 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 </div></main>
 
 <div class="chat-tools" id="player-communication-tools" aria-label="Comunicação">
-  <button class="chat-toggle" onclick="abrirChatGlobal()">💬 Chat Geral</button><button class="chat-toggle" onclick="dwOpenCentral()">⚡ Central</button><button id="adm-contact-toggle" class="adm-contact-btn" onclick="abrirContatoAdm()">🛟 Falar com Suporte</button>
+  <button class="chat-toggle" onclick="dwOpenChatHub()">💬 Chat Geral</button><button class="chat-toggle" onclick="dwOpenCentral()">⚡ Central Geral</button><button id="adm-contact-toggle" class="adm-contact-btn" onclick="abrirContatoAdm()">🛟 Central de Suporte</button>
+</div>
+
+<div id="dw-chat-hub" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9999;display:flex;align-items:center;justify-content:center;padding:18px;">
+  <div style="width:min(900px,100%);max-height:88vh;overflow:auto;background:#07111f;border:1px solid #24425f;border-radius:18px;box-shadow:0 25px 80px rgba(0,0,0,.6);padding:18px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;">
+      <div><h2 style="margin:0">💬 Central de Chats</h2><p style="margin:4px 0 0;color:#94a3b8;font-size:12px">Chat Geral e Chat da Guilda no mesmo lugar.</p></div>
+      <button class="dw-btn" onclick="dwCloseChatHub()">✕ Fechar</button>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+      <button id="dw-chat-tab-global" class="dw-btn primary" onclick="dwChatHubTab('global')">🌎 Chat Geral</button>
+      <button id="dw-chat-tab-guild" class="dw-btn" onclick="dwChatHubTab('guild')">🛡️ Chat da Guilda</button>
+    </div>
+    <div id="dw-chat-panel-global">
+      <div id="dw-hub-global" class="chat-box" style="height:320px;overflow:auto;margin-bottom:10px;"></div>
+      <div style="display:flex;gap:8px;"><input id="dw-hub-global-input" class="form-control" style="margin:0;flex:1" placeholder="Digite uma mensagem no Chat Geral..." onkeydown="if(event.key==='Enter')dwSendHubGlobal()"><button class="btn btn-blue" style="width:auto" onclick="dwSendHubGlobal()">Enviar</button></div>
+    </div>
+    <div id="dw-chat-panel-guild" class="hidden">
+      <div id="dw-hub-guild" class="chat-box" style="height:320px;overflow:auto;margin-bottom:10px;"></div>
+      <div id="dw-hub-guild-no" class="box-item hidden" style="text-align:center">🛡️ Você precisa estar em uma guilda para usar este chat.</div>
+      <div id="dw-hub-guild-send" style="display:flex;gap:8px;"><input id="dw-hub-guild-input" class="form-control" style="margin:0;flex:1" placeholder="Digite uma mensagem para sua guilda..." onkeydown="if(event.key==='Enter')dwSendHubGuild()"><button class="btn btn-blue" style="width:auto" onclick="dwSendHubGuild()">Enviar</button></div>
+    </div>
+  </div>
 </div>
 <div id="modal-contato-adm" class="modal-overlay hidden">
   <div class="modal-card adm-contact-card">
@@ -424,7 +445,7 @@ function atualizarPerfilUI(){
  document.getElementById("player-edit-avatar").value=usuarioAtual.avatar||"";
  document.getElementById("perfil-recursos").innerHTML=`Nível ${usuarioAtual.level} • ${patenteAtual(usuarioAtual.level)} • XP ${usuarioAtual.xp}`;document.getElementById("perfil-rank").innerText=patenteAtual(usuarioAtual.level);const vidaEl=document.getElementById("perfil-vida");if(vidaEl)vidaEl.innerHTML=`❤️ Vida: ${Math.max(0,Number(usuarioAtual.currentHp??100))}/100`;renderPerfilGuilda();renderizarGaleriaAvatares();
 }
-function atualizarInterfacePorCargo(){const adm=!!(usuarioAtual&&(usuarioAtual.isAdm||usuarioAtual.isSubAdm));document.getElementById("dw-game-entry-bar")?.classList.toggle("hidden",adm);document.getElementById("player-communication-tools")?.classList.toggle("hidden",adm);document.getElementById("adm-loja-controls")?.classList.toggle("hidden",!adm);document.getElementById("adm-power-create")?.classList.toggle("hidden",!adm);document.getElementById("player-power-admin-note")?.classList.toggle("hidden",!adm);}
+function atualizarInterfacePorCargo(){const adm=!!(usuarioAtual&&(usuarioAtual.isAdm||usuarioAtual.isSubAdm));document.getElementById("player-communication-tools")?.classList.toggle("hidden",adm);document.getElementById("adm-loja-controls")?.classList.toggle("hidden",!adm);document.getElementById("adm-power-create")?.classList.toggle("hidden",!adm);document.getElementById("player-power-admin-note")?.classList.toggle("hidden",!adm);}
 function montarMenuLateral(){
  const m=document.getElementById("menu-list");m.innerHTML="";
  let itens=[];
@@ -974,8 +995,7 @@ onAuthStateChanged(auth,user=>{
 </style>
 <div class="dw-quickbar" id="dw-quickbar">
  <button class="dw-central-btn" id="dw-central-open" onclick="dwOpenCentral()">⚡ Central</button>
- <button class="dw-central-btn dw-adm-contact-btn" onclick="abrirContatoAdm()">🛟 Falar com Suporte</button>
-</div>
+ </div>
 <div id="dw-admin-alert" class="dw-notify">📨 Novo pedido para o ADM</div>
 <div id="dw-central" class="dw-modal hidden">
  <div class="dw-panel">
@@ -1020,6 +1040,37 @@ window.dwRefreshAll=async()=>{try{await dwRenderOverview();}catch(e){}let u=wind
  window.dwAddContact=async()=>{let target=document.getElementById('dw-private-target').value.trim();if(!target||target===usuarioAtual.uid)return alert('Informe o UID de outro jogador.');try{await setDoc(doc(db,'contatos',usuarioAtual.uid,'lista',target),{uid:target,createdAt:serverTimestamp()});alert('👤 Jogador adicionado aos seus contatos.');}catch(e){console.error(e);alert('Não foi possível adicionar o contato.')}};
  window.dwSendPrivateChat=async()=>{let target=document.getElementById('dw-private-target').value.trim(),i=document.getElementById('dw-private-input'),t=i.value.trim();if(!target||!t)return;await addDoc(collection(db,'chat_privado'),{from:usuarioAtual.uid,to:target,text:t,senderName:currentName(),createdAt:serverTimestamp()});i.value='';};
  window.dwSendGuildChat=async()=>{if(!usuarioAtual.guildId)return alert('Você precisa estar em uma guilda.');let i=document.getElementById('dw-guild-chat-input'),t=i.value.trim();if(!t)return;await addDoc(collection(db,'chat_guilda'),{guildId:usuarioAtual.guildId,from:usuarioAtual.uid,senderName:currentName(),text:t,createdAt:serverTimestamp()});i.value='';};
+ window.dwOpenChatHub=()=>{
+   if(!window.usuarioAtual)return alert('Faça login primeiro.');
+   document.getElementById('dw-chat-hub')?.classList.remove('hidden');
+   dwChatHubTab('global');
+   dwStartChatHubListeners();
+ };
+ window.dwCloseChatHub=()=>document.getElementById('dw-chat-hub')?.classList.add('hidden');
+ window.dwChatHubTab=(tab)=>{
+   const g=document.getElementById('dw-chat-panel-global'),h=document.getElementById('dw-chat-panel-guild');
+   const bg=document.getElementById('dw-chat-tab-global'),bh=document.getElementById('dw-chat-tab-guild');
+   g?.classList.toggle('hidden',tab!=='global'); h?.classList.toggle('hidden',tab!=='guild');
+   bg?.classList.toggle('primary',tab==='global'); bh?.classList.toggle('primary',tab==='guild');
+   const no=document.getElementById('dw-hub-guild-no'),send=document.getElementById('dw-hub-guild-send');
+   const hasGuild=!!window.usuarioAtual?.guildId; no?.classList.toggle('hidden',hasGuild); send?.classList.toggle('hidden',!hasGuild);
+ };
+ let dwChatHubListenersStarted=false;
+ window.dwStartChatHubListeners=()=>{
+   if(dwChatHubListenersStarted||typeof onSnapshot!=='function')return; dwChatHubListenersStarted=true;
+   try{
+     onSnapshot(query(collection(db,'chat_global'),orderBy('createdAt','asc')),snap=>{
+       const b=document.getElementById('dw-hub-global'); if(!b)return;
+       b.innerHTML=snap.docs.slice(-100).map(x=>{const d=x.data();return `<div class="dw-msg ${d.senderUid===usuarioAtual.uid?'me':''}"><b>${escapeHtml(d.senderName||'Jogador')}</b>: ${escapeHtml(d.text||'')}</div>`}).join('')||'<div style="color:#94a3b8;text-align:center;padding:30px">Nenhuma mensagem ainda.</div>'; b.scrollTop=b.scrollHeight;
+     });
+     onSnapshot(query(collection(db,'chat_guilda'),orderBy('createdAt','asc')),snap=>{
+       const b=document.getElementById('dw-hub-guild'); if(!b)return; const gid=usuarioAtual?.guildId;
+       b.innerHTML=snap.docs.slice(-100).map(x=>{const d=x.data(); if(!gid||d.guildId!==gid)return ''; return `<div class="dw-msg ${d.from===usuarioAtual.uid?'me':''}"><b>${escapeHtml(d.senderName||'Jogador')}</b>: ${escapeHtml(d.text||'')}</div>`}).join('')||'<div style="color:#94a3b8;text-align:center;padding:30px">Nenhuma mensagem da guilda ainda.</div>'; b.scrollTop=b.scrollHeight;
+     });
+   }catch(e){console.warn(e)}
+ };
+ window.dwSendHubGlobal=async()=>{const i=document.getElementById('dw-hub-global-input'),t=i?.value.trim();if(!t||!window.usuarioAtual?.uid)return;await addDoc(collection(db,'chat_global'),{senderUid:usuarioAtual.uid,senderName:isAdm()?'👑 ADM GABRIEL':currentName(),text:t,global:true,createdAt:serverTimestamp()});i.value='';};
+ window.dwSendHubGuild=async()=>{if(!window.usuarioAtual?.guildId)return alert('Você precisa estar em uma guilda.');const i=document.getElementById('dw-hub-guild-input'),t=i?.value.trim();if(!t)return;await addDoc(collection(db,'chat_guilda'),{guildId:usuarioAtual.guildId,from:usuarioAtual.uid,senderName:currentName(),text:t,createdAt:serverTimestamp()});i.value='';};
  window.dwStartChats=()=>{if(typeof onSnapshot!=='function')return;try{onSnapshot(query(collection(db,'chat_global'),orderBy('createdAt','asc')),snap=>{let b=document.getElementById('dw-chat-global');if(b)b.innerHTML=snap.docs.slice(-80).map(x=>{let d=x.data();return `<div class="dw-msg ${d.senderUid===usuarioAtual.uid?'me':''}"><b>${escapeHtml(d.senderName||'Jogador')}</b>: ${escapeHtml(d.text||'')}</div>`}).join('');if(b)b.scrollTop=b.scrollHeight});onSnapshot(query(collection(db,'chat_privado'),orderBy('createdAt','asc')),snap=>{let target=document.getElementById('dw-private-target')?.value.trim(),b=document.getElementById('dw-chat-private');if(!b)return;b.innerHTML=snap.docs.slice(-100).map(x=>{let d=x.data();if(!target||!((d.from===usuarioAtual.uid&&d.to===target)||(d.from===target&&d.to===usuarioAtual.uid)))return '';return `<div class="dw-msg"><b>${escapeHtml(d.senderName||'Jogador')}</b>: ${escapeHtml(d.text||'')}</div>`}).join('');b.scrollTop=b.scrollHeight});onSnapshot(query(collection(db,'chat_guilda'),orderBy('createdAt','asc')),snap=>{let b=document.getElementById('dw-chat-guild');if(!b)return;b.innerHTML=snap.docs.slice(-100).map(x=>{let d=x.data();if(!usuarioAtual.guildId||d.guildId!==usuarioAtual.guildId)return '';return `<div class="dw-msg"><b>${escapeHtml(d.senderName||'Jogador')}</b>: ${escapeHtml(d.text||'')}</div>`}).join('');b.scrollTop=b.scrollHeight});}catch(e){console.warn(e)}};
  window.dwLoadRanks=async()=>{try{let s=await getDocs(collection(db,'jogadores_reais')),rows=s.docs.map(x=>({uid:x.id,...x.data()})).filter(x=>!x.isAdm&&String(x.role||'').toUpperCase()!=='ADMINISTRADOR').sort((a,b)=>Number(b.points||b.xp||0)-Number(a.points||a.xp||0)).slice(0,20);document.getElementById('dw-rank-general').innerHTML=rows.map((x,i)=>`<div class="dw-msg">#${i+1} <b>${escapeHtml(x.displayName||x.nome||'Jogador')}</b> — Nível ${x.level||1}</div>`).join('')||'Nenhum jogador ainda.';let g=await getDocs(collection(db,'guildas')),gs=g.docs.map(x=>x.data()).sort((a,b)=>Number(b.level||1)-Number(a.level||1));document.getElementById('dw-rank-guild').innerHTML=gs.map((x,i)=>`<div class="dw-msg">#${i+1} 🏰 <b>${escapeHtml(x.nome||'Guilda')}</b> — Nível ${x.level||1} • ${x.membros||0} membros</div>`).join('')||'Nenhuma guilda criada ainda.';}catch(e){console.error(e)}};
  let admListenerStarted=false;
@@ -1036,4 +1087,4 @@ window.addEventListener("online",()=>notificar("📡 Conexão restaurada.","succ
 
 </script>
 </body>
-</html>
+                                                                                                                                                                                                                              </html>
