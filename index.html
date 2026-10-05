@@ -766,8 +766,8 @@ window.selecionarPersonagemInventario=async id=>{const req={guerreiro:1,mago:1,g
 function atualizarInventarioUI(){const box=document.getElementById("inventario-itens");if(!box)return;renderizarPersonagensInventario();const inv=Array.isArray(usuarioAtual.inventory)?usuarioAtual.inventory:[];if(!inv.length){box.innerHTML='<div class="box-item">🎒 Sua mochila ainda está vazia.</div>';return;}box.innerHTML=inv.map((i,n)=>{const skin=i.category==="skin",es=skin&&String(usuarioAtual.equippedSkin||"")===String(i.id),ew=i.category==="weapon"&&String(usuarioAtual.equippedWeapon||"")===String(i.id),ep=i.category==="power"&&String(usuarioAtual.equippedPower||"")===String(i.id),eq=es||ew||ep,img=skin?(avataresOficiais[(Number(i.avatarIndex??n))%avataresOficiais.length]||""):"",q=Math.max(1,Number(i.quantity||1));let a=skin?`<button class="btn ${eq?"btn-green":"btn-blue"}" style="padding:6px;margin-top:7px" onclick="equiparAvatarInventario('${i.id}')">${eq?"✅ EQUIPADO":"🖼️ EQUIPAR AVATAR"}</button>`:(i.category==="weapon"||i.category==="power")?`<button class="btn ${eq?"btn-green":"btn-blue"}" style="padding:6px;margin-top:7px" onclick="equiparItemInventario('${i.id}')">${eq?"✅ EQUIPADO":"⚔️ EQUIPAR"}</button>`:i.category==="potion"?`<button class="btn btn-green" style="padding:6px;margin-top:7px" onclick="usarPocaoInventario('${i.id}')">🧪 USAR</button>`:"";return `<div class="item-card" style="min-width:170px;max-width:220px">${img?`<img class="skin-shop-img" src="${img}" alt="${escapeHtml(i.nome)}">`:`<div style="font-size:42px">${icone(i.category)}</div>`}<h4>${escapeHtml(i.nome)}</h4><p>${escapeHtml(i.desc||"")}</p><div style="font-size:11px;color:#fbbf24">${skin?`⚔️ Bônus Arena +${Number(i.stat||0)}%`:i.category==="potion"?`🧪 Efeito +${Number(i.stat||0)} • Quantidade: <b>${q}</b>`:`💥 ${Number(i.stat||0)} bônus`}</div>${a}</div>`}).join("");}
 function bonusAvatarArena(){const id=usuarioAtual.equippedSkin;if(!id)return 0;const i=(usuarioAtual.inventory||[]).find(x=>String(x.id)===String(id));return i&&i.category==="skin"?Math.max(0,Number(i.stat||0)):0;}
 
-function renderizarPoderes(){const c=document.getElementById("lista-mais-de-50-poderes");if(!c)return;const arr=catalogo.filter(x=>x.category==="power"&&!x.disabled);const adm=!!usuarioAtual?.isAdm||!!usuarioAtual?.isSubAdm;c.innerHTML=arr.map(i=>`<div class="item-card"><h4>⚡ ${escapeHtml(i.nome)}</h4><p>${escapeHtml(i.desc||"Poder Dragon War")}</p><div style="font-size:12px;color:#cbd5e1">💥 Dano/Bônus: <b>${Number(i.stat||0)}</b></div><div class="price">${Number(i.price||0)} 🪙</div>${adm?`<div style="display:flex;gap:6px"><button class="btn btn-blue" style="padding:6px;font-size:11px" onclick="editarItemCatalogo('${i.id}')">✏️ EDITAR</button><button class="btn btn-gray" style="padding:6px;font-size:11px" onclick="removerItemCatalogo('${i.id}')">🗑️ REMOVER</button></div>`:`<button class="btn" style="padding:6px;font-size:11px" onclick="comprarItem('${i.id}')">Comprar</button>`}</div>`).join("")||'<div class="box-item">Nenhum poder cadastrado.</div>'}
-function renderLoja(){let g=document.getElementById("loja-grid");if(!g)return;let arr=(categoriaLoja==="all"?catalogo:catalogo.filter(x=>x.category===categoriaLoja)).filter(x=>!x.disabled);const adm=!!usuarioAtual?.isAdm||!!usuarioAtual?.isSubAdm;g.innerHTML=arr.map((i,n)=>{const skinImg=i.category==="skin"?avataresOficiais[(Number(i.avatarIndex??n))%avataresOficiais.length]:"";const botoes=adm?`<div style="display:flex;gap:6px"><button class="btn btn-blue" style="padding:6px;margin-top:7px;font-size:11px" onclick="editarItemCatalogo('${i.id}')">✏️ EDITAR</button><button class="btn btn-gray" style="padding:6px;margin-top:7px;font-size:11px" onclick="removerItemCatalogo('${i.id}')">🗑️ REMOVER</button></div>`:`<button class="btn" style="padding:6px;margin-top:7px;font-size:11px" onclick="comprarItem('${i.id}')">${i.category==="skin"?"Comprar Skin":"Comprar"}</button>`;return `<div class="item-card">${skinImg?`<img class="skin-shop-img" src="${skinImg}" alt="${escapeHtml(i.nome)}">`:""}<h4>${icone(i.category)} ${escapeHtml(i.nome)}</h4><p>${escapeHtml(i.desc||"")}</p><div style="font-size:12px;color:#cbd5e1">⚔️ Dano/Bônus: <b>${Number(i.stat||0)}</b></div><div class="price">${Number(i.price||0)} 🪙</div>${botoes}</div>`}).join("")||'<div class="box-item">Nenhum produto nesta categoria.</div>'}
+function renderizarPoderes(){const c=document.getElementById("lista-mais-de-50-poderes");if(!c)return;const arr=catalogo.filter(x=>x.category==="power"&&!x.disabled);const adm=ehAdmCompleto();c.innerHTML=arr.map(i=>`<div class="item-card"><h4>⚡ ${escapeHtml(i.nome)}</h4><p>${escapeHtml(i.desc||"Poder Dragon War")}</p><div style="font-size:12px;color:#cbd5e1">💥 Dano/Bônus: <b>${Number(i.stat||0)}</b></div><div class="price">${Number(i.price||0)} 🪙</div>${adm?`<div style="display:flex;gap:6px"><button class="btn btn-blue" style="padding:6px;font-size:11px" onclick="editarItemCatalogo('${i.id}')">✏️ EDITAR</button><button class="btn btn-gray" style="padding:6px;font-size:11px" onclick="removerItemCatalogo('${i.id}')">🗑️ REMOVER</button></div>`:`<button class="btn" style="padding:6px;font-size:11px" onclick="comprarItem('${i.id}')">Comprar</button>`}</div>`).join("")||'<div class="box-item">Nenhum poder cadastrado.</div>'}
+function renderLoja(){let g=document.getElementById("loja-grid");if(!g)return;let arr=(categoriaLoja==="all"?catalogo:catalogo.filter(x=>x.category===categoriaLoja)).filter(x=>!x.disabled);const adm=ehAdmCompleto();g.innerHTML=arr.map((i,n)=>{const skinImg=i.category==="skin"?avataresOficiais[(Number(i.avatarIndex??n))%avataresOficiais.length]:"";const botoes=adm?`<div style="display:flex;gap:6px"><button class="btn btn-blue" style="padding:6px;margin-top:7px;font-size:11px" onclick="editarItemCatalogo('${i.id}')">✏️ EDITAR</button><button class="btn btn-gray" style="padding:6px;margin-top:7px;font-size:11px" onclick="removerItemCatalogo('${i.id}')">🗑️ REMOVER</button></div>`:`<button class="btn" style="padding:6px;margin-top:7px;font-size:11px" onclick="comprarItem('${i.id}')">${i.category==="skin"?"Comprar Skin":"Comprar"}</button>`;return `<div class="item-card">${skinImg?`<img class="skin-shop-img" src="${skinImg}" alt="${escapeHtml(i.nome)}">`:""}<h4>${icone(i.category)} ${escapeHtml(i.nome)}</h4><p>${escapeHtml(i.desc||"")}</p><div style="font-size:12px;color:#cbd5e1">⚔️ Dano/Bônus: <b>${Number(i.stat||0)}</b></div><div class="price">${Number(i.price||0)} 🪙</div>${botoes}</div>`}).join("")||'<div class="box-item">Nenhum produto nesta categoria.</div>'}
 function renderGuildaResumo(g){
  const el=document.getElementById("guilda-resumo"); if(!el)return;
  if(!g){el.innerHTML=`<div class="box-item"><h3>👤 Você ainda não está em uma guilda</h3><p style="color:#94a3b8;margin-top:5px">Escolha uma guilda disponível ou crie a sua.</p></div>`;return;}
@@ -877,11 +877,11 @@ async function carregarJogadoresPublicos(){const t=document.getElementById("tabe
 window.enviarChatPublico=async()=>{if(usuarioAtual.muted)return alert("🔇 Você está mutado pelo ADM.");const i=document.getElementById("player-chat-publico-input"),text=i?.value.trim();if(!text)return;await addDoc(collection(db,"chat_global"),{senderUid:usuarioAtual.uid,senderName:nomeAtual(),text,global:true,createdAt:serverTimestamp()});i.value=""};
 window.enviarReclamacaoPublica=async()=>{const text=document.getElementById("player-reclamacao-publica")?.value.trim();if(!text)return alert("Escreva a reclamação.");await addDoc(collection(db,"solicitacoes_adm"),{nome:nomeAtual(),uid:usuarioAtual.uid,email:usuarioAtual.email,motivo:text,status:"nova",createdAt:serverTimestamp()});document.getElementById("player-reclamacao-publica").value="";alert("📨 Reclamação enviada para a equipe ADM.")};
 
-async function carregarJogadoresReaisDoBanco(){let t=document.getElementById("tabela-jogadores-server");if(!t)return;t.innerHTML="<tr><td colspan=5>Carregando...</td></tr>";try{let s=await getDocs(collection(db,"jogadores_reais")),arr=[];s.forEach(d=>arr.push(d.data()));let online=0,adms=0,ban=0;arr.forEach(x=>{let isOn=x.lastSeen?.toMillis?Date.now()-x.lastSeen.toMillis()<90000:x.status==="Online";if(isOn)online++;if(x.isAdm)adms++;if(x.banned)ban++});document.getElementById("adm-total").innerText=arr.length;document.getElementById("adm-online").innerText=online;document.getElementById("adm-adms").innerText=adms;document.getElementById("adm-banidos").innerText=ban;document.getElementById("adm-total2").innerText=arr.length;document.getElementById("adm-online2").innerText=online;t.innerHTML="";arr.forEach(x=>{let on=x.lastSeen?.toMillis?Date.now()-x.lastSeen.toMillis()<90000:x.status==="Online";let tr=document.createElement("tr");tr.innerHTML=`<td style="font-family:monospace;color:var(--accent-color);font-size:11px">${x.uid||""}</td><td>${x.displayName||x.email||""} ${x.isAdm?'<span class="badge adm">ADM</span>':""} ${x.muted?'<span class="badge offline">🔇 MUTE</span>':""}</td><td>${x.serverAccess===false||x.removedFromServer?'<span class="badge offline">⛔ Fora do servidor</span>':(on?'<span class="badge online">🟢 Online</span>':'<span class="badge offline">⚫ Offline</span>')}</td><td>${String(x.email||"").trim().toLowerCase()===String(EMAIL_ADMIN).trim().toLowerCase()?"ADM GERAL":(x.isSubAdm?"ADM AUXILIAR":((String(x.guildRole||"").toUpperCase()==="MODERADOR"||String(x.guildRank||"").toLowerCase()==="líder")?"MODERADOR":"Jogador"))}</td><td><button class="btn" style="padding:4px 8px;width:auto;font-size:10px" onclick="abrirPainelJogador('${x.uid}','${String(x.displayName||x.email||"Jogador").replace(/'/g,"")}')">Selecionar</button></td>`;t.appendChild(tr)})}catch(e){t.innerHTML="<tr><td colspan=5>Erro ao carregar jogadores.</td></tr>"}}
+async function carregarJogadoresReaisDoBanco(){let t=document.getElementById("tabela-jogadores-server");if(!t)return;t.innerHTML="<tr><td colspan=5>Carregando...</td></tr>";try{let s=await getDocs(collection(db,"jogadores_reais")),arr=[];s.forEach(d=>arr.push(d.data()));let online=0,adms=0,ban=0;arr.forEach(x=>{let isOn=x.lastSeen?.toMillis?Date.now()-x.lastSeen.toMillis()<90000:x.status==="Online";if(isOn)online++;if(x.isAdm)adms++;if(x.banned)ban++});document.getElementById("adm-total").innerText=arr.length;document.getElementById("adm-online").innerText=online;document.getElementById("adm-adms").innerText=adms;document.getElementById("adm-banidos").innerText=ban;document.getElementById("adm-total2").innerText=arr.length;document.getElementById("adm-online2").innerText=online;t.innerHTML="";arr.forEach(x=>{let on=x.lastSeen?.toMillis?Date.now()-x.lastSeen.toMillis()<90000:x.status==="Online";let tr=document.createElement("tr");tr.innerHTML=`<td style="font-family:monospace;color:var(--accent-color);font-size:11px">${x.uid||""}</td><td>${x.displayName||x.email||""} ${x.isAdm?'<span class="badge adm">ADM</span>':""} ${x.muted?'<span class="badge offline">🔇 MUTE</span>':""}</td><td>${x.serverAccess===false||x.removedFromServer?'<span class="badge offline">⛔ Fora do servidor</span>':(on?'<span class="badge online">🟢 Online</span>':'<span class="badge offline">⚫ Offline</span>')}</td><td>${x.isAdm?"ADM GERAL":(x.isSubAdm?"ADM AUXILIAR":((String(x.guildRole||"").toUpperCase()==="MODERADOR"||String(x.guildRank||"").toLowerCase()==="líder")?"MODERADOR":"Jogador"))}</td><td><button class="btn" style="padding:4px 8px;width:auto;font-size:10px" onclick="abrirPainelJogador('${x.uid}','${String(x.displayName||x.email||"Jogador").replace(/'/g,"")}')">Selecionar</button></td>`;t.appendChild(tr)})}catch(e){t.innerHTML="<tr><td colspan=5>Erro ao carregar jogadores.</td></tr>"}}
 
 let perfilPublicoUid="";
 window.abrirMensagemPerfilPublico=(uid,nome)=>{const input=document.getElementById("dw-private-target");if(input)input.value=uid;document.getElementById("modal-perfil-publico")?.classList.add("hidden");const hub=document.getElementById("dw-chat-hub");if(hub){hub.classList.remove("hidden");if(typeof dwChatHubTab==="function")dwChatHubTab("private");}else alert(`💬 Abra o Chat para conversar com ${nome}.`);};
-window.abrirPerfilPublico=async uid=>{try{let d=null;try{const snap=await getDoc(doc(db,"jogadores_reais",uid));if(snap.exists())d=snap.data();}catch(_e){}if(!d&&Array.isArray(window.jogadoresPublicosCache))d=window.jogadoresPublicosCache.find(x=>String(x.uid)===String(uid));if(!d)return alert("Não foi possível abrir o perfil. Verifique a conexão com o servidor.");perfilPublicoUid=uid;const nome=d.displayName||d.nome||"Jogador";const avatar=d.avatar||avataresOficiais[Number(d.avatarIndex||0)%avataresOficiais.length];const chars=Array.isArray(d.characters)?d.characters:[];const inv=Array.isArray(d.inventory)?d.inventory:[];const pr=d.phaseProgress||{};const fases=Object.entries(categorias).map(([k,c])=>`${c.nome}: ${Math.min(c.max,Number(pr[k]||1)-1)}/${c.max}`).join(" • ");const medalhas=[];const emailPerfil=String(d.email||"").trim().toLowerCase();const admGeralPublico=emailPerfil==="groupsacabraldigital@gmail.com";if(admGeralPublico){medalhas.push("💻 DESENVOLVEDOR","👑 ADMINISTRADOR GERAL","⭐ ADM","💎 VIP","🏰 DONO DE GUILDA");}else if(d.isSubAdm||String(d.role||"").toUpperCase()==="ADM_SERVIDOR"||String(d.role||"").toUpperCase()==="ADM_AUXILIAR"){medalhas.push("🛡️ ADM AUXILIAR","⭐ ADM");}else if(String(d.role||"").toUpperCase().includes("DESENV")){medalhas.push("💻 DESENVOLVEDOR");}if(Number(d.vip||0)>0&&!medalhas.includes("💎 VIP"))medalhas.push("💎 VIP");if(d.guildAdmin&&!medalhas.includes("🏰 DONO DE GUILDA"))medalhas.push("🏰 DONO DE GUILDA");if(d.adminVerified)medalhas.push("✅ VERIFICADO");if(Number(d.level||1)>=1)medalhas.push("🎮 PRIMEIRA JORNADA");const cargos=[];if(admGeralPublico)cargos.push("👑 ADMINISTRAÇÃO GERAL");else if(d.isSubAdm||String(d.role||"").toUpperCase()==="ADM_SERVIDOR"||String(d.role||"").toUpperCase()==="ADM_AUXILIAR")cargos.push("🛡️ ADM AUXILIAR");if(String(d.role||"").toUpperCase().includes("DESENV"))cargos.push("💻 DESENVOLVEDOR");if(d.guildRole&&d.guildRole!=="JOGADOR")cargos.push("🏰 "+String(d.guildRole).toUpperCase());if(Number(d.vip||0)>0)cargos.push("💎 VIP "+d.vip);if(d.adminVerified)cargos.push("✅ VERIFICADO");if(!cargos.length)cargos.push("🎮 JOGADOR");document.getElementById("perfil-publico-conteudo").innerHTML=`<div class="profile-public-head"><img class="profile-public-avatar" src="${escapeHtml(avatar)}" alt="Avatar"><div><div style="font-size:22px;font-weight:900">${escapeHtml(nome)}</div><div style="color:#94a3b8;font-size:12px">ID: <span style="font-family:monospace">${escapeHtml(uid)}</span></div><div class="role-badges">${cargos.map(x=>`<span class="role-badge">${escapeHtml(x)}</span>`).join("")}</div></div></div><div class="public-profile-grid"><div class="public-profile-card"><b>Nível / Patente</b>${Number(d.level||1)} • ${escapeHtml(patenteAtual(d.level))}</div><div class="public-profile-card"><b>Experiência / Pontos</b>${Number(d.xp||0)} XP • ${Number(d.points||d.pontos||0)} ⭐</div><div class="public-profile-card"><b>Combates</b>${Number(d.combats||0)} • 🏆 ${Number(d.victories||0)} vitórias • 💀 ${Number(d.defeats||0)} derrotas</div><div class="public-profile-card"><b>Recursos</b>❤️ ${Number(d.currentHp??100)} • 🔥 ${Number(d.mana??100)} • 💎 ${Number(d.diamonds||0)} • 🪙 ${Number(d.coins||0)}</div><div class="public-profile-card"><b>Guilda</b>${escapeHtml(d.guildName||"Sem guilda")} • ${escapeHtml(d.guildRole||"JOGADOR")}</div><div class="public-profile-card"><b>Personagens / Armas</b>${chars.length} personagens • ${inv.filter(x=>x.category==="weapon").length} armas</div><div class="public-profile-card" style="grid-column:1/-1"><b>Progresso da Campanha</b>${escapeHtml(fases)}</div><div class="public-profile-card"><b>🏅 Medalhas</b><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">${medalhas.map(x=>`<span class="role-badge" style="background:linear-gradient(135deg,#18243b,#111827);border-color:#f59e0b;color:#fde68a">${escapeHtml(x)}</span>`).join("")}</div></div><div class="public-profile-card" style="grid-column:1/-1"><b>Identificação</b>ID: <span style="font-family:monospace">${escapeHtml(uid)}</span><br><span style="color:#64748b;font-size:11px">E-mail e dados de login são privados.</span><br><button class="btn btn-blue" style="width:auto;margin-top:8px" onclick="abrirMensagemPerfilPublico('${uid}','${escapeHtml(nome)}')">💬 Mandar mensagem</button></div></div>`;document.getElementById("modal-perfil-publico").classList.remove("hidden")}catch(e){console.error(e);alert("Não foi possível abrir o perfil.")}};
+window.abrirPerfilPublico=async uid=>{try{let d=null;try{const snap=await getDoc(doc(db,"jogadores_reais",uid));if(snap.exists())d=snap.data();}catch(_e){}if(!d&&Array.isArray(window.jogadoresPublicosCache))d=window.jogadoresPublicosCache.find(x=>String(x.uid)===String(uid));if(!d)return alert("Não foi possível abrir o perfil. Verifique a conexão com o servidor.");perfilPublicoUid=uid;const nome=d.displayName||d.nome||d.email?.split("@")[0]||"Jogador";const avatar=d.avatar||avataresOficiais[Number(d.avatarIndex||0)%avataresOficiais.length];const chars=Array.isArray(d.characters)?d.characters:[];const inv=Array.isArray(d.inventory)?d.inventory:[];const pr=d.phaseProgress||{};const fases=Object.entries(categorias).map(([k,c])=>`${c.nome}: ${Math.min(c.max,Number(pr[k]||1)-1)}/${c.max}`).join(" • ");const medalhas=[];if(d.isAdm||String(d.role||"").toUpperCase().includes("DESENV")){medalhas.push("💻 DESENVOLVEDOR","👑 ADMINISTRADOR GERAL","⭐ ADM","💎 VIP","🏰 DONO DE GUILDA");}if(Number(d.vip||0)>0&&!medalhas.includes("💎 VIP"))medalhas.push("💎 VIP");if(d.guildAdmin&&!medalhas.includes("🏰 DONO DE GUILDA"))medalhas.push("🏰 DONO DE GUILDA");if(d.adminVerified)medalhas.push("✅ VERIFICADO");if(Number(d.level||1)>=1)medalhas.push("🎮 PRIMEIRA JORNADA");const cargos=[];if(d.isAdm)cargos.push("👑 ADMINISTRAÇÃO");if(String(d.role||"").toUpperCase().includes("DESENV"))cargos.push("💻 DESENVOLVEDOR");if(d.isSubAdm)cargos.push("🛡️ ADM SERVIDOR");if(d.guildRole&&d.guildRole!=="JOGADOR")cargos.push("🏰 "+String(d.guildRole).toUpperCase());if(Number(d.vip||0)>0)cargos.push("💎 VIP "+d.vip);if(d.adminVerified)cargos.push("✅ VERIFICADO");if(!cargos.length)cargos.push("🎮 JOGADOR");document.getElementById("perfil-publico-conteudo").innerHTML=`<div class="profile-public-head"><img class="profile-public-avatar" src="${escapeHtml(avatar)}" alt="Avatar"><div><div style="font-size:22px;font-weight:900">${escapeHtml(nome)}</div><div style="color:#94a3b8;font-size:12px">ID: <span style="font-family:monospace">${escapeHtml(uid)}</span></div><div class="role-badges">${cargos.map(x=>`<span class="role-badge">${escapeHtml(x)}</span>`).join("")}</div></div></div><div class="public-profile-grid"><div class="public-profile-card"><b>Nível / Patente</b>${Number(d.level||1)} • ${escapeHtml(patenteAtual(d.level))}</div><div class="public-profile-card"><b>Experiência / Pontos</b>${Number(d.xp||0)} XP • ${Number(d.points||d.pontos||0)} ⭐</div><div class="public-profile-card"><b>Combates</b>${Number(d.combats||0)} • 🏆 ${Number(d.victories||0)} vitórias • 💀 ${Number(d.defeats||0)} derrotas</div><div class="public-profile-card"><b>Recursos</b>❤️ ${Number(d.currentHp??100)} • 🔥 ${Number(d.mana??100)} • 💎 ${Number(d.diamonds||0)} • 🪙 ${Number(d.coins||0)}</div><div class="public-profile-card"><b>Guilda</b>${escapeHtml(d.guildName||"Sem guilda")} • ${escapeHtml(d.guildRole||"JOGADOR")}</div><div class="public-profile-card"><b>Personagens / Armas</b>${chars.length} personagens • ${inv.filter(x=>x.category==="weapon").length} armas</div><div class="public-profile-card" style="grid-column:1/-1"><b>Progresso da Campanha</b>${escapeHtml(fases)}</div><div class="public-profile-card"><b>🏅 Medalhas</b><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">${medalhas.map(x=>`<span class="role-badge" style="background:linear-gradient(135deg,#18243b,#111827);border-color:#f59e0b;color:#fde68a">${escapeHtml(x)}</span>`).join("")}</div></div><div class="public-profile-card" style="grid-column:1/-1"><b>Identificação</b>ID: <span style="font-family:monospace">${escapeHtml(uid)}</span><br><span style="color:#64748b;font-size:11px">E-mail e dados de login são privados.</span><br><button class="btn btn-blue" style="width:auto;margin-top:8px" onclick="abrirMensagemPerfilPublico('${uid}','${escapeHtml(nome)}')">💬 Mandar mensagem</button></div></div>`;document.getElementById("modal-perfil-publico").classList.remove("hidden")}catch(e){console.error(e);alert("Não foi possível abrir o perfil.")}};
 window.fecharPerfilPublico=()=>document.getElementById("modal-perfil-publico")?.classList.add("hidden");
 window.mandarMensagemPerfilPublico=()=>{const d=perfilPublicoUid;if(!d)return;alert("💬 Sistema de mensagem: o perfil foi selecionado. A mensagem privada será vinculada a este jogador.")};
 
@@ -909,7 +909,7 @@ window.fecharAtendimento=()=>{document.getElementById("modal-atendimento").class
 async function registrarLog(acao,target){if(!usuarioAtual.isAdm)return;await addDoc(collection(db,"logs_adm"),{acao,target,adminUid:usuarioAtual.uid,adminName:"ADM GABRIEL",createdAt:serverTimestamp()});carregarLogs()};
 async function carregarSolicitacoesAdm(){
  const c=document.getElementById("adm-solicitacoes");
- if(!c||!usuarioAtual.isAdm)return;
+ if(!c||!(usuarioAtual.isAdm||usuarioAtual.isSubAdm))return;
  try{
   const s=await getDocs(query(collection(db,"solicitacoes_adm"),orderBy("createdAt","desc")));
   const arr=s.docs.slice(0,30);
@@ -1182,5 +1182,155 @@ document.getElementById("auth-pass")?.addEventListener("keydown",e=>{if(e.key===
 window.addEventListener("online",()=>notificar("📡 Conexão restaurada.","success"));
 
 </script>
+
+<script id="dragon-war-functional-final-patch">
+/* Dragon War — camada funcional final: perfis, loja, recompensas e permissões */
+(function(){
+  const ADMIN_EMAIL="groupsacabraldigital@gmail.com";
+  const AUX_ROLES=["ADM_SERVIDOR","ADM_AUXILIAR"];
+  const isGeneral=()=>String(window.usuarioAtual?.email||window.auth?.currentUser?.email||"").trim().toLowerCase()===ADMIN_EMAIL;
+  const isAux=()=>!!window.usuarioAtual?.isSubAdm && !isGeneral();
+  const isAdmin=()=>isGeneral()||isAux();
+  const generalOnly=()=>isGeneral();
+  const refPlayer=(uid)=>doc(db,"jogadores_reais",uid);
+  const safeNum=(v,d=0)=>Number.isFinite(Number(v))?Number(v):d;
+  const toast=(m,t="info")=>typeof notificar==="function"?notificar(m,t):alert(m);
+
+  // Public profile: never expose authentication e-mail.
+  const oldOpenPublic=window.abrirPerfilPublico;
+  window.abrirPerfilPublico=async function(uid){
+    await oldOpenPublic(uid);
+    const box=document.getElementById("perfil-publico-conteudo");
+    if(!box)return;
+    box.querySelectorAll('[data-private-email], .private-email, .public-email').forEach(x=>x.remove());
+  };
+
+  // Auxiliary ADM can consult and handle support complaints, but cannot use General ADM powers.
+  const oldLoadComplaints=window.carregarSolicitacoesAdm;
+  window.carregarSolicitacoesAdm=async function(){
+    if(!(isAdmin())) return;
+    const c=document.getElementById("adm-solicitacoes")||document.getElementById("adm-solicitacoes-reclamacoes");
+    if(!c)return;
+    try{
+      const snap=await getDocs(query(collection(db,"solicitacoes_adm"),orderBy("createdAt","desc")));
+      c.innerHTML="";
+      if(snap.empty){c.innerHTML='<div class="chat-msg">Nenhuma reclamação ou solicitação recebida.</div>';return;}
+      snap.docs.slice(0,50).forEach(d=>{
+        const x=d.data();
+        const when=x.createdAt?.toDate?x.createdAt.toDate().toLocaleString("pt-BR"):"Agora";
+        const el=document.createElement("div");el.className="chat-msg";
+        el.innerHTML=`<b>👤 ${escapeHtml(x.nome||"Jogador")}</b> <span class="badge">UID: ${escapeHtml(x.uid||x.id||"-")}</span><br><span style="color:#94a3b8;font-size:11px">${escapeHtml(when)} • ${escapeHtml(x.status||"nova")}</span><div style="margin-top:6px">${escapeHtml(x.motivo||"")}</div><div style="margin-top:7px;display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-purple" style="width:auto;padding:5px 9px" onclick="abrirAtendimentoPorBuscaUid('${String(x.uid||x.id||"").replace(/'/g,"\\'")}')">💬 Atender</button>${isGeneral()?`<button class="btn btn-gray" style="width:auto;padding:5px 9px" onclick="marcarSolicitacaoResolvida('${d.id}')">✅ Resolver</button>`:""}</div>`;
+        c.appendChild(el);
+      });
+    }catch(e){console.warn(e);c.innerHTML='<div class="chat-msg">Não foi possível carregar as reclamações.</div>';}
+  };
+  window.abrirAtendimentoPorBuscaUid=async function(uid){
+    if(!uid)return;
+    try{const s=await getDoc(refPlayer(uid));if(!s.exists())return alert("Jogador não encontrado.");const d=s.data();await abrirSalaAtendimento(uid,d.displayName||"Jogador");}
+    catch(e){alert("Não foi possível abrir o atendimento.");}
+  };
+  window.marcarSolicitacaoResolvida=async function(id){
+    if(!isGeneral())return alert("🔒 Somente o ADM Geral pode concluir solicitações.");
+    await updateDoc(doc(db,"solicitacoes_adm",id),{status:"resolvida",resolvedBy:usuarioAtual.uid,resolvedAt:serverTimestamp()});
+    await registrarLog("Resolver solicitação",id);carregarSolicitacoesAdm();toast("✅ Solicitação marcada como resolvida.","success");
+  };
+
+  // General ADM reward editor: one action can grant multiple resource types and catalog items.
+  window.editarRecompensasJogador=async function(){
+    if(!isGeneral())return alert("🔒 Função exclusiva do ADM Geral.");
+    if(!jogadorSelecionadoModal?.id)return;
+    const d=jogadorSelecionadoModal.data||{};
+    const coins=prompt("🪙 Moedas a adicionar:","500"); if(coins===null)return;
+    const diamonds=prompt("💎 Gemas a adicionar:","25"); if(diamonds===null)return;
+    const xp=prompt("⭐ XP/Pontos a adicionar:","250"); if(xp===null)return;
+    const hp=prompt("❤️ Vida a restaurar:","50"); if(hp===null)return;
+    const mana=prompt("🔥 Mana a restaurar:","50"); if(mana===null)return;
+    const c=Math.max(0,Math.floor(safeNum(coins))),g=Math.max(0,Math.floor(safeNum(diamonds))),x=Math.max(0,Math.floor(safeNum(xp)));
+    const maxHp=safeNum(d.maxHp,100),maxMana=safeNum(d.maxMana,100);
+    const newHp=Math.min(maxHp,safeNum(d.currentHp,100)+Math.max(0,Math.floor(safeNum(hp))));
+    const newMana=Math.min(maxMana,safeNum(d.mana,100)+Math.max(0,Math.floor(safeNum(mana))));
+    await updateDoc(refPlayer(jogadorSelecionadoModal.id),{
+      coins:safeNum(d.coins)+c,diamonds:safeNum(d.diamonds)+g,xp:safeNum(d.xp)+x,
+      points:safeNum(d.points||d.pontos)+x,pontos:safeNum(d.pontos||d.points)+x,
+      currentHp:newHp,mana:newMana,lastAction:"RECOMPENSA MÚLTIPLA DO ADM GERAL",lastActionAt:Date.now()
+    });
+    await registrarLog("Recompensas múltiplas",`${jogadorSelecionadoModal.id} +${c} moedas +${g} gemas +${x} XP`);
+    toast(`🎁 Recompensas enviadas: +${c} 🪙 +${g} 💎 +${x} ⭐`,"success");
+    carregarJogadoresReaisDoBanco();
+  };
+
+  // Give an item from the real catalog to the selected player.
+  window.darItemCatalogoSelecionado=async function(){
+    if(!isGeneral())return alert("🔒 Somente o ADM Geral pode entregar itens.");
+    if(!jogadorSelecionadoModal?.id)return;
+    const active=(catalogo||[]).filter(x=>!x.disabled);
+    if(!active.length)return alert("Nenhum item disponível no catálogo.");
+    const names=active.slice(0,80).map(x=>x.nome).join("\n");
+    const nome=prompt("Digite o nome exato do item para entregar ao jogador:\n\n"+names,active[0].nome);
+    if(nome===null)return;
+    const item=active.find(x=>String(x.nome).trim().toLowerCase()===String(nome).trim().toLowerCase());
+    if(!item)return alert("Item não encontrado no catálogo.");
+    const s=await getDoc(refPlayer(jogadorSelecionadoModal.id));if(!s.exists())return alert("Jogador não encontrado.");
+    const d=s.data(),inv=Array.isArray(d.inventory)?[...d.inventory]:[];
+    const idx=inv.findIndex(x=>String(x.id)===String(item.id));
+    if(idx>=0){inv[idx]={...inv[idx],quantity:Math.max(1,safeNum(inv[idx].quantity,1)+1)};}else inv.push({...item,quantity:1,giftedBy:usuarioAtual.uid,giftedAt:Date.now()});
+    await updateDoc(refPlayer(jogadorSelecionadoModal.id),{inventory:inv,lastAction:"ITEM RECEBIDO DO ADM GERAL",lastActionAt:Date.now()});
+    await registrarLog("Entregar item",`${jogadorSelecionadoModal.id} -> ${item.nome}`);
+    jogadorSelecionadoModal.data.inventory=inv;
+    toast(`🎁 ${item.nome} entregue ao jogador.`,`success`);
+    carregarJogadoresReaisDoBanco();
+  };
+
+  // Admin shop: catalog is global and every published item becomes purchasable by normal players.
+  window.publicarItemNaLoja=async function(){
+    if(!isGeneral())return alert("🔒 Somente o ADM Geral pode publicar itens na Loja.");
+    return window.adicionarItemCatalogo();
+  };
+
+  // Make the role card and profile controls reflect the two ADM levels.
+  const oldUpdate=window.atualizarPerfilUI;
+  window.atualizarPerfilUI=function(){
+    oldUpdate();
+    const role=document.getElementById("sidebar-role");
+    if(role && isGeneral())role.innerText="ADM GERAL • DESENVOLVEDOR • VIP 10";
+    if(role && isAux())role.innerText="ADM AUXILIAR • 🛡️ ADM_SERVIDOR";
+  };
+
+  // Protect sensitive admin functions even if a hidden button is invoked manually.
+  ["darGemasSelecionado","darMoedasSelecionado","darXpPontosSelecionado","darVidaSelecionado","darManaSelecionado","darSkinSelecionado","darPresenteSelecionado","alternarBanSelecionado","alternarMuteSelecionado","alternarAdmSelecionado","alternarServidorSelecionado","editarJogadorSelecionado","promoverAdmGuildaSelecionado","removerAdmGuildaSelecionado","promoverGuildaSelecionado","rebaixarGuildaSelecionado","editarItemCatalogo","removerItemCatalogo","adicionarItemCatalogo","criarPoder","editarEventoGlobal","removerEventoGlobal"].forEach(name=>{
+    const old=window[name];
+    if(typeof old!=="function")return;
+    window[name]=async function(...args){
+      if(!isGeneral()){alert("🛡️ ADM Auxiliar: esta função é exclusiva do ADM Geral.");return;}
+      return old.apply(this,args);
+    };
+  });
+
+  // Auxiliary may create/manage events, but not catalog/powers/resources.
+  const oldCreateEvent=window.criarEventoGlobal;
+  if(typeof oldCreateEvent==='function')window.criarEventoGlobal=async function(...args){if(!isAdmin())return alert("Acesso negado.");return oldCreateEvent.apply(this,args)};
+
+  // Profile avatar selection is available to every player and persists to Firestore.
+  window.selecionarFotoPerfil=window.selecionarAvatarOficial;
+
+  // Add a reward button to the selected-player modal for General ADM.
+  const full=document.getElementById("adm-full-actions");
+  if(full && !document.getElementById("btn-recompensas-multiplas")){
+    const b=document.createElement("button");b.id="btn-recompensas-multiplas";b.className="btn btn-green";b.textContent="🎁 Recompensas Múltiplas";b.onclick=editarRecompensasJogador;
+    full.insertBefore(b,full.firstChild);
+    const item=document.createElement("button");item.className="btn btn-purple";item.textContent="🛒 Entregar Item da Loja";item.onclick=darItemCatalogoSelecionado;full.insertBefore(item,full.children[1]);
+  }
+
+  // Public player list must not display e-mail.
+  const oldPublic=window.carregarJogadoresPublicos;
+  window.carregarJogadoresPublicos=async function(...args){
+    await oldPublic(...args);
+    document.querySelectorAll('#tabela-jogadores-publico tr').forEach(tr=>{
+      const emailCells=[...tr.querySelectorAll('td')].filter(td=>/@/.test(td.textContent||''));
+      emailCells.forEach(td=>{td.textContent=(window.jogadoresPublicosCache||[]).find(x=>String(x.uid)===String(tr.querySelector('button')?.getAttribute('onclick')||'').match(/'([^']+)'/)?.[1])?.displayName||"Jogador"});
+    });
+  };
+})();
+</script>
 </body>
-    </html>
+</html>
