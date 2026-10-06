@@ -318,7 +318,8 @@ table th,table td{border-bottom-color:#5d4027}.tag{background:rgba(170,119,49,.1
 
 <div class="chat-tools" id="player-communication-tools" aria-label="Comunicação">
   <button class="chat-toggle" onclick="dwOpenChatHub()">💬 Chat Geral</button><button id="adm-contact-toggle" class="adm-contact-btn" onclick="abrirContatoAdm()">🛟 Central de Suporte</button>
-                                                                                                      </div>
+</div>
+
 <div id="dw-chat-hub" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9999;display:flex;align-items:center;justify-content:center;padding:18px;">
   <div style="width:min(900px,100%);max-height:88vh;overflow:auto;background:#07111f;border:1px solid #24425f;border-radius:18px;box-shadow:0 25px 80px rgba(0,0,0,.6);padding:18px;">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;">
@@ -359,8 +360,7 @@ table th,table td{border-bottom-color:#5d4027}.tag{background:rgba(170,119,49,.1
   <div class="chat-box" id="chat-container"></div>
   <div class="chat-compose"><input type="text" id="footer-chat-input" placeholder="Digite sua mensagem..."><button class="btn" onclick="enviarMensagemRodape()">Enviar</button></div>
 </div>
-</div>
-
+ </div>
 <div id="modal-jogador" class="modal-overlay hidden"><div class="modal-card"><button class="close-modal" onclick="fecharModalJogador()">&times;</button>
 <h3 style="color:var(--accent-color);margin-bottom:15px">🛡️ Gestão do Jogador</h3><div style="font-size:14px;display:flex;flex-direction:column;gap:8px;margin-bottom:15px">
 <div><strong>UID:</strong> <span id="m-id" style="color:#f59e0b;font-family:monospace"></span></div><div><strong>Nome:</strong> <span id="m-nome"></span></div><div><strong>Status:</strong> <span id="m-status"></span></div></div>
@@ -694,6 +694,7 @@ async function carregarJogador(){
    if(!leituraBancoFalhou){
      setDoc(ref,{displayName:"Biel16Santos10",isAdm:false,isSubAdm:false,role:"USER",admLevel:"USER",adminVerified:false,adminProfileIcon:null,vip:0,coins:5000,diamonds:0,level:1,xp:0,points:0,victories:0,defeats:0,combats:0,inventory:[],characters:[],selectedCharacterId:"",pets:[],selectedPetId:"",phaseProgress:{reino1:1,reino2:1,reino3:1,reino4:1,reino5:1,reino6:1,reino7:1},currentHp:100,mana:100,maxMana:100,guildId:"",guildName:"",guildRank:"",guildRole:"JOGADOR",guildAdmin:false,lastSeen:serverTimestamp(),status:"Online"},{merge:true}).catch(e=>console.warn("Normalização Biel:",e));
    }
+ }
  if(!existe){usuarioAtual.coins=5000;usuarioAtual.diamonds=0;usuarioAtual.level=1;usuarioAtual.xp=0;usuarioAtual.characters=[];usuarioAtual.selectedCharacterId="";usuarioAtual.guildId="";usuarioAtual.guildName="";usuarioAtual.guildRank="";usuarioAtual.guildRole="JOGADOR";usuarioAtual.guildAdmin=false;usuarioAtual.guildInventory=[];usuarioAtual.equippedWeapon="";usuarioAtual.equippedPower="";usuarioAtual.muted=false;usuarioAtual.serverAccess=true;usuarioAtual.removedFromServer=false;usuarioAtual.currentHp=100;usuarioAtual.mana=100;usuarioAtual.maxMana=100;usuarioAtual.pets=[];usuarioAtual.selectedPetId="";}
  if(usuarioAtual.isAdm){usuarioAtual.coins=Math.max(Number(usuarioAtual.coins||0),999999);usuarioAtual.diamonds=Math.max(Number(usuarioAtual.diamonds||0),99999);usuarioAtual.level=Math.max(Number(usuarioAtual.level||1),100);usuarioAtual.points=Math.max(Number(usuarioAtual.points||0),999999);usuarioAtual.victories=Math.max(Number(usuarioAtual.victories||0),9999);usuarioAtual.combats=Math.max(Number(usuarioAtual.combats||0),9999)}
  const bs=base.battleState;
@@ -708,6 +709,7 @@ async function carregarJogador(){
 window.alternarModoAuth=()=>{modoCadastro=!modoCadastro;document.getElementById("auth-title").innerText=modoCadastro?"Criar Conta Real":"Entrar no Servidor";document.getElementById("auth-btn-action").innerText=modoCadastro?"Registrar e Gerar ID":"Entrar na Partida";document.getElementById("auth-switch-mode").innerText=modoCadastro?"Já tem conta? Faça login":"Não tem conta? Crie uma conta"};
 let autenticacaoEmAndamento=false;
 let authSessionToken=0;
+let dwLoginConfirmado=false;
 function promessacomTimeout(promise,ms=15000){
  return Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(Object.assign(new Error("Tempo limite de conexão."),{code:"timeout"})),ms))]);
 }
@@ -746,6 +748,7 @@ window.realizarAutenticacao=async()=>{
    }
    if(!cred?.user)throw new Error("Usuário não retornado pelo Firebase.");
 
+   dwLoginConfirmado=true;
    prepararJogoBasico(cred.user);
    abrirTelaDoJogoSeguro();
    if(status)status.textContent="✅ Login realizado! Carregando dados...";
@@ -757,6 +760,7 @@ window.realizarAutenticacao=async()=>{
    if(status)status.textContent="❌ "+msg;
    // Evita o alerta nativo do Chrome no celular. O erro fica visível na própria tela.
  }finally{
+   if(!auth.currentUser) dwLoginConfirmado=false;
    autenticacaoEmAndamento=false;
    if(btn){btn.disabled=false;btn.textContent=modoCadastro?"Registrar e Gerar ID":"Entrar na Partida";}
  }
@@ -856,8 +860,7 @@ window.batalhaAcao=async acao=>{
    if(q<=1)usuarioAtual.inventory.splice(idx,1);else pocao.quantity=q-1;
    usuarioAtual.mana=faseAtualInfo.playerMp; usuarioAtual.currentHp=faseAtualInfo.playerHp;
    await salvarProgressoCompleto(false);
- }
- usuarioAtual.mana=faseAtualInfo.playerMp;
+ }usuarioAtual.mana=faseAtualInfo.playerMp;
  if(faseAtualInfo.hpMovel<=0){const avancou=await iniciarProximaFase();if(!avancou)return;atualizarMoedasDiamantesUI();return}
  const danoInimigo=faseAtualInfo.defend?Math.max(4,Math.round(nivel.dano*0.35)):nivel.dano;
  faseAtualInfo.defend=false;
@@ -1431,7 +1434,7 @@ function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":
 window.atualizarVolume=()=>{document.getElementById("bg-music").volume=Number(document.getElementById("vol-musica").value)/100};
 window.alternarSom=async()=>{let a=document.getElementById("bg-music");if(a.paused){a.volume=Number(document.getElementById("vol-musica").value)/100;try{await a.play()}catch(e){alert("O navegador bloqueou o áudio. Clique novamente após interagir com a página.")}}else a.pause()};
 
-window.sairDaConta=async()=>{try{if(heartbeatTimer)clearInterval(heartbeatTimer);if(unsubscribeGlobal)unsubscribeGlobal();if(unsubscribeSupport)unsubscribeSupport();if(auth.currentUser)await updateDoc(doc(db,"jogadores_reais",auth.currentUser.uid),{status:"Offline",lastSeen:serverTimestamp()});await signOut(auth)}catch(e){console.error(e)}finally{document.getElementById("game-container").classList.add("hidden");document.getElementById("login-screen").classList.remove("hidden");document.getElementById("auth-email").value="";document.getElementById("auth-pass").value="";notificar("🚪 Conta desconectada. Faça login novamente.","info")}};
+window.sairDaConta=async()=>{dwLoginConfirmado=false;try{if(heartbeatTimer)clearInterval(heartbeatTimer);if(unsubscribeGlobal)unsubscribeGlobal();if(unsubscribeSupport)unsubscribeSupport();if(auth.currentUser)await updateDoc(doc(db,"jogadores_reais",auth.currentUser.uid),{status:"Offline",lastSeen:serverTimestamp()});await signOut(auth)}catch(e){console.error(e)}finally{document.getElementById("game-container").classList.add("hidden");document.getElementById("login-screen").classList.remove("hidden");document.getElementById("auth-email").value="";document.getElementById("auth-pass").value="";notificar("🚪 Conta desconectada. Faça login novamente.","info")}};
 
 let sessaoCarregando=false;
 let sessaoNumero=0;
@@ -1439,8 +1442,9 @@ let sessaoNumero=0;
 function abrirTelaDoJogoSeguro(){
   const login=document.getElementById("login-screen");
   const game=document.getElementById("game-container");
-  if(login) login.classList.add("hidden");
-  if(game) game.classList.remove("hidden");
+  dwLoginConfirmado=true;
+  if(login){ login.classList.add("hidden"); login.style.display="none"; }
+  if(game){ game.classList.remove("hidden"); game.style.display="flex"; game.style.visibility="visible"; game.style.opacity="1"; }
   document.body.style.overflow="hidden";
 }
 
@@ -1568,6 +1572,7 @@ setInterval(carregarAtualizacoesLogin,60000);
 
 onAuthStateChanged(auth,user=>{
   if(!user){
+    if(autenticacaoEmAndamento || dwLoginConfirmado) return;
     sessaoCarregando=false;
     const game=document.getElementById("game-container");
     if(game)game.classList.add("hidden");
