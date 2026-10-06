@@ -805,23 +805,25 @@ function montarEstadoPersistente(){
 }
 let salvamentoEmAndamento=false;
 async function salvarProgressoCompleto(atualizarUI=true){
- if(!usuarioAtual.uid||!auth.currentUser)return false;
+ if(!usuarioAtual.uid)return false;
  const estado=montarEstadoPersistente();
+ // Salva primeiro no aparelho para que compras/progresso nunca fiquem presos esperando a internet.
+ try{localStorage.setItem("dragonWar:lastState:"+usuarioAtual.uid,JSON.stringify({...estado,updatedAtLocal:estado.clientUpdatedAt}));}catch(e){}
+ if(atualizarUI)atualizarMoedasDiamantesUI();
+ if(!auth.currentUser||!db)return false;
  try{
   salvamentoEmAndamento=true;
-  await setDoc(doc(db,"jogadores_reais",usuarioAtual.uid),estado,{merge:true});
-  try{localStorage.setItem("dragonWar:lastState:"+usuarioAtual.uid,JSON.stringify({...estado,updatedAtLocal:estado.clientUpdatedAt}));}catch(e){}
-  if(atualizarUI)atualizarMoedasDiamantesUI();
+  const gravacao=setDoc(doc(db,"jogadores_reais",usuarioAtual.uid),estado,{merge:true});
+  await Promise.race([gravacao,new Promise((_,reject)=>setTimeout(()=>reject(new Error("FIREBASE_TIMEOUT")),5000))]);
   return true;
  }catch(e){
-  try{localStorage.setItem("dragonWar:lastState:"+usuarioAtual.uid,JSON.stringify({...estado,updatedAtLocal:estado.clientUpdatedAt}));}catch(x){}
-  console.warn("Falha ao salvar no Firestore; cópia local mantida.",e);
+  console.warn("Firebase indisponível/limitado; progresso local mantido.",e);
   return false;
  }finally{salvamentoEmAndamento=false;}
 }
 async function salvarProgresso(){return salvarProgressoCompleto(true)}
 async function salvarAutomaticamente(){if(auth.currentUser&&usuarioAtual.uid&&!salvamentoEmAndamento)await salvarProgressoCompleto(false)}
-setInterval(salvarAutomaticamente,10000);
+setInterval(salvarAutomaticamente,30000);
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")salvarAutomaticamente()});
 window.addEventListener("pagehide",()=>{try{if(usuarioAtual.uid){const estado=montarEstadoPersistente();localStorage.setItem("dragonWar:lastState:"+usuarioAtual.uid,JSON.stringify({...estado,updatedAtLocal:Date.now()}));}}catch(e){}});
 window.addEventListener("beforeunload",()=>{try{if(usuarioAtual.uid){const estado=montarEstadoPersistente();localStorage.setItem("dragonWar:lastState:"+usuarioAtual.uid,JSON.stringify({...estado,updatedAtLocal:Date.now()}));}}catch(e){}});
@@ -847,8 +849,10 @@ async function comprarItem(id,quantidade=1){
  usuarioAtual.coins-=total;usuarioAtual.inventory=inv;
  if(item.category==="skin"){usuarioAtual.equippedSkin=item.id;usuarioAtual.avatar=avataresOficiais[(Number(item.avatarIndex??0))%avataresOficiais.length]||usuarioAtual.avatar;}
  if(item.category==="character"){usuarioAtual.selectedCharacterId=item.id;usuarioAtual.characterAbility=item.ability||"";usuarioAtual.characterAbilityPower=Number(item.abilityPower||0);if(!Array.isArray(usuarioAtual.characters))usuarioAtual.characters=[];if(!usuarioAtual.characters.includes(item.id))usuarioAtual.characters.push(item.id);}
- await salvarProgressoCompleto(false);verificarAchievements();atualizarMoedasDiamantesUI();atualizarPerfilUI();atualizarInventarioUI();renderLoja();renderizarPoderes();
- notificar(`🛒 ${item.nome} comprado e salvo na sua mochila.${item.category==="potion"?" 🧪 Quantidade acumulada.":item.category==="skin"?" 🖼️ Avatar equipado automaticamente!":""}`,"success");
+ const savePromise=salvarProgressoCompleto(false);
+ verificarAchievements();atualizarMoedasDiamantesUI();atualizarPerfilUI();atualizarInventarioUI();renderLoja();renderizarPoderes();
+ notificar(`🛒 ${item.nome} comprado!${item.category==="potion"||item.category==="mana"?" 🧪 Quantidade acumulada.":item.category==="skin"?" 🖼️ Avatar equipado automaticamente!":""}`,"success");
+ savePromise.catch(()=>{});
 }
 async function equiparAvatarInventario(id){
  const item=(usuarioAtual.inventory||[]).find(x=>String(x.id)===String(id)&&x.category==="skin");
@@ -869,10 +873,12 @@ window.selecionarPersonagemLoja=async id=>{const item=(usuarioAtual.inventory||[
 function bonusAvatarArena(){const id=usuarioAtual.equippedSkin;if(!id)return 0;const i=(usuarioAtual.inventory||[]).find(x=>String(x.id)===String(id));return i&&i.category==="skin"?Math.max(0,Number(i.stat||0)):0;}
 
 function renderizarPoderes(){const c=document.getElementById("lista-mais-de-50-poderes");if(!c)return;const arr=catalogo.filter(x=>x.category==="power"&&!x.disabled);const adm=ehAdmCompleto();c.innerHTML=arr.map(i=>`<div class="item-card"><h4>⚡ ${escapeHtml(i.nome)}</h4><p>${escapeHtml(i.desc||"Poder Dragon War")}</p><div style="font-size:12px;color:#cbd5e1">💥 Dano/Bônus: <b>${Number(i.stat||0)}</b></div><div class="price">${Number(i.price||0)} 🪙</div>${adm?`<div style="display:flex;gap:6px"><button class="btn btn-blue" style="padding:6px;font-size:11px" onclick="editarItemCatalogo('${i.id}')">✏️ EDITAR</button><button class="btn btn-gray" style="padding:6px;font-size:11px" onclick="removerItemCatalogo('${i.id}')">🗑️ REMOVER</button></div>`:`<button class="btn" style="padding:6px;font-size:11px" onclick="comprarItem('${i.id}')">Comprar</button>`}</div>`).join("")||'<div class="box-item">Nenhum poder cadastrado.</div>'}
+let lojaLimite=24;
 function renderLoja(){
  const g=document.getElementById("loja-grid");
  if(!g)return;
- const arr=(categoriaLoja==="all"?catalogo:catalogo.filter(x=>x.category===categoriaLoja)).filter(x=>!x.disabled);
+ const todosItens=(categoriaLoja==="all"?catalogo:catalogo.filter(x=>x.category===categoriaLoja)).filter(x=>!x.disabled);
+ const arr=todosItens.slice(0,lojaLimite);
  const adm=ehAdmCompleto();
  const counts={weapon:0,skin:0,potion:0,power:0,character:0,life:0,mana:0};
  catalogo.filter(x=>!x.disabled).forEach(x=>{if(counts[x.category]!==undefined)counts[x.category]++;});
@@ -909,8 +915,11 @@ function renderLoja(){
       ${botoes}
     </div>`;
  }).join("")||'<div class="box-item" style="grid-column:1/-1;text-align:center">Nenhum produto nesta categoria.</div>';
+ if(todosItens.length>arr.length){
+   g.insertAdjacentHTML("beforeend",`<div style="grid-column:1/-1;text-align:center;margin-top:12px"><button class="btn btn-blue" onclick="lojaLimite+=24;renderLoja()">⬇️ CARREGAR MAIS (${todosItens.length-arr.length} restantes)</button></div>`);
+ }
 }
-window.mudarCategoriaLoja=function(c){categoriaLoja=c||"all";renderLoja();};
+window.mudarCategoriaLoja=function(c){categoriaLoja=c||"all";lojaLimite=24;renderLoja();};
 function renderGuildaResumo(g){
  const el=document.getElementById("guilda-resumo"); if(!el)return;
  if(!g){el.innerHTML=`<div class="box-item"><h3>👤 Você ainda não está em uma guilda</h3><p style="color:#94a3b8;margin-top:5px">Escolha uma guilda disponível ou crie a sua.</p></div>`;return;}
@@ -1082,8 +1091,7 @@ const MEDALHAS_DRAGON_WAR=[
  {id:"desenvolvedor",nome:"💻 Desenvolvedor",desc:"Medalha exclusiva do ADM Geral."}
 ];
 async function atualizarMedalhasSistema(){
- try{
-  const u=usuarioAtual||{}; const atual=Array.isArray(u.medalhas)?u.medalhas:[]; const ids=new Set(atual.map(m=>typeof m==='string'?m:m.id));
+ try{ const u=usuarioAtual||{}; const atual=Array.isArray(u.medalhas)?u.medalhas:[]; const ids=new Set(atual.map(m=>typeof m==='string'?m:m.id));
   const add=(id)=>{const m=MEDALHAS_DRAGON_WAR.find(x=>x.id===id);if(m&&!ids.has(id)){atual.push({...m,conquistadaEm:Date.now()});ids.add(id);}};
   add('primeiro_login');
   if((u.inventory||[]).length>0)add('primeira_compra');
@@ -1294,7 +1302,7 @@ function abrirTelaDoJogoSeguro(){
   if(login) login.classList.add("hidden");
   if(game) game.classList.remove("hidden");
   document.body.style.overflow="hidden";
-  }
+}
 
 function prepararJogoBasico(user){
   const email=user?.email||"";
@@ -1316,8 +1324,30 @@ function prepararJogoBasico(user){
 
 async function limparGuildasIniciaisUmaVez(){
  if(!ehAdmCompleto())return;
- try{const flag=await getDoc(doc(db,"config_sistema","guildas_iniciais_limpeza_v3"));if(flag.exists()&&flag.data().concluida)return;}catch(e){return;}
- try{const snap=await getDocs(collection(db,"guildas"));for(const d of snap.docs){try{await apagarGuildaCompleta(d.id);}catch(e){console.warn("Falha ao apagar guilda inicial",d.id,e);}}await setDoc(doc(db,"config_sistema","guildas_iniciais_limpeza_v3"),{concluida:true,executadaPor:usuarioAtual.uid,executadaEm:serverTimestamp()});if(usuarioAtual.guildId){usuarioAtual.guildId="";usuarioAtual.guildName="";usuarioAtual.guildTag="";usuarioAtual.guildAvatar="";usuarioAtual.guildRank="";usuarioAtual.guildRole="JOGADOR";usuarioAtual.guildAdmin=false;}}catch(e){console.warn("Limpeza inicial das guildas:",e)}
+ /* V4: remove SOMENTE as guildas que já existem neste momento.
+    Depois da limpeza, novas guildas criadas pelos jogadores permanecem normalmente. */
+ try{const flag=await getDoc(doc(db,"config_sistema","guildas_iniciais_limpeza_v4"));if(flag.exists()&&flag.data().concluida)return;}catch(e){console.warn("Verificação da limpeza de guildas:",e)}
+ try{
+   const snap=await getDocs(collection(db,"guildas"));
+   for(const d of snap.docs){try{await apagarGuildaCompleta(d.id);}catch(e){console.warn("Falha ao apagar guilda inicial",d.id,e);}}
+   /* Garante que nenhum jogador fique preso em uma guilda que acabou de ser apagada. */
+   try{
+     const ps=await getDocs(collection(db,"jogadores_reais"));
+     for(const pd of ps.docs){
+       const u=pd.data()||{};
+       if(u.guildId){
+         try{await updateDoc(pd.ref,{guildId:"",guildName:"",guildTag:"",guildAvatar:"",guildRank:"",guildRole:"JOGADOR",guildAdmin:false});}catch(e){}
+       }
+     }
+   }catch(e){console.warn("Limpeza dos vínculos de guilda dos jogadores:",e)}
+   await setDoc(doc(db,"config_sistema","guildas_iniciais_limpeza_v4"),{concluida:true,quantidadeRemovida:snap.size,executadaPor:usuarioAtual.uid,executadaEm:serverTimestamp()});
+   usuarioAtual.guildId="";usuarioAtual.guildName="";usuarioAtual.guildTag="";usuarioAtual.guildAvatar="";usuarioAtual.guildRank="";usuarioAtual.guildRole="JOGADOR";usuarioAtual.guildAdmin=false;
+   renderGuildaResumo(null);
+   document.getElementById("guilda-painel")?.classList.add("hidden");
+   document.getElementById("guilda-acoes")?.classList.remove("hidden");
+   document.getElementById("guildas-disponiveis")?.classList.remove("hidden");
+   document.getElementById("guilda-recursos-painel")?.classList.add("hidden");
+ }catch(e){console.warn("Limpeza inicial das guildas:",e)}
 }
 
 async function abrirSessaoComSeguranca(user){
