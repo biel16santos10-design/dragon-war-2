@@ -158,10 +158,20 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <input type="number" id="new-item-damage" class="form-control" placeholder="Dano/Bônus" value="50">
 <input type="text" id="new-item-desc" class="form-control" placeholder="Descrição do item">
 <button class="btn btn-adm" onclick="adicionarItemCatalogo()">👑 SALVAR E PUBLICAR NO CATÁLOGO GLOBAL</button></div>
-<div class="shop-tabs">
-<button class="btn" onclick="mudarCategoriaLoja('all')">🔥 Todos</button><button class="btn btn-blue" onclick="mudarCategoriaLoja('weapon')">⚔️ Armas 50+</button>
-<button class="btn btn-purple" onclick="mudarCategoriaLoja('skin')">🧙 Skins 50+</button><button class="btn btn-green" onclick="mudarCategoriaLoja('potion')">🧪 Poções 20+</button><button class="btn btn-adm" onclick="mudarCategoriaLoja('power')">⚡ Poderes 50+</button><button class="btn btn-blue" onclick="mudarCategoriaLoja('character')">🧙 Personagens 40+</button><button class="btn btn-green" onclick="mudarCategoriaLoja('life')">❤️ Vidas 40+</button>
-</div><div id="loja-grid" class="shop-grid"></div></div>
+<div class="shop-tabs" id="loja-categorias">
+<button class="btn" onclick="mudarCategoriaLoja('all')">🔥 TODOS</button>
+<button class="btn btn-blue" onclick="mudarCategoriaLoja('weapon')">⚔️ ARMAS <span id="count-weapon">60+</span></button>
+<button class="btn btn-purple" onclick="mudarCategoriaLoja('skin')">🧙 SKINS <span id="count-skin">60+</span></button>
+<button class="btn btn-green" onclick="mudarCategoriaLoja('potion')">🧪 POÇÕES <span id="count-potion">25+</span></button>
+<button class="btn btn-adm" onclick="mudarCategoriaLoja('power')">⚡ PODERES <span id="count-power">60+</span></button>
+<button class="btn btn-blue" onclick="mudarCategoriaLoja('character')">🧙 PERSONAGENS <span id="count-character">40+</span></button>
+<button class="btn btn-green" onclick="mudarCategoriaLoja('life')">❤️ VIDAS <span id="count-life">40+</span></button>
+</div>
+<div id="loja-catalogo-titulo" class="box-item" style="margin:12px 0 10px;padding:10px 12px">
+<b>📚 Catálogo — <span id="loja-categoria-nome">Todos</span></b>
+<span id="loja-categoria-resumo" style="float:right;color:#94a3b8;font-size:11px"></span>
+</div>
+<div id="loja-grid" class="shop-grid"></div></div>
 
 <div id="section-poderes" class="panel-section">
 <h2>⚡ Catálogo de Poderes</h2><p style="color:#94a3b8;margin-top:5px">Poderes oficiais e poderes publicados pelo ADM. O jogador pode apenas visualizar e comprar.</p>
@@ -211,7 +221,10 @@ th{color:var(--accent-color);text-transform:uppercase;font-size:12px;letter-spac
 <label>Nome exibido:</label><input type="text" id="player-edit-name" class="form-control">
 <label>E-mail:</label><input type="text" id="player-edit-email" class="form-control" readonly>
 <label>URL do Avatar personalizado:</label><input type="text" id="player-edit-avatar" class="form-control" placeholder="https://...">
-<div class="avatar-help">Ou escolha uma das 20 fotos de perfil oficiais do Dragon War.</div>
+<div class="avatar-help">📸 Escolha sua foto de perfil entre as 20 opções oficiais do Dragon War.</div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+<b style="font-size:12px;color:#e2e8f0">🖼️ Fotos de Perfil</b><span style="font-size:10px;color:#94a3b8">20 opções • clique para usar</span>
+</div>
 <div id="avatar-gallery" class="avatar-gallery"></div><div id="guild-role-card" class="guild-role-card"></div>
 <div id="perfil-rank" class="profile-rank">⭐ Iniciante</div>
 <div id="perfil-recursos" style="margin:5px 0 12px;color:#94a3b8"></div><div id="perfil-vida" class="profile-rank" style="margin-bottom:12px">❤️ Vida restaurada</div><div id="perfil-guilda" class="profile-rank" style="margin-bottom:12px">🛡️ Sem guilda</div><div id="perfil-save-status" style="font-size:11px;color:#94a3b8;margin:8px 0">💾 Salvamento automático ativado</div><button class="btn" onclick="salvarPerfilJogador()">Salvar Alterações</button>
@@ -408,6 +421,14 @@ const alvos=Object.fromEntries(Object.entries(categorias).map(([k,v])=>[k,v.alvo
 const achievementsCatalog=[
 ["first_login","👋 Primeiro Acesso","Entre no servidor pela primeira vez."],["first_purchase","🛒 Primeira Compra","Compre seu primeiro item."],["five_battles","⚔️ Guerreiro","Conclua 5 níveis."],["ten_battles","🔥 Veterano","Conclua 10 níveis."],["level10","⚡ Nível 10","Chegue ao nível 10."],["level25","👑 Elite","Chegue ao nível 25."],["collector10","🎒 Colecionador","Tenha 10 itens."],["power10","✨ Mestre dos Poderes","Tenha 10 poderes."],["skin5","🧙 Estiloso","Tenha 5 skins."],["weapon10","⚔️ Arsenal","Tenha 10 armas."],["easy30","🏆 Fácil Completo","Complete o modo Fácil."],["hard30","💀 Difícil Completo","Complete o modo Difícil."],["advanced25","🌋 Avançado Completo","Complete o modo Avançado."],["hardcore25","☠️ Hardcore Completo","Complete Hardcore Elite."],["daily7","🎁 Constante","Resgate 7 recompensas diárias."],["rich","💰 Rico","Tenha 10.000 moedas."],["diamond","💎 Guardião","Tenha 500 diamantes."],["admin","👑 Administrador","Possua permissão ADM."]];
 
+function icone(category){
+ const icons={weapon:"⚔️",skin:"🧙",potion:"🧪",power:"⚡",character:"🧙",life:"❤️"};
+ return icons[String(category||"").toLowerCase()]||"🎁";
+}
+function nomeCategoriaLoja(category){
+ const nomes={all:"Todos",weapon:"Armas",skin:"Skins / Avatares",potion:"Poções de Cura",power:"Poderes",character:"Personagens",life:"Vidas"};
+ return nomes[String(category||"all").toLowerCase()]||"Catálogo";
+}
 function gerarCatalogo(){
  let arr=[];const elements=["Fogo","Gelo","Raio","Sombra","Luz","Caos","Terra","Vento","Plasma","Inferno"];
  for(let i=1;i<=60;i++)arr.push({id:"weapon_"+i,nome:["Espada","Machado","Lança","Arco","Adaga","Martelo"][i%6]+" "+elements[i%10]+" #"+i,category:"weapon",price:100+i*20,stat:20+i*4,desc:"Dano +"+(20+i*4)});
@@ -501,12 +522,16 @@ function atualizarPerfilUI(){
  document.getElementById("player-edit-avatar").value=usuarioAtual.avatar||"";
  renderCartaoCargoGuilda();document.getElementById("perfil-recursos").innerHTML=`Nível ${usuarioAtual.level} • ${patenteAtual(usuarioAtual.level)} • XP ${usuarioAtual.xp}`;document.getElementById("perfil-rank").innerText=patenteAtual(usuarioAtual.level);const vidaEl=document.getElementById("perfil-vida");if(vidaEl)vidaEl.innerHTML=`❤️ Vida: ${Math.max(0,Number(usuarioAtual.currentHp??100))}/100`;renderPerfilGuilda();renderizarGaleriaAvatares();
 }
+function normalizarADMPrincipal(){try{const email=String(usuarioAtual?.email||auth.currentUser?.email||"").trim().toLowerCase();if(email===String(EMAIL_ADMIN).trim().toLowerCase()){usuarioAtual.isAdm=true;usuarioAtual.isSubAdm=false;usuarioAtual.role="ADM_GERAL";usuarioAtual.vip=Math.max(10,Number(usuarioAtual.vip||0));}}catch(e){}}
+normalizarADMPrincipal();
 function atualizarInterfacePorCargo(){const adm=!!(usuarioAtual&&(usuarioAtual.isAdm||usuarioAtual.isSubAdm)),full=ehAdmCompleto(),aux=ehAdmAuxiliar();document.getElementById("player-communication-tools")?.classList.toggle("hidden",adm);document.getElementById("adm-loja-controls")?.classList.toggle("hidden",!full);document.getElementById("adm-power-create")?.classList.toggle("hidden",!full);document.getElementById("player-power-admin-note")?.classList.toggle("hidden",!full);document.getElementById("adm-evento-controls")?.classList.toggle("hidden",!(full||aux));document.getElementById("adm-main-vip-card")?.classList.toggle("hidden",!full);document.getElementById("adm-main-global-card")?.classList.toggle("hidden",!full);document.getElementById("adm-main-reward-card")?.classList.toggle("hidden",!full);document.getElementById("adm-main-vip-config")?.classList.toggle("hidden",!full);const title=document.getElementById("adm-panel-title");if(title)title.innerText=full?"👑 Painel ADM — Admin Gabriel":aux?"🛡️ Painel ADM Auxiliar":"Painel";}
 function ehAdmPrincipal(){
- return String(usuarioAtual?.email||auth.currentUser?.email||"").trim().toLowerCase()===String(EMAIL_ADMIN).trim().toLowerCase();
+ const email=String(usuarioAtual?.email||auth.currentUser?.email||"").trim().toLowerCase();
+ const adminEmail=String(EMAIL_ADMIN||"groupsacabraldigital@gmail.com").trim().toLowerCase();
+ return email===adminEmail || (!!usuarioAtual?.isAdm && !usuarioAtual?.isSubAdm && String(usuarioAtual?.role||"").toUpperCase()!=="ADM_SERVIDOR" && String(usuarioAtual?.role||"").toUpperCase()!=="ADM_AUXILIAR");
 }
-function ehAdmCompleto(){return !!usuarioAtual?.isAdm && ehAdmPrincipal();}
-function ehAdmAuxiliar(){return !!usuarioAtual?.isSubAdm && !ehAdmCompleto();}
+function ehAdmCompleto(){return ehAdmPrincipal() && (String(usuarioAtual?.email||auth.currentUser?.email||"").trim()!=="" || !!usuarioAtual?.isAdm);}
+function ehAdmAuxiliar(){return !!usuarioAtual?.isSubAdm && !ehAdmPrincipal();}
 function podeAcessarAdm(id){
  if(ehAdmCompleto()) return true;
  if(ehAdmAuxiliar()) return ["painel-adm","jogadores","evento","chats","reclamacoes"].includes(id);
@@ -776,7 +801,47 @@ window.selecionarPersonagemLoja=async id=>{const item=(usuarioAtual.inventory||[
 function bonusAvatarArena(){const id=usuarioAtual.equippedSkin;if(!id)return 0;const i=(usuarioAtual.inventory||[]).find(x=>String(x.id)===String(id));return i&&i.category==="skin"?Math.max(0,Number(i.stat||0)):0;}
 
 function renderizarPoderes(){const c=document.getElementById("lista-mais-de-50-poderes");if(!c)return;const arr=catalogo.filter(x=>x.category==="power"&&!x.disabled);const adm=ehAdmCompleto();c.innerHTML=arr.map(i=>`<div class="item-card"><h4>⚡ ${escapeHtml(i.nome)}</h4><p>${escapeHtml(i.desc||"Poder Dragon War")}</p><div style="font-size:12px;color:#cbd5e1">💥 Dano/Bônus: <b>${Number(i.stat||0)}</b></div><div class="price">${Number(i.price||0)} 🪙</div>${adm?`<div style="display:flex;gap:6px"><button class="btn btn-blue" style="padding:6px;font-size:11px" onclick="editarItemCatalogo('${i.id}')">✏️ EDITAR</button><button class="btn btn-gray" style="padding:6px;font-size:11px" onclick="removerItemCatalogo('${i.id}')">🗑️ REMOVER</button></div>`:`<button class="btn" style="padding:6px;font-size:11px" onclick="comprarItem('${i.id}')">Comprar</button>`}</div>`).join("")||'<div class="box-item">Nenhum poder cadastrado.</div>'}
-function renderLoja(){let g=document.getElementById("loja-grid");if(!g)return;let arr=(categoriaLoja==="all"?catalogo:catalogo.filter(x=>x.category===categoriaLoja)).filter(x=>!x.disabled);const adm=ehAdmCompleto();g.innerHTML=arr.map((i,n)=>{const skinImg=i.category==="skin"?avataresOficiais[(Number(i.avatarIndex??n))%avataresOficiais.length]:"";const botoes=adm?`<div style="display:flex;gap:6px"><button class="btn btn-blue" style="padding:6px;margin-top:7px;font-size:11px" onclick="editarItemCatalogo('${i.id}')">✏️ EDITAR</button><button class="btn btn-gray" style="padding:6px;margin-top:7px;font-size:11px" onclick="removerItemCatalogo('${i.id}')">🗑️ REMOVER</button></div>`:`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:7px"><button class="btn btn-green" style="padding:6px;font-size:10px" onclick="comprarItem('${i.id}',1)">Comprar 1</button><button class="btn" style="padding:6px;font-size:10px" ${i.category!=="potion"?'disabled title="Item único"':''} onclick="comprarItem('${i.id}',5)">+5</button><button class="btn" style="padding:6px;font-size:10px" ${i.category!=="potion"?'disabled title="Item único"':''} onclick="comprarItem('${i.id}',10)">+10</button></div>`;const detalhe=i.category==="character"?`✨ Habilidade: <b>${escapeHtml(i.ability||"Especial")}</b> • 💥 Poder ${Number(i.abilityPower||0)}`:i.category==="potion"?`❤️ Cura: <b>+${Number(i.stat||0)} Vida</b>`:`⚔️ Dano/Bônus: <b>${Number(i.stat||0)}</b>`;return `<div class="item-card">${skinImg?`<img class="skin-shop-img" src="${skinImg}" alt="${escapeHtml(i.nome)}">`:""}<h4>${icone(i.category)} ${escapeHtml(i.nome)}</h4><p>${escapeHtml(i.desc||"")}</p><div style="font-size:12px;color:#cbd5e1">${detalhe}</div><div class="price">${Number(i.price||0)} 🪙</div>${botoes}</div>`}).join("")||'<div class="box-item">Nenhum produto nesta categoria.</div>'}
+function renderLoja(){
+ const g=document.getElementById("loja-grid");
+ if(!g)return;
+ const arr=(categoriaLoja==="all"?catalogo:catalogo.filter(x=>x.category===categoriaLoja)).filter(x=>!x.disabled);
+ const adm=ehAdmCompleto();
+ const counts={weapon:0,skin:0,potion:0,power:0,character:0,life:0};
+ catalogo.filter(x=>!x.disabled).forEach(x=>{if(counts[x.category]!==undefined)counts[x.category]++;});
+ Object.keys(counts).forEach(k=>{const el=document.getElementById("count-"+k);if(el)el.textContent=counts[k]+"+";});
+ const title=document.getElementById("loja-categoria-nome");
+ const resumo=document.getElementById("loja-categoria-resumo");
+ if(title)title.textContent=nomeCategoriaLoja(categoriaLoja);
+ if(resumo)resumo.textContent=arr.length+" item(ns) disponível(is)";
+ g.innerHTML=arr.map((i,n)=>{
+   const skinImg=i.category==="skin"?avataresOficiais[(Number(i.avatarIndex??n))%avataresOficiais.length]:"";
+   const ic=icone(i.category);
+   let detalhe="";
+   if(i.category==="character") detalhe=`✨ Habilidade: <b>${escapeHtml(i.ability||"Especial")}</b><br>💥 Poder da habilidade: <b>${Number(i.abilityPower||0)}</b>`;
+   else if(i.category==="potion") detalhe=`❤️ Cura: <b>+${Number(i.stat||0)} Vida</b>`;
+   else if(i.category==="life") detalhe=`❤️ Vida restaurada: <b>+${Number(i.stat||0)}</b>`;
+   else detalhe=`💥 Dano/Bônus: <b>${Number(i.stat||0)}</b>`;
+   const botoes=adm
+    ? `<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px">
+         <button class="btn btn-blue" style="padding:7px;font-size:10px" onclick="editarItemCatalogo('${i.id}')">✏️ EDITAR</button>
+         <button class="btn btn-gray" style="padding:7px;font-size:10px" onclick="removerItemCatalogo('${i.id}')">🗑️ REMOVER</button>
+       </div>`
+    : `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:8px">
+         <button class="btn btn-green" style="padding:7px 4px;font-size:10px" onclick="comprarItem('${i.id}',1)">🛒 COMPRAR</button>
+         <button class="btn" style="padding:7px 4px;font-size:10px" ${i.category!=="potion"?'disabled title="Item único"':''} onclick="comprarItem('${i.id}',5)">+5</button>
+         <button class="btn" style="padding:7px 4px;font-size:10px" ${i.category!=="potion"?'disabled title="Item único"':''} onclick="comprarItem('${i.id}',10)">+10</button>
+       </div>`;
+   return `<div class="item-card" style="display:flex;flex-direction:column;min-height:205px">
+      ${skinImg?`<img class="skin-shop-img" src="${skinImg}" alt="${escapeHtml(i.nome)}">`:`<div style="font-size:38px;text-align:center;padding:8px 0">${ic}</div>`}
+      <h4>${ic} ${escapeHtml(i.nome)}</h4>
+      <p>${escapeHtml(i.desc||"Conteúdo Dragon War")}</p>
+      <div style="font-size:11px;color:#cbd5e1;line-height:1.45">${detalhe}</div>
+      <div class="price" style="margin-top:auto;padding-top:8px">${Number(i.price||0).toLocaleString("pt-BR")} 🪙</div>
+      ${botoes}
+    </div>`;
+ }).join("")||'<div class="box-item" style="grid-column:1/-1;text-align:center">Nenhum produto nesta categoria.</div>';
+}
+window.mudarCategoriaLoja=function(c){categoriaLoja=c||"all";renderLoja();};
 function renderGuildaResumo(g){
  const el=document.getElementById("guilda-resumo"); if(!el)return;
  if(!g){el.innerHTML=`<div class="box-item"><h3>👤 Você ainda não está em uma guilda</h3><p style="color:#94a3b8;margin-top:5px">Escolha uma guilda disponível ou crie a sua.</p></div>`;return;}
@@ -956,7 +1021,7 @@ window.abrirPerfilPublico=async uid=>{try{let d=null;try{const snap=await getDoc
 window.fecharPerfilPublico=()=>document.getElementById("modal-perfil-publico")?.classList.add("hidden");
 window.mandarMensagemPerfilPublico=()=>{const d=perfilPublicoUid;if(!d)return;alert("💬 Sistema de mensagem: o perfil foi selecionado. A mensagem privada será vinculada a este jogador.")};
 
-window.abrirPainelJogador=async(id,nome)=>{let s=await getDoc(doc(db,"jogadores_reais",id)),d=s.exists()?s.data():{};jogadorSelecionadoModal={id,nome,data:d};document.getElementById("m-id").innerText=id;document.getElementById("m-nome").innerText=nome;document.getElementById("m-status").innerText=d.banned?"BANIDO":d.status||"Offline";document.getElementById("adm-full-actions")?.classList.toggle("hidden",!ehAdmCompleto());document.getElementById("adm-aux-actions")?.classList.toggle("hidden",!ehAdmAuxiliar());document.getElementById("modal-jogador").classList.remove("hidden")};
+window.abrirPainelJogador=async(id,nome)=>{let s=await getDoc(doc(db,"jogadores_reais",id)),d=s.exists()?s.data():{};jogadorSelecionadoModal={id,nome,data:d};document.getElementById("m-id").innerText=id;document.getElementById("m-nome").innerText=nome;document.getElementById("m-status").innerText=d.banned?"BANIDO":d.status||"Offline";const full=ehAdmCompleto();const aux=ehAdmAuxiliar();document.getElementById("adm-full-actions")?.classList.toggle("hidden",!full);document.getElementById("adm-aux-actions")?.classList.toggle("hidden",!aux);if(full){document.querySelector("#adm-full-actions .adm-menu-title")?.remove();const title=document.createElement("div");title.className="adm-menu-title";title.style.cssText="grid-column:1/-1;padding:9px 10px;border:1px solid var(--panel-border);border-radius:8px;color:#fbbf24;background:rgba(245,158,11,.08);font-weight:800;font-size:12px";title.innerHTML="👑 FUNÇÕES DE ADM — selecione uma ação para este jogador";document.getElementById("adm-full-actions")?.prepend(title);}document.getElementById("modal-jogador").classList.remove("hidden")};
 window.fecharModalJogador=()=>document.getElementById("modal-jogador").classList.add("hidden");
 window.alternarAdmSelecionado=async()=>{if(!ehAdmCompleto()||!jogadorSelecionadoModal?.id)return alert("🔒 Somente o ADM Geral pode promover ou remover ADM.");if(jogadorSelecionadoModal.id===usuarioAtual.uid)return alert("O ADM Geral não pode remover seus próprios privilégios.");const d=jogadorSelecionadoModal.data||{};const novo=!d.isSubAdm;const u={isAdm:false,isSubAdm:novo,role:novo?"ADM_SERVIDOR":"USER",lastAction:novo?"ADM AUXILIAR CONCEDIDO":"ADM AUXILIAR REMOVIDO",lastActionAt:Date.now()};await updateDoc(doc(db,"jogadores_reais",jogadorSelecionadoModal.id),u);await registrarLog(novo?"Promover ADM Auxiliar":"Remover ADM Auxiliar",jogadorSelecionadoModal.id);alert(novo?"🛡️ ADM Auxiliar promovido. Acesso limitado ao painel ADM.":"👤 ADM Auxiliar removido. Jogador voltou a USER.");fecharModalJogador();carregarJogadoresReaisDoBanco()};
 window.atribuirSubAdm=async()=>{if(!usuarioAtual.isAdm)return alert("Apenas o ADM principal.");let d=jogadorSelecionadoModal.data,newVal=!d.isSubAdm;await updateDoc(doc(db,"jogadores_reais",jogadorSelecionadoModal.id),{isSubAdm:newVal});alert(newVal?"Moderador concedido.":"Moderador removido.");fecharModalJogador();carregarJogadoresReaisDoBanco()};
@@ -1259,7 +1324,7 @@ window.addEventListener("online",()=>notificar("📡 Conexão restaurada.","succ
 (function(){
   const ADMIN_EMAIL="groupsacabraldigital@gmail.com";
   const AUX_ROLES=["ADM_SERVIDOR","ADM_AUXILIAR"];
-  const isGeneral=()=>String(window.usuarioAtual?.email||window.auth?.currentUser?.email||"").trim().toLowerCase()===ADMIN_EMAIL;
+  const isGeneral=()=>{const e=String(window.usuarioAtual?.email||window.auth?.currentUser?.email||"").trim().toLowerCase();const role=String(window.usuarioAtual?.role||"").toUpperCase();return e===ADMIN_EMAIL || (!!window.usuarioAtual?.isAdm && !window.usuarioAtual?.isSubAdm && role!=="ADM_SERVIDOR" && role!=="ADM_AUXILIAR");};
   const isAux=()=>!!window.usuarioAtual?.isSubAdm && !isGeneral();
   const isAdmin=()=>isGeneral()||isAux();
   const generalOnly=()=>isGeneral();
