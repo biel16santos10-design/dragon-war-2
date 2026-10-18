@@ -12,9 +12,58 @@ header{padding:18px 16px 14px;text-align:center;border-bottom:1px solid #293652;
 .wrap{max-width:1150px;margin:auto;padding:16px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:14px}.stat,.panel{background:linear-gradient(145deg,#172238,#101727);border:1px solid #2a3956;border-radius:14px}.stat{padding:11px;text-align:center}.stat small{display:block;color:var(--muted);font-size:11px}.stat strong{font-size:19px}.stat .ico{font-size:18px;margin-right:4px}
 nav{display:flex;gap:7px;overflow-x:auto;padding:2px 0 12px;margin-bottom:5px}button{font:inherit;cursor:pointer;border:1px solid #344461;border-radius:10px;padding:10px 13px;color:var(--text);background:#202d45;transition:.15s}button:hover{filter:brightness(1.18);transform:translateY(-1px)}button:disabled{opacity:.4;cursor:not-allowed;transform:none}.navbtn{white-space:nowrap;font-size:13px}.navbtn.active,.primary{background:linear-gradient(120deg,#f59e0b,#f97316);border-color:#ffc45b;color:#17100a;font-weight:800}.danger{background:#512432;border-color:#94394a}.success{background:#173d35;border-color:#26785e}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.panel{padding:16px;margin-bottom:14px}.panel h2,.panel h3{margin:0 0 10px}.panel h2{font-size:20px}.panel h3{font-size:16px}.hero{min-height:230px;display:flex;align-items:center;justify-content:space-between;gap:16px;overflow:hidden;background:radial-gradient(circle at 75% 30%,#8a321e66,transparent 34%),linear-gradient(135deg,#1b2944,#111827)}.hero-art{font-size:clamp(78px,17vw,150px);filter:drop-shadow(0 10px 18px #0008)}.eyebrow{color:var(--gold);font-size:11px;letter-spacing:2px;font-weight:800}.hero h1{font-size:clamp(24px,5vw,42px);line-height:1.05;margin:8px 0}.hero p{color:#bac7df;max-width:440px}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}.pill{display:inline-block;border:1px solid #394963;border-radius:999px;padding:4px 9px;font-size:11px;color:#c9d6ec}.bar{height:9px;border-radius:99px;background:#303b50;overflow:hidden;margin:7px 0 12px}.bar span{height:100%;display:block;border-radius:99px;background:linear-gradient(90deg,#ff5364,#f59e0b)}.bar.xp span{background:linear-gradient(90deg,#43c7e7,#7c6cf2)}.bar.mana span{background:linear-gradient(90deg,#4287ff,#8d6cff)}.item{padding:13px;border-radius:12px;border:1px solid #2a3956;background:#111a2a;margin:9px 0}.item-title{font-weight:800}.item p{font-size:13px;color:var(--muted);margin:5px 0 10px}.price{color:var(--gold);font-weight:800}.item-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.item-grid .item{margin:0}.big-icon{font-size:32px}.section{display:none}.section.active{display:block}.notice{padding:11px 13px;background:#172d3b;border:1px solid #285466;border-radius:10px;color:#bdefff;font-size:13px;margin-bottom:12px}.log{background:#0a101d;border-radius:10px;padding:10px;max-height:180px;overflow:auto;font-size:13px;color:#b9c8df}.log div{padding:4px 0;border-bottom:1px solid #1c273a}.empty{text-align:center;color:var(--muted);padding:25px}.footer{text-align:center;color:#71809c;font-size:11px;padding:20px}.field{background:#0a1220;border:1px solid #344461;color:white;border-radius:8px;padding:10px;width:100%;font:inherit}.field-label{font-size:12px;color:var(--muted);display:block;margin:8px 0 5px}.boss{font-size:72px;text-align:center;filter:drop-shadow(0 0 18px #ff4b3655)}.bossbox{background:linear-gradient(140deg,#2c1725,#151827);border-color:#673044}.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#f5a623;color:#1a1205;font-weight:800;padding:12px 18px;border-radius:12px;box-shadow:0 8px 30px #0008;z-index:20;display:none;max-width:90%;text-align:center}
 @media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.hero{align-items:flex-start}.hero-art{font-size:86px}.item-grid{grid-template-columns:1fr}.panel{padding:13px}.wrap{padding:10px}}
+
+.start-screen{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto;background:#05070c}
+.start-backdrop{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 35%,#78351d55 0%,transparent 40%),radial-gradient(ellipse at 50% 100%,#b65a1b22 0%,transparent 45%),linear-gradient(135deg,#090d15,#111827 55%,#07090f)}
+.start-backdrop:before{content:"";position:absolute;inset:0;opacity:.17;background-image:repeating-linear-gradient(135deg,transparent 0 5px,#8d7850 6px,transparent 7px 14px);mask-image:linear-gradient(to bottom,black,transparent)}
+.start-card{position:relative;width:min(100%,480px);padding:32px 28px;text-align:center;background:linear-gradient(145deg,#151c29f5,#080b12f7);border:1px solid #72583a;border-radius:16px;box-shadow:0 25px 100px #000c, inset 0 0 0 4px #ffffff08}
+.start-emblem{font-size:56px;filter:drop-shadow(0 0 18px #f97316aa);margin-bottom:4px}
+.start-kicker{font-size:10px;letter-spacing:3px;color:#c4b18c;font-weight:800}
+.start-card h1{font-family:Georgia,serif;font-size:clamp(35px,8vw,54px);letter-spacing:2px;color:#f5a623;margin:8px 0 0;text-shadow:0 0 22px #f9731655}
+.start-card h1 span{color:#f0dfbd}
+.start-subtitle{margin:0;color:#c2c8d1;font-size:11px;letter-spacing:6px}
+.start-divider{display:flex;align-items:center;gap:12px;color:#f5a623;margin:20px 0}.start-divider:before,.start-divider:after{content:"";height:1px;flex:1;background:linear-gradient(90deg,transparent,#856b42)}.start-divider:after{background:linear-gradient(90deg,#856b42,transparent)}
+.start-description{font-size:14px;line-height:1.6;color:#b5bdca;margin:0 auto 22px;max-width:340px}
+.start-actions{display:grid;gap:10px}.start-screen button{width:100%;padding:12px 14px;border-radius:8px;font-weight:800;letter-spacing:.3px}
+.start-primary{background:linear-gradient(120deg,#f7b33e,#d95c18);border:1px solid #ffd27b;color:#1b1007}
+.start-secondary{background:linear-gradient(120deg,#2a303b,#161c26);border:1px solid #665a48;color:#eee3ce}
+.start-guest{background:transparent;border:1px solid #394252;color:#aeb8c9;font-size:13px}
+.start-login-panel{margin-top:18px;text-align:left;padding-top:16px;border-top:1px solid #393329}.start-login-panel label{display:block;font-size:12px;color:#d4c4a6;margin:10px 0 6px}.start-login-panel input{width:100%;padding:12px;background:#080d16;border:1px solid #4a4f59;border-radius:7px;color:#fff;font:inherit;outline:none}.start-login-panel input:focus{border-color:#f5a623}.start-actions-inline{display:flex;gap:8px;margin-top:12px}.start-actions-inline button{flex:1}.start-footnote{font-size:10px;color:#778295;margin-top:22px;letter-spacing:.5px}#startAuthMessage{font-size:12px;line-height:1.5;color:#ffcf80;margin-top:10px;overflow-wrap:anywhere}
+@media(max-width:480px){.start-card{padding:26px 20px}.start-emblem{font-size:48px}}
+
 </style>
 </head>
 <body>
+
+<div id="startScreen" class="start-screen">
+  <div class="start-backdrop"></div>
+  <div class="start-card">
+    <div class="start-emblem">🐉</div>
+    <div class="start-kicker">UM RPG DE FANTASIA SOMBRIA</div>
+    <h1>DRAGON <span>WAR</span></h1>
+    <p class="start-subtitle">RISE OF POWER</p>
+    <div class="start-divider"><span>✦</span></div>
+    <p class="start-description">Sua lenda começa aqui. Entre no reino, escolha seu caminho e enfrente os grandes chefes.</p>
+    <div class="start-actions">
+      <button class="start-primary" onclick="openStartLogin('login')">⚔️ Entrar na conta</button>
+      <button class="start-secondary" onclick="openStartLogin('register')">✦ Criar conta</button>
+      <button class="start-guest" onclick="enterGuest()">Jogar sem conta</button>
+    </div>
+    <div id="startLoginPanel" class="start-login-panel" style="display:none">
+      <label for="startEmail">E-mail</label>
+      <input id="startEmail" type="email" autocomplete="email" placeholder="voce@email.com">
+      <label for="startPassword">Senha</label>
+      <input id="startPassword" type="password" autocomplete="current-password" placeholder="Sua senha (mínimo 6 caracteres)">
+      <div class="start-actions-inline">
+        <button class="start-primary" id="startSubmitBtn" onclick="submitStartAuth()">Entrar</button>
+        <button class="start-secondary" onclick="closeStartLogin()">Voltar</button>
+      </div>
+      <div id="startAuthMessage" role="status"></div>
+    </div>
+    <div class="start-footnote">Conta online via Firebase · ou experimente o modo local</div>
+  </div>
+</div>
+
 <header><div class="logo">🐉 DRAGON WAR</div><div class="subtitle">Rise of Power · RPG de fantasia</div></header>
 <div class="wrap">
 <div class="stats">
@@ -74,7 +123,7 @@ nav{display:flex;gap:7px;overflow-x:auto;padding:2px 0 12px;margin-bottom:5px}bu
 <script>
 const defaultState={name:"Aventureiro",heroClass:"Guerreiro",gold:500,gems:25,level:1,xp:0,hp:100,maxHp:100,mana:100,maxMana:100,wins:0,kills:0,phase:1,weapon:"Faca de treino",weaponPower:10,armor:0,potions:2,skin:"Novato",ownedSkins:["Novato"],ownedWeapons:["Faca de treino"],ownedItems:["Poção de vida ×2"],powers:[],boss:"Nenhum",quests:{wolf:0,win:0,gold:0},completed:[]};
 let s;try{s={...defaultState,...JSON.parse(localStorage.getItem("dragonWarSave")||"{}")}}catch(e){s={...defaultState}}
-let currentEnemy=null,turn=0;
+s.phase=Math.max(1,Number(s.phase)||1); let currentEnemy=null,turn=0;
 const weapons=[{name:"Faca de treino",icon:"🗡️",power:10,price:0,desc:"Uma arma simples para começar."},{name:"Espada de Ferro",icon:"⚔️",power:20,price:180,desc:"Confiável e equilibrada."},{name:"Arco Élfico",icon:"🏹",power:27,price:320,desc:"Preciso e mortal."},{name:"Machado de Guerra",icon:"🪓",power:35,price:550,desc:"Golpes pesados."},{name:"Lâmina de Fogo",icon:"🔥",power:48,price:950,desc:"Uma arma envolta em chamas."},{name:"Espada do Dragão",icon:"🐉",power:65,price:1500,desc:"Relíquia lendária do reino."}];
 const skins=[{name:"Novato",icon:"🛡️",price:0,desc:"O visual de quem está começando."},{name:"Cavaleiro Rubro",icon:"🟥",price:180,desc:"Armadura escarlate."},{name:"Mago Arcano",icon:"🧙",price:12,gems:true,desc:"Tecida com energia mágica."},{name:"Caçador da Floresta",icon:"🏹",price:350,desc:"Camuflagem para trilhas perigosas."},{name:"Guardião Dourado",icon:"👑",price:700,desc:"Uma aparência digna de lenda."},{name:"Dragão Sombrio",icon:"🐲",price:30,gems:true,desc:"Uma skin rara das sombras."}];
 const goods=[{name:"Poção de vida",icon:"🧪",price:30,desc:"Recupera 45 pontos de vida.",type:"potion"},{name:"Elixir de mana",icon:"🔮",price:25,desc:"Recupera 40 pontos de mana.",type:"mana"},{name:"Armadura reforçada",icon:"🦺",price:250,desc:"Reduz o dano recebido em 4.",type:"armor"},{name:"Bolsa de gemas",icon:"💎",price:150,desc:"Troca ouro por 5 gemas.",type:"gems"}];
@@ -173,7 +222,7 @@ if(configured){
    try {
     const snap=await getDoc(doc(db,"admins",user.uid));
     isAdmin=snap.exists();
-    status("Conectado: "+user.email+" · "+(isAdmin?"ADMINISTRADOR":"JOGADOR"));
+    status("Conectado: "+user.email+" · "+(isAdmin?"ADMINISTRADOR":"JOGADOR")); const startScreen=document.getElementById("startScreen"); if(startScreen) startScreen.style.display="none";
     document.getElementById("adminNav").style.display=isAdmin?"inline-block":"none";
     document.getElementById("adminGate").textContent=isAdmin?"Permissão ADM confirmada para esta conta.":"Acesso negado. Esta conta não está na coleção admins.";
     document.getElementById("adminTools").style.display=isAdmin?"block":"none";
@@ -223,6 +272,45 @@ service cloud.firestore {
   }
 }
 -->
+
+
+<script>
+let startAuthMode = "login";
+function openStartLogin(mode){
+ startAuthMode=mode;
+ const panel=document.getElementById("startLoginPanel");
+ panel.style.display="block";
+ document.getElementById("startSubmitBtn").textContent=mode==="register"?"Criar conta":"Entrar";
+ document.getElementById("startPassword").autocomplete=mode==="register"?"new-password":"current-password";
+ document.getElementById("startAuthMessage").textContent=mode==="register"?"Crie uma conta com e-mail e senha.":"Entre com sua conta do jogo.";
+ setTimeout(()=>document.getElementById("startEmail").focus(),50);
+}
+function closeStartLogin(){document.getElementById("startLoginPanel").style.display="none";}
+function enterGuest(){
+ document.getElementById("startScreen").style.display="none";
+ if(typeof showTab==="function")showTab("home");
+}
+async function submitStartAuth(){
+ const email=document.getElementById("startEmail").value.trim();
+ const password=document.getElementById("startPassword").value;
+ const msg=document.getElementById("startAuthMessage");
+ if(!email||!password){msg.textContent="Preencha o e-mail e a senha.";return;}
+ if(password.length<6){msg.textContent="A senha precisa ter pelo menos 6 caracteres.";return;}
+ if(startAuthMode==="register"){
+   if(typeof window.firebaseRegister!=="function"){msg.textContent="Firebase ainda não está pronto. Use 'Jogar sem conta' ou configure o Firebase.";return;}
+   document.getElementById("authEmail").value=email;document.getElementById("authPassword").value=password;
+   await window.firebaseRegister();
+   msg.textContent=document.getElementById("authStatus").textContent;
+ }else{
+   if(typeof window.firebaseLogin!=="function"){msg.textContent="Firebase ainda não está pronto. Use 'Jogar sem conta' ou configure o Firebase.";return;}
+   document.getElementById("authEmail").value=email;document.getElementById("authPassword").value=password;
+   await window.firebaseLogin();
+   const status=document.getElementById("authStatus").textContent;
+   msg.textContent=status;
+   if(status.startsWith("Conectado:"))document.getElementById("startScreen").style.display="none";
+ }
+}
+</script>
 
 </body>
 </html>
