@@ -24,7 +24,7 @@ nav{display:flex;gap:7px;overflow-x:auto;padding:2px 0 12px;margin-bottom:5px}bu
  <div class="stat"><small>⚔️ VITÓRIAS</small><strong id="wins">0</strong></div>
 </div>
 <nav id="nav">
-<button class="navbtn active" data-tab="home">🏰 Início</button><button class="navbtn" data-tab="battle">⚔️ Batalhas</button><button class="navbtn" data-tab="shop">🛒 Loja</button><button class="navbtn" data-tab="skins">🎭 Skins</button><button class="navbtn" data-tab="inventory">🎒 Inventário</button><button class="navbtn" data-tab="powers">✨ Poderes</button><button class="navbtn" data-tab="quests">📜 Missões</button><button class="navbtn" data-tab="profile">👤 Perfil</button>
+<button class="navbtn active" data-tab="home">🏰 Início</button><button class="navbtn" data-tab="battle">⚔️ Batalhas</button><button class="navbtn" data-tab="shop">🛒 Loja</button><button class="navbtn" data-tab="skins">🎭 Skins</button><button class="navbtn" data-tab="inventory">🎒 Inventário</button><button class="navbtn" data-tab="powers">✨ Poderes</button><button class="navbtn" data-tab="quests">📜 Missões</button><button class="navbtn" data-tab="profile">👤 Perfil</button><button class="navbtn" data-tab="account">🔐 Conta</button><button class="navbtn" data-tab="admin" id="adminNav" style="display:none">👑 Painel ADM</button>
 </nav>
 
 <section id="home" class="section active">
@@ -46,6 +46,28 @@ nav{display:flex;gap:7px;overflow-x:auto;padding:2px 0 12px;margin-bottom:5px}bu
 <section id="inventory" class="section"><div class="panel"><div class="eyebrow">SEUS TESOUROS</div><h2>🎒 Inventário</h2><div id="inventoryItems"></div></div></section>
 <section id="powers" class="section"><div class="panel"><div class="eyebrow">MAGIA ANTIGA</div><h2>✨ Poderes e habilidades</h2><p class="muted">Use mana em batalha. Aprender habilidades custa ouro e exige nível mínimo.</p><div id="powerItems" class="item-grid"></div></div></section>
 <section id="quests" class="section"><div class="panel"><div class="eyebrow">CONTRATOS DO REINO</div><h2>📜 Missões</h2><div id="questItems"></div></div></section>
+
+<section id="account" class="section">
+ <div class="panel"><div class="eyebrow">FIREBASE AUTHENTICATION</div><h2>🔐 Entrar / Criar conta</h2>
+ <div class="notice">Configure o Firebase no código para ativar login real. Sem configuração, você ainda pode jogar no modo local.</div>
+ <label class="field-label">E-mail</label><input class="field" id="authEmail" type="email" placeholder="seu@email.com">
+ <label class="field-label">Senha</label><input class="field" id="authPassword" type="password" placeholder="Mínimo de 6 caracteres">
+ <div class="row" style="margin-top:12px"><button class="primary" onclick="firebaseLogin()">Entrar</button><button onclick="firebaseRegister()">Criar conta</button><button onclick="firebaseLogout()">Sair</button></div>
+ <p id="authStatus" class="muted">Modo local: não conectado ao Firebase.</p>
+ </div>
+ <div class="panel"><h3>🛡️ Como liberar o acesso ADM com segurança</h3><p class="muted">O administrador não deve ser definido por um botão no navegador. Depois de criar sua conta, adicione o UID dela à coleção <b>admins</b> no Firestore. O painel ADM só aparece quando esse documento existir e as regras permitirem a leitura.</p><p class="muted">Não coloque senhas, chaves privadas ou credenciais de servidor dentro do HTML.</p></div>
+</section>
+<section id="admin" class="section">
+ <div class="panel"><div class="eyebrow">ACESSO RESTRITO</div><h2>👑 Painel ADM — Dragon War</h2><p id="adminGate" class="notice">Verificando permissão de administrador...</p>
+ <div id="adminTools" style="display:none">
+ <h3>📣 Mensagem global</h3><input class="field" id="globalMessage" placeholder="Mensagem para todos os jogadores"><button class="primary" style="margin-top:8px" onclick="publishGlobalMessage()">Publicar mensagem</button>
+ <hr style="border-color:#293750;margin:16px 0"><h3>🎁 Ajustar jogador</h3><label class="field-label">UID do jogador</label><input class="field" id="targetUid" placeholder="UID do usuário no Firebase">
+ <div class="row" style="margin-top:9px"><button onclick="adminAdjust('gold',100)">+100 ouro</button><button onclick="adminAdjust('gems',10)">+10 gemas</button><button onclick="adminAdjust('xp',100)">+100 XP</button></div>
+ <p class="muted">Ações administrativas reais precisam ser protegidas por regras Firestore ou Cloud Functions. Esta interface não concede permissão por si só.</p>
+ <div id="adminLog" class="log"></div>
+ </div></div>
+</section>
+
 <section id="profile" class="section"><div class="panel"><div class="eyebrow">IDENTIDADE DO HERÓI</div><h2>👤 Perfil do aventureiro</h2><label class="field-label">Nome do personagem</label><input class="field" id="nameInput" maxlength="20" placeholder="Digite seu nome"><label class="field-label">Classe</label><select class="field" id="classInput"><option>Guerreiro</option><option>Mago</option><option>Arqueiro</option></select><div class="row" style="margin-top:12px"><button class="primary" onclick="updateProfile()">Salvar perfil</button><button onclick="saveGame()">Salvar progresso</button><button class="danger" onclick="resetGame()">Reiniciar jogo</button></div><hr style="border-color:#293750;margin:18px 0"><h3>📊 Estatísticas</h3><div id="profileStats"></div><p class="muted" style="font-size:12px">O progresso fica salvo neste navegador usando armazenamento local. Limpar os dados do navegador pode apagar o save.</p></div></section>
 <div class="footer">Dragon War: Rise of Power · RPG em HTML, CSS e JavaScript · Desenvolvido por Gabriel Cabral</div>
 </div><div id="toast" class="toast"></div>
@@ -70,7 +92,7 @@ function buyWeapon(i){let w=weapons[i];if(s.ownedWeapons.includes(w.name)){s.wea
 function buyGood(i){let g=goods[i];if(s.gold<g.price)return toast("Ouro insuficiente.");s.gold-=g.price;if(g.type==="potion"){s.potions++;s.ownedItems.push("Poção de vida")}if(g.type==="mana"){s.mana=Math.min(s.maxMana,s.mana+40);s.ownedItems.push("Elixir de mana")}if(g.type==="armor"){s.armor+=4;s.ownedItems.push("Armadura reforçada");g.price=500}if(g.type==="gems")s.gems+=5;toast(g.name+" adquirido!");saveSilent();render()}
 function buySkin(i){let x=skins[i];if(s.ownedSkins.includes(x.name)){s.skin=x.name;toast("Skin equipada!")}else{let cur=x.gems?"gems":"gold";if(s[cur]<x.price)return toast(x.gems?"Gemas insuficientes.":"Ouro insuficiente.");s[cur]-=x.price;s.ownedSkins.push(x.name);s.skin=x.name;toast("Nova skin desbloqueada!")}saveSilent();render()}
 function learnPower(i){let p=powers[i];if(s.powers.includes(p.name))return toast("Você já aprendeu essa habilidade.");if(s.level<p.level)return toast("Requer nível "+p.level+".");if(s.gold<p.cost)return toast("Ouro insuficiente.");s.gold-=p.cost;s.powers.push(p.name);toast(p.name+" aprendido!");saveSilent();render()}
-function startBattle(n){if(n>s.phase)return toast("Derrote a fase anterior para desbloquear esta.");if(s.hp<=0)s.hp=Math.max(1,Math.ceil(s.maxHp*.5));let p=phases[n-1];currentEnemy={...p,hpNow:p.hp+Math.max(0,s.level-n)*8,max:p.hp+Math.max(0,s.level-n)*8};turn=0;document.getElementById("battleLog").innerHTML="";log("Você encontrou: "+p.enemy+"!","battleLog");showTab("battle");renderEnemy()}
+function startBattle(n){if(!Number.isFinite(s.phase)||s.phase<1)s.phase=1;if(n>s.phase)return toast("Derrote a fase anterior para desbloquear esta.");if(s.hp<=0)s.hp=Math.max(1,Math.ceil(s.maxHp*.5));let p=phases[n-1];currentEnemy={...p,hpNow:p.hp+Math.max(0,s.level-n)*8,max:p.hp+Math.max(0,s.level-n)*8};turn=0;document.getElementById("battleLog").innerHTML="";log("Você encontrou: "+p.enemy+"!","battleLog");showTab("battle");renderEnemy()}
 function renderEnemy(){if(!currentEnemy)return;document.getElementById("enemyArt").textContent=currentEnemy.art;document.getElementById("enemyName").textContent=currentEnemy.enemy;document.getElementById("enemyDesc").textContent=currentEnemy.desc;document.getElementById("enemyHpBar").style.width=Math.max(0,currentEnemy.hpNow/currentEnemy.max*100)+"%";document.getElementById("enemyHpText").textContent="Vida: "+Math.max(0,currentEnemy.hpNow)+" / "+currentEnemy.max;document.getElementById("enemyLevel").textContent=currentEnemy.boss?"CHEFE":"Nível "+currentEnemy.n}
 function attack(){if(!currentEnemy)return toast("Escolha uma fase primeiro.");let crit=Math.random()<.16;let dmg=s.weaponPower+(s.level-1)*2+(crit?Math.ceil(s.weaponPower*.6):0);currentEnemy.hpNow-=dmg;turn++;log("Você causou "+dmg+" de dano"+(crit?" crítico!":"."),"battleLog");if(currentEnemy.hpNow<=0)return victory();enemyTurn();renderEnemy();render()}
 function castBattlePower(){if(!currentEnemy)return toast("Escolha uma fase primeiro.");if(!s.powers.length)return toast("Aprenda um poder na aba Poderes.");let p=powers.filter(x=>s.powers.includes(x.name)).slice(-1)[0];if(s.mana<p.mana)return toast("Mana insuficiente.");s.mana-=p.mana;currentEnemy.hpNow-=p.damage+Math.floor(s.level*2);log(p.name+" causou "+(p.damage+Math.floor(s.level*2))+" de dano!","battleLog");if(currentEnemy.hpNow<=0)return victory();enemyTurn();renderEnemy();render()}
@@ -90,5 +112,117 @@ function renderProfile(){document.getElementById("profileStats").innerHTML=`<div
 function resetGame(){if(confirm("Tem certeza que deseja apagar todo o progresso e começar de novo?")){localStorage.removeItem("dragonWarSave");s={...defaultState,ownedSkins:["Novato"],ownedWeapons:["Faca de treino"],ownedItems:["Poção de vida ×2"],powers:[],quests:{wolf:0,win:0,gold:0},completed:[]};currentEnemy=null;render();showTab("home");toast("Novo jogo iniciado.")}}
 render();
 </script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+// COLE AQUI A CONFIGURAÇÃO WEB DO SEU PROJETO Firebase Console > Configurações do projeto.
+const firebaseConfig = {
+  apiKey: "COLE_SUA_API_KEY",
+  authDomain: "SEU_PROJETO.firebaseapp.com",
+  projectId: "SEU_PROJECT_ID",
+  appId: "COLE_SEU_APP_ID"
+};
+const configured = firebaseConfig.apiKey !== "COLE_SUA_API_KEY" &&
+                   firebaseConfig.projectId !== "SEU_PROJECT_ID";
+let auth = null, db = null, currentUser = null, isAdmin = false;
+const statusEl = () => document.getElementById("authStatus");
+function status(msg){ if(statusEl()) statusEl().textContent = msg; }
+function logAdmin(msg){ const el=document.getElementById("adminLog"); if(el){const d=document.createElement("div");d.textContent="› "+msg;el.prepend(d);} }
+window.firebaseLogin = async () => {
+ if(!configured) return status("Firebase ainda não configurado. Você pode jogar no modo local.");
+ try { await signInWithEmailAndPassword(auth, document.getElementById("authEmail").value.trim(), document.getElementById("authPassword").value); }
+ catch(e){ status("Não foi possível entrar: "+e.message); }
+};
+window.firebaseRegister = async () => {
+ if(!configured) return status("Cole sua configuração Firebase no código primeiro.");
+ try {
+  const cred=await createUserWithEmailAndPassword(auth, document.getElementById("authEmail").value.trim(), document.getElementById("authPassword").value);
+  await setDoc(doc(db,"users",cred.user.uid),{email:cred.user.email,role:"player",createdAt:serverTimestamp()});
+  status("Conta criada! Seu acesso inicial é de jogador.");
+ } catch(e){ status("Não foi possível criar a conta: "+e.message); }
+};
+window.firebaseLogout = async () => {
+ if(!auth) return status("Você está no modo local.");
+ try { await signOut(auth); } catch(e){status(e.message);}
+};
+window.publishGlobalMessage = async () => {
+ if(!currentUser || !isAdmin) return status("Apenas ADM autenticado pode publicar.");
+ const message=document.getElementById("globalMessage").value.trim();
+ if(!message) return status("Digite uma mensagem.");
+ try { await setDoc(doc(db,"settings","global"),{message,updatedAt:serverTimestamp(),updatedBy:currentUser.uid}); status("Mensagem global publicada."); logAdmin("Mensagem global atualizada."); }
+ catch(e){status("Falha ao publicar: "+e.message);}
+};
+window.adminAdjust = async (field, amount) => {
+ if(!currentUser || !isAdmin) return status("Apenas ADM autenticado pode executar esta ação.");
+ const uid=document.getElementById("targetUid").value.trim();
+ if(!uid) return status("Informe o UID do jogador.");
+ // Intencionalmente não altera moedas/XP diretamente pelo navegador: faça isso via Cloud Function
+ // validando o papel de administrador no servidor.
+ status("Para alterar recursos de outro jogador com segurança, implemente uma Cloud Function que valide o ADM. Nenhuma alteração foi feita.");
+ logAdmin("Ação solicitada: "+field+" "+amount+" para UID "+uid+" (aguardando Cloud Function segura).");
+};
+if(configured){
+ try {
+  const app=initializeApp(firebaseConfig); auth=getAuth(app); db=getFirestore(app);
+  onAuthStateChanged(auth, async user=>{
+   currentUser=user; isAdmin=false;
+   if(!user){status("Não conectado.");document.getElementById("adminNav").style.display="none";return;}
+   try {
+    const snap=await getDoc(doc(db,"admins",user.uid));
+    isAdmin=snap.exists();
+    status("Conectado: "+user.email+" · "+(isAdmin?"ADMINISTRADOR":"JOGADOR"));
+    document.getElementById("adminNav").style.display=isAdmin?"inline-block":"none";
+    document.getElementById("adminGate").textContent=isAdmin?"Permissão ADM confirmada para esta conta.":"Acesso negado. Esta conta não está na coleção admins.";
+    document.getElementById("adminTools").style.display=isAdmin?"block":"none";
+   } catch(e){status("Login ativo, mas não foi possível verificar o ADM: "+e.message);}
+  });
+ } catch(e){status("Erro ao iniciar Firebase: "+e.message);}
+} else {
+ status("Firebase não configurado. Modo local disponível; o login real será ativado após preencher firebaseConfig.");
+ document.getElementById("adminGate").textContent="Configure o Firebase e entre com uma conta autorizada para liberar este painel.";
+ document.getElementById("adminTools").style.display="none";
+}
+</script>
+
+
+<!--
+REGRAS FIRESTORE RECOMENDADAS (ajuste/teste antes de publicar):
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isAdmin() {
+      return signedIn() &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      // Usuário não pode promover a si mesmo nem editar o próprio papel.
+      allow create: if signedIn() && request.auth.uid == uid
+                    && request.resource.data.role == 'player';
+      allow update, delete: if isAdmin();
+    }
+    match /admins/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow write: if false; // Gerencie admins pelo Console/ambiente confiável.
+    }
+    match /settings/{docId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+    match /players/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow create: if signedIn() && request.auth.uid == uid;
+      allow update: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow delete: if isAdmin();
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}
+-->
+
 </body>
 </html>
